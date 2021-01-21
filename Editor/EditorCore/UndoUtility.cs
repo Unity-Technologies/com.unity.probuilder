@@ -24,15 +24,19 @@ namespace UnityEditor.ProBuilder
             // for the FindObjectsOfType call.
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
+                var versionID = mesh.versionID;
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();
+                mesh.versionID = versionID;
             }
 
             foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
+                var versionID = mesh.versionID;
                 mesh.InvalidateCaches();
                 mesh.Rebuild();
                 mesh.Optimize();
+                mesh.versionID = versionID;
             }
 
             ProBuilderEditor.Refresh();

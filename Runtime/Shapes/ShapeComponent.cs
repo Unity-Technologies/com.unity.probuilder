@@ -8,17 +8,6 @@ namespace UnityEngine.ProBuilder.Shapes
 {
     sealed class ShapeComponent : MonoBehaviour
     {
-        [Serializable]
-        class ShapeBoxProperties
-        {
-            [SerializeField]
-            internal float m_SizeX ;
-            [SerializeField]
-            internal float m_SizeZ ;
-            [SerializeField]
-            internal float m_SizeY ;
-        }
-
         [SerializeReference]
         Shape m_Shape = new Cube();
 
@@ -28,9 +17,6 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         Quaternion m_Rotation = Quaternion.identity;
 
-        [SerializeField]
-        ShapeBoxProperties m_Properties = new ShapeBoxProperties();
-
         ProBuilderMesh m_Mesh;
 
         [SerializeField]
@@ -39,7 +25,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         Vector3 m_PivotPosition;
 
-        [SerializeField] int m_Hash;
+        [SerializeField] uint m_Hash;
 
         public Shape shape
         {
@@ -89,18 +75,10 @@ namespace UnityEngine.ProBuilder.Shapes
         Bounds m_ShapeBox;
         public Bounds shapeBox => m_ShapeBox;
 
-        bool m_isEditable = true;
-        public bool isEditable
-        {
-            get
-            {
-                if(!m_isEditable)
-                    return false;
-                else
-                    m_isEditable = m_Hash == GetCurrentHash();
-                return m_isEditable;
-            }
-        }
+        uint currentHash => mesh.versionID;
+        public bool isEditable => m_Hash == currentHash;
+
+
 
         /// <summary>
         /// Reference to the <see cref="ProBuilderMesh"/> that this component is creating.
@@ -131,41 +109,29 @@ namespace UnityEngine.ProBuilder.Shapes
             pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
         }
 
-        int GetCurrentHash()
-        {
-            int hash = 0;
-            for(int i = 0; i < mesh.vertexCount; i++)
-                hash += mesh.positionsInternal[i].GetHashCode();
-
-            return hash;
-        }
-
-        void UpdateProperties()
-        {
-            m_Properties.m_SizeX = size.x;
-            m_Properties.m_SizeY = size.y;
-            m_Properties.m_SizeZ = size.z;
-        }
-
         public void UpdateComponent()
         {
-            //If pivot is located at first corner, then take this position as a reference when changing size properties
-            if(m_PivotLocation == PivotLocation.FirstCorner)
-            {
-                var center = m_Size / 2f;
-                var newCenter = new Vector3(
-                                        m_Properties.m_SizeX / 2f,
-                                        m_Properties.m_SizeY / 2f,
-                                        m_Properties.m_SizeZ / 2f);
-
-                Bounds shapeBB = m_ShapeBox;
-                shapeBB.center += (newCenter - center);
-                m_ShapeBox = shapeBB;
-            }
+            // //If pivot is located at first corner, then take this position as a reference when changing size properties
+            // if(m_PivotLocation == PivotLocation.FirstCorner)
+            // {
+            //     //var center = m_Size / 2f;
+            //     // var newCenter = new Vector3(
+            //     //                         m_Properties.m_SizeX / 2f,
+            //     //                         m_Properties.m_SizeY / 2f,
+            //     //                         m_Properties.m_SizeZ / 2f);
+            //     // var newCenter = new Vector3(
+            //     //     m_Properties.m_SizeX / 2f,
+            //     //     m_Properties.m_SizeY / 2f,
+            //     //     m_Properties.m_SizeZ / 2f);
+            //     var newCenter = m_Size / 2f;
+            //
+            //     Bounds shapeBB = m_ShapeBox;
+            //     shapeBB.center += (newCenter - shapeBB.center);
+            //     m_ShapeBox = shapeBB;
+            // }
 
             //Recenter shape
             ResetPivot(mesh, size, rotation);
-            size = new Vector3(m_Properties.m_SizeX, m_Properties.m_SizeY, m_Properties.m_SizeZ);
             Rebuild();
         }
 
@@ -204,9 +170,7 @@ namespace UnityEngine.ProBuilder.Shapes
             bounds.size = Math.Abs(m_ShapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
 
-            m_Hash = GetCurrentHash();
-            m_isEditable = true;
-            UpdateProperties();
+            m_Hash = currentHash;
         }
 
         public void SetShape(Shape shape, PivotLocation location)
@@ -240,7 +204,6 @@ namespace UnityEngine.ProBuilder.Shapes
                 m_ShapeBox = bounds;
             }
             ResetPivot(mesh, size, rotation);
-            UpdateProperties();
             Rebuild();
         }
 

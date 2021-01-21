@@ -33,9 +33,9 @@ namespace UnityEditor.ProBuilder
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
-        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("Size X");
-        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Size Y");
-        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Size Z");
+        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("X (Length)");
+        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Y (Height)");
+        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Z (Width)");
 
         const string k_dialogTitle = "Shape reset";
         const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
@@ -63,9 +63,9 @@ namespace UnityEditor.ProBuilder
         {
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
             m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
-            m_ShapeSizeXProperty = serializedObject.FindProperty("m_Properties.m_SizeX");
-            m_ShapeSizeZProperty = serializedObject.FindProperty("m_Properties.m_SizeZ");
-            m_ShapeSizeYProperty = serializedObject.FindProperty("m_Properties.m_SizeY");
+            m_ShapeSizeXProperty = serializedObject.FindProperty("m_Size.x");
+            m_ShapeSizeYProperty = serializedObject.FindProperty("m_Size.y");
+            m_ShapeSizeZProperty = serializedObject.FindProperty("m_Size.z");
         }
 
         public override void OnInspectorGUI()
@@ -158,9 +158,9 @@ namespace UnityEditor.ProBuilder
                 EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
 
                 EditorGUILayout.PropertyField(m_ShapeSizeXProperty, k_ShapeSizeXLabel);
-                EditorGUILayout.PropertyField(m_ShapeSizeZProperty, k_ShapeSizeZLabel);
                 if(HasMultipleShapeTypes || (m_CurrentShapeType != typeof(Plane) &&  m_CurrentShapeType != typeof(Sprite)))
                     EditorGUILayout.PropertyField(m_ShapeSizeYProperty, k_ShapeSizeYLabel);
+                EditorGUILayout.PropertyField(m_ShapeSizeZProperty, k_ShapeSizeZLabel);
 
                 EditorGUI.indentLevel--;
             }

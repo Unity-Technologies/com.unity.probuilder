@@ -326,6 +326,8 @@ namespace UnityEngine.ProBuilder
             mesh.name = string.Format("pb_Mesh{0}", id);
 
             EnsureMeshFilterIsAssigned();
+
+            m_VersionID++;
         }
 
         /// <summary>
@@ -395,6 +397,9 @@ namespace UnityEngine.ProBuilder
 
             if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
                 mesh.RecalculateBounds();
+
+            m_VersionID++;
+
         }
 
         internal void EnsureMeshColliderIsAssigned()
