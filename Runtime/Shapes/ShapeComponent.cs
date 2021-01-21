@@ -96,14 +96,6 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public void CopyComponent(ShapeComponent shapeComponent)
-        {
-            rotation = shapeComponent.rotation;
-            size = shapeComponent.size;
-            pivotLocation = shapeComponent.pivotLocation;
-            pivotLocalPosition = shapeComponent.pivotLocalPosition;
-        }
-
         public void SetPivotPosition(Vector3 position)
         {
             pivotLocalPosition = mesh.transform.InverseTransformPoint(position);

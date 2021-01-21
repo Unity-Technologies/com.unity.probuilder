@@ -189,6 +189,14 @@ namespace UnityEditor.ProBuilder
             EditorShapeUtility.SaveParams(shapeComponent.shape);
         }
 
+        internal static void ApplyPrefsSettings(ShapeComponent shapeComponent)
+        {
+            shapeComponent.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
+            shapeComponent.pivotLocalPosition = s_LastPivotPosition.value;
+            shapeComponent.size = s_LastSize.value;
+            shapeComponent.rotation = s_LastRotation.value;
+        }
+
         // Returns a local space point,
         public Vector3 GetPoint(Vector3 point, bool useIncrementSnap = false)
         {
@@ -217,10 +225,8 @@ namespace UnityEditor.ProBuilder
             if(position.Equals(Vector3.positiveInfinity))
                 return;
 
-            var pivotLocation = EditorUtility.newShapePivotLocation;
+            var pivotLocation = (PivotLocation)s_LastPivotLocation.value;
             var size = currentShapeInOverlay.size;
-            if(m_LastShapeCreated != null)
-                pivotLocation = m_LastShapeCreated.pivotLocation;
 
             m_Bounds.size = size;
 
@@ -239,9 +245,9 @@ namespace UnityEditor.ProBuilder
 
                 case PivotLocation.Center:
                 default:
+                    position = GetPoint(position);
                     cornerPosition = position - size / 2f;
                     cornerPosition.y = position.y;
-                    cornerPosition = GetPoint(cornerPosition);
                     m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
                     m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
 
@@ -251,16 +257,13 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
-
-            var lastShape = m_LastShapeCreated != null ? m_LastShapeCreated : currentShapeInOverlay;
             ShapeComponent shape;
             if(m_DuplicateGO == null)
             {
-                shape = ShapeFactory.Instantiate(activeShapeType, lastShape.pivotLocation)
-                    .GetComponent<ShapeComponent>();
+                shape = ShapeFactory.Instantiate(activeShapeType, ( (PivotLocation)s_LastPivotLocation.value )).GetComponent<ShapeComponent>();
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
-                shape.CopyComponent(lastShape);
+                ApplyPrefsSettings(shape);
                 shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
             }
             else

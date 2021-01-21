@@ -79,10 +79,9 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape()
         {
-            var lastShape = tool.m_LastShapeCreated != null ? tool.m_LastShapeCreated : tool.currentShapeInOverlay;
-            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, lastShape.pivotLocation).GetComponent<ShapeComponent>();
+            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ShapeComponent>();
             shape.gameObject.name = shape.gameObject.name + "-Copy";
-            shape.CopyComponent(lastShape);
+            DrawShapeTool.ApplyPrefsSettings(shape);
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
