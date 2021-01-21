@@ -21,11 +21,11 @@ namespace UnityEditor.ProBuilder.Actions
             get
             {
                 if (modifier == SelectionModifierBehavior.Add)
-                    return IconUtility.GetIcon("Toolbar/Selection_ShiftAdd", IconSkin.Pro);
+                    return IconUtility.GetIcon("Toolbar/ShiftAdd", IconSkin.Pro);
                 else if (modifier == SelectionModifierBehavior.Subtract)
-                    return IconUtility.GetIcon("Toolbar/Selection_ShiftSubtract", IconSkin.Pro);
+                    return IconUtility.GetIcon("Toolbar/ShiftSubtract", IconSkin.Pro);
                 else
-                    return IconUtility.GetIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
+                    return IconUtility.GetIcon("Toolbar/ShiftInvert", IconSkin.Pro);
             }
         }
 

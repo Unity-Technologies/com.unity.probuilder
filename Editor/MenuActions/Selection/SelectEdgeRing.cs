@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Ring", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/SelectEdgeRing", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip

@@ -51,8 +51,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_Icons = new Texture2D[]
             {
-                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On", IconSkin.Pro)
+                IconUtility.GetIcon("Toolbar/SelectHidden", IconSkin.Pro),
+                IconUtility.GetIcon("Toolbar/SelectHidden", IconSkin.Pro)
             };
         }
 

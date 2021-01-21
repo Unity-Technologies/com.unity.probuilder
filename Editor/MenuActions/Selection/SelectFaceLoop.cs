@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Loop_Face", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/SelectFaceLoop", IconSkin.Pro); }
         }
 
         public override TooltipContent tooltip

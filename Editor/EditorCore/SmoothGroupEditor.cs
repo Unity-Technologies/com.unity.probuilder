@@ -343,7 +343,7 @@ namespace UnityEditor.ProBuilder
             m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
             m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/BreakFaceSmoothing"),
                     "Clear the selected faces of their smoothing groups");
-            m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
+            m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/SelectBySmoothingGroup"),
                     "Expand the face selection by selecting all faces matching the currently selected face groups");
             MeshSelection.OnObjectSelectionChanged();
             OnSelectionChanged();

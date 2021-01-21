@@ -21,8 +21,8 @@ namespace UnityEditor.ProBuilder.Actions
             get
             {
                 return mode == RectSelectMode.Complete
-                    ? IconUtility.GetIcon("Toolbar/Selection_Rect_Complete")
-                    : IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
+                    ? IconUtility.GetIcon("Toolbar/DragSelect")
+                    : IconUtility.GetIcon("Toolbar/DragSelect", IconSkin.Pro);
             }
         }
 
