@@ -278,9 +278,9 @@ namespace UnityEditor.ProBuilder
         /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerfomActionImplementation(). (UnityUpgradable) -> PerformActionImplementation()";
+        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerformAction(), the implementation of the action should inherits from PerformActionImplementation(). (UnityUpgradable) -> PerformAction()";
         [Obsolete(obsoleteDoActionMsg, false)]
-        public ActionResult DoAction() => PerformActionImplementation();
+        public ActionResult DoAction() => PerformAction();
 
 
         protected virtual void DoAlternateAction()
