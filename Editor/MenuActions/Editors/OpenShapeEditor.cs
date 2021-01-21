@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenShapeEditor : MenuToolToggle
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CreateShape", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }
