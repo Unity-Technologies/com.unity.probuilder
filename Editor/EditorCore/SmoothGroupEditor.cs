@@ -341,7 +341,7 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.afterMeshModification += OnFinishVertexMovement;
             autoRepaintOnSceneChange = true;
             m_HelpIcon = new GUIContent(IconUtility.GetIcon("Toolbar/Help"), "Open Documentation");
-            m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/Face_BreakSmoothing"),
+            m_BreakSmoothingContent = new GUIContent(IconUtility.GetIcon("Toolbar/BreakFaceSmoothing"),
                     "Clear the selected faces of their smoothing groups");
             m_SelectFacesWithSmoothGroupSelectionContent = new GUIContent(IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"),
                     "Expand the face selection by selecting all faces matching the currently selected face groups");
