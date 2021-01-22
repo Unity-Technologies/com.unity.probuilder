@@ -276,6 +276,8 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
+            bool usedInParticuleSystem = false;
+
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
             {
@@ -286,6 +288,7 @@ namespace UnityEngine.ProBuilder
             }
             else if (mesh.vertexCount != vertexCount)
             {
+                usedInParticuleSystem = MeshUtility.IsUsedInParticuleSystem(this);
                 mesh.Clear();
             }
 
@@ -324,6 +327,9 @@ namespace UnityEngine.ProBuilder
             mesh.name = string.Format("pb_Mesh{0}", id);
 
             EnsureMeshFilterIsAssigned();
+
+            if(usedInParticuleSystem)
+                MeshUtility.RestoreParticuleSystem(this);
         }
 
         /// <summary>

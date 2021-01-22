@@ -510,12 +510,10 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            bool hasCollapsedVertices = false;
+            bool hasCollapsedVertices = vertices != null;
 
             if(vertices == null)
                 vertices = mesh.GetVertices();
-            else
-                hasCollapsedVertices = true;
 
             int smc = mesh.subMeshCount;
             List<Dictionary<Vertex, int>> subVertices = new List<Dictionary<Vertex, int>>();
@@ -598,8 +596,33 @@ namespace UnityEngine.ProBuilder
 
                 sb.AppendFormat("vertex {0} contains invalid values:\n{1}\n\n", i, vertex.ToString());
             }
-
             return sb.ToString();
         }
+
+        internal static bool IsUsedInParticuleSystem(ProBuilderMesh pbmesh)
+        {
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                if(shapeModule.meshRenderer == pbmesh.renderer)
+                {
+                    shapeModule.meshRenderer = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static void RestoreParticuleSystem(ProBuilderMesh pbmesh)
+        {
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                shapeModule.meshRenderer = pbmesh.renderer;
+            }
+        }
+
     }
 }
