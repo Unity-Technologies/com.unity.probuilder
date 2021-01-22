@@ -34,7 +34,6 @@ namespace UnityEditor.ProBuilder
                 switch(evt.type)
                 {
                     case EventType.MouseDrag:
-                    {
                         m_IsDragging = true;
                         Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                         float distance;
@@ -43,10 +42,8 @@ namespace UnityEditor.ProBuilder
                             UpdateShapeBase(ray, distance);
 
                         break;
-                    }
 
                     case EventType.MouseUp:
-                    {
                         if(!m_IsDragging && evt.shift)
                         {
                             CreateLastShape();
@@ -57,9 +54,6 @@ namespace UnityEditor.ProBuilder
                             return ResetState();
 
                         return NextState();
-
-                        break;
-                    }
                 }
             }
 
