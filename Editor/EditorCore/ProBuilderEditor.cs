@@ -49,7 +49,6 @@ namespace UnityEditor.ProBuilder
         static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
-        static Pref<SelectMode> s_LastActiveSelectMode = new Pref<SelectMode>("editor.lastActiveSelectMode", SelectMode.Face);
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -285,8 +284,6 @@ namespace UnityEditor.ProBuilder
             InitGUI();
             EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
-
-            selectMode = s_LastActiveSelectMode;
         }
 
         void OnDisable()
@@ -324,6 +321,7 @@ namespace UnityEditor.ProBuilder
             Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
+            Repaint();
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -370,7 +368,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if (instance != null)
+            if(instance != null)
                 instance.UpdateSelection(vertexCountChanged);
         }
 
@@ -789,9 +787,9 @@ namespace UnityEditor.ProBuilder
                 if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                 {
                     if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().PerformAction());
                     else
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().PerformAction());
                 }
                 else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                 {
@@ -799,9 +797,9 @@ namespace UnityEditor.ProBuilder
                         (EventModifiers.Control | EventModifiers.Shift))
                         Actions.SelectFaceRing.MenuRingAndLoopFaces(MeshSelection.topInternal);
                     else if (e.control)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().PerformAction());
                     else if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().PerformAction());
                     else
                         mesh.SetSelectedFaces(mesh.facesInternal);
                 }
@@ -970,6 +968,7 @@ namespace UnityEditor.ProBuilder
             m_Hovering.Clear();
             UpdateSelection();
             SetOverrideWireframe(true);
+            Repaint();
         }
 
         /// <summary>

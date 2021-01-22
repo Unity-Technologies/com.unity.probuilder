@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MeshSelection.selectedObjectCount > 0; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             string res = ExportWithFileDialog(MeshSelection.topInternal);
 

@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -81,8 +79,13 @@ namespace UnityEditor.ProBuilder
             submeshes = Submesh.GetSubmeshes(mesh.facesInternal, MaterialUtility.GetMaterialCount(mesh.renderer), quads ? MeshTopology.Quads : MeshTopology.Triangles);
             materials = new Material[submeshCount];
 
-            for (int i = 0; i < submeshCount; ++i)
+            for(int i = 0; i < submeshCount; ++i)
+            {
                 materials[i] = mesh.renderer.sharedMaterials[Math.Clamp(i, 0, materials.Length - 1)];
+                if(materials[i] == null)
+                    materials[i] = BuiltinMaterials.defaultMaterial;
+            }
+
 
             matrix = mesh.transform.localToWorldMatrix;
             mesh.ToMesh(MeshTopology.Triangles);

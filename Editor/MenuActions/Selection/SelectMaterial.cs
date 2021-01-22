@@ -62,12 +62,12 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (GUILayout.Button("Select Faces with Material"))
             {
-                DoAction();
+                PerformAction();
                 SceneView.RepaintAll();
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             IEnumerable<ProBuilderMesh> selection;
 

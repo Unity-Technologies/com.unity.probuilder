@@ -64,7 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
             ConfigurableWindow.GetWindow<MoveElementsSettings>(true, "Offset Settings", true);
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;
@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (GUILayout.Button(L10n.Tr("Offset Selection")))
             {
                 var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
-                EditorUtility.ShowNotification(instance.DoAction().notification);
+                EditorUtility.ShowNotification(instance.PerformAction().notification);
             }
 
             if (EditorGUI.EndChangeCheck())

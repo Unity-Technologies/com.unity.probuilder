@@ -2,6 +2,7 @@ using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 
 static class UndoTests
@@ -9,7 +10,7 @@ static class UndoTests
     [Test]
     public static void RegisterComplete()
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeFactory.Instantiate<Cube>();
         var duplicate = UnityEngine.Object.Instantiate(cube.gameObject).GetComponent<ProBuilderMesh>();
         duplicate.MakeUnique();
 

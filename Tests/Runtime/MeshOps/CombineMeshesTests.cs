@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 
 class CombineMeshesTests
 {
@@ -17,9 +18,9 @@ class CombineMeshesTests
     [SetUp]
     public void SetUp()
     {
-        m_mesh1 = ShapeGenerator.CreateShape(ShapeType.Cube);
-        m_mesh2 = ShapeGenerator.CreateShape(ShapeType.Cone);
-        m_mesh3 = ShapeGenerator.CreateShape(ShapeType.Cylinder);
+        m_mesh1 = ShapeFactory.Instantiate<Cube>();
+        m_mesh2 = ShapeFactory.Instantiate<Cone>();
+        m_mesh3 = ShapeFactory.Instantiate<Cylinder>();
         m_mesh1.gameObject.AddComponent<BoxCollider>();
         m_meshScale = new Vector3(2.0f, 2.0f, 2.0f);
         m_mesh1.gameObject.transform.localScale = m_meshScale;;

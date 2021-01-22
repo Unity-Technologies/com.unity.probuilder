@@ -45,6 +45,60 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
+        /// Get a point on the circumference of an ellipse.
+        /// </summary>
+        /// <param name="xRadius">The radius of the circle on the x-axis.</param>
+        /// <param name="yRadius">The radius of the circle on the y-axis.</param>
+        /// <param name="angleInDegrees">Where along the circle should the point be projected. Angle is in degrees.</param>
+        /// <param name="origin">The center point of the ellipse</param>
+        /// <param name="tangent">Out: the resulting at the computed position</param>
+        /// <returns></returns>
+        internal static Vector2 PointInEllipseCircumference(float xRadius, float yRadius, float angleInDegrees, Vector2 origin, out Vector2 tangent)
+        {
+            // Convert from degrees to radians via multiplication by PI/180
+            var cosA = Mathf.Cos(Mathf.Deg2Rad * angleInDegrees);
+            var sinA = Mathf.Sin(Mathf.Deg2Rad * angleInDegrees);
+
+            float x = (float)(xRadius * cosA) + origin.x;
+            float y = (float)(yRadius * sinA) + origin.y;
+
+            tangent = new Vector2( -y / (yRadius * yRadius), x / (xRadius * xRadius));
+            tangent.Normalize();
+
+            return new Vector2(x,y);
+        }
+
+        /// <summary>
+        /// Get a point on the circumference of an ellipse.
+        /// </summary>
+        /// <param name="xRadius">The radius of the circle on the x-axis.</param>
+        /// <param name="yRadius">The radius of the circle on the y-axis.</param>
+        /// <param name="angleInDegrees">Where along the circle should the point be projected. Angle is in degrees.</param>
+        /// <param name="origin">The center point of the ellipse</param>
+        /// <param name="tangent">Out: the resulting at the computed position</param>
+        /// <returns></returns>
+        internal static Vector2 PointInEllipseCircumferenceWithConstantAngle(float xRadius, float yRadius, float angleInDegrees, Vector2 origin, out Vector2 tangent)
+        {
+            // Convert from degrees to radians via multiplication by PI/180
+            var cosA = Mathf.Cos(Mathf.Deg2Rad * angleInDegrees);
+            var sinA = Mathf.Sin(Mathf.Deg2Rad * angleInDegrees);
+
+            float tan = Mathf.Tan(Mathf.Deg2Rad * angleInDegrees);
+            float tan2 = tan * tan;
+            float newX = ( xRadius * yRadius ) / Mathf.Sqrt(yRadius * yRadius + xRadius * xRadius * tan2);
+            if(cosA < 0)
+                newX = -newX;
+            float newY = ( xRadius * yRadius ) / Mathf.Sqrt(xRadius * xRadius + yRadius * yRadius / tan2);
+            if(sinA < 0)
+                newY = -newY;
+
+            tangent = new Vector2( -newY / (yRadius * yRadius), newX / (xRadius * xRadius));
+            tangent.Normalize();
+
+            return new Vector2(newX, newY);
+        }
+
+        /// <summary>
         /// Provided a radius, latitudinal and longitudinal angle, return a position.
         /// </summary>
         /// <param name="radius"></param>
@@ -594,19 +648,16 @@ namespace UnityEngine.ProBuilder
                     by = p2.y - p0.y,
                     bz = p2.z - p0.z;
 
-            Vector3 cross = Vector3.zero;
-
-            Cross(ax, ay, az, bx, by, bz, ref cross.x, ref cross.y, ref cross.z);
+            Vector3 cross = new Vector3(
+                ay * bz - az * by,
+                az * bx - ax * bz,
+                ax * by - ay * bx);
 
             if (cross.magnitude < Mathf.Epsilon)
-            {
                 return new Vector3(0f, 0f, 0f); // bad triangle
-            }
-            else
-            {
-                cross.Normalize();
-                return cross;
-            }
+
+            cross.Normalize();
+            return cross;
         }
 
         /// <summary>
@@ -651,10 +702,8 @@ namespace UnityEngine.ProBuilder
 
             var positions = mesh.positionsInternal;
 
-            // if the face is just a quad, use the first
-            // triangle normal.
-            // otherwise it's not safe to assume that the face
-            // has even generally uniform normals
+            // if the face is just a quad, use the first triangle normal. otherwise it's not safe to assume that the
+            // face has even generally uniform normals
             Vector3 nrm = Normal(
                     positions[face.indexesInternal[0]],
                     positions[face.indexesInternal[1]],
@@ -679,36 +728,6 @@ namespace UnityEngine.ProBuilder
             }
 
             return nrm;
-        }
-
-        /// <summary>
-        /// Get the average normal of a set of individual triangles.
-        /// If p.Length % 3 == 0, finds the normal of each triangle in a face and returns the average. Otherwise return the normal of the first three points.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        internal static Vector3 Normal(IList<Vector3> p)
-        {
-            if (p == null || p.Count < 3)
-                return Vector3.zero;
-
-            int c = p.Count;
-
-            if (c % 3 == 0)
-            {
-                Vector3 nrm = Vector3.zero;
-                for (int i = 0; i < c; i += 3)
-                    nrm += Normal(p[i + 0], p[i + 1], p[i + 2]);
-                nrm /= (c / 3f);
-                nrm.Normalize();
-                return nrm;
-            }
-            Vector3 cross = Vector3.Cross(p[1] - p[0], p[2] - p[0]);
-
-            if (cross.magnitude < Mathf.Epsilon)
-                return new Vector3(0f, 0f, 0f); // bad triangle
-
-            return cross.normalized;
         }
 
         /// <summary>
@@ -901,18 +920,6 @@ namespace UnityEngine.ProBuilder
         /// <param name="v"></param>
         /// <param name="indexes">Indexes of v array to test.</param>
         /// <returns></returns>
-        internal static Vector2 SmallestVector2(Vector2[] v, int[] indexes)
-        {
-            int len = indexes.Length;
-            Vector2 l = v[indexes[0]];
-            for (int i = 0; i < len; i++)
-            {
-                if (v[indexes[i]].x < l.x) l.x = v[indexes[i]].x;
-                if (v[indexes[i]].y < l.y) l.y = v[indexes[i]].y;
-            }
-            return l;
-        }
-
         internal static Vector2 SmallestVector2(Vector2[] v, IList<int> indexes)
         {
             int len = indexes.Count;
@@ -938,18 +945,6 @@ namespace UnityEngine.ProBuilder
             {
                 if (v[i].x > l.x) l.x = v[i].x;
                 if (v[i].y > l.y) l.y = v[i].y;
-            }
-            return l;
-        }
-
-        internal static Vector2 LargestVector2(Vector2[] v, int[] indexes)
-        {
-            int len = indexes.Length;
-            Vector2 l = v[indexes[0]];
-            for (int i = 0; i < len; i++)
-            {
-                if (v[indexes[i]].x > l.x) l.x = v[indexes[i]].x;
-                if (v[indexes[i]].y > l.y) l.y = v[indexes[i]].y;
             }
             return l;
         }
@@ -1014,86 +1009,6 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Creates an AABB with a set of vertices.
-        /// </summary>
-        /// <param name="positions"></param>
-        /// <returns></returns>
-        internal static Bounds GetBounds(Vector3[] positions, IEnumerable<Face> faces)
-        {
-            bool initialized = false;
-
-            Vector3 min = Vector3.zero;
-            Vector3 max = min;
-
-            foreach (var face in faces)
-            {
-                var indices = face.distinctIndexesInternal;
-
-                if (!initialized)
-                {
-                    initialized = true;
-                    min = positions[indices[0]];
-                    max = positions[indices[0]];
-                }
-
-                for (int i = 0, c = indices.Length; i < c; i++)
-                {
-                    min.x = Mathf.Min(positions[indices[i]].x, min.x);
-                    max.x = Mathf.Max(positions[indices[i]].x, max.x);
-
-                    min.y = Mathf.Min(positions[indices[i]].y, min.y);
-                    max.y = Mathf.Max(positions[indices[i]].y, max.y);
-
-                    min.z = Mathf.Min(positions[indices[i]].z, min.z);
-                    max.z = Mathf.Max(positions[indices[i]].z, max.z);
-                }
-            }
-
-            return new Bounds((min + max) * .5f, max - min);
-        }
-
-        static Vector3 ComponentMin(Vector3 a, Vector3 b)
-        {
-            return new Vector3(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Min(a.z, b.z));
-        }
-
-        static Vector3 ComponentMax(Vector3 a, Vector3 b)
-        {
-            return new Vector3(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y), Mathf.Max(a.z, b.z));
-        }
-
-        /// <summary>
-        /// Creates an AABB with a set of vertices.
-        /// </summary>
-        /// <param name="positions"></param>
-        /// <returns></returns>
-        internal static Bounds GetBounds(Vector3[] positions, IEnumerable<Edge> edges)
-        {
-            bool initialized = false;
-
-            Vector3 min = Vector3.zero;
-            Vector3 max = min;
-
-            foreach (var edge in edges)
-            {
-                if (!initialized)
-                {
-                    initialized = true;
-                    min = positions[edge.a];
-                    max = positions[edge.a];
-                }
-
-                min = ComponentMin(positions[edge.a], min);
-                max = ComponentMax(positions[edge.a], max);
-
-                min = ComponentMin(positions[edge.b], min);
-                max = ComponentMax(positions[edge.b], max);
-           }
-
-            return new Bounds((min + max) * .5f, max - min);
-        }
-
-        /// <summary>
         /// Gets the average of a vector array.
         /// </summary>
         /// <param name="array">The array</param>
@@ -1153,58 +1068,47 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Average a set of vertices.
+        /// Gets the average of a vector array.
         /// </summary>
-        /// <param name="list">The collection from which to select indices.</param>
-        /// <param name="selector">The function used to get vertex values.</param>
-        /// <param name="indexes"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        internal static Vector3 Average<T>(this IList<T> list, Func<T, Vector3> selector, IList<int> indexes = null)
+        /// <param name="array">The array.</param>
+        /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
+        /// <returns>Average Vector4 of passed vertex array.</returns>
+        public static Vector4 Average(IList<Vector4> array, IList<int> indexes = null)
         {
-            if (list == null)
-                throw new ArgumentNullException("list");
+            if (array == null)
+                throw new ArgumentNullException("array");
 
-            if (selector == null)
-                throw new ArgumentNullException("selector");
+            Vector4 sum = Vector3.zero;
 
-            Vector3 sum = Vector3.zero;
-            float len = indexes == null ? list.Count : indexes.Count;
+            float len = indexes == null ? array.Count : indexes.Count;
 
             if (indexes == null)
             {
                 for (int i = 0; i < len; i++)
-                    sum += selector(list[i]);
+                {
+                    sum.x += array[i].x;
+                    sum.y += array[i].y;
+                    sum.z += array[i].z;
+                }
             }
             else
             {
                 for (int i = 0; i < len; i++)
-                    sum += selector(list[indexes[i]]);
+                {
+                    sum.x += array[indexes[i]].x;
+                    sum.y += array[indexes[i]].y;
+                    sum.z += array[indexes[i]].z;
+                }
             }
 
             return sum / len;
         }
 
-        public static Vector4 Average(IList<Vector4> v, IList<int> indexes = null)
+        internal static Vector3 InvertScaleVector(Vector3 scaleVector)
         {
-            Vector4 sum = Vector4.zero;
-            float len = indexes == null ? v.Count : indexes.Count;
-            if (indexes == null)
-                for (int i = 0; i < len; i++) sum += v[i];
-            else
-                for (int i = 0; i < len; i++) sum += v[indexes[i]];
-            return sum / len;
-        }
-
-        internal static Color Average(IList<Color> c, IList<int> indexes = null)
-        {
-            Color sum = c[0];
-            float len = indexes == null ? c.Count : indexes.Count;
-            if (indexes == null)
-                for (int i = 1; i < len; i++) sum += c[i];
-            else
-                for (int i = 1; i < len; i++) sum += c[indexes[i]];
-            return sum / len;
+            for (int axis = 0; axis < 3; ++axis)
+                scaleVector[axis] = scaleVector[axis] == 0f ? 0f : 1f / scaleVector[axis];
+            return scaleVector;
         }
 
         /// <summary>
@@ -1275,30 +1179,9 @@ namespace UnityEngine.ProBuilder
         /// <param name="b">Second float value.</param>
         /// <param name="delta">The maximum difference between components allowed.</param>
         /// <returns>True if a and b components are respectively within delta distance of one another.</returns>
-
         internal static bool Approx(this float a, float b, float delta = k_FltCompareEpsilon)
         {
             return Mathf.Abs(b - a) < Mathf.Abs(delta);
-        }
-
-        /// <summary>
-        /// Wrap value to range.
-        /// </summary>
-        /// <remarks>
-        /// http://stackoverflow.com/questions/707370/clean-efficient-algorithm-for-wrapping-integers-in-c
-        /// </remarks>
-        /// <param name="value"></param>
-        /// <param name="lowerBound"></param>
-        /// <param name="upperBound"></param>
-        /// <returns></returns>
-        internal static int Wrap(int value, int lowerBound, int upperBound)
-        {
-            int range_size = upperBound - lowerBound + 1;
-
-            if (value < lowerBound)
-                value += range_size * ((lowerBound - value) / range_size + 1);
-
-            return lowerBound + (value - lowerBound) % range_size;
         }
 
         /// <summary>
@@ -1317,51 +1200,19 @@ namespace UnityEngine.ProBuilder
                     : value;
         }
 
-        internal static Vector3 Clamp(Vector3 value, Vector3 lowerBound, Vector3 upperBound)
-        {
-            return Vector3.Max(Vector3.Min(value, upperBound), lowerBound);
-        }
-
-        internal static Vector3 ToSignedMask(this Vector3 vec, float delta = k_FltEpsilon)
-        {
-            return new Vector3(
-                Mathf.Abs(vec.x) > delta ? vec.x / Mathf.Abs(vec.x) : 0f,
-                Mathf.Abs(vec.y) > delta ? vec.y / Mathf.Abs(vec.y) : 0f,
-                Mathf.Abs(vec.z) > delta ? vec.z / Mathf.Abs(vec.z) : 0f
-                );
-        }
-
         internal static Vector3 Abs(this Vector3 v)
         {
             return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
         }
 
-        internal static int IntSum(this Vector3 mask)
+        internal static Vector3 Sign(this Vector3 v)
         {
-            return (int)Mathf.Abs(mask.x) + (int)Mathf.Abs(mask.y) + (int)Mathf.Abs(mask.z);
+            return new Vector3(Mathf.Sign(v.x), Mathf.Sign(v.y), Mathf.Sign(v.z));
         }
 
         internal static float Sum(this Vector3 v)
         {
             return Mathf.Abs(v.x) + Mathf.Abs(v.y) + Mathf.Abs(v.z);
-        }
-
-        /// <summary>
-        /// Non-allocating cross product.
-        /// </summary>
-        /// <remarks>
-        /// `ref` does not box with primitive types (https://msdn.microsoft.com/en-us/library/14akc2c7.aspx)
-        /// </remarks>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        internal static void Cross(Vector3 a, Vector3 b, ref float x, ref float y, ref float z)
-        {
-            x = a.y * b.z - a.z * b.y;
-            y = a.z * b.x - a.x * b.z;
-            z = a.x * b.y - a.y * b.x;
         }
 
         /// <summary>
@@ -1378,25 +1229,6 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Non-allocating cross product.
-        /// </summary>
-        /// <param name="ax"></param>
-        /// <param name="ay"></param>
-        /// <param name="az"></param>
-        /// <param name="bx"></param>
-        /// <param name="by"></param>
-        /// <param name="bz"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        internal static void Cross(float ax, float ay, float az, float bx, float by, float bz, ref float x, ref float y, ref float z)
-        {
-            x = ay * bz - az * by;
-            y = az * bx - ax * bz;
-            z = ax * by - ay * bx;
-        }
-
-        /// <summary>
         /// Vector subtraction without allocating a new vector.
         /// </summary>
         /// <param name="a"></param>
@@ -1407,16 +1239,6 @@ namespace UnityEngine.ProBuilder
             res.x = b.x - a.x;
             res.y = b.y - a.y;
             res.z = b.z - a.z;
-        }
-
-        internal static int Min(int a, int b)
-        {
-            return a < b ? a : b;
-        }
-
-        internal static int Max(int a, int b)
-        {
-            return a > b ? a : b;
         }
 
         internal static bool IsNumber(float value)

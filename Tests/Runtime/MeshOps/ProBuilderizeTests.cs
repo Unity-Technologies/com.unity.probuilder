@@ -6,13 +6,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 
 class ProBuilderizeTests : TemporaryAssetTest
 {
     [Test]
     public static void ImportCube_MatchesDefaultCube()
     {
-        var pb = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var pb = ShapeFactory.Instantiate<Cube>();
 
         try
         {

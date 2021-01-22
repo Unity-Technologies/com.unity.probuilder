@@ -9,6 +9,12 @@ using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.ShortcutManagement;
 
+#if !UNITY_2020_2_OR_NEWER
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#else
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#endif
+
 namespace UnityEditor.ProBuilder
 {
     static class EditorToolbarMenuItem
@@ -28,7 +34,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", true, PreferenceKeys.menuEditor + 1)]
@@ -42,8 +48,11 @@ namespace UnityEditor.ProBuilder
 		static void MenuPerform_NewPolyShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
-			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+            if(instance != null && instance.enabled)
+            {
+                var result = ToolManager.IsActiveTool(instance.Tool) ? instance.EndActivation() : instance.StartActivation();
+                EditorUtility.ShowNotification(result.notification);
+            }
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -58,7 +67,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Material Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -73,7 +82,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", true, PreferenceKeys.menuEditor + 1)]
@@ -88,7 +97,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -103,7 +112,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open UV Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -118,7 +127,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Color Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -133,7 +142,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Vertex Position Editor", true, PreferenceKeys.menuEditor + 1)]
@@ -148,7 +157,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Asset", true, PreferenceKeys.menuExport + 0)]
@@ -163,7 +172,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportAsset>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Obj", true, PreferenceKeys.menuExport + 0)]
@@ -178,7 +187,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportObj>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Ply", true, PreferenceKeys.menuExport + 0)]
@@ -193,7 +202,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportPly>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Ascii", true, PreferenceKeys.menuExport + 0)]
@@ -208,7 +217,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Export/Export Stl Binary", true, PreferenceKeys.menuExport + 0)]
@@ -223,7 +232,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Bevel Edges", true, PreferenceKeys.menuGeometry + 3)]
@@ -238,7 +247,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Bridge Edges &b", true, PreferenceKeys.menuGeometry + 3)]
@@ -253,7 +262,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &c", true, PreferenceKeys.menuGeometry + 3)]
@@ -268,7 +277,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Conform Face Normals", true, PreferenceKeys.menuGeometry + 3)]
@@ -283,7 +292,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", true, PreferenceKeys.menuGeometry + 3)]
@@ -299,7 +308,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Detach Faces", true, PreferenceKeys.menuGeometry + 3)]
@@ -314,7 +323,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<DetachFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Duplicate Faces", true, PreferenceKeys.menuGeometry + 3)]
@@ -329,7 +338,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Extrude %e", true, PreferenceKeys.menuGeometry + 3)]
@@ -344,7 +353,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<Extrude>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Fill Hole", true, PreferenceKeys.menuGeometry + 3)]
@@ -359,7 +368,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<FillHole>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Edge", true, PreferenceKeys.menuGeometry + 3)]
@@ -374,7 +383,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Flip Face Normals &n", true, PreferenceKeys.menuGeometry + 3)]
@@ -389,7 +398,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Insert Edge Loop &u", true, PreferenceKeys.menuGeometry + 3)]
@@ -404,7 +413,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Merge Faces", true, PreferenceKeys.menuGeometry + 3)]
@@ -419,7 +428,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<MergeFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Offset Elements", true, PreferenceKeys.menuGeometry + 3)]
@@ -434,7 +443,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %j", true, PreferenceKeys.menuGeometry + 3)]
@@ -449,7 +458,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Connect &e", true, PreferenceKeys.menuGeometry + 3)]
@@ -464,7 +473,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SmartConnect>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Smart Subdivide &s", true, PreferenceKeys.menuGeometry + 3)]
@@ -479,7 +488,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Split Vertices &x", true, PreferenceKeys.menuGeometry + 3)]
@@ -494,7 +503,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SplitVertices>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Triangulate Faces", true, PreferenceKeys.menuGeometry + 3)]
@@ -509,7 +518,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Geometry/Weld Vertices &v", true, PreferenceKeys.menuGeometry + 3)]
@@ -524,7 +533,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode", true, PreferenceKeys.menuSelection + 1)]
@@ -539,7 +548,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode", true, PreferenceKeys.menuSelection + 1)]
@@ -554,7 +563,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation [p]", true, PreferenceKeys.menuSelection + 1)]
@@ -570,7 +579,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Select Back Faces", true, PreferenceKeys.menuSelection + 1)]
@@ -585,7 +594,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle X Ray &#x", true, PreferenceKeys.menuSelection + 1)]
@@ -600,7 +609,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Center Pivot", true, PreferenceKeys.menuGeometry + 2)]
@@ -615,7 +624,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals", true, PreferenceKeys.menuGeometry + 2)]
@@ -630,7 +639,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals", true, PreferenceKeys.menuGeometry + 2)]
@@ -645,7 +654,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Freeze Transform", true, PreferenceKeys.menuGeometry + 2)]
@@ -660,7 +669,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Merge Objects", true, PreferenceKeys.menuGeometry + 2)]
@@ -675,7 +684,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", true, PreferenceKeys.menuGeometry + 2)]
@@ -690,7 +699,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Pro Builderize", true, PreferenceKeys.menuGeometry + 2)]
@@ -705,7 +714,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Set Collider", true, PreferenceKeys.menuGeometry + 2)]
@@ -720,7 +729,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetCollider>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Set Trigger", true, PreferenceKeys.menuGeometry + 2)]
@@ -735,7 +744,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Subdivide Object", true, PreferenceKeys.menuGeometry + 2)]
@@ -750,7 +759,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Object/Triangulate Object", true, PreferenceKeys.menuGeometry + 2)]
@@ -765,7 +774,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Grow Selection &g", true, PreferenceKeys.menuSelection + 0)]
@@ -780,7 +789,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Hole", true, PreferenceKeys.menuSelection + 0)]
@@ -795,7 +804,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectHole>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Loop &l", true, PreferenceKeys.menuSelection + 0)]
@@ -810,7 +819,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectLoop>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Material", true, PreferenceKeys.menuSelection + 0)]
@@ -825,7 +834,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Ring &r", true, PreferenceKeys.menuSelection + 0)]
@@ -840,7 +849,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectRing>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Smoothing Group", true, PreferenceKeys.menuSelection + 0)]
@@ -855,7 +864,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Select Vertex Color", true, PreferenceKeys.menuSelection + 0)]
@@ -870,7 +879,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
 		[MenuItem(k_MenuPrefix + "Selection/Shrink Selection &#g", true, PreferenceKeys.menuSelection + 0)]
@@ -885,7 +894,7 @@ namespace UnityEditor.ProBuilder
 		{
 			var instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
 			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.DoAction().notification);
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 	}
 }

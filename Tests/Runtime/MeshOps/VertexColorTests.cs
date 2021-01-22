@@ -3,6 +3,7 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 
 static class VertexColorTests
@@ -10,7 +11,7 @@ static class VertexColorTests
     [Test]
     public static void DuplicateMesh_ApplyColor_MatchesTemplate()
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeFactory.Instantiate<Cube>();
         var dup = UObject.Instantiate(cube.gameObject).GetComponent<ProBuilderMesh>();
 
         dup.SetFaceColor(dup.faces[0], Color.blue);

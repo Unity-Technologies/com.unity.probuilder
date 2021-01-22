@@ -5,6 +5,8 @@ using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
+using Plane = UnityEngine.Plane;
 using UObject = UnityEngine.Object;
 
 #if !UNITY_2020_2_OR_NEWER
@@ -28,7 +30,7 @@ public class CutToolTest
 
         Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
-        m_PBMesh = ShapeGenerator.CreateShape(ShapeType.Plane);
+        m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
         MeshSelection.SetSelection(m_PBMesh.gameObject);
         MeshSelection.OnObjectSelectionChanged();
 

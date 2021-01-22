@@ -54,14 +54,14 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             switch (ProBuilderEditor.selectMode)
             {
                 case SelectMode.Edge:
-                    return EditorToolbarLoader.GetInstance<ExtrudeEdges>().DoAction();
+                    return EditorToolbarLoader.GetInstance<ExtrudeEdges>().PerformAction();
                 case SelectMode.Face:
-                    return EditorToolbarLoader.GetInstance<ExtrudeFaces>().DoAction();
+                    return EditorToolbarLoader.GetInstance<ExtrudeFaces>().PerformAction();
 
                 default:
                     return ActionResult.NoSelection;

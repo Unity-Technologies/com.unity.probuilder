@@ -5,6 +5,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 class DuplicateFacesTest
 {
@@ -13,7 +14,7 @@ class DuplicateFacesTest
     [SetUp]
     public void Setup()
     {
-        ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape1 = ShapeFactory.Instantiate<Cube>();
         shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
         selectables = new ProBuilderMesh[]
@@ -47,7 +48,7 @@ class DuplicateFacesTest
 
         UnityEditor.ProBuilder.Actions.DuplicateFaces duplicateFaces = new UnityEditor.ProBuilder.Actions.DuplicateFaces();
         ProBuilderSettings.Set<UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting>("DuplicateFaces.target", UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting.GameObject);
-        duplicateFaces.DoAction();
+        duplicateFaces.PerformAction();
 
         //selectable object should keep all faces selected
         Assert.AreEqual(selectables[0].faces.Count, 6);
@@ -78,7 +79,7 @@ class DuplicateFacesTest
 
         UnityEditor.ProBuilder.Actions.DuplicateFaces duplicateFaces = new UnityEditor.ProBuilder.Actions.DuplicateFaces();
         ProBuilderSettings.Set<UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting>("DuplicateFaces.target", UnityEditor.ProBuilder.Actions.DuplicateFaces.DuplicateFaceSetting.Submesh);
-        duplicateFaces.DoAction();
+        duplicateFaces.PerformAction();
 
         //All selectable object should have all faces selected
         Assert.AreEqual(selectables[0].faces.Count, 7);
