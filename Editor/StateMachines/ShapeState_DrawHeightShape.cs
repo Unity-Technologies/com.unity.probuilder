@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder
         ShapeState ValidateShape()
         {
             tool.RebuildShape();
-            tool.m_ShapeComponent.SetPivotPosition(tool.m_BB_Origin);
+            tool.m_ShapeComponent.pivotGlobalPosition = tool.m_BB_Origin;
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
             DrawShapeTool.SaveShapeParams(tool.m_ShapeComponent);

@@ -46,6 +46,12 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_PivotPosition = value;
         }
 
+        public Vector3 pivotGlobalPosition
+        {
+            get => mesh.transform.TransformPoint(m_PivotPosition);
+            set => m_PivotPosition = mesh.transform.InverseTransformPoint(value);
+        }
+
         public Vector3 size
         {
             get => m_Size;
@@ -84,8 +90,6 @@ namespace UnityEngine.ProBuilder.Shapes
         uint currentHash => mesh.versionID;
         public bool isEditable => m_Hash == currentHash;
 
-
-
         /// <summary>
         /// Reference to the <see cref="ProBuilderMesh"/> that this component is creating.
         /// </summary>
@@ -104,24 +108,20 @@ namespace UnityEngine.ProBuilder.Shapes
 
         void OnValidate()
         {
+            //Ensure the size in X and Z is not set to 0 otherwise PhysX
+            //is throwing errors as it cannot create a collider
             m_Size.x = System.Math.Abs(m_Size.x) == 0 ? 0.001f: m_Size.x;
-            m_Size.y = m_Size.y;
             m_Size.z = System.Math.Abs(m_Size.z) == 0 ? 0.001f: m_Size.z;
         }
 
-        public void SetPivotPosition(Vector3 position)
-        {
-            pivotLocalPosition = mesh.transform.InverseTransformPoint(position);
-        }
-
-        public void UpdateComponent()
+        internal void UpdateComponent()
         {
             //Recenter shape
             ResetPivot(mesh, size, rotation);
             Rebuild();
         }
 
-        public void UpdateBounds(Bounds bounds)
+        internal void UpdateBounds(Bounds bounds)
         {
             var centerLocalPos = mesh.transform.InverseTransformPoint(bounds.center);
             Bounds shapeBB = m_ShapeBox;
@@ -134,7 +134,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        public void Rebuild(Bounds bounds, Quaternion rotation)
+        internal void Rebuild(Bounds bounds, Quaternion rotation)
         {
             size = bounds.size;
             transform.position = bounds.center;
@@ -143,29 +143,23 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        public void Rebuild()
+        void Rebuild()
         {
             if(gameObject == null
             || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            try
-            {
-                m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
-                RebuildPivot(mesh, size, rotation);
+            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
+            RebuildPivot(mesh, size, rotation);
 
-                Bounds bounds = m_ShapeBox;
-                bounds.size = Math.Abs(m_ShapeBox.size);
-                MeshUtility.FitToSize(mesh, bounds, size);
-            }catch(Exception e)
-            {
-                Debug.Log("oops");
-            }
+            Bounds bounds = m_ShapeBox;
+            bounds.size = Math.Abs(m_ShapeBox.size);
+            MeshUtility.FitToSize(mesh, bounds, size);
 
             m_Hash = currentHash;
         }
 
-        public void SetShape(Shape shape, PivotLocation location)
+        internal void SetShape(Shape shape, PivotLocation location)
         {
             m_PivotLocation = location;
 
@@ -203,14 +197,14 @@ namespace UnityEngine.ProBuilder.Shapes
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
         /// <param name="rotation">The angles to rotate by</param>
-        public void RotateInsideBounds(Quaternion deltaRotation)
+        internal void RotateInsideBounds(Quaternion deltaRotation)
         {
             ResetPivot(mesh, size, rotation);
             rotation = deltaRotation * rotation;
             Rebuild();
         }
 
-        public void ResetPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
+        void ResetPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             if(mesh != null && mesh.mesh != null)
             {
@@ -222,7 +216,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public void RebuildPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
+        void RebuildPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             if(mesh != null && mesh.mesh != null)
             {
