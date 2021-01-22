@@ -37,7 +37,9 @@ namespace UnityEditor.ProBuilder
 
             bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
             string name = isDarkSkin ? iconName : iconName + "_Light";
-            name = EditorGUIUtility.pixelsPerPoint>1 ? iconName+"@2x" : name;
+
+            if(EditorGUIUtility.pixelsPerPoint>1)
+                name += "@2x";
 
             Texture2D icon = null;
 
