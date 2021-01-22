@@ -191,7 +191,6 @@ namespace UnityEditor.ProBuilder
             set
             {
                 toolManager?.SetSelectMode(value);
-                Refresh();
             }
         }
 
@@ -311,6 +310,7 @@ namespace UnityEditor.ProBuilder
             m_Toolbar.Dispose();
             if(m_ToolManager != null)
                 m_ToolManager.Dispose();
+            OnSelectModeChanged();
             ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
             SceneView.RepaintAll();
@@ -321,6 +321,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged()
         {
+            Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
         }
@@ -370,10 +371,7 @@ namespace UnityEditor.ProBuilder
         public static void Refresh(bool vertexCountChanged = true)
         {
             if (instance != null)
-            {
                 instance.UpdateSelection(vertexCountChanged);
-                SceneView.RepaintAll();
-            }
         }
 
         void OnGUI()
@@ -499,6 +497,7 @@ namespace UnityEditor.ProBuilder
                     SceneView.RepaintAll();
                 }
             }
+
             m_wasSelectingPath = pathSelectionModifier;
 
             if (Tools.current == Tool.View)
@@ -611,7 +610,6 @@ namespace UnityEditor.ProBuilder
 
                         EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
                         UpdateSelection();
-                        SceneView.RepaintAll();
                     }
                     else
                     {
@@ -678,7 +676,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DeselectAll()
@@ -715,7 +712,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void InvertSelection()
@@ -782,7 +778,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DoubleClick(Event e)
@@ -816,7 +811,6 @@ namespace UnityEditor.ProBuilder
                 }
 
                 UpdateSelection();
-                SceneView.RepaintAll();
                 m_WasDoubleClick = true;
             }
         }
@@ -930,7 +924,7 @@ namespace UnityEditor.ProBuilder
             if (selectionUpdated != null)
                 selectionUpdated(selection);
 
-            Repaint();
+            SceneView.RepaintAll();
         }
 
         internal static void UpdateMeshHandles(bool selectionOrVertexCountChanged = true)
