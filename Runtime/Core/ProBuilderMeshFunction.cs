@@ -59,11 +59,17 @@ namespace UnityEngine.ProBuilder
         {
             EnsureMeshFilterIsAssigned();
             EnsureMeshColliderIsAssigned();
+            //Ensure no element is selected at awake
+            ClearSelection();
 
-            if (vertexCount > 0
-                && faceCount > 0
-                && meshSyncState == MeshSyncState.Null)
+            if(vertexCount > 0
+               && faceCount > 0
+               && meshSyncState == MeshSyncState.Null)
+            {
+                var version = m_VersionID;
                 Rebuild();
+                m_VersionID = version;
+            }
         }
 
         void Reset()
@@ -212,7 +218,7 @@ namespace UnityEngine.ProBuilder
             return mesh;
         }
 
-        void GeometryWithPoints(Vector3[] points)
+        internal void GeometryWithPoints(Vector3[] points)
         {
             // Wrap in faces
             Face[] f = new Face[points.Length / 4];
@@ -236,7 +242,7 @@ namespace UnityEngine.ProBuilder
             positions = points;
             m_Faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
-            InvalidateSharedVertexLookup();
+            InvalidateCaches();
             ToMesh();
             Refresh();
         }
@@ -330,6 +336,8 @@ namespace UnityEngine.ProBuilder
 
             if(usedInParticuleSystem)
                 MeshUtility.RestoreParticuleSystem(this);
+            
+            m_VersionID++;
         }
 
         /// <summary>
@@ -396,6 +404,11 @@ namespace UnityEngine.ProBuilder
 
             if ((mask & RefreshMask.Collisions) > 0)
                 EnsureMeshColliderIsAssigned();
+
+            if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
+                mesh.RecalculateBounds();
+
+            m_VersionID++;
         }
 
         internal void EnsureMeshColliderIsAssigned()
@@ -405,6 +418,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
+
                 collider.sharedMesh = mesh;
             }
         }

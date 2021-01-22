@@ -211,8 +211,9 @@ namespace UnityEditor.ProBuilder
                     Submesh submesh = model.submeshes[submeshIndex];
 
                     string materialName = "";
+                    var material = model.materials[submeshIndex];
 
-                    if (materialMap.TryGetValue(model.materials[submeshIndex], out materialName))
+                    if (material != null && materialMap.TryGetValue(material, out materialName))
                         sb.AppendLine(string.Format("usemtl {0}", materialName));
                     else
                         sb.AppendLine(string.Format("usemtl {0}", "null"));

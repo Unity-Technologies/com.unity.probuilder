@@ -48,7 +48,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

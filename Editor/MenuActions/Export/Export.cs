@@ -121,7 +121,7 @@ namespace UnityEditor.ProBuilder.Actions
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Export"))
-                EditorUtility.ShowNotification(DoAction().notification);
+                EditorUtility.ShowNotification(PerformAction().notification);
         }
 
         void ObjExportOptions()
@@ -171,7 +171,7 @@ namespace UnityEditor.ProBuilder.Actions
                 ExportAsset.s_ExportAssetOptions.SetValue(options);
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             string res = null;
 

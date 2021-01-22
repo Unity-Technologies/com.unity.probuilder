@@ -1,18 +1,18 @@
 using System.Globalization;
 using System.Linq;
-using UnityEngine;
 using UnityEditor.ProBuilder;
 using NUnit.Framework;
 using System.Threading;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Shapes;
 
 class ExportPly : TemporaryAssetTest
 {
     [Test]
     public static void NumbersAreCultureInvariant()
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeFactory.Instantiate<Cube>();
         var current = Thread.CurrentThread.CurrentCulture;
 
         try
@@ -29,7 +29,7 @@ class ExportPly : TemporaryAssetTest
         finally
         {
             Thread.CurrentThread.CurrentCulture = current;
-            UnityEngine.Object.DestroyImmediate(cube);
+            UnityEngine.Object.DestroyImmediate(cube.gameObject);
         }
     }
 }

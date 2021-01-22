@@ -76,20 +76,26 @@ namespace UnityEditor.ProBuilder
             this.content = content;
             Vector2 size = content.CalcSize();
 
+            var dpiRatio = Screen.dpi / 96f;
+            var screenWidth = Screen.currentResolution.width / dpiRatio;
+
             Vector2 p = new Vector2(rect.x + rect.width + k_PositionPadding, rect.y);
-             if(((p.x % Screen.currentResolution.width) + size.x) > Screen.currentResolution.width)
+             if((p.x + size.x) > screenWidth)
                 p.x = rect.x - k_PositionPadding - size.x;
 
             minSize = size;
             maxSize = size;
+            var newPosition = new Rect(
+                p.x,
+                p.y,
+                size.x,
+                size.y);
 
-            position = new Rect(
-                    p.x,
-                    p.y,
-                    size.x,
-                    size.y);
-
-            s_WindowRect = new Rect(0, 0, size.x, size.y);
+            if (position != newPosition)
+            {
+                position = newPosition;
+                s_WindowRect = new Rect(0, 0, size.x, size.y);
+            }
         }
 
         public TooltipContent content = null;

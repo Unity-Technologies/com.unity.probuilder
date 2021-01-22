@@ -88,7 +88,7 @@ namespace UnityEngine.ProBuilder
         {
             int count = 0;
             foreach (var face in mesh.facesInternal)
-                count = Math.Max(count, face.submeshIndex);
+                count = Mathf.Max(count, face.submeshIndex);
             return count + 1;
         }
 

@@ -3,6 +3,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 class SelectMaterial
 {
@@ -11,10 +12,10 @@ class SelectMaterial
     [SetUp]
     public void Setup()
     {
-        ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape1 = ShapeFactory.Instantiate<Cube>();
         shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
-        ProBuilderMesh shape2 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape2 = ShapeFactory.Instantiate<Cube>();
         shape2.transform.position = Vector3.zero - shape2.GetComponent<MeshRenderer>().bounds.center;
 
         shape1.AddToFaceSelection(0);
@@ -67,7 +68,7 @@ class SelectMaterial
         UnityEditor.ProBuilder.Actions.SelectMaterial selectMaterial = new UnityEditor.ProBuilder.Actions.SelectMaterial();
         var oldValue = selectMaterial.m_RestrictToSelectedObjects.value;
         selectMaterial.m_RestrictToSelectedObjects.value = false;
-        selectMaterial.DoAction();
+        selectMaterial.PerformAction();
         selectMaterial.m_RestrictToSelectedObjects.value = oldValue;
 
         //We need to force the object selection change here to ensure that MeshSelection reflect the result
@@ -97,7 +98,7 @@ class SelectMaterial
         UnityEditor.ProBuilder.Actions.SelectMaterial selectMaterial = new UnityEditor.ProBuilder.Actions.SelectMaterial();
         var oldValue = selectMaterial.m_RestrictToSelectedObjects.value;
         selectMaterial.m_RestrictToSelectedObjects.value = false;
-        selectMaterial.DoAction();
+        selectMaterial.PerformAction();
         selectMaterial.m_RestrictToSelectedObjects.value = oldValue;
 
         //We need to force the object selection change here to ensure that MeshSelection reflect the result

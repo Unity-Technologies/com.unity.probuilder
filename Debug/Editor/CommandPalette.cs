@@ -281,7 +281,7 @@ namespace UnityEditor.ProBuilder
 			if (m_SelectedIndex > -1 && m_SelectedIndex < m_Results.Count)
 			{
 				var action = m_Results[m_SelectedIndex].action;
-				EditorUtility.ShowNotification(action.DoAction().notification);
+				EditorUtility.ShowNotification(action.PerformAction().notification);
 			}
 
 			Close();

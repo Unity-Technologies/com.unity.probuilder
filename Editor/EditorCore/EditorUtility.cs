@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
 
         [UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
-        static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
+        static Pref<PivotLocation> s_NewShapesPivotAtCenter = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.Center);
 
         [UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
         static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 
         internal static PivotLocation newShapePivotLocation
         {
-            get { return s_NewShapesPivotAtVertex; }
+            get { return s_NewShapesPivotAtCenter; }
         }
 
         /// <value>
@@ -250,11 +250,20 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Move a GameObject to the active scene, where active scene may be a prefab stage.
+        /// Move a GameObject to the proper active root.
+        /// Checks if a default parent exists, otherwise it adds the object as a root of the active scene, which can be a prefab stage.
         /// </summary>
         /// <param name="gameObject"></param>
-        internal static void MoveToActiveScene(GameObject gameObject)
+        internal static void MoveToActiveRoot(GameObject gameObject)
         {
+#if UNITY_2020_2_OR_NEWER
+            var parent = SceneView.GetDefaultParentObjectIfSet();
+            if (parent != null)
+            {
+                gameObject.transform.SetParent(parent);
+                return;
+            }
+#endif
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
             var activeScene = SceneManager.GetActiveScene();
 
@@ -281,7 +290,8 @@ namespace UnityEditor.ProBuilder
         /// <param name="pb"></param>
         internal static void InitObject(ProBuilderMesh pb)
         {
-            MoveToActiveScene(pb.gameObject);
+            MoveToActiveRoot(pb.gameObject);
+
             GameObjectUtility.EnsureUniqueNameForSibling(pb.gameObject);
             ScreenCenter(pb.gameObject);
             SnapInstantiatedObject(pb);
@@ -289,7 +299,6 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
 #endif
-
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
 

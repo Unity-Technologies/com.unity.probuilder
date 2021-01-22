@@ -86,6 +86,7 @@ namespace UnityEditor.ProBuilder
                 m_TextureTools[i].hideFlags = HideFlags.HideAndDontSave;
             }
 #endif
+            SetSelectMode(s_SelectMode);
         }
 
         public void Dispose()

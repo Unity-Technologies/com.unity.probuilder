@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedSharedVertexCount > 1; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             ActionResult res = ActionResult.NoSelection;
 

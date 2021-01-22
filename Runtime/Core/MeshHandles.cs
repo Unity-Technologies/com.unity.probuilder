@@ -24,6 +24,13 @@ namespace UnityEngine.ProBuilder
             target.triangles = mesh.selectedFacesInternal.SelectMany(x => x.indexes).ToArray();
         }
 
+        internal static void CreateFaceMeshFromFaces(ProBuilderMesh mesh, IList<Face> faces, Mesh target)
+        {
+            target.Clear();
+            target.vertices = mesh.positionsInternal;
+            target.triangles = faces.SelectMany(x => x.indexes).ToArray();
+        }
+
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target)
         {
             int edgeCount = 0;
