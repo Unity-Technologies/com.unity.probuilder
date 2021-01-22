@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace UnityEditor.ProBuilder
 {
@@ -36,10 +37,16 @@ namespace UnityEditor.ProBuilder
 #endif
 
             bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
-            string name = isDarkSkin ? iconName : iconName + "_Light";
-            Texture2D icon = null;
 
-            if (!s_Icons.TryGetValue(name, out icon))
+            var fileName = Path.GetFileName(iconName);
+            string name = isDarkSkin ? "d_"+ fileName : fileName;
+
+            if(EditorGUIUtility.pixelsPerPoint>1)
+                name += "@2x";
+
+            name = iconName.Replace(fileName,name);
+            Texture2D icon = null;
+            if (!s_Icons.TryGetValue(iconName, out icon))
             {
                 int i = 0;
 
@@ -49,11 +56,12 @@ namespace UnityEditor.ProBuilder
                     // - do one lap searching for light
                     // - if nothing found, next searching for default
                     string fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
+
                     icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
                 }
                 while (!isDarkSkin && ++i < 2 && icon == null);
 
-                s_Icons.Add(name, icon);
+                s_Icons.Add(iconName, icon);
             }
 
             return icon;
