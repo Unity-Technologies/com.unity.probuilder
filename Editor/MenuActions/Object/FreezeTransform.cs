@@ -4,6 +4,7 @@ using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder.UI;
+using Math = System.Math;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -37,12 +38,11 @@ namespace UnityEditor.ProBuilder.Actions
 
         public bool ShouldFlipFaces(Vector3 scale)
         {
-            int numberOfInversions = (int)Mathf.Sign(scale.x) + (int)Mathf.Sign(scale.y) + (int)Mathf.Sign(scale.z);
-            //If the scale is negative once (-1 + 1 + 1) or three times( -1 + -1 + -1), faces should be inverted
-            return ( numberOfInversions == 1 || numberOfInversions == -3 );
+            var globalSign = Mathf.Sign(scale.x) * Mathf.Sign(scale.y) * Mathf.Sign(scale.z);
+            return globalSign < 0;
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

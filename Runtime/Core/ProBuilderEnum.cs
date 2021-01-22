@@ -162,27 +162,6 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// pb_ShapeEditor enum.
-    /// </summary>
-    [System.Obsolete("See pb_ShapeType")]
-    enum Shape
-    {
-        Cube,
-        Stair,
-        Prism,
-        Cylinder,
-        Plane,
-        Door,
-        Pipe,
-        Cone,
-        Sprite,
-        Arch,
-        Icosahedron,
-        Torus,
-        Custom
-    }
-
-    /// <summary>
     /// Human readable axis enum.
     /// </summary>
     public enum Axis
@@ -394,9 +373,13 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Collisions = 0x10,
         /// <summary>
+        /// Bounds will be recalculated.
+        /// </summary>
+        Bounds = 0x16,
+        /// <summary>
         /// Refresh all optional mesh attributes.
         /// </summary>
-        All = UV | Colors | Normals | Tangents | Collisions
+        All = UV | Colors | Normals | Tangents | Collisions | Bounds
     };
 
     /// <summary>

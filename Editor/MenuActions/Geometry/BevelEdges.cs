@@ -56,10 +56,10 @@ namespace UnityEditor.ProBuilder.Actions
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Bevel Edges"))
-                DoAction();
+                PerformAction();
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             ActionResult res = ActionResult.NoSelection;
 

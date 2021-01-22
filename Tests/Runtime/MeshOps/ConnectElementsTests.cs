@@ -1,22 +1,34 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 
 static class ConnectElementsTests
 {
-    public static ShapeType[] shapeTypes
-    {
-        get { return (ShapeType[])typeof(ShapeType).GetEnumValues(); }
+    public static List<Type> shapeTypes {
+        get {
+            var list = new List<Type>();
+            var types = typeof(Shape).Assembly.GetTypes();
+            foreach (var type in types)
+            {
+                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                {
+                    list.Add(type);
+                }
+            }
+            return list;
+        }
     }
 
     [Test]
-    public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] ShapeType shapeType)
+    public static void ConnectEdges_CreatesValidGeometry([ValueSource("shapeTypes")] Type shapeType)
     {
-        var mesh = ShapeGenerator.CreateShape(shapeType);
+        var mesh = ShapeFactory.Instantiate(shapeType);
 
         Assume.That(mesh, Is.Not.Null);
         Assume.That(mesh.faceCount, Is.GreaterThan(0));
@@ -47,7 +59,7 @@ static class ConnectElementsTests
     [Test]
     public static void ConnectEdges_RetainsMaterial()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.renderer.sharedMaterials = new[]
         {

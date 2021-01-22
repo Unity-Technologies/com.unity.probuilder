@@ -53,11 +53,11 @@ namespace UnityEditor.ProBuilder
         static Dictionary<ProBuilderMesh, MeshHandle> selectedEdgeHandles { get { Init(); return m_SelectedEdgeHandles; } }
 
         static Color wireframeColor { get { return s_UseUnityColors ? k_WireframeDefault : s_WireframeColorPref; } }
-        static Color faceSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedFaceColorPref; } }
-        static Color preselectionColor { get { return s_UseUnityColors ? Handles.preselectionColor : s_PreselectionColorPref; } }
-        static Color edgeSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedEdgeColorPref; } }
+        internal static Color faceSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedFaceColorPref; } }
+        internal static Color preselectionColor { get { return s_UseUnityColors ? Handles.preselectionColor : s_PreselectionColorPref; } }
+        internal static Color edgeSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedEdgeColorPref; } }
         static Color edgeUnselectedColor { get { return s_UseUnityColors ? k_WireframeDefault : s_UnselectedEdgeColorPref; } }
-        static Color vertexSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedVertexColorPref; } }
+        internal static Color vertexSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedVertexColorPref; } }
         static Color vertexUnselectedColor { get { return s_UseUnityColors ? k_VertexUnselectedDefault : s_UnselectedVertexColorPref; } }
 
         // Force line rendering to use GL.LINE without geometry shader billboards. This is set by the
@@ -224,7 +224,7 @@ namespace UnityEditor.ProBuilder
             m_ForceWireframeLinesGL = s_WireframeLineSize.value < k_MinLineWidthForGeometryShader;
 
             wireMaterial.SetColor("_Color", wireframeColor);
-            wireMaterial.SetInt("_HandleZTest", (int)CompareFunction.LessEqual);
+            wireMaterial.SetFloat("_HandleZTest", (int)CompareFunction.LessEqual);
 
             SetMaterialsScaleAttribute();
         }
@@ -354,8 +354,8 @@ namespace UnityEditor.ProBuilder
 
         static void Render(Dictionary<ProBuilderMesh, MeshHandle> handles, Material material, Color color, CompareFunction func, bool zWrite = false)
         {
-            material.SetInt("_HandleZTest", (int) func);
-            material.SetInt("_HandleZWrite", zWrite ? 1 : 0);
+            material.SetFloat("_HandleZTest", (int) func);
+            material.SetFloat("_HandleZWrite", zWrite ? 1 : 0);
             material.SetColor("_Color", color);
 
             if(material.SetPass(0))

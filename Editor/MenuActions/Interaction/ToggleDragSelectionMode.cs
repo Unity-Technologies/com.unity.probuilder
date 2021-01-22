@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return string.Format("Shift: {0}", modifier); }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             int mode = (int)modifier;
             int len = System.Enum.GetValues(typeof(SelectionModifierBehavior)).Length;

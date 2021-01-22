@@ -14,7 +14,7 @@ public class ConvertTextureUnwrappingAutoManualTests
 	[SetUp]
 	public void Setup()
 	{
-		mesh = ShapeGenerator.CreateShape(ShapeType.Sprite);
+        mesh = ShapeFactory.Instantiate<UnityEngine.ProBuilder.Shapes.Sprite>();
 		face = mesh.faces.First();
 		verticalEdge = face.edgesInternal[0];
 		horizontalEdge = face.edgesInternal[1];

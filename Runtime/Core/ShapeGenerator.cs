@@ -67,15 +67,6 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Describes the type of pivot ProBuilder would automatically assign on primitive creation.
-    /// </summary>
-    public enum PivotLocation
-    {
-        Center,
-        FirstVertex
-    }
-
-    /// <summary>
     /// Functions for creating ProBuilderMesh primitives.
     /// </summary>
     public static class ShapeGenerator
@@ -1127,7 +1118,11 @@ namespace UnityEngine.ProBuilder
             ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(v.ToArray());
 
             pb.gameObject.name = "Pipe";
-            pb.SetPivot(pivotType, 1);
+            //Keep backward compatibility
+            if(pivotType == PivotLocation.Center)
+                pb.SetPivot(pivotType);
+            else
+                pb.CenterPivot(new int[1] { 1 });
 
             return pb;
         }
@@ -1440,7 +1435,11 @@ namespace UnityEngine.ProBuilder
             pb.ToMesh();
             pb.Refresh();
             pb.gameObject.name = "Icosphere";
-            pb.SetPivot(pivotType, bottomMostVertexIndex);
+            //Keep backward compatibility
+            if(pivotType == PivotLocation.Center)
+                pb.SetPivot(pivotType);
+            else
+                pb.CenterPivot(new int[1]{bottomMostVertexIndex});
 
             pb.unwrapParameters = new UnwrapParameters()
             {

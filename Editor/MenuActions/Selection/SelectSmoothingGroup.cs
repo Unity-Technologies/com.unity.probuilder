@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             UndoUtility.RecordSelection("Select Faces with Smoothing Group");
 

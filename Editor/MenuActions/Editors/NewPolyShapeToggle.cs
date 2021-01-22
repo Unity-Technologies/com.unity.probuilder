@@ -3,8 +3,6 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
-
-using UObject = UnityEngine.Object;
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
 #else
@@ -65,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
             return true;
         }
 
-        internal override ActionResult StartActivation()
+        protected override ActionResult PerformActionImplementation()
         {
             if (!CanCreateNewPolyShape())
                 return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
@@ -96,6 +94,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             Undo.RegisterCreatedObjectUndo(m_Tool, "Open PolyShape Tool");
 
+            MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
@@ -106,15 +105,23 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override ActionResult EndActivation()
         {
+            MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            ((PolyShapeTool)m_Tool).End();
-            UObject.DestroyImmediate(m_Tool);
+            Object.DestroyImmediate(m_Tool);
+
+            ProBuilderEditor.instance.Repaint();
 
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
+        }
+
+        void ActionPerformed(MenuAction newActionPerformed)
+        {
+            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
+                LeaveTool();
         }
 
         void OnObjectSelectionChanged()

@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder.Actions
 		/// Return a pb_ActionResult indicating the success/failure of action.
 		/// </summary>
 		/// <returns></returns>
-		public override ActionResult DoAction()
+		protected override ActionResult PerformActionImplementation()
 		{
 			var selection = MeshSelection.top.ToArray();
 			Undo.RecordObjects(selection, "Removing Edges");
