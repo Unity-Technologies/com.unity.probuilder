@@ -7,19 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [5.0.0-pre.10] - 2021-01-22
 
-### Internal
-
-- Remove backwards compatibility breaking API changes.
-- Fix `Material.SetInt` deprecation warnings.
-- Fix failing `Undo` tests on macOS.
-
 ### Features
 
-- Added Point-to-point Cut tool
-- Upgrading PolyShape tool to EditorTool and correct some features in it.
+- Redesigned shape creation workflow: Shapes are now interactively drawn in the Scene View, and remain configurable after the point of creation via the `ShapeComponent` Inspector.
+- Added Point-to-point Cut tool.
 - Added a selection preview when using the Select Path tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
-- MergeElements.Merge moved to public API
 
 ### Bug Fixes
 - [case: 1304442] Update package description for SRPs : warning to users to add samples projects.
@@ -61,12 +54,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- Modified VertexManipulationTool to inherit from EditorTool
-- Adding a new MenuAction in Samples to merge faces from edges selection
-- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0
+- Modified `VertexManipulationTool` to inherit from EditorTool.
+- Adding a new MenuAction in Samples to merge faces from edges selection.
+- Removing preprocessor directives for Unity 2018 and below for Probuilder 5.0.
 - Modified the AppendVerticesToEdge to handle edges split for non-convex faces.
 - Removed unused "About" images.
 - Removed unused HDRP shader variants.
+- `MergeElements.Merge` moved to public API.
+- Upgraded `PolyShape` tool to EditorTool and correct some features in it.
+
+### Internal
+
+- Remove backwards compatibility breaking API changes.
+- Fix `Material.SetInt` deprecation warnings.
+- Fix failing `Undo` tests on macOS.
 
 ## [4.4.0] - 2020-08-12
 
