@@ -17,6 +17,9 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
+            if(tool.m_ShapeComponent == null)
+                return ResetState();
+
             if(evt.type == EventType.Repaint && m_IsDragging)
                 tool.DrawBoundingBox();
 
