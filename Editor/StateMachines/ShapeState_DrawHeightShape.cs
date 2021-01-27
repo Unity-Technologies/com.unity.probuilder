@@ -18,6 +18,7 @@ namespace UnityEditor.ProBuilder
         {
             tool.RebuildShape();
             tool.m_ShapeComponent.pivotGlobalPosition = tool.m_BB_Origin;
+            tool.m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
             DrawShapeTool.SaveShapeParams(tool.m_ShapeComponent);
@@ -27,17 +28,12 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if(tool.m_ShapeComponent == null)
-                return ResetState();
-
             if((tool.m_ShapeComponent.shape is Plane)
                 || (tool.m_ShapeComponent.shape is UnityEngine.ProBuilder.Shapes.Sprite))
             {
                 //Skip Height definition for plane
                 return NextState();
             }
-
-            tool.DrawBoundingBox();
 
             if(evt.type == EventType.KeyDown)
             {
@@ -47,8 +43,13 @@ namespace UnityEditor.ProBuilder
                     case KeyCode.Return:
                     case KeyCode.Escape:
                         return ValidateShape();
+
+                    case KeyCode.Delete:
+                        return ResetState();
                 }
             }
+
+            tool.DrawBoundingBox();
 
             if(evt.isMouse)
             {

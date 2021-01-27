@@ -17,20 +17,18 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if(tool.m_ShapeComponent == null)
-                return ResetState();
-
-            if(evt.type == EventType.Repaint && m_IsDragging)
-                tool.DrawBoundingBox();
-
             if(evt.type == EventType.KeyDown)
             {
                 switch(evt.keyCode)
                 {
+                    case KeyCode.Delete:
                     case KeyCode.Escape:
                         return ResetState();
                 }
             }
+
+            if(evt.type == EventType.Repaint && m_IsDragging)
+                tool.DrawBoundingBox();
 
             if(evt.isMouse)
             {
