@@ -370,13 +370,13 @@ namespace UnityEditor.ProBuilder
 
             DrawShapeGUI();
 
-            var snapEnabled = Tools.pivotRotation != PivotRotation.Global;
-            using(new EditorGUI.DisabledScope(snapEnabled))
+            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
+            using(new EditorGUI.DisabledScope(snapDisabled))
             {
-                if(snapEnabled)
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+                if(snapDisabled)
+                    EditorGUILayout.Toggle("Snapping (only Global)", false);
                 else
-                    EditorGUILayout.Toggle("Snapping", false);
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 
             string foldoutName = "New Shape Settings";
