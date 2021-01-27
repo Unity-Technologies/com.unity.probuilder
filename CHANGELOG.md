@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1285651] Fixed tooltip going out of screen when screen display is scale up
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
 - [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
+- [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter. 
 
 ### Changes
 
