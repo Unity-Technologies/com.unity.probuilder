@@ -148,7 +148,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(Selection.activeGameObject != null
-                   && MeshSelection.activeMesh != currentShapeInOverlay.mesh)
+                   && MeshSelection.activeMesh.GetComponent<ShapeComponent>() == null)
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
