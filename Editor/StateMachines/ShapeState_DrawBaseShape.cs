@@ -41,7 +41,10 @@ namespace UnityEditor.ProBuilder
 
                             if(tool.m_DuplicateGO != null)
                                 GameObject.DestroyImmediate(tool.m_DuplicateGO);
-                            
+
+                            if(Selection.activeGameObject != null)
+                                MeshSelection.SetSelection((GameObject)null);
+
                             Drag(evt.mousePosition);
                         }
                         break;
