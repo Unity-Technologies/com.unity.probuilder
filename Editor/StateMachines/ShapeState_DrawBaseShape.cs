@@ -35,12 +35,19 @@ namespace UnityEditor.ProBuilder
                 switch(evt.type)
                 {
                     case EventType.MouseDrag:
-                        m_IsDragging = true;
-                        Drag(evt.mousePosition);
+                        if(evt.button == 0)
+                        {
+                            m_IsDragging = true;
+
+                            if(tool.m_DuplicateGO != null)
+                                GameObject.DestroyImmediate(tool.m_DuplicateGO);
+                            
+                            Drag(evt.mousePosition);
+                        }
                         break;
 
                     case EventType.MouseMove:
-                        if(m_IsDragging)
+                        if(evt.button == 0 && m_IsDragging)
                             Drag(evt.mousePosition);
                         break;
 
