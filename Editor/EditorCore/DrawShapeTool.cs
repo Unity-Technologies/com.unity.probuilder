@@ -299,7 +299,8 @@ namespace UnityEditor.ProBuilder
                || Mathf.Abs(m_Bounds.extents.x) < 0.001f
                || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
             {
-                if(m_ShapeComponent.mesh.vertexCount > 0)
+                if(m_ShapeComponent != null
+                   && m_ShapeComponent.mesh.vertexCount > 0)
                 {
                     m_ShapeComponent.mesh.Clear();
                     m_ShapeComponent.mesh.Rebuild();

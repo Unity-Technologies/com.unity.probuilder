@@ -36,29 +36,42 @@ namespace UnityEditor.ProBuilder
                 {
                     case EventType.MouseDrag:
                         m_IsDragging = true;
-                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                        float distance;
+                        Drag(evt.mousePosition);
+                        break;
 
-                        if(tool.m_Plane.Raycast(ray, out distance))
-                            UpdateShapeBase(ray, distance);
-
+                    case EventType.MouseMove:
+                        if(m_IsDragging)
+                            Drag(evt.mousePosition);
                         break;
 
                     case EventType.MouseUp:
-                        if(!m_IsDragging && evt.shift)
+                        if(evt.button == 0)
                         {
-                            CreateLastShape();
-                            return ResetState();
+                            if(!m_IsDragging && evt.shift)
+                            {
+                                CreateLastShape();
+                                return ResetState();
+                            }
+
+                            if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
+                                return ResetState();
+
+                            return NextState();
                         }
-
-                        if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
-                            return ResetState();
-
-                        return NextState();
+                        break;
                 }
             }
 
             return this;
+        }
+
+        void Drag(Vector2 mousePosition)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+            float distance;
+
+            if(tool.m_Plane.Raycast(ray, out distance))
+                UpdateShapeBase(ray, distance);
         }
 
         void UpdateShapeBase(Ray ray, float distance)
@@ -76,12 +89,15 @@ namespace UnityEditor.ProBuilder
         {
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ShapeComponent>();
             shape.gameObject.name = shape.gameObject.name + "-Copy";
+            EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
+
+            //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
 
             tool.m_ShapeComponent = null;
