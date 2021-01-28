@@ -148,7 +148,8 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(Selection.activeGameObject != null
-                   &&(MeshSelection.activeMesh || MeshSelection.activeMesh.GetComponent<ShapeComponent>() == null))
+                        && (MeshSelection.activeMesh == null
+                        || MeshSelection.activeMesh.GetComponent<ShapeComponent>() == null))
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
@@ -336,6 +337,9 @@ namespace UnityEditor.ProBuilder
             m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
             HandleUtility.AddDefaultControl(m_ControlID);
 
+            if(GUIUtility.hotControl == 0)
+                EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
+
             m_CurrentState = m_CurrentState.DoState(evt);
         }
 
@@ -362,7 +366,6 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings."), MessageType.Info);
 
             DrawShapeGUI();
