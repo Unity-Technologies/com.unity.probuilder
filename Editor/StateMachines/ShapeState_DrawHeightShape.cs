@@ -19,6 +19,10 @@ namespace UnityEditor.ProBuilder
             tool.RebuildShape();
             tool.m_ShapeComponent.pivotGlobalPosition = tool.m_BB_Origin;
             tool.m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
+
+            //Finish initializing object and collider once it's completed
+            EditorUtility.InitObject(tool.m_ShapeComponent.mesh);
+
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
 
             DrawShapeTool.SaveShapeParams(tool.m_ShapeComponent);

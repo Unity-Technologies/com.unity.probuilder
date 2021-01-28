@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using Unity.Collections;
-using UnityEditor;
-using UnityEngine.Experimental.Playables;
-using UnityEngine.ProBuilder.MeshOperations;
+﻿using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -99,6 +94,7 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 if(m_Mesh == null)
                     m_Mesh = GetComponent<ProBuilderMesh>();
+
                 if(m_Mesh == null)
                     m_Mesh = gameObject.AddComponent<ProBuilderMesh>();
 

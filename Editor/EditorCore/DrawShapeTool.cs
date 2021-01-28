@@ -312,17 +312,13 @@ namespace UnityEditor.ProBuilder
             {
                 EditorShapeUtility.CopyLastParams(m_ShapeComponent.shape, m_ShapeComponent.shape.GetType());
                 m_ShapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                m_ShapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
                 UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
+                m_IsShapeInit = true;
             }
 
             m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
-
-            if (!m_IsShapeInit)
-            {
-                EditorUtility.InitObject(m_ShapeComponent.mesh);
-                m_IsShapeInit = true;
-            }
 
             SceneView.RepaintAll();
         }
