@@ -82,9 +82,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Height Segments";
+                m_Content.text = "Height Cuts";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), m_Content);
-                m_Content.text = "Width Segments";
+                m_Content.text = "Width Cuts";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_WidthSegments"), m_Content);
             }
 
