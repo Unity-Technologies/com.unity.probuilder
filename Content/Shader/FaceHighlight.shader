@@ -40,8 +40,10 @@ Shader "Hidden/ProBuilder/FaceHighlight"
             v2f vert (appdata v)
             {
                 v2f o;
-                //This simplification seems to be working and avoiding Z-fighting for Unity 2019.4 and above
-                o.pos = UnityObjectToClipPos(v.vertex.xyz);
+                o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
+                o.pos.xy *= lerp(.99, 1, unity_OrthoParams.w);
+                o.pos.z *= .99;
+                o.pos = mul(UNITY_MATRIX_P, o.pos);
 
                 return o;
             }
