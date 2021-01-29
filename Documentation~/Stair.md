@@ -1,4 +1,4 @@
-# Stair
+# Stairs
 You can create straight stairs, curved stairs, long stairs, stairs with a lot of steps, wide stairs, and stairs without side polygons.
 
 ![Stair shapes](images/shape-tool_stair.png)

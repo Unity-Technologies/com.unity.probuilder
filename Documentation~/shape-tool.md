@@ -18,7 +18,7 @@ To create a new ProBuilder Mesh based on one of the predefined shapes:
 
 	> **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey to open the **Shape Tool** window, or use the menu (**Tools** > **ProBuilder** > **Editors** > **Open Shape Editor Menu Item**).
 
-1. Choose the shape you'd like to create (such as *Cube*, *Cylinder* or *Torus*) from the __Shape Selector__ drop-down menu. The properties specific to that shape type apppear in the Shape Tool window.
+1. Choose the shape you'd like to create (such as *Cube*, *Cylinder* or *Torus*) from the __Shape Selector__ drop-down menu. The properties specific to that shape type appear in the Shape Tool window.
 
 1. Set the options (width, height, radius, number of stairs) according to the type of shape.
 
@@ -35,7 +35,7 @@ The following sections describe the shape-specific properties available for thes
 * [Cube](Cube.md)
 * [Sprite](Sprite.md)
 * [Prism](Prism.md)
-* [Stair](Stair.md)
+* [Stairs](Stair.md)
 * [Cylinder](Cylinder.md)
 * [Door](Door.md)
 * [Plane](Plane.md)
