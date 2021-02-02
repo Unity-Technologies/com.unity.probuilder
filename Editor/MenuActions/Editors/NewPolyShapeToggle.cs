@@ -111,8 +111,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            Object.DestroyImmediate(m_Tool);
-
             ProBuilderEditor.instance.Repaint();
 
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");

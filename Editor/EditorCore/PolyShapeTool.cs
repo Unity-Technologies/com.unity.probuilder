@@ -14,6 +14,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
+    [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
@@ -30,10 +31,20 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_OverlayTitle;
 
-        GUIContent m_IconContent;
+        static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
         {
-            get { return m_IconContent; }
+            get
+            {
+                if(s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                        text = "Create PolyShape",
+                        tooltip = "Create PolyShape"
+                    };
+                return s_IconContent;
+            }
         }
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
@@ -97,13 +108,6 @@ namespace UnityEditor.ProBuilder
         {
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
 
-            m_IconContent = new GUIContent()
-            {
-                image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
-                text = "Create PolyShape",
-                tooltip = "Create PolyShape"
-            };
-
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanged += OnToolChanged;
 #endif
@@ -132,7 +136,7 @@ namespace UnityEditor.ProBuilder
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
-            DestroyImmediate(this);
+            Selection.activeObject = polygon;
         }
 
 #if !UNITY_2020_2_OR_NEWER
@@ -141,7 +145,25 @@ namespace UnityEditor.ProBuilder
             if(!ToolManager.IsActiveTool(this))
                 End();
             else
-                SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+            {
+                if(target is PolyShape)
+                {
+                    polygon = ( (PolyShape) target );
+                    SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                }
+                else if(target is GameObject)
+                {
+                    PolyShape ps;
+                    if(( (GameObject) target ).transform.TryGetComponent<PolyShape>(out ps))
+                    {
+                        polygon = ps;
+                        SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                    }
+                }
+
+                if(polygon == null)
+                    End();
+            }
         }
 #endif
 
@@ -249,8 +271,8 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.None);
-                        DestroyImmediate(this);
+                        End();
+                        ToolManager.RestorePreviousTool();
                     }
                     EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
@@ -291,6 +313,9 @@ namespace UnityEditor.ProBuilder
 
         void SetPolyEditMode(PolyShape.PolyEditMode mode)
         {
+            if(polygon == null)
+                return;
+
             PolyShape.PolyEditMode old = polygon.polyEditMode;
 
             if (mode != old)
@@ -810,12 +835,12 @@ namespace UnityEditor.ProBuilder
                     if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
                         DestroyImmediate(polygon.gameObject);
-                        DestroyImmediate(this);
                         ProBuilderEditor.ResetToLastSelectMode();
                     }
                     else
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        End();
+                        ToolManager.RestorePreviousTool();
                     }
 
                     evt.Use();

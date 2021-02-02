@@ -29,10 +29,7 @@ namespace UnityEditor.ProBuilder
                      {
                          ProBuilderEditor.selectMode = SelectMode.Object;
                          polygon.polyEditMode = PolyShape.PolyEditMode.Edit;
-                         PolyShapeTool tool = CreateInstance<PolyShapeTool>();
-                         tool.polygon = polygon;
-                         ToolManager.SetActiveTool(tool);
-                         Undo.RegisterCreatedObjectUndo(tool, "Open Polyshape Tool");
+                         ToolManager.SetActiveTool<PolyShapeTool>();
                      }
 
                      EditorGUILayout.HelpBox(
