@@ -27,8 +27,6 @@ namespace UnityEditor.ProBuilder
                  {
                      if(GUILayout.Button("Edit Poly Shape"))
                      {
-                         ProBuilderEditor.selectMode = SelectMode.Object;
-                         polygon.polyEditMode = PolyShape.PolyEditMode.Edit;
                          ToolManager.SetActiveTool<PolyShapeTool>();
                      }
 

@@ -93,11 +93,14 @@ namespace UnityEditor.ProBuilder
             set
             {
                 m_Polygon = value;
-
-                PolyShape.PolyEditMode mode = m_Polygon.polyEditMode;
-                m_Polygon.polyEditMode = PolyShape.PolyEditMode.None;
-                SetPolyEditMode(mode);
+                if(m_Polygon != null)
+                {
+                    PolyShape.PolyEditMode mode = m_Polygon.polyEditMode;
+                    m_Polygon.polyEditMode = PolyShape.PolyEditMode.None;
+                    SetPolyEditMode(mode);
+                }
             }
+
             get
             {
                 return m_Polygon;
@@ -135,37 +138,64 @@ namespace UnityEditor.ProBuilder
         {
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
-
-            Selection.activeObject = polygon;
+            polygon = null;
         }
 
 #if !UNITY_2020_2_OR_NEWER
         void OnToolChanged()
         {
-            if(!ToolManager.IsActiveTool(this))
-                End();
-            else
+            if(!ToolManager.IsActiveTool(this) && polygon != null)
             {
-                if(target is PolyShape)
-                {
-                    polygon = ( (PolyShape) target );
-                    SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                }
-                else if(target is GameObject)
-                {
-                    PolyShape ps;
-                    if(( (GameObject) target ).transform.TryGetComponent<PolyShape>(out ps))
-                    {
-                        polygon = ps;
-                        SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                    }
-                }
-
+                End();
+                EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+            }
+            else if(ToolManager.IsActiveTool(this))
+            {
+                UpdateTarget();
                 if(polygon == null)
                     End();
             }
         }
+#else
+        public override void OnActivated()
+        {
+            UpdateTarget();
+        }
 #endif
+
+        internal void UpdateTarget(PolyShape shape = null)
+        {
+            if(shape != null)
+                m_Target = shape;
+
+            if(target is PolyShape)
+            {
+                polygon = ( (PolyShape) target );
+                SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+            }
+            else if(target is GameObject)
+            {
+                PolyShape ps;
+                if(( (GameObject) target ).transform.TryGetComponent<PolyShape>(out ps))
+                {
+                    polygon = ps;
+                    SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                }
+            }
+
+            EditorApplication.delayCall += () =>
+            {
+                ProBuilderEditor.selectMode = SelectMode.Object;
+            };
+        }
+
+        void LeaveAndRestorePreviousTool()
+        {
+            //Quit Polygon edit mode and deactivate the tool
+            SetPolyEditMode(PolyShape.PolyEditMode.None);
+            ToolManager.RestorePreviousTool();
+            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+        }
 
         /// <summary>
         /// Main GUI update for the tool, calls every secondary methods to place points, update lines and compute the cut
@@ -177,10 +207,7 @@ namespace UnityEditor.ProBuilder
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
 
             if (polygon == null)
-            {
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
                 return;
-            }
 
             if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
                 return;
@@ -253,7 +280,11 @@ namespace UnityEditor.ProBuilder
         /// <param name="view">the current SceneView where to display the overlay</param>
         void OnOverlayGUI(UObject target, SceneView view)
         {
-            switch (polygon.polyEditMode)
+            var currentPolygon = polygon;
+            if(currentPolygon == null)
+                return;
+
+            switch (currentPolygon.polyEditMode)
             {
                 case PolyShape.PolyEditMode.Path:
                 {
@@ -270,44 +301,40 @@ namespace UnityEditor.ProBuilder
                 case PolyShape.PolyEditMode.Edit:
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
-                    {
-                        End();
-                        ToolManager.RestorePreviousTool();
-                    }
+                        LeaveAndRestorePreviousTool();
+
                     EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
                 }
             }
 
-            //EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Use Grid Snapping", EditorSnapSettings.gridSnapEnabled);
-
             EditorGUI.BeginChangeCheck();
 
-            float extrude = polygon.extrude;
+            float extrude = currentPolygon.extrude;
             extrude = EditorGUILayout.FloatField("Extrusion", extrude);
 
-            bool flipNormals = polygon.flipNormals;
+            bool flipNormals = currentPolygon.flipNormals;
             flipNormals = EditorGUILayout.Toggle("Flip Normals", flipNormals);
 
             if (EditorGUI.EndChangeCheck())
             {
-                if (polygon.polyEditMode == PolyShape.PolyEditMode.None)
+                if (currentPolygon.polyEditMode == PolyShape.PolyEditMode.None)
                 {
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
 
-                    UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
-                    UndoUtility.RecordObject(polygon.mesh, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(currentPolygon, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(currentPolygon.mesh, "Change Polygon Shape Settings");
                 }
                 else
                 {
-                    UndoUtility.RecordObject(polygon, "Change Polygon Shape Settings");
+                    UndoUtility.RecordObject(currentPolygon, "Change Polygon Shape Settings");
                 }
 
-                polygon.extrude = extrude;
-                polygon.flipNormals = flipNormals;
+                currentPolygon.extrude = extrude;
+                currentPolygon.flipNormals = flipNormals;
 
-                RebuildPolyShapeMesh(polygon);
+                RebuildPolyShapeMesh(currentPolygon);
             }
         }
 
@@ -345,12 +372,19 @@ namespace UnityEditor.ProBuilder
                     float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
                     s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
                 }
+                else if(old == PolyShape.PolyEditMode.Path && mode == PolyShape.PolyEditMode.None)
+                {
+                    var go = polygon.gameObject;
+                    EditorApplication.delayCall += () => DestroyImmediate(go);
+                    return;
+                }
 
                 RebuildPolyShapeMesh(polygon);
 
                 //Dirty the polygon for serialization (fix for transition between prefab and scene mode)
                 if(polygon != null)
                     UnityEditor.EditorUtility.SetDirty(polygon);
+
             }
         }
 
@@ -833,15 +867,9 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Escape:
                 {
                     if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-                    {
                         DestroyImmediate(polygon.gameObject);
-                        ProBuilderEditor.ResetToLastSelectMode();
-                    }
-                    else
-                    {
-                        End();
-                        ToolManager.RestorePreviousTool();
-                    }
+
+                    LeaveAndRestorePreviousTool();
 
                     evt.Use();
                     break;
@@ -881,28 +909,29 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged(SelectMode selectMode)
         {
-            // User changed select mode manually, remove InputTool flag
-            if (polygon != null
-                && polygon.polyEditMode != PolyShape.PolyEditMode.None
-                && !selectMode.ContainsFlag(SelectMode.InputTool))
-            {
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
-            }
-        }
-
-        private void OnObjectSelectionChanged()
-        {
-            if(polygon == null)
+            if(!ToolManager.IsActiveTool(this))
                 return;
 
             if(MeshSelection.activeMesh)
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
-                if(shape != null && shape != polygon)
-                {
-                    //Quit Polygon edit mode and deactivate the tool
-                    SetPolyEditMode(PolyShape.PolyEditMode.None);
-                }
+                if(shape != null && shape != polygon || selectMode != SelectMode.Object)
+                    LeaveAndRestorePreviousTool();
+            }
+        }
+
+        private void OnObjectSelectionChanged()
+        {
+            if(!ToolManager.IsActiveTool(this) || polygon == null)
+                return;
+
+            if(MeshSelection.activeMesh)
+            {
+                PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
+                if(shape == null)
+                    LeaveAndRestorePreviousTool();
+                else if(shape != polygon)
+                    UpdateTarget(shape);
             }
         }
     }

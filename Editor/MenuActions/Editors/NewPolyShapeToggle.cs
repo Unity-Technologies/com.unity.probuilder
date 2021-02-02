@@ -5,8 +5,10 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 #if !UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.EditorTools;
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
 #else
 using ToolManager = UnityEditor.EditorTools.ToolManager;
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 #endif
 
 namespace UnityEditor.ProBuilder.Actions
@@ -75,27 +77,24 @@ namespace UnityEditor.ProBuilder.Actions
             pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
             EditorUtility.InitObject(pb);
 
-            // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
-            // interaction, regardless of whether snapping is enabled or not.
-            if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
-            {
-                Vector3 pivot;
-                if (ProGridsInterface.GetPivot(out pivot))
-                    go.transform.position = pivot;
-            }
-            MeshSelection.SetSelection(go);
-            poly.polyEditMode = PolyShape.PolyEditMode.Path;
+             // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
+             // interaction, regardless of whether snapping is enabled or not.
+             if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
+             {
+                 Vector3 pivot;
+                 if (ProGridsInterface.GetPivot(out pivot))
+                     go.transform.position = pivot;
+             }
+             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-            ProBuilderEditor.selectMode = SelectMode.Object;
+             ProBuilderEditor.selectMode = SelectMode.Object;
 
-            m_Tool = ScriptableObject.CreateInstance<PolyShapeTool>();
-            ((PolyShapeTool)m_Tool).polygon = poly;
-            ToolManager.SetActiveTool(m_Tool);
-
-            Undo.RegisterCreatedObjectUndo(m_Tool, "Open PolyShape Tool");
+             m_Tool = EditorToolManager.GetSingleton<PolyShapeTool>();
+             ( (PolyShapeTool) m_Tool ).UpdateTarget(poly);
+             ToolManager.SetActiveTool(m_Tool);
 
             MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += LeaveTool;
+            ToolManager.activeToolChanging += OnActiveToolChanging;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
@@ -106,13 +105,32 @@ namespace UnityEditor.ProBuilder.Actions
         internal override ActionResult EndActivation()
         {
             MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= LeaveTool;
+            ToolManager.activeToolChanging -= OnActiveToolChanging;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
+            ToolManager.RestorePreviousTool();
+            m_Tool = null;
+
+            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+
             ProBuilderEditor.instance.Repaint();
 
+            return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
+        }
+
+        ActionResult QuitTool()
+        {
+            MenuAction.onPerformAction -= ActionPerformed;
+            ToolManager.activeToolChanging -= OnActiveToolChanging;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+
+            m_Tool = null;
+
+            ProBuilderEditor.instance.Repaint();
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
@@ -124,7 +142,10 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnObjectSelectionChanged()
         {
-            if(MeshSelection.activeMesh != ( (PolyShapeTool) m_Tool ).polygon.mesh)
+            if( m_Tool == null )
+                return;
+
+            if(MeshSelection.activeMesh.GetComponent<PolyShape>() == null)
                 EditorApplication.delayCall += () => LeaveTool();
         }
 
@@ -133,9 +154,15 @@ namespace UnityEditor.ProBuilder.Actions
             LeaveTool();
         }
 
+        void OnActiveToolChanging()
+        {
+            if(m_Tool != null && ToolManager.IsActiveTool(m_Tool))
+                 LeaveTool();
+        }
+
         void LeaveTool()
         {
-            ActionResult result = EndActivation();
+            ActionResult result = QuitTool();
             EditorUtility.ShowNotification(result.notification);
         }
     }
