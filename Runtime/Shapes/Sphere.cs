@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
+﻿using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -179,6 +177,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Sphere))]
     public class SphereDrawer : PropertyDrawer
     {
@@ -203,5 +202,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
-
+#endif
 }

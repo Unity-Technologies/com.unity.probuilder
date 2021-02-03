@@ -176,6 +176,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Torus))]
     public class TorusDrawer : PropertyDrawer
     {
@@ -213,5 +214,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
-
+#endif
 }

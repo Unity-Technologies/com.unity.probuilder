@@ -2,7 +2,7 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    public enum StepGenerationType
+    enum StepGenerationType
     {
         Height,
         Count
@@ -512,6 +512,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Stairs))]
     public class StairsDrawer : PropertyDrawer
     {
@@ -525,7 +526,6 @@ namespace UnityEngine.ProBuilder.Shapes
         static readonly GUIContent k_HomogeneousStepsContent = new GUIContent("Homogeneous Steps", L10n.Tr("Should step height be rounded to generate homogeneous stairs."));
         static readonly GUIContent k_CircumferenceContent = new GUIContent("Circumference", L10n.Tr("Circumference of the stairs, negate to rotate in opposite direction"));
         static readonly GUIContent k_SidesContent = new GUIContent("Sides", L10n.Tr("Does sides need to be generated as well."));
-
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -542,7 +542,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 EditorGUI.BeginChangeCheck();
                 typeEnum = (StepGenerationType)EditorGUILayout.EnumPopup(k_StepGenerationContent, typeEnum);
                 if(EditorGUI.EndChangeCheck())
-                    typeProperty.enumValueIndex = (int)typeEnum;
+                    typeProperty.intValue = (int)typeEnum;
 
                 if(typeEnum == StepGenerationType.Count)
                     EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"),
@@ -563,4 +563,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

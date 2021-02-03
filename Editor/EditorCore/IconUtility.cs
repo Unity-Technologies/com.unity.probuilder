@@ -38,9 +38,6 @@ namespace UnityEditor.ProBuilder
             bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
             string name = isDarkSkin ? iconName : iconName + "_Light";
 
-            if(EditorGUIUtility.pixelsPerPoint>1)
-                name += "@2x";
-
             Texture2D icon = null;
 
             if (!s_Icons.TryGetValue(name, out icon))
@@ -50,10 +47,20 @@ namespace UnityEditor.ProBuilder
                 do
                 {
                     // if in light mode:
-                    // - do one lap searching for light
+                    // - do one lap searching for light in 2x first and then in normal if no 2X found
                     // - if nothing found, next searching for default
-                    string fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
-                    icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
+                    string fullPath;
+                    if(EditorGUIUtility.pixelsPerPoint > 1)
+                    {
+                        fullPath = string.Format("{0}{1}@2x.png", s_IconFolderPath, i == 0 ? name : iconName);
+                        icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
+                    }
+
+                    if(icon == null)
+                    {
+                        fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
+                        icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
+                    }
                 }
                 while (!isDarkSkin && ++i < 2 && icon == null);
 

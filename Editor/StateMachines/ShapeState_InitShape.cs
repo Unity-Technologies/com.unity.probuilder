@@ -118,7 +118,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if(evt.shift)
+                if(GUIUtility.hotControl == 0 && evt.shift)
                     tool.DrawBoundingBox(false);
             }
 

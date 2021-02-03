@@ -66,9 +66,20 @@ namespace UnityEditor.ProBuilder
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
 
+        static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
         {
-            get { return PrimitiveBoundsHandle.editModeButton; }
+            get
+            {
+                if(s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                        text = "Edit Shape Tool",
+                        tooltip = "Edit Shape Tool"
+                    };
+                return s_IconContent;
+            }
         }
 
         void OnEnable()
@@ -97,7 +108,8 @@ namespace UnityEditor.ProBuilder
 #if !UNITY_2020_2_OR_NEWER
         void ActiveToolChanging()
         {
-            EditorApplication.delayCall += () => ChangeToObjectMode();
+            if(ToolManager.IsActiveTool(this))
+                EditorApplication.delayCall += () => ChangeToObjectMode();
         }
 
         void ChangeToObjectMode()

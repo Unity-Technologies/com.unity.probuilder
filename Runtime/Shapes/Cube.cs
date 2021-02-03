@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -48,6 +47,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Cube))]
     public class CubeDrawer : PropertyDrawer
     {
@@ -55,4 +55,5 @@ namespace UnityEngine.ProBuilder.Shapes
         {
         }
     }
+#endif
 }

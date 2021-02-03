@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -13,7 +12,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [Range(3, 200)]
         [SerializeField]
-        int m_NumberOfSides = 6;
+        int m_NumberOfSides = 5;
 
         [Range(1, 360)]
         [SerializeField]
@@ -54,7 +53,7 @@ namespace UnityEngine.ProBuilder.Shapes
             var yRadius = upDir.magnitude;
             var depth = forwardDir.magnitude / 2f;
 
-            var radialCuts = m_NumberOfSides;
+            var radialCuts = m_NumberOfSides + 1;
             var angle = m_ArchDegrees;
             var templateOut = new Vector2[radialCuts];
             var templateIn = new Vector2[radialCuts];
@@ -162,6 +161,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Arch))]
     public class ArchDrawer : PropertyDrawer
     {
@@ -195,4 +195,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

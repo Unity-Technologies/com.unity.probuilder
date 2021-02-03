@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -63,25 +62,25 @@ namespace UnityEngine.ProBuilder.Shapes
 
             List<Vector3> points = new List<Vector3>();
 
+            points.Add(template[4]);
             points.Add(template[0]);
+            points.Add(template[5]);
             points.Add(template[1]);
-            points.Add(template[4]);
-            points.Add(template[5]);
 
-            points.Add(template[6]);
             points.Add(template[2]);
-            points.Add(template[7]);
             points.Add(template[3]);
-
-            points.Add(template[8]);
-            points.Add(template[4]);
-            points.Add(template[9]);
-            points.Add(template[5]);
-
             points.Add(template[6]);
             points.Add(template[7]);
+
+            points.Add(template[4]);
+            points.Add(template[5]);
+            points.Add(template[8]);
+            points.Add(template[9]);
+
             points.Add(template[10]);
+            points.Add(template[6]);
             points.Add(template[11]);
+            points.Add(template[7]);
 
             points.Add(template[5]);
             points.Add(template[6]);
@@ -92,10 +91,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             for (int i = 0; i < points.Count; i += 4)
             {
-                reverse.Add(points[i + 1] - Vector3.forward * depth);
                 reverse.Add(points[i + 0] - Vector3.forward * depth);
-                reverse.Add(points[i + 3] - Vector3.forward * depth);
                 reverse.Add(points[i + 2] - Vector3.forward * depth);
+                reverse.Add(points[i + 1] - Vector3.forward * depth);
+                reverse.Add(points[i + 3] - Vector3.forward * depth);
             }
 
             points.AddRange(reverse);
@@ -133,7 +132,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
-
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Door))]
     public class DoorDrawer : PropertyDrawer
     {
@@ -163,4 +162,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
+#endif
 }
