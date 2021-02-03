@@ -50,7 +50,8 @@
   ],
   "dependencies": {
     "com.unity.settings-manager": "1.0.3",
-    "com.unity.modules.physics" :  "1.0.0"
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0"
   },
   "repository": {
     "type": "git",

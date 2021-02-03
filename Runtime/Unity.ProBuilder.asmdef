@@ -17,6 +17,11 @@
             "name": "com.unity.render-pipelines.high-definition",
             "expression": "7.1.0",
             "define": "HDRP_7_1_0_OR_NEWER"
+        },
+        {
+            "name": "com.unity.modules.particlesystem",
+            "expression": "1.0.0",
+            "define": "USING_PARTICLE_SYSTEM"
         }
     ],
     "noEngineReferences": false

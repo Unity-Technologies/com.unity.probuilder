@@ -635,6 +635,7 @@ namespace UnityEngine.ProBuilder
 
         internal static bool IsUsedInParticuleSystem(ProBuilderMesh pbmesh)
         {
+#if USING_PARTICLE_SYSTEM
             ParticleSystem pSys;
             if(pbmesh.TryGetComponent(out pSys))
             {
@@ -645,17 +646,20 @@ namespace UnityEngine.ProBuilder
                     return true;
                 }
             }
+#endif
             return false;
         }
 
         internal static void RestoreParticuleSystem(ProBuilderMesh pbmesh)
         {
+#if USING_PARTICLE_SYSTEM
             ParticleSystem pSys;
             if(pbmesh.TryGetComponent(out pSys))
             {
                 var shapeModule = pSys.shape;
                 shapeModule.meshRenderer = pbmesh.renderer;
             }
+#endif
         }
 
     }
