@@ -1,14 +1,20 @@
-# ![Shape Tool icon](images/icons/Panel_Shapes.png) Shape Tool window
+# ![Shape Tool icon](images/icons/Panel_Shapes.png) New Shape tool
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes, such as cylinders, arches, and stairs.
+Use the **New Shape** tool to create new ProBuilder Mesh shapes, such as cylinders, arches, and stairs.
+
+<span style="color:blue">**@DEVQ**: How do I use the Edit Shape tool on a ProBuilderized Unity primitive without explicitly adding a ShapeComponent (and would that even work)?</span>
+
+<span style="color:blue">**@DEVQ**: Do the XYZ properties on the shape components represent a delta from some fixed point? If so, what is that origin?</span>
 
 ![Shape Tool properties](images/shape-tool.png) 
 
-Each shape has specific properties. You can customize these before you add the shape to your Scene. For example, the *Stair* shape lets you choose items like step height, arc, and which parts of the stairway to build. 
+Each shape has specific properties. You can customize these before you add the shape to your Scene. For example, the **Stairs** shape lets you choose items like ~~step height, arc, and which parts of the stairway to build~~. 
+
+<span style="color:blue">**@DEVQ**: How do you create curved stairs without the Curvature property?</span>
 
 ![Shape Tool Example](images/Example_ShapeToolsWithCurvedStair.png)
 
-ProBuilder Mesh shapes are similar to other GameObjects in Unity in terms of how they interact with other GameObjects and respond to Physics in the Scene. However, you can use [ProBuilder's editing tools](workflow-edit) to customize and deform ProBuilder Meshes after you create them. 
+ProBuilder Mesh shapes are similar to other GameObjects in Unity in terms of how they interact with other GameObjects and respond to Physics in the Scene. However, you can use [ProBuilder actions](workflow-edit) to customize and deform ProBuilder Meshes after you create them. 
 
 ## Creating specific shapes
 
