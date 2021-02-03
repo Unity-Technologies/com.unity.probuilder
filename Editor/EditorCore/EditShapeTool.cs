@@ -108,7 +108,8 @@ namespace UnityEditor.ProBuilder
 #if !UNITY_2020_2_OR_NEWER
         void ActiveToolChanging()
         {
-            EditorApplication.delayCall += () => ChangeToObjectMode();
+            if(ToolManager.IsActiveTool(this))
+                EditorApplication.delayCall += () => ChangeToObjectMode();
         }
 
         void ChangeToObjectMode()

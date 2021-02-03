@@ -6,10 +6,12 @@ using UnityEngine.ProBuilder.MeshOperations;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
+#if UNITY_2020_2_OR_NEWER
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
+using ToolManager = UnityEditor.EditorTools.EditorTools;
 #endif
 
 namespace UnityEditor.ProBuilder
@@ -138,22 +140,27 @@ namespace UnityEditor.ProBuilder
         {
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
+
             polygon = null;
+
+#if UNITY_2020_2_OR_NEWER
+            EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
+#endif
         }
 
 #if !UNITY_2020_2_OR_NEWER
         void OnToolChanged()
         {
-            if(!ToolManager.IsActiveTool(this) && polygon != null)
-            {
-                End();
-                EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
-            }
-            else if(ToolManager.IsActiveTool(this))
+            if(ToolManager.IsActiveTool(this))
             {
                 UpdateTarget();
                 if(polygon == null)
                     End();
+            }
+            else if(polygon != null)
+            {
+                End();
+                EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
             }
         }
 #else
@@ -162,6 +169,12 @@ namespace UnityEditor.ProBuilder
             UpdateTarget();
         }
 #endif
+        static void CheckForSelectModeAfterToolQuit()
+        {
+            var toolType = EditorToolUtility.GetEnumWithEditorTool(EditorToolManager.activeTool);
+            if(toolType != Tool.Custom && toolType != Tool.None)
+                ProBuilderEditor.ResetToLastSelectMode();
+        }
 
         internal void UpdateTarget(PolyShape shape = null)
         {
@@ -189,12 +202,17 @@ namespace UnityEditor.ProBuilder
             };
         }
 
-        void LeaveAndRestorePreviousTool()
+        void LeaveTool(bool restoreLastMode = true)
         {
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
+            polygon = null;
             ToolManager.RestorePreviousTool();
-            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+            if(restoreLastMode)
+            {
+                //EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+                ProBuilderEditor.ResetToLastSelectMode();
+            }
         }
 
         /// <summary>
@@ -301,7 +319,7 @@ namespace UnityEditor.ProBuilder
                 case PolyShape.PolyEditMode.Edit:
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
-                        LeaveAndRestorePreviousTool();
+                        LeaveTool();
 
                     EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
@@ -869,7 +887,7 @@ namespace UnityEditor.ProBuilder
                     if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                         DestroyImmediate(polygon.gameObject);
 
-                    LeaveAndRestorePreviousTool();
+                    LeaveTool();
 
                     evt.Use();
                     break;
@@ -916,11 +934,11 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape != null && shape != polygon || selectMode != SelectMode.Object)
-                    LeaveAndRestorePreviousTool();
+                    LeaveTool(false);
             }
         }
 
-        private void OnObjectSelectionChanged()
+        void OnObjectSelectionChanged()
         {
             if(!ToolManager.IsActiveTool(this) || polygon == null)
                 return;
@@ -929,7 +947,7 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape == null)
-                    LeaveAndRestorePreviousTool();
+                    LeaveTool(true);
                 else if(shape != polygon)
                     UpdateTarget(shape);
             }

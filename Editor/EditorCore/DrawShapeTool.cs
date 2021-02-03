@@ -124,6 +124,14 @@ namespace UnityEditor.ProBuilder
                 m_ShapePreviewMaterial.SetColor("_Color", previewColor);
         }
 
+        void OnDisable()
+        {
+            if(m_ShapeEditor != null)
+                DestroyImmediate(m_ShapeEditor);
+            if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
+                DestroyImmediate(m_ShapeComponent.gameObject);
+        }
+
         void OnDestroy()
         {
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
@@ -153,6 +161,7 @@ namespace UnityEditor.ProBuilder
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
+
                 }
             }
         }
@@ -169,14 +178,6 @@ namespace UnityEditor.ProBuilder
             drawHeightState.m_nextState = initState;
 
             return ShapeState.StartStateMachine();
-        }
-
-        void OnDisable()
-        {
-            if(m_ShapeEditor != null)
-                DestroyImmediate(m_ShapeEditor);
-            if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
-                DestroyImmediate(m_ShapeComponent.gameObject);
         }
 
         internal static void SaveShapeParams(ShapeComponent shapeComponent)

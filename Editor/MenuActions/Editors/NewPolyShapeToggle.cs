@@ -3,12 +3,12 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-#else
-using ToolManager = UnityEditor.EditorTools.ToolManager;
+#if UNITY_2020_2_OR_NEWER
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
+using ToolManager = UnityEditor.EditorTools.EditorTools;
 #endif
 
 namespace UnityEditor.ProBuilder.Actions
@@ -102,35 +102,29 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
         }
 
-        internal override ActionResult EndActivation()
+        void Clear()
         {
+            m_Tool = null;
             MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= OnActiveToolChanging;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            ToolManager.RestorePreviousTool();
-            m_Tool = null;
-
-            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
-
             ProBuilderEditor.instance.Repaint();
+        }
+
+        internal override ActionResult EndActivation()
+        {
+            Clear();
+            ToolManager.RestorePreviousTool();
+            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
 
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
         ActionResult QuitTool()
         {
-            MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= OnActiveToolChanging;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-
-            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
-
-            m_Tool = null;
-
-            ProBuilderEditor.instance.Repaint();
+            Clear();
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 
