@@ -128,8 +128,8 @@ namespace UnityEditor.ProBuilder
         {
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
-            if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
-                DestroyImmediate(m_ShapeComponent.gameObject);
+            if(m_ShapeComponent != null && !( m_CurrentState is ShapeState_InitShape ))
+                ShapeState.ResetState();
         }
 
         void OnDestroy()
@@ -313,10 +313,11 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsShapeInit)
             {
-                EditorShapeUtility.CopyLastParams(m_ShapeComponent.shape, m_ShapeComponent.shape.GetType());
-                m_ShapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
-                m_ShapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-                UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
+                var shapeComponent = currentShapeInOverlay;
+                EditorShapeUtility.CopyLastParams(shapeComponent.shape, shapeComponent.shape.GetType());
+                shapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
+                UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
                 m_IsShapeInit = true;
             }
 
