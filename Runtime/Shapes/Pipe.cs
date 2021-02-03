@@ -139,6 +139,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Pipe))]
     public class PipeDrawer : PropertyDrawer
     {
@@ -170,4 +171,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

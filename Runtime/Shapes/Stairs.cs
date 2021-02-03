@@ -512,6 +512,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Stairs))]
     public class StairsDrawer : PropertyDrawer
     {
@@ -562,4 +563,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER

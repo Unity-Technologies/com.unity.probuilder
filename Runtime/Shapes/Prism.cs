@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -77,6 +76,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Prism))]
     public class PrismDrawer : PropertyDrawer
     {
@@ -84,4 +84,5 @@ namespace UnityEngine.ProBuilder.Shapes
         {
         }
     }
+#endif
 }

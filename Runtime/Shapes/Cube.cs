@@ -47,6 +47,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Cube))]
     public class CubeDrawer : PropertyDrawer
     {
@@ -54,4 +55,5 @@ namespace UnityEngine.ProBuilder.Shapes
         {
         }
     }
+#endif
 }
