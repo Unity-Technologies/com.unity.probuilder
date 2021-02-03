@@ -1,6 +1,3 @@
-using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
-
 namespace UnityEngine.ProBuilder.Shapes
 {
     [System.Serializable]

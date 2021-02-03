@@ -14,9 +14,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_NumberOfSides = 6;
 
-        [Range(1, 32)]
+        [Range(0, 31)]
         [SerializeField]
-        int m_HeightSegments = 1;
+        int m_HeightCuts = 0;
 
         public override void CopyShape(Shape shape)
         {
@@ -25,7 +25,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 Pipe pipe = (Pipe) shape;
                 m_Thickness = pipe.m_Thickness;
                 m_NumberOfSides = pipe.m_NumberOfSides;
-                m_HeightSegments = pipe.m_HeightSegments;
+                m_HeightCuts = pipe.m_HeightCuts;
             }
         }
 
@@ -63,11 +63,12 @@ namespace UnityEngine.ProBuilder.Shapes
             var baseY = height / 2f;
             // build out sides
             Vector2 tmp, tmp2, tmp3, tmp4;
-            for (int i = 0; i < m_HeightSegments; i++)
+            var heightSegments = m_HeightCuts + 1;
+            for (int i = 0; i < heightSegments; i++)
             {
                 // height subdivisions
-                float y = i * (height / m_HeightSegments) - baseY;
-                float y2 = (i + 1) * (height / m_HeightSegments) - baseY;
+                float y = i * (height / heightSegments) - baseY;
+                float y2 = (i + 1) * (height / heightSegments) - baseY;
 
                 for (int n = 0; n < m_NumberOfSides; n++)
                 {
@@ -138,6 +139,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Pipe))]
     public class PipeDrawer : PropertyDrawer
     {
@@ -161,12 +163,13 @@ namespace UnityEngine.ProBuilder.Shapes
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), m_Content);
                 m_Content.text = "Sides Count";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
-                m_Content.text = "Height Segments";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightSegments"), m_Content);
+                m_Content.text = "Height Cuts";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
             }
 
             EditorGUI.indentLevel--;
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

@@ -1,9 +1,7 @@
 using System;
-using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER
@@ -124,6 +122,14 @@ namespace UnityEditor.ProBuilder
                 m_ShapePreviewMaterial.SetColor("_Color", previewColor);
         }
 
+        void OnDisable()
+        {
+            if(m_ShapeEditor != null)
+                DestroyImmediate(m_ShapeEditor);
+            if(m_ShapeComponent != null && !( m_CurrentState is ShapeState_InitShape ))
+                ShapeState.ResetState();
+        }
+
         void OnDestroy()
         {
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
@@ -148,10 +154,12 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(Selection.activeGameObject != null
-                   && MeshSelection.activeMesh != currentShapeInOverlay.mesh)
+                        && (MeshSelection.activeMesh == null
+                        || MeshSelection.activeMesh.GetComponent<ShapeComponent>() == null))
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
+
                 }
             }
         }
@@ -168,14 +176,6 @@ namespace UnityEditor.ProBuilder
             drawHeightState.m_nextState = initState;
 
             return ShapeState.StartStateMachine();
-        }
-
-        void OnDisable()
-        {
-            if(m_ShapeEditor != null)
-                DestroyImmediate(m_ShapeEditor);
-            if (m_ShapeComponent != null && m_ShapeComponent.gameObject.hideFlags == HideFlags.HideAndDontSave)
-                DestroyImmediate(m_ShapeComponent.gameObject);
         }
 
         internal static void SaveShapeParams(ShapeComponent shapeComponent)
@@ -299,7 +299,8 @@ namespace UnityEditor.ProBuilder
                || Mathf.Abs(m_Bounds.extents.x) < 0.001f
                || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
             {
-                if(m_ShapeComponent.mesh.vertexCount > 0)
+                if(m_ShapeComponent != null
+                   && m_ShapeComponent.mesh.vertexCount > 0)
                 {
                     m_ShapeComponent.mesh.Clear();
                     m_ShapeComponent.mesh.Rebuild();
@@ -310,19 +311,16 @@ namespace UnityEditor.ProBuilder
 
             if (!m_IsShapeInit)
             {
-                EditorShapeUtility.CopyLastParams(m_ShapeComponent.shape, m_ShapeComponent.shape.GetType());
-                m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
-                UndoUtility.RegisterCreatedObjectUndo(m_ShapeComponent.gameObject, "Draw Shape");
+                var shapeComponent = currentShapeInOverlay;
+                EditorShapeUtility.CopyLastParams(shapeComponent.shape, shapeComponent.shape.GetType());
+                shapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
+                UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
+                m_IsShapeInit = true;
             }
 
             m_ShapeComponent.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
-
-            if (!m_IsShapeInit)
-            {
-                EditorUtility.InitObject(m_ShapeComponent.mesh);
-                m_IsShapeInit = true;
-            }
 
             SceneView.RepaintAll();
         }
@@ -338,6 +336,9 @@ namespace UnityEditor.ProBuilder
 
             m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
             HandleUtility.AddDefaultControl(m_ControlID);
+
+            if(GUIUtility.hotControl == 0)
+                EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
 
             m_CurrentState = m_CurrentState.DoState(evt);
         }
@@ -365,18 +366,17 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
             EditorGUILayout.HelpBox(L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings."), MessageType.Info);
 
             DrawShapeGUI();
 
-            var snapEnabled = Tools.pivotRotation != PivotRotation.Global;
-            using(new EditorGUI.DisabledScope(snapEnabled))
+            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
+            using(new EditorGUI.DisabledScope(snapDisabled))
             {
-                if(snapEnabled)
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+                if(snapDisabled)
+                    EditorGUILayout.Toggle("Snapping (only Global)", false);
                 else
-                    EditorGUILayout.Toggle("Snapping", false);
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 
             string foldoutName = "New Shape Settings";
