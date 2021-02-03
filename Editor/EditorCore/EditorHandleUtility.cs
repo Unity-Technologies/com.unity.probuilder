@@ -15,12 +15,12 @@ namespace UnityEditor.ProBuilder
 
         public static bool SceneViewInUse(Event e)
         {
-            return GUIUtility.hotControl == 0
+            return (GUIUtility.hotControl == 0 || Tools.viewToolActive)
                    &&(e.alt
-                   || Tools.current == Tool.View
-                   || (e.isMouse && e.button > 0)
-                   || Tools.viewTool == ViewTool.FPS
-                   || Tools.viewTool == ViewTool.Orbit);
+                      || Tools.current == Tool.View
+                      || (e.isMouse && e.button > 0)
+                      || Tools.viewTool == ViewTool.FPS
+                      || Tools.viewTool == ViewTool.Orbit);
         }
 
         public static bool IsAppendModifier(EventModifiers em)
