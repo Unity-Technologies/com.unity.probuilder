@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.5.1] - 2021-02-04
+
+### Bug Fixes
+
+- [case: 1304561] Fix `Shape Preview` not rendering with the blue preview tint with High Definition Render Pipeline.
+
 ## [4.5.0] - 2021-01-15
 
 ### Bug Fixes
