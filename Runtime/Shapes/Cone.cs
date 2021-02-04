@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -119,6 +118,7 @@ namespace UnityEngine.ProBuilder.Shapes
         }
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Cone))]
     public class ConeDrawer : PropertyDrawer
     {
@@ -145,5 +145,5 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.EndProperty();
         }
     }
-
+#endif
 }

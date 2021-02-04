@@ -190,8 +190,10 @@ namespace UnityEditor.ProBuilder
 
                 if (state == MeshSyncState.Null)
                 {
+                    var versionID = mesh.versionID;
                     mesh.Rebuild();
                     mesh.Optimize();
+                    mesh.versionID = versionID;
                 }
                 else
                 // If the mesh ID doesn't match the gameObject Id, it could mean two things:

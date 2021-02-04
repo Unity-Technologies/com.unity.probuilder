@@ -510,7 +510,9 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            if (vertices == null)
+            bool hasCollapsedVertices = vertices != null;
+
+            if(vertices == null)
                 vertices = mesh.GetVertices();
 
             int smc = mesh.subMeshCount;
@@ -544,10 +546,15 @@ namespace UnityEngine.ProBuilder
             }
 
             Vertex[] collapsed = subVertices.SelectMany(x => x.Keys).ToArray();
-            Vertex.SetMesh(mesh, collapsed);
-            mesh.subMeshCount = smc;
-            for (int i = 0; i < smc; i++)
-                mesh.SetTriangles(tris[i], i);
+            //Check if new vertices have been collapsed
+            hasCollapsedVertices |= (collapsed.Length != vertices.Length);
+            if(hasCollapsedVertices)
+            {
+                Vertex.SetMesh(mesh, collapsed);
+                mesh.subMeshCount = smc;
+                for(int i = 0; i < smc; i++)
+                    mesh.SetTriangles(tris[i], i);
+            }
         }
 
         /// <summary>
@@ -623,8 +630,37 @@ namespace UnityEngine.ProBuilder
 
                 sb.AppendFormat("vertex {0} contains invalid values:\n{1}\n\n", i, vertex.ToString());
             }
-
             return sb.ToString();
         }
+
+        internal static bool IsUsedInParticuleSystem(ProBuilderMesh pbmesh)
+        {
+#if USING_PARTICLE_SYSTEM
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                if(shapeModule.meshRenderer == pbmesh.renderer)
+                {
+                    shapeModule.meshRenderer = null;
+                    return true;
+                }
+            }
+#endif
+            return false;
+        }
+
+        internal static void RestoreParticuleSystem(ProBuilderMesh pbmesh)
+        {
+#if USING_PARTICLE_SYSTEM
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                shapeModule.meshRenderer = pbmesh.renderer;
+            }
+#endif
+        }
+
     }
 }

@@ -72,6 +72,16 @@ namespace UnityEditor.ProBuilder
         {
             DrawShapeGUI();
             DrawShapeParametersGUI();
+
+            if(ToolManager.activeToolType != typeof(DrawShapeTool)
+               && ToolManager.activeToolType != typeof(EditShapeTool) )
+            {
+                if(GUILayout.Button("Edit Shape Tool"))
+                {
+                    ProBuilderEditor.selectMode = SelectMode.Object;
+                    ToolManager.SetActiveTool<EditShapeTool>();
+                }
+            }
         }
 
         public void DrawShapeGUI(DrawShapeTool tool = null)

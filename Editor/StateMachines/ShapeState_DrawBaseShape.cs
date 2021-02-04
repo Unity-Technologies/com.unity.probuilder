@@ -17,47 +17,71 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if(evt.type == EventType.Repaint && m_IsDragging)
-                tool.DrawBoundingBox();
-
             if(evt.type == EventType.KeyDown)
             {
                 switch(evt.keyCode)
                 {
+                    case KeyCode.Delete:
                     case KeyCode.Escape:
                         return ResetState();
                 }
             }
+
+            if(evt.type == EventType.Repaint && m_IsDragging)
+                tool.DrawBoundingBox();
 
             if(evt.isMouse)
             {
                 switch(evt.type)
                 {
                     case EventType.MouseDrag:
-                        m_IsDragging = true;
-                        Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
-                        float distance;
+                        if(evt.button == 0)
+                        {
+                            m_IsDragging = true;
 
-                        if(tool.m_Plane.Raycast(ray, out distance))
-                            UpdateShapeBase(ray, distance);
+                            if(tool.m_DuplicateGO != null)
+                                GameObject.DestroyImmediate(tool.m_DuplicateGO);
 
+                            if(Selection.activeGameObject != null)
+                                MeshSelection.SetSelection((GameObject)null);
+
+                            Drag(evt.mousePosition);
+                        }
+                        break;
+
+                    case EventType.MouseMove:
+                        if(evt.button == 0 && m_IsDragging)
+                            Drag(evt.mousePosition);
                         break;
 
                     case EventType.MouseUp:
-                        if(!m_IsDragging && evt.shift)
+                        if(evt.button == 0)
                         {
-                            CreateLastShape();
-                            return ResetState();
+                            if(!m_IsDragging && evt.shift)
+                            {
+                                CreateLastShape();
+                                return ResetState();
+                            }
+
+                            if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
+                                return ResetState();
+
+                            return NextState();
                         }
-
-                        if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
-                            return ResetState();
-
-                        return NextState();
+                        break;
                 }
             }
 
             return this;
+        }
+
+        void Drag(Vector2 mousePosition)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+            float distance;
+
+            if(tool.m_Plane.Raycast(ray, out distance))
+                UpdateShapeBase(ray, distance);
         }
 
         void UpdateShapeBase(Ray ray, float distance)
@@ -75,12 +99,15 @@ namespace UnityEditor.ProBuilder
         {
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ShapeComponent>();
             shape.gameObject.name = shape.gameObject.name + "-Copy";
+            EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
+
+            //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
 
             tool.m_ShapeComponent = null;

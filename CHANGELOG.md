@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Bug Fixes
+
+- Added Particle System and IMGUI modules as a dependency.
+
 ## [5.0.0-pre.10] - 2021-01-22
 
 ### Features
@@ -49,8 +55,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1284741] Fixed missing tooltips for some items in the `Smooth Group Editor` window.
 - [case: 1283167] Fixed `Mesh Collider` mesh value not updating with modifications.
 - [case: 1285651] Fixed tooltip going out of screen when screen display is scale up
+- [case: 1285654] Fixed selected faces highlight for isometric camera mode in sceneview.
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
 - [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
+- [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter. 
 
 ### Changes
 
