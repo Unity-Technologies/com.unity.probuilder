@@ -11,10 +11,10 @@ class ShapeGeneratorTests
     public static List<Type> shapeTypes {
         get {
             var list = new List<Type>();
-            var types = typeof(Shape).Assembly.GetTypes();
+            var types = typeof(ShapePrimitive).Assembly.GetTypes();
             foreach (var type in types)
             {
-                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                if (typeof(ShapePrimitive).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     list.Add(type);
                 }
