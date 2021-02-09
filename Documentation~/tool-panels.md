@@ -1,6 +1,6 @@
 # Tool panels
 
-This portion of the ProBuilder toolbar provides access to most of the ProBuilder windows and components.
+This portion of the ProBuilder toolbar provides access to most of the ProBuilder windows, tools, and actions.
 
 ![Tool Panels on the ProBuilder toolbar](images/tool_panels.png)
 
@@ -8,23 +8,23 @@ This portion of the ProBuilder toolbar provides access to most of the ProBuilder
 
 ## ![Shape Tool icon](images/icons/Panel_Shapes.png) New Shape
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
+Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
 
-For more information, see the [Shape Tool](shape-tool.md) window reference.
+For more information, see the [Shape Tool](shape-tool.md) tool reference.
 
 ## ![Poly Shape Tool icon](images/icons/NewPolyShape.png) New Poly Shape
 
-Use the **Poly Shape** component to create a custom 2-dimensional shape and then extrude that shape to create a custom 3-dimensional Mesh.
+Use the **Poly Shape** tool to create a custom 2-dimensional shape and then extrude that shape to create a 3-dimensional mesh.
 
-For more information, see the [Poly Shape](polyshape.md) component reference.
+For more information, see the [Poly Shape](polyshape.md) tool reference.
 
 ## ![Bezier Shape icon](images/icons/NewBezierSpline.png) New Bezier Shape
 
-Use the **Bezier Shape** component to define a bezier curve around which ProBuilder extrudes a Mesh.
+Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a mesh.
 
 > ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
-For more information, see the [Bezier Shape](bezier.md) component reference.
+For more information, see the [Bezier Shape](bezier.md) tool reference.
 
 ## ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) Smoothing 
 

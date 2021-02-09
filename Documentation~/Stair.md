@@ -3,16 +3,67 @@ You can create straight stairs, curved stairs, long stairs, stairs with a lot of
 
 ![Stair shapes](images/shape-tool_stair.png)
 
-You can customize the shape of your stairs with these shape properties:
+You can customize the shape of your stairs with these shape-specific properties:
 
-![Stair shape properties](images/shape-tool_stair-props.png)
+<!--
 
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Steps__ | Set the number of steps to define on the stairs. The default value is 6. Valid values range from 2 to 64. |
-| __Build Sides__ | Enable this option to draw polygons on the sides of the stairs. This is enabled by default. You can disable this option if the sides of your stairs are not visible to the camera (for example, if your stairs are built into a wall). |
-| __Curvature__ | Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360. |
-| __Width__ or __X__ | Set the width (dimensions in the x-axis) of the stairs in meters. You can use the __Width__ slider or enter an exact value in the __X__ text box. The default value is 2. Valid values range from 0.01 to 10. |
-| __Height__ or __Y__ | Set the height (dimensions in the y-axis) of the stairs in meters. You can use the __Height__ slider or enter an exact value in the __Y__ text box. The default value is 2.5. Keep in mind that you may need to increase the number of stairs to compensate as you increase this value. Valid values range from 0.01 to 10. |
-| __Depth__ or __Z__ | Set the depth (dimensions in the z-axis) of the stairs in meters. You can use the __Depth__ slider or enter an exact value in the __Z__ text box. Keep in mind that you may need to increase the number of stairs to compensate as you increase this value. The default value is 4. Valid values range from 0.01 to 10. |
+| __Steps Generation__ | Select how you want ProBuilder to build steps:<br /><br />- Select the **Height** method if you want ProBuilder to generate a predictable height for each step in the staircase. This means that if you increase the height of the overall size of the staircase, the number of of steps increases.<br />- Select the **Count** method if you want ProBuilder to generate a specific number of steps, regardless of any changes in the size of the staircase. This means that if you increase the height of the overall size of the stairs, each step becomes higher.<br /><br />The default value is the **Count** method. |
+| __Steps Height__ | Set the fixed height of each step on the stairs. The default value is 0.2. <br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |
+| __Homogeneous Steps__ | Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |
+| __Steps Count__ | Set the fixed number of steps that the stairs always has. The default value is 10. Valid values range from 1 to 256.<br /><br />This property is only available when the **Steps Generation** method is set to **Count**. |
+| __Sides__ | Enable this option to draw polygons on the sides of the stairs. This is enabled by default. You can disable this option if the sides of your stairs are not visible to the camera (for example, if your stairs are built into a wall). |
+| __Circumference__ | Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360. |
+
+-->
+
+
+
+
+<table>
+<thead>
+<tr>
+<th colspan="2"><strong>Property:</strong></th>
+<th><strong>Description:</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2"><strong>Steps Generation</strong></td>
+<td>Select whether you want ProBuilder to build the same number of steps regardless of how the size of the stairs changes (the default) or make each step the same height but change the number of steps to match the size.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Height</strong></td>
+<td>Select this method if you want ProBuilder to generate a predictable height for each step in the staircase. This means that if you increase the height of the overall size of the staircase, the number of of steps increases.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Count</strong></td>
+<td>Select this method if you want ProBuilder to generate a specific number of steps, regardless of any changes in the size of the staircase. This means that if you increase the height of the overall size of the stairs, each step becomes higher. This is the default value.</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Steps Height</strong></td>
+<td>Set the fixed height of each step on the stairs. The default value is 0.2. <br /><br />This property is only available when the <strong>Steps Generation</strong> method is set to <strong>Height</strong>.</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Homogeneous Steps</strong></td>
+<td>Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />This property is only available when the <strong>Steps Generation</strong> method is set to <strong>Height</strong>.</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Steps Count</strong></td>
+<td>Set the fixed number of steps that the stairs always has. The default value is 10. Valid values range from 1 to 256.<br /><br />This property is only available when the <strong>Steps Generation</strong> method is set to <strong>Count</strong>.</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Sides</strong></td>
+<td>Enable this option to draw polygons on the sides of the stairs. This is enabled by default. You can disable this option if the sides of your stairs are not visible to the camera (for example, if your stairs are built into a wall).</td>
+</tr>
+<tr>
+<td colspan="2"><strong>Circumference</strong></td>
+<td>Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360.</td>
+</tr>
+</tbody>
+</table>
+

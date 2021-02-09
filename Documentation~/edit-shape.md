@@ -1,2 +1,0 @@
-# Edit shape tool
-

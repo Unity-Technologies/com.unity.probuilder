@@ -8,12 +8,14 @@ ProBuilder provides these ways to edit ProBuilder Meshes:
 
   You can also modify any regular Unity GameObject with ProBuilder tools, if you [Probuilderize](Object_ProBuilderize.md) it first.
 
-- In addition to modifying Mesh elements, there are special editing modes for Poly Shapes and Bezier Shapes that allow you to return to the shape you created or last edited:
+- In addition to modifying Mesh elements, there are special editing modes for (predefined) Shapes, Poly Shapes, and Bezier Shapes that allow you to return to the shape you created or last edited:
+
+  - For Shapes based on shape primitives, you can change the size of the bounding box and even switch the shape primitive, after you finish [creating it](workflow-create-predefined.md).
 
   - For Poly Shapes, you can [edit the extrusion and the normals](polyshape.md), after you finish [creating it](workflow-create-polyshape.md).
 
   - For Bezier Shapes, you can [edit the underlying bezier curve](bezier.md); you can delete and move existing points, add new ones, close the loop, and smooth it.
-
+  
   	> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
 

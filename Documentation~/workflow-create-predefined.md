@@ -6,28 +6,30 @@ To create a Mesh from a predefined shape:
 
   The [Edit Mode toolbar](overview-ui.md#edit-mode-toolbar) and the [ProBuilder toolbar](toolbar.md) appear.
 
-2. From the ProBuilder toolbar, **Alt/Opt+click** the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) button. 
+2. From the ProBuilder toolbar, click the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) tool. The [Draw Shape](shape-tool.md) panel appears in the bottom of the Scene view and in [Text mode](customizing.md#text-vs-icon-mode), the **New Shape** button is highlighted.
 
-  The [Shape Tool window](shape-tool.md) opens with the cube shape selected by default and a preview image appears in the Scene view.
+  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey to activate the Shape tool and leave the panel open, or use the menu (**Tools** > **ProBuilder** > **Editors** > **Open Shape Editor Menu Item**).
 
-  ![Shape Tool window with Cube shape](images/shape-tool_preview.png)
+  <span style="color:blue">**@DEV**: When you use the **Ctrl/Cmd+Shift+K** hotkey to activate the Shape tool, the panel stays open but the tool doesn't seem to still be active. If I activate the Edit Shape tool and do some stuff and then click the icon again to exit, the Draw Shape panel reappears. Switching back and forth between the create and edit states can also lead to tons of errors when the Shape panel is still visible, but it's hard to reproduce the error. </span>
 
-  > **Note:** If you only want a basic cube, click **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) without pressing **Alt** or **Opt** to skip displaying this window. You can also use **Ctrl/Cmd+K** to create the default cube without modifications.
+3. Choose the shape you'd like to create either from the shape icons or the drop-down menu. Any shape-specific properties appear under the **&lt;Shape&gt; Settings** section at the bottom.
 
-3. Select a predefined shape from the __Shape Selector__ drop-down menu.
+4. Set the shape-specific options (width, height, radius, number of stairs) according to the type of shape. For example, the [Stairs](Stair.md) shape lets you customize the height of the steps, how curved to make them, and whether to create faces for the sides. 
 
-4. Set the shape-specific properties to customize your mesh. Each shape has its own set of properties; for example, for a cube, you can define the X, Y, and Z dimensions, but for a cone, you need to set the radius, height, and number of sides. 
+	![Preview of the stairs inside the bounding box](images/Example_ShapeToolsWithCurvedStair2.png) 
 
-  See the [Shape Tool page](shape-tool.md) for a complete list of predefined shapes and their properties.
+5. While the Shape tool is active, you cannot use the transform tools, but you can use the camera to orbit around the new shape and zoom in and out. 
 
-5. ProBuilder shows a preview of the final shape in turquoise or blue while you are modifying your Mesh properties. You can move and rotate the Mesh preview object.
+6. In the Scene view, click and hold as you move to draw the base of the bounding box (along the x-axis and the z-axis) and then, if you are creating a 3D shape, move up (without letting go) along the y-axis to draw the height. As soon as you let go, ProBuilder creates the new mesh.
 
-6. When you are satisfied with the look of your Mesh, click the **Build** button.
+	> **Tip**: Alternatively, you can set all the properties on the **Draw Shape** panel, including the bounding-box dimensions, and then hover over the Scene view while holding Shift to see a preview of the mesh. When you are satisfied with how it looks and where it appears in the scene, click in the Scene view to finish creating the new mesh.
 
-	The blue preview changes to the default ProBuilder material to indicate your Mesh is ready to use.
+7. To create copies of the new mesh you defined, hold Shift to see a preview of the mesh while moving in the Scene view, and then click to build the mesh copy at that spot. You can do this as many times as you like until you exit the tool.
 
-7. Close the Shape Tool window if you do not need to create another Mesh.
+8. To exit the tool, click the **New Shape** button or select Esc. 
+
+	**Note**: If you decide later that you want to switch primitive shapes, change the size of the bounding box, or modify any of the shape-specific properties, select the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) from the **Tools** panel. 
 
 
-Now that you have created a Mesh shape, you can use any of the [ProBuilder editing tools](workflow-edit.md) to fine-tune or customize that shape further. For example, you can build a plain cube Mesh and then use the **Extrude Face** and **Delete Face** tools to create windows and doors to make a house.
+Now that you have created a Mesh shape, you can use any of the [ProBuilder editing tools](workflow-edit.md) to fine-tune or customize that shape further. For example, you can build a plain cube and then use the **Extrude Face** and **Delete Face** tools to create windows and doorways to make a house.
 

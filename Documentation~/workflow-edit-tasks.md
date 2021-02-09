@@ -1,12 +1,12 @@
 # Common editing tasks
 
-This page describes some of the most common ways you can use the ProBuilder tools to create geometry. There any many more possibilities, but these should give you a good place to start developing your own workflow.
+This page describes some of the most common ways you can use the ProBuilder tools and actions to create and modify geometry. There any many more possibilities, but these should give you a good place to start developing your own workflow.
 
 ## General modeling tasks
 
-- **Selecting**: Selecting elements is the first step you take when you want to change your Mesh. ProBuilder provides a whole range of [selection tools](selection-tools.md) that make it easier to target the elements you need to access. As a shortcut, when working in the Face editing mode, you can double-click any face to select all faces on the Mesh.
+- **Selecting**: Selecting elements is the first step you take when you want to change your mesh. ProBuilder provides a whole range of [selection actions](selection-tools.md) that make it easier to target the elements you need to access. As a shortcut, when working in the Face editing mode, you can double-click any face to select all faces on the Mesh.
 
-- **Transforming:** You can translate, rotate, and scale geometry elements to change the shape of a basic Mesh. For example, if you use the basic Stair shape but you want to give it a crooked look, you could move some edges or vertices.
+- **Transforming:** You can translate, rotate, and scale geometry elements to change the shape of a basic Mesh. For example, if you use the basic Stairs shape but you want to give it a crooked look, you could move some edges or vertices.
 
 - **Extruding:** "Extruding" refers to dragging a face out from the Mesh. To do this, click the ![Face edit mode](images/icons/EditModes_Face.png) [Face editing mode](modes.md) button on the Edit modes toolbar, select a face, hold Shift, and use the Transform controls.
 
@@ -35,7 +35,7 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
   On the other hand, if you are working on an uneven or multi-sided wall, such as a castle or church wall, this strategy is preferable: 
 
-  * Use the [Insert Edge Loop](Edge_InsertLoop.md) tool to create two vertical edges. Do the same on the horizontal plane (two for a window, one for a door). 
+  * Use the [Insert Edge Loop](Edge_InsertLoop.md) action to create two vertical edges. Do the same on the horizontal plane (two for a window, one for a door). 
   * Adjust the loops so that the resulting hole is the right size and location for a window or a door. 
   * Select the face of the hole and press **Backspace**. If necessary, from the other side of the wall, [delete the face](Face_Delete.md) on the other side.  
 

@@ -26,9 +26,6 @@ To create a new face on an existing mesh face:
 
 6. To exit the Cut tool, select the Esc key or click **Cut Tool** on the ProBuilder toolbar.
 
-	**Tip**: When you create a new face, the Cut tool creates extra edges. To simplify the geometry, select the meshes around the new face and merge them with the [Merge Faces](Face_Merge.md) tool. For example, if you cut out a diamond on the side of a cube, you can merge the other faces to leave only two faces.
-
-<span style="color:blue;">@DEVQ3:<br/>Does this create overly complicated geometry to suggest this?</span>
 
 
 
