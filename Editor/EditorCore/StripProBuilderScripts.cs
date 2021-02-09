@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -81,7 +82,6 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
-
                 if (go.TryGetComponent(out PolyShape polyShape))
                     DestroyImmediate(polyShape);
 
@@ -90,11 +90,7 @@ namespace UnityEditor.ProBuilder.Actions
 
                 if (pb.mesh == null)
                 {
-                    DestroyImmediate(pb);
-
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
-
+                    DestroyProBuilderMeshAndDependencies(go, pb);
                     return;
                 }
 
@@ -113,10 +109,7 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
 
-                    DestroyImmediate(pb);
-
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
+                    DestroyProBuilderMeshAndDependencies(go, pb);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
                     if (go.TryGetComponent(out MeshCollider meshCollider))
@@ -124,6 +117,17 @@ namespace UnityEditor.ProBuilder.Actions
                 }
             }
             catch {}
+        }
+
+        static void DestroyProBuilderMeshAndDependencies(GameObject go, ProBuilderMesh pb)
+        {
+            DestroyImmediate(pb);
+
+            if (go.TryGetComponent(out Entity entity))
+                DestroyImmediate(entity);
+
+            if (go.TryGetComponent(out ShapeComponent shapeComponent))
+                DestroyImmediate(shapeComponent);
         }
     }
 }
