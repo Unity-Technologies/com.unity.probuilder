@@ -159,7 +159,6 @@ namespace UnityEditor.ProBuilder
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
-
                 }
             }
         }

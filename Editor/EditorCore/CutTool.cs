@@ -147,19 +147,34 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Update the mouse cursor depending on the tool status
+        /// </summary>
+        /// <returns>the texture to use as a cursor</returns>
+        Texture2D CursorTexture
+        {
+            get
+            {
+                if(m_CutPath.Count > 0)
+                    return m_CutAddCursorTexture;
+
+                return m_CutCursorTexture;
+            }
+        }
+
         void OnEnable()
         {
             m_IconContent = new GUIContent()
             {
                 image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
-                text = "Create PolyShape",
-                tooltip = "Create PolyShape"
+                text = "Cut Tool",
+                tooltip = "Cut Tool"
             };
 
             s_HandleColorUseExistingVertex = Handles.selectedColor;
             s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
-            m_OverlayTitle = new GUIContent("Cut Tool");
+            m_OverlayTitle = new GUIContent("Cut Settings");
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
 
@@ -218,6 +233,22 @@ namespace UnityEditor.ProBuilder
             m_MeshConnections.Clear();
 
             RebuildCutShape();
+        }
+
+        /// <summary>
+        /// Creates a toggle for cut tool overlays
+        /// </summary>
+        /// <param name="label">toggle title</param>
+        /// <param name="val">starting value for the toggle</param>
+        /// <returns>new toggle value</returns>
+        bool DoOverlayToggle(string label, bool val)
+        {
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField(label, GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                return EditorGUILayout.Toggle(val);
+            }
         }
 
         /// <summary>
@@ -299,55 +330,75 @@ namespace UnityEditor.ProBuilder
             if(MeshSelection.selectedObjectCount != 1)
                 GUI.enabled = false;
 
-            if(m_Mesh == null)
+            using(new GUILayout.HorizontalScope())
             {
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
+                if(m_Mesh == null)
                 {
-                    m_Mesh = MeshSelection.activeMesh;
-                    m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
-                    m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
-
-                    if(m_CutPath.Count > 0)
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
                     {
-                        m_CutPath.Clear();
-                        m_MeshConnections.Clear();
+                        m_Mesh = MeshSelection.activeMesh;
+                        m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                        m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+
+                        if(m_CutPath.Count > 0)
+                        {
+                            m_CutPath.Clear();
+                            m_MeshConnections.Clear();
+                        }
+                    }
+
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
+                    {
+                        Clear();
+                        ToolManager.RestorePreviousTool();
                     }
                 }
+                else
+                {
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
+                        ExecuteCut();
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
+                        Clear();
+                }
             }
-            else
-            {
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cut")))
-                    ExecuteCut();
-            }
+
             GUI.enabled = true;
         }
 
+
         /// <summary>
-        /// Creates a toggle for cut tool overlays
+        /// Handle key events
         /// </summary>
-        /// <param name="label">toggle title</param>
-        /// <param name="val">starting value for the toggle</param>
-        /// <returns>new toggle value</returns>
-        bool DoOverlayToggle(string label, bool val)
+        /// <param name="evt">the current event to check</param>
+        void HandleKeyEvent(Event evt)
         {
-            using(new GUILayout.HorizontalScope())
+            KeyCode key = evt.keyCode;
+
+            switch (key)
             {
-                EditorGUILayout.LabelField(label, GUILayout.Width(225));
-                GUILayout.FlexibleSpace();
-                return EditorGUILayout.Toggle(val);
+                case KeyCode.Backspace:
+                {
+                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
+                    m_CutPath.RemoveAt(m_CutPath.Count-1);
+                    UpdateMeshConnections();
+                    RebuildCutShape();
+                    evt.Use();
+                    break;
+                }
+
+                case KeyCode.Escape:
+                    evt.Use();
+                    Clear();
+                    break;
+
+                case KeyCode.KeypadEnter:
+                case KeyCode.Return:
+                case KeyCode.Space:
+                    evt.Use();
+                    ExecuteCut();
+                    ToolManager.RestorePreviousTool();
+                    break;
             }
-        }
-
-        /// <summary>
-        /// Update the mouse cursor depending on the tool status
-        /// </summary>
-        /// <returns>the texture to use as a cursor</returns>
-        Texture2D GetCursorTexture()
-        {
-            if(m_CutPath.Count > 0)
-                return m_CutAddCursorTexture;
-
-            return m_CutCursorTexture;
         }
 
         /// <summary>
@@ -373,7 +424,7 @@ namespace UnityEditor.ProBuilder
 
                 if (hasHitPosition)
                 {
-                    m_CurrentCutCursor = GetCursorTexture();
+                    m_CurrentCutCursor = CursorTexture;
                     if( (m_CurrentVertexTypes & (VertexTypes.ExistingVertex | VertexTypes.VertexInShape)) != 0)
                         m_CurrentHandleColor = m_ModifyingPoint ? k_HandleColorModifyVertex : s_HandleColorUseExistingVertex;
                     else if ((m_CurrentVertexTypes & VertexTypes.AddedOnEdge) != 0)
@@ -809,6 +860,8 @@ namespace UnityEditor.ProBuilder
             return newFaces;
         }
 
+
+
         /// <summary>
         ///    The method computes all the possible faces that can be made starting by the vertices in polygonStart and ending with the cut
         /// This method creates faces that are not the final one and that must be deleted at the end. These invalid faces are returned in facesToDelete
@@ -1168,42 +1221,6 @@ namespace UnityEditor.ProBuilder
 
             Vertex v = m_Mesh.InsertVertexOnEdge(peripheralEdges[bestIndex], vertexPosition);
             return v;
-        }
-
-        /// <summary>
-        /// Handle key events
-        /// </summary>
-        /// <param name="evt">the current event to check</param>
-        void HandleKeyEvent(Event evt)
-        {
-            KeyCode key = evt.keyCode;
-
-            switch (key)
-            {
-                case KeyCode.Backspace:
-                {
-                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
-                    m_CutPath.RemoveAt(m_CutPath.Count-1);
-                    UpdateMeshConnections();
-                    RebuildCutShape();
-                    evt.Use();
-                    break;
-                }
-
-                case KeyCode.Escape:
-                    evt.Use();
-                    Clear();
-                    ProBuilderEditor.ResetToLastSelectMode();
-                    break;
-
-                case KeyCode.KeypadEnter:
-                case KeyCode.Return:
-                case KeyCode.Space:
-                    evt.Use();
-                    ExecuteCut();
-                    ProBuilderEditor.ResetToLastSelectMode();
-                    break;
-            }
         }
 
         /// <summary>
