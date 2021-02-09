@@ -62,8 +62,6 @@ namespace UnityEditor.ProBuilder
                 GameObject gameObject = mesh.gameObject;
                 var entity = ProcessLegacyEntity(gameObject);
 
-                Debug.Log("stripping "+gameObject.name);
-
 #if ENABLE_DRIVEN_PROPERTIES
                 // clear editor-only HideFlags and serialization ignores
                 mesh.ClearDrivenProperties();
