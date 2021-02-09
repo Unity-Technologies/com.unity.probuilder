@@ -85,14 +85,14 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", true, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Shape %#k", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_OpenShapeEditorMenuItem()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", false, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Shape %#k", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_OpenShapeEditorMenuItem()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();

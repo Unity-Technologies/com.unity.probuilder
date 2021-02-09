@@ -23,7 +23,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="shape">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
-        public static ProBuilderMesh Instantiate<T>(PivotLocation pivotType = PivotLocation.Center) where T : Shape, new()
+        public static ProBuilderMesh Instantiate<T>(PivotLocation pivotType = PivotLocation.Center) where T : ShapePrimitive, new()
         {
             return Instantiate(typeof(T));
         }
@@ -39,14 +39,14 @@ namespace UnityEngine.ProBuilder
             if (shapeType == null)
                 throw new ArgumentNullException("shapeType", "Cannot instantiate a null shape.");
 
-            if (shapeType.IsAssignableFrom(typeof(Shape)))
+            if (shapeType.IsAssignableFrom(typeof(ShapePrimitive)))
                 throw new ArgumentException("Type needs to derive from Shape");
 
             try
             {
                 var shape = Activator.CreateInstance(shapeType,
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance,
-                    null, null, null, null) as Shape;
+                    null, null, null, null) as ShapePrimitive;
                 return Instantiate(shape, pivotType);
             }
             catch (Exception e)
@@ -60,22 +60,22 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a shape with default parameters.
         /// </summary>
-        /// <param name="shape">The ShapeType to create.</param>
+        /// <param name="shapePrimitive">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
-        public static ProBuilderMesh Instantiate(Shape shape, PivotLocation pivotType = PivotLocation.Center)
+        public static ProBuilderMesh Instantiate(ShapePrimitive shapePrimitive, PivotLocation pivotType = PivotLocation.Center)
         {
-            if (shape == null)
-                throw new ArgumentNullException("shape", "Cannot instantiate a null shape.");
+            if (shapePrimitive == null)
+                throw new ArgumentNullException("shapePrimitive", "Cannot instantiate a null shape.");
 
-            var shapeComponent = new GameObject("Shape").AddComponent<ShapeComponent>();
-            shapeComponent.SetShape(shape, pivotType);
+            var shapeComponent = new GameObject("Shape").AddComponent<ProBuilderShape>();
+            shapeComponent.SetShape(shapePrimitive, pivotType);
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 
-            var attribute = Attribute.GetCustomAttribute(shape.GetType(), typeof(ShapeAttribute));
+            var attribute = Attribute.GetCustomAttribute(shapePrimitive.GetType(), typeof(ShapePrimitiveAttribute));
 
-            if(attribute is ShapeAttribute shapeAttrib)
+            if(attribute is ShapePrimitiveAttribute shapeAttrib)
                 pb.gameObject.name = shapeAttrib.name;
 
             return pb;

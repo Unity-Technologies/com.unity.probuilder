@@ -2,8 +2,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [Shape("Cube")]
-    public class Cube : Shape
+    [ShapePrimitive("Cube")]
+    public class Cube : ShapePrimitive
     {
         /// <summary>
         /// A set of 8 vertices forming the template for a cube mesh.
@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder.Shapes
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
-        public override void CopyShape(Shape shape) {}
+        public override void CopyShape(ShapePrimitive shapePrimitive) {}
 
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {

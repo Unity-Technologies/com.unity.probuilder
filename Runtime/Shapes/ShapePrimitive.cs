@@ -1,7 +1,7 @@
 namespace UnityEngine.ProBuilder.Shapes
 {
     [System.Serializable]
-    public abstract class Shape
+    public abstract class ShapePrimitive
     {
         public virtual Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
@@ -10,15 +10,15 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public abstract Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation);
 
-        public abstract void CopyShape(Shape shape);
+        public abstract void CopyShape(ShapePrimitive shapePrimitive);
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class)]
-    public class ShapeAttribute : System.Attribute
+    public class ShapePrimitiveAttribute : System.Attribute
     {
         public string name;
 
-        public ShapeAttribute(string n)
+        public ShapePrimitiveAttribute(string n)
         {
             name = n;
         }

@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [Shape("Cone")]
-    public class Cone : Shape
+    [ShapePrimitive("Cone")]
+    public class Cone : ShapePrimitive
     {
         [Range(3,64)]
         [SerializeField]
@@ -12,12 +12,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
         float m_Radius = 0;
 
-        public override void CopyShape(Shape shape)
+        public override void CopyShape(ShapePrimitive shapePrimitive)
         {
-            if(shape is Cone)
+            if(shapePrimitive is Cone)
             {
-                m_NumberOfSides = ((Cone)shape).m_NumberOfSides;
-                m_Radius = ((Cone)shape).m_Radius;
+                m_NumberOfSides = ((Cone)shapePrimitive).m_NumberOfSides;
+                m_Radius = ((Cone)shapePrimitive).m_Radius;
             }
         }
 

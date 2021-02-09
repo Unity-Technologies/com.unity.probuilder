@@ -2,8 +2,8 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [Shape("Sphere")]
-    public class Sphere : Shape
+    [ShapePrimitive("Sphere")]
+    public class Sphere : ShapePrimitive
     {
         static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
         {
@@ -56,12 +56,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
         int m_BottomMostVertexIndex = 0;
 
-        public override void CopyShape(Shape shape)
+        public override void CopyShape(ShapePrimitive shapePrimitive)
         {
-            if(shape is Sphere)
+            if(shapePrimitive is Sphere)
             {
-                m_Subdivisions = ( (Sphere) shape ).m_Subdivisions;
-                m_BottomMostVertexIndex = ( (Sphere) shape ).m_BottomMostVertexIndex;
+                m_Subdivisions = ( (Sphere) shapePrimitive ).m_Subdivisions;
+                m_BottomMostVertexIndex = ( (Sphere) shapePrimitive ).m_BottomMostVertexIndex;
             }
         }
 

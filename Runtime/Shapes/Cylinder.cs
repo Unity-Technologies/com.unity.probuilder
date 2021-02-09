@@ -2,8 +2,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [Shape("Cylinder")]
-    public class Cylinder : Shape
+    [ShapePrimitive("Cylinder")]
+    public class Cylinder : ShapePrimitive
     {
         [Range(4,64)]
         [SerializeField]
@@ -17,13 +17,13 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_Smoothing = -1;
 
-        public override void CopyShape(Shape shape)
+        public override void CopyShape(ShapePrimitive shapePrimitive)
         {
-            if(shape is Cylinder)
+            if(shapePrimitive is Cylinder)
             {
-                m_AxisDivisions = ((Cylinder)shape).m_AxisDivisions;
-                m_HeightCuts = ((Cylinder)shape).m_HeightCuts;
-                m_Smoothing = ((Cylinder)shape).m_Smoothing;
+                m_AxisDivisions = ((Cylinder)shapePrimitive).m_AxisDivisions;
+                m_HeightCuts = ((Cylinder)shapePrimitive).m_HeightCuts;
+                m_Smoothing = ((Cylinder)shapePrimitive).m_Smoothing;
             }
         }
 

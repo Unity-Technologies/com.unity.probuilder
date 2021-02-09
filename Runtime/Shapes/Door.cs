@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [Shape("Door")]
-    public class Door : Shape
+    [ShapePrimitive("Door")]
+    public class Door : ShapePrimitive
     {
         [Min(0.01f)]
         [SerializeField]
@@ -14,12 +14,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
-        public override void CopyShape(Shape shape)
+        public override void CopyShape(ShapePrimitive shapePrimitive)
         {
-            if(shape is Door)
+            if(shapePrimitive is Door)
             {
-                m_DoorHeight = ( (Door) shape ).m_DoorHeight;
-                m_LegWidth = ( (Door) shape ).m_LegWidth;
+                m_DoorHeight = ( (Door) shapePrimitive ).m_DoorHeight;
+                m_LegWidth = ( (Door) shapePrimitive ).m_LegWidth;
             }
         }
 
