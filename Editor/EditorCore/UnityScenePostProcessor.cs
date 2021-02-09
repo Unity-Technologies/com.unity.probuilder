@@ -5,6 +5,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
 {
@@ -21,8 +22,9 @@ namespace UnityEditor.ProBuilder
         {
             var invisibleFaceMaterial = Resources.Load<Material>("Materials/InvisibleFace");
 
+            var pbMeshes = (ProBuilderMesh[]) Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh));
             // Hide nodraw faces if present.
-            foreach (var pb in Object.FindObjectsOfType<ProBuilderMesh>())
+            foreach (var pb in pbMeshes)
             {
                 if (pb.GetComponent<MeshRenderer>() == null)
                     continue;
@@ -50,7 +52,7 @@ namespace UnityEditor.ProBuilder
                     entity.OnEnterPlayMode();
             }
 
-            foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
+            foreach (var mesh in pbMeshes)
             {
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
 
@@ -59,6 +61,8 @@ namespace UnityEditor.ProBuilder
 
                 GameObject gameObject = mesh.gameObject;
                 var entity = ProcessLegacyEntity(gameObject);
+
+                Debug.Log("stripping "+gameObject.name);
 
 #if ENABLE_DRIVEN_PROPERTIES
                 // clear editor-only HideFlags and serialization ignores
@@ -78,15 +82,18 @@ namespace UnityEditor.ProBuilder
                 if (m_ScriptStripping == false)
                     continue;
 
-                if(mesh.TryGetComponent<BezierShape>(out BezierShape bezier))
+                if(mesh.TryGetComponent(out BezierShape bezier))
                     Object.DestroyImmediate(bezier);
 
-                if(mesh.TryGetComponent<PolyShape>(out PolyShape poly))
+                if(mesh.TryGetComponent(out PolyShape poly))
                     Object.DestroyImmediate(poly);
 
                 mesh.preserveMeshAssetOnDestroy = true;
                 Object.DestroyImmediate(mesh);
                 Object.DestroyImmediate(entity);
+
+                if(gameObject.TryGetComponent(out ShapeComponent shapeComponent))
+                    Object.DestroyImmediate(shapeComponent);
             }
         }
 
