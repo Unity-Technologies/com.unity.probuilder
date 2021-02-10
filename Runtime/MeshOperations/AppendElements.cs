@@ -1051,7 +1051,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                         modifiedFaces.Add(face, data);
 
-
                         //Ordering vertices in the new face
                         List<Vertex> orderedVertices = new List<Vertex>();
                         List<int> orderedSharedIndexes = new List<int>();
@@ -1168,6 +1167,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     continue;
 
+                //Keep submesh index when rebuilding to maintain material references
+                data.face.submeshIndex = face.submeshIndex;
                 data.face.ShiftIndexes(vertexCount);
                 face.CopyFrom(data.face);
 
@@ -1447,6 +1448,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     continue;
 
+                //Keep submesh index when rebuilding to maintain material references
+                data.face.submeshIndex = face.submeshIndex;
                 data.face.ShiftIndexes(vertexCount);
                 face.CopyFrom(data.face);
 
