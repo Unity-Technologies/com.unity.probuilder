@@ -12,12 +12,17 @@ namespace UnityEngine.ProBuilder.Shapes
 
         float m_Radius = 0;
 
+        [SerializeField]
+        bool m_Smooth = true;
+
         public override void CopyShape(ShapePrimitive shapePrimitive)
         {
             if(shapePrimitive is Cone)
             {
-                m_NumberOfSides = ((Cone)shapePrimitive).m_NumberOfSides;
-                m_Radius = ((Cone)shapePrimitive).m_Radius;
+                Cone cone = (Cone) shapePrimitive;
+                m_NumberOfSides = cone.m_NumberOfSides;
+                m_Radius = cone.m_Radius;
+                m_Smooth = cone.m_Smooth;
             }
         }
 
@@ -73,6 +78,7 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < subdivAxis * 6; i += 6)
             {
                 Face face = new Face(new int[3] { i + 2, i + 1, i + 0 });
+                face.smoothingGroup = m_Smooth ? 1 : 0;
                 f.Add(face);
                 sideFaces.Add(face);
                 f.Add(new Face(new int[3] { i + 3, i + 4, i + 5 }));
@@ -126,7 +132,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        readonly GUIContent m_Content = new GUIContent("Sides Count");
+        readonly GUIContent m_Content = new GUIContent("");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -138,7 +144,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
+                m_Content.text = "Sides Count";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

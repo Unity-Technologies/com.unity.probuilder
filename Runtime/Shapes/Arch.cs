@@ -21,14 +21,19 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_EndCaps = true;
 
+        [SerializeField]
+        bool m_Smooth = true;
+
         public override void CopyShape(ShapePrimitive shapePrimitive)
         {
             if(shapePrimitive is Arch)
             {
-                m_Thickness = ((Arch)shapePrimitive).m_Thickness;
-                m_NumberOfSides = ((Arch)shapePrimitive).m_NumberOfSides;
-                m_ArchDegrees = ((Arch)shapePrimitive).m_ArchDegrees;
-                m_EndCaps = ((Arch)shapePrimitive).m_EndCaps;
+                Arch arch = ( (Arch) shapePrimitive );
+                m_Thickness = arch.m_Thickness;
+                m_NumberOfSides = arch.m_NumberOfSides;
+                m_ArchDegrees = arch.m_ArchDegrees;
+                m_EndCaps = arch.m_EndCaps;
+                m_Smooth = arch.m_Smooth;
             }
         }
 
@@ -78,7 +83,7 @@ namespace UnityEngine.ProBuilder.Shapes
             Vector2 tmp, tmp2, tmp3, tmp4;
 
             float y = -depth;
-
+            int smoothedFaceCount = 0;
             for (int n = 0; n < radialCuts - 1; n++)
             {
                 // outside faces
@@ -93,18 +98,20 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 Vector3[] qvi = GetFace(tmp2, tmp, -depth);
 
-                v.AddRange(qvo);
-
-                if (n != radialCuts - 1)
-                    v.AddRange(qvi);
-
                 // left side bottom face
-                if (angle < 360f && m_EndCaps)
+                if(angle < 360f && m_EndCaps)
                 {
-                    if (n == 0)
+                    if(n == 0)
                         v.AddRange(GetFace(templateOut[n], templateIn[n], depth));
+                }
 
-                    // ride side bottom face
+                v.AddRange(qvo);
+                v.AddRange(qvi);
+                smoothedFaceCount += 2;
+
+                if(angle < 360f && m_EndCaps)
+                {
+                    // right side bottom face
                     if (n == radialCuts - 2)
                         v.AddRange(GetFace(templateIn[n+1], templateOut[n+1], depth));
                 }
@@ -145,6 +152,12 @@ namespace UnityEngine.ProBuilder.Shapes
                 v[i] = Vector3.Scale(rotation * v[i], sizeSigns);
 
             mesh.GeometryWithPoints(v.ToArray());
+
+            if(m_Smooth)
+            {
+                for(int i = ( angle < 360f && m_EndCaps ) ? 1 : 0; i < smoothedFaceCount; i++)
+                    mesh.facesInternal[i].smoothingGroup = 1;
+            }
 
             var sizeSign = sizeSigns.x * sizeSigns.y * sizeSigns.z;
             if(sizeSign < 0)
@@ -189,6 +202,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_ArchDegrees"), m_Content);
                 m_Content.text = "End Caps";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_EndCaps"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

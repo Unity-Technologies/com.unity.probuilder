@@ -18,6 +18,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightCuts = 0;
 
+        [SerializeField]
+        bool m_Smooth = true;
+
         public override void CopyShape(ShapePrimitive shapePrimitive)
         {
             if(shapePrimitive is Pipe)
@@ -26,6 +29,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 m_Thickness = pipe.m_Thickness;
                 m_NumberOfSides = pipe.m_NumberOfSides;
                 m_HeightCuts = pipe.m_HeightCuts;
+                m_Smooth = pipe.m_Smooth;
             }
         }
 
@@ -135,6 +139,14 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(v.ToArray());
 
+            //Smooth internal and external faces
+            if(m_Smooth)
+            {
+                int smoothCount = 2 * heightSegments * m_NumberOfSides;
+                for(int i = 0; i < smoothCount; i++)
+                    mesh.facesInternal[i].smoothingGroup = 1;
+            }
+
             return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
@@ -165,6 +177,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
                 m_Content.text = "Height Cuts";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

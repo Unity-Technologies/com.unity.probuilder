@@ -13,9 +13,8 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightCuts = 0;
 
-        [Min(-1)]
         [SerializeField]
-        int m_Smoothing = -1;
+        bool m_Smooth = true;
 
         public override void CopyShape(ShapePrimitive shapePrimitive)
         {
@@ -23,7 +22,7 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 m_AxisDivisions = ((Cylinder)shapePrimitive).m_AxisDivisions;
                 m_HeightCuts = ((Cylinder)shapePrimitive).m_HeightCuts;
-                m_Smoothing = ((Cylinder)shapePrimitive).m_Smoothing;
+                m_Smooth = ((Cylinder)shapePrimitive).m_Smooth;
             }
         }
 
@@ -120,7 +119,7 @@ namespace UnityEngine.ProBuilder.Shapes
                         new int[6] { zero, one, two, one, three, two },
                         0,
                         AutoUnwrapSettings.tile,
-                        m_Smoothing,
+                        m_Smooth ? 1 : -1,
                         -1,
                         -1,
                         false);
@@ -195,8 +194,8 @@ namespace UnityEngine.ProBuilder.Shapes
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), m_Content);
                 m_Content.text = "Height Cuts";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
-                m_Content.text = "Smoothing Group";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smoothing"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
             }
 
             EditorGUI.indentLevel--;

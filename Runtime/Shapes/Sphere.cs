@@ -56,12 +56,17 @@ namespace UnityEngine.ProBuilder.Shapes
 
         int m_BottomMostVertexIndex = 0;
 
+        [SerializeField]
+        bool m_Smooth = true;
+
         public override void CopyShape(ShapePrimitive shapePrimitive)
         {
             if(shapePrimitive is Sphere)
             {
-                m_Subdivisions = ( (Sphere) shapePrimitive ).m_Subdivisions;
-                m_BottomMostVertexIndex = ( (Sphere) shapePrimitive ).m_BottomMostVertexIndex;
+                Sphere sphere = ( (Sphere) shapePrimitive );
+                m_Subdivisions = sphere.m_Subdivisions;
+                m_BottomMostVertexIndex = sphere.m_BottomMostVertexIndex;
+                m_Smooth = sphere.m_Smooth;
             }
         }
 
@@ -104,6 +109,7 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < v.Length; i += 3)
             {
                 f[i / 3] = new Face(new int[3] { i, i + 1, i + 2 });
+                f[i / 3].smoothingGroup = m_Smooth ? 1 : 0;
                 f[i / 3].manualUV = true;
 
                 // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
@@ -131,7 +137,7 @@ namespace UnityEngine.ProBuilder.Shapes
         // Subdivides a set of vertices (wound as individual triangles) on an icosphere.
         //
         //   /\          /\
-        //      /  \    ->      /--\
+        //  /  \  ->    /--\
         // /____\      /_\/_\
         //
         static Vector3[] SubdivideIcosahedron(Vector3[] vertices, float radius)
@@ -185,7 +191,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        readonly GUIContent m_Content = new GUIContent("Subdivisions");
+        readonly GUIContent m_Content = new GUIContent("");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -196,7 +202,12 @@ namespace UnityEngine.ProBuilder.Shapes
             EditorGUI.indentLevel++;
 
             if(s_foldoutEnabled)
+            {
+                m_Content.text = "Subdivisions";
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), m_Content);
+                m_Content.text = "Smooth";
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
+            }
 
             EditorGUI.indentLevel--;
             EditorGUI.EndProperty();
