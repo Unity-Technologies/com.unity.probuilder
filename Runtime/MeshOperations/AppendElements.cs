@@ -1448,6 +1448,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     continue;
 
+                //Keep submesh index when rebuilding to maintain material references
+                data.face.submeshIndex = face.submeshIndex;
                 data.face.ShiftIndexes(vertexCount);
                 face.CopyFrom(data.face);
 
