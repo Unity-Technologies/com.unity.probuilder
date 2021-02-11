@@ -65,6 +65,9 @@ namespace UnityEditor.ProBuilder
         static Quaternion s_ShapeRotation = Quaternion.identity;
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
+#if UNITY_2021_1_OR_NEWER
+        public override bool gridSnapEnabled => true;
+#endif
 
         static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
@@ -159,8 +162,16 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(Object obj, SceneView view)
         {
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
-
+#if !UNITY_2021_1_OR_NEWER
+            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
+            using(new EditorGUI.DisabledScope(snapDisabled))
+            {
+                if(snapDisabled)
+                    EditorGUILayout.Toggle("Snapping (only Global)", false);
+                else
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+            }
+#endif
             Editor.CreateCachedEditor(targets.ToArray(), typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))

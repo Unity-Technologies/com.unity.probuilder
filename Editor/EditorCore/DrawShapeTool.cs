@@ -72,6 +72,10 @@ namespace UnityEditor.ProBuilder
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex]; }
         }
 
+#if UNITY_2021_1_OR_NEWER
+        public override bool gridSnapEnabled => true;
+#endif
+
         internal ProBuilderShape currentShapeInOverlay
         {
             get
@@ -369,6 +373,7 @@ namespace UnityEditor.ProBuilder
 
             DrawShapeGUI();
 
+#if !UNITY_2021_1_OR_NEWER
             var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
             using(new EditorGUI.DisabledScope(snapDisabled))
             {
@@ -377,7 +382,7 @@ namespace UnityEditor.ProBuilder
                 else
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             }
-
+#endif
             string foldoutName = "Shape Properties (New Shape)";
             if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Shape Properties (" + m_LastShapeCreated.name + ")";
