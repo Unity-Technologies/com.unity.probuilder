@@ -214,12 +214,14 @@ namespace UnityEditor.ProBuilder
 
             m_SelectedVertices = null;
             m_SelectedEdges = null;
+
+            EditorHandleDrawing.ClearHandles();
         }
 
         /// <summary>
         /// Undo/Redo callback: Reset and recompute lines, and update the targeted face if needed
         /// </summary>
-        private void UndoRedoPerformed()
+        void UndoRedoPerformed()
         {
             if(m_CutPath.Count == 0 && m_Mesh != null)
             {
@@ -233,6 +235,26 @@ namespace UnityEditor.ProBuilder
             m_MeshConnections.Clear();
 
             RebuildCutShape();
+        }
+
+        internal void UpdateTarget()
+        {
+            if(MeshSelection.activeMesh != m_Mesh)
+            {
+                Clear();
+                if(MeshSelection.selectedObjectCount == 1)
+                {
+                    m_Mesh = MeshSelection.activeMesh;
+                    m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                    m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+
+                    if(m_CutPath.Count > 0)
+                    {
+                        m_CutPath.Clear();
+                        m_MeshConnections.Clear();
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -336,15 +358,7 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
                     {
-                        m_Mesh = MeshSelection.activeMesh;
-                        m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
-                        m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
-
-                        if(m_CutPath.Count > 0)
-                        {
-                            m_CutPath.Clear();
-                            m_MeshConnections.Clear();
-                        }
+                        UpdateTarget();
                     }
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
@@ -1314,6 +1328,9 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
             SceneView.RepaintAll();
+
+            if(IsALoop && m_IsCutValid)
+                ExecuteCut();
         }
 
         void ValidateCutShape()
