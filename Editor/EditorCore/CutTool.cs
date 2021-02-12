@@ -658,7 +658,7 @@ namespace UnityEditor.ProBuilder
                 return new ActionResult(ActionResult.Status.Failure, L10n.Tr("The current cut overlaps itself"));
             }
 
-            UndoUtility.RecordObject(m_Mesh, "Do Cut To Mesh");
+            UndoUtility.RecordObject(m_Mesh, "Execute Cut");
 
             List<Vertex> meshVertices = new List<Vertex>();
             m_Mesh.GetVerticesInList(meshVertices);
@@ -688,6 +688,7 @@ namespace UnityEditor.ProBuilder
             if (IsALoop)
             {
                 Face f = m_Mesh.CreatePolygon(cutIndexes, false);
+                f.submeshIndex = m_TargetFace.submeshIndex;
 
                 if(f == null)
                     return new ActionResult(ActionResult.Status.Failure, L10n.Tr("Cut Shape is not valid"));
@@ -793,6 +794,7 @@ namespace UnityEditor.ProBuilder
                      {
                          List<Face> toDelete;
                          Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
+                         newFace.submeshIndex = m_TargetFace.submeshIndex;
 
                          newFaces.Add(newFace);
                          facesToDelete.AddRange(toDelete);
