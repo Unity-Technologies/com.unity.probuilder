@@ -21,25 +21,26 @@ namespace UnityEditor.ProBuilder
         internal ProBuilderShape m_ProBuilderShape;
         internal bool m_IsShapeInit;
 
-        internal GameObject m_DuplicateGO = null;
-        Material m_ShapePreviewMaterial;
-        static readonly Color previewColor = new Color(.5f, .9f, 1f, .56f);
-
         Editor m_ShapeEditor;
 
         // plane of interaction
         internal UnityEngine.Plane m_Plane;
-        internal Vector3 m_PlaneForward;
-        internal Vector3 m_PlaneRight;
+        internal Vector3 m_PlaneForward, m_PlaneRight;
         internal Quaternion m_PlaneRotation;
         internal Vector3 m_BB_Origin, m_BB_OppositeCorner, m_BB_HeightCorner;
 
+        // Shape's duplicate
+        internal GameObject m_DuplicateGO = null;
+        Material m_ShapePreviewMaterial;
+        static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
+
+        //Shape's properties
         internal bool m_IsOnGrid;
 
         internal Bounds m_Bounds;
-        internal static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
+        static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
-        readonly GUIContent k_ShapeTitle = new GUIContent("Create Shape");
+        static readonly GUIContent k_ShapeTitle = new GUIContent("Create Shape");
 
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false);
@@ -123,7 +124,7 @@ namespace UnityEditor.ProBuilder
                 m_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
 
             if (m_ShapePreviewMaterial.HasProperty("_Color"))
-                m_ShapePreviewMaterial.SetColor("_Color", previewColor);
+                m_ShapePreviewMaterial.SetColor("_Color", k_PreviewColor);
         }
 
         void OnDisable()
@@ -167,6 +168,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Init the state machine associated to the tool.
+        /// All states are linked together and initialized.
+        /// </summary>
+        /// <returns>
+        /// Returns the current state of the StateMachine,
+        /// this state machine will self-handle during its lifetime.
+        /// </returns>
         ShapeState InitStateMachine()
         {
             ShapeState.tool = this;
@@ -199,7 +208,7 @@ namespace UnityEditor.ProBuilder
             proBuilderShape.rotation = s_LastRotation.value;
         }
 
-        // Returns a local space point,
+        // Transform the point according to the snapping settings
         public Vector3 GetPoint(Vector3 point, bool useIncrementSnap = false)
         {
             if(useIncrementSnap)
@@ -383,6 +392,7 @@ namespace UnityEditor.ProBuilder
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
+
             string foldoutName = "Shape Properties (New Shape)";
             if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Shape Properties (" + m_LastShapeCreated.name + ")";

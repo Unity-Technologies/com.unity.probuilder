@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
 
         static FaceData[] s_Faces;
 
-        public static FaceData[] Faces
+        public static FaceData[] faces
         {
             get
             {
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 
         //Handle Manipulation
         static int s_CurrentId = -1;
-        static int[] s_OrientationControlIDs = new int[4];
+        static readonly int[] k_OrientationControlIDs = new int[4];
 
         //Size Handle management
         static Vector3 s_StartSize;
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
         static Vector3 s_StartCenter;
         static Vector3 s_TargetSize;
         static Vector3 s_Scaling;
-        static bool s_sizeManipulationInit;
+        static bool s_SizeManipulationInit;
 
         static float s_DefaultMidpointHandleSize = 0.03f;
         static float s_DefaultMidpointSquareSize = 0.15f;
@@ -135,7 +135,7 @@ namespace UnityEditor.ProBuilder
         }
 #endif
 
-        public void OnSelectModeChanged(SelectMode selectMode)
+        void OnSelectModeChanged(SelectMode selectMode)
         {
             if(ToolManager.IsActiveTool(this) && selectMode != SelectMode.Object)
                 ToolManager.RestorePreviousTool();
@@ -156,7 +156,7 @@ namespace UnityEditor.ProBuilder
                 var shape = obj as ProBuilderShape;
 
                 if (shape != null && shape.isEditable)
-                    DoEditingGUI(shape);
+                    DoEditingHandles(shape);
             }
         }
 
@@ -181,7 +181,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static void DoEditingGUI(ProBuilderShape proBuilderShape, bool updatePrefs = false)
+        /// <summary>
+        /// The Editing handles are used to manipulate and resize ProBuilderShapes
+        /// These handles are used in 2 tools : EditShapeTool and DrawShapeTool. In this second tool,
+        /// these handles allow to modified the last created shape.
+        /// </summary>
+        /// <param name="proBuilderShape">The Shape on which to attach the handles</param>
+        /// <param name="updatePrefs">Parameter used to update the DrawShapeTool when needed</param>
+        internal static void DoEditingHandles(ProBuilderShape proBuilderShape, bool updatePrefs = false)
         {
             if(proBuilderShape == null)
                 return;
@@ -193,20 +200,20 @@ namespace UnityEditor.ProBuilder
 
             using (new Handles.DrawingScope(matrix))
             {
-                EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, scale, Faces);
+                EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, scale, faces);
 
                 for(int i = 0; i <4; ++i)
-                    s_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
+                    k_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
                 var absSize = Math.Abs(proBuilderShape.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandlesGUI(proBuilderShape, updatePrefs);
+                    DoOrientationHandles(proBuilderShape, updatePrefs);
 
-                DoSizeHandlesGUI(proBuilderShape, updatePrefs);
+                DoSizeHandles(proBuilderShape, updatePrefs);
             }
         }
 
-        static void DoSizeHandlesGUI(ProBuilderShape proBuilderShape, bool updatePrefs)
+        static void DoSizeHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
         {
             int faceCount = s_Faces.Length;
 
@@ -215,7 +222,7 @@ namespace UnityEditor.ProBuilder
             var is2D = proBuilderShape.shapePrimitive is Plane || proBuilderShape.shapePrimitive is Sprite;
             for(int i = 0; i < faceCount; i++)
             {
-                var face = Faces[i];
+                var face = faces[i];
                 if(is2D && !face.IsValid)
                     continue;
 
@@ -237,12 +244,12 @@ namespace UnityEditor.ProBuilder
                     if(evt.alt)
                         modifier = 2f;
 
-                    if(!s_sizeManipulationInit)
+                    if(!s_SizeManipulationInit)
                     {
                         s_StartCenter = proBuilderShape.transform.position + proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
                         s_StartPosition = face.CenterPosition;
                         s_StartSize = proBuilderShape.size;
-                        s_sizeManipulationInit = true;
+                        s_SizeManipulationInit = true;
 
                         s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
@@ -290,17 +297,17 @@ namespace UnityEditor.ProBuilder
                 return true;
 
             if(GUIUtility.hotControl == 0)
-                s_sizeManipulationInit = false;
+                s_SizeManipulationInit = false;
 
             return false;
         }
 
-        static void DoOrientationHandlesGUI(ProBuilderShape proBuilderShape, bool updatePrefs)
+        static void DoOrientationHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
         {
-            if( GUIUtility.hotControl != 0 && !s_OrientationControlIDs.Contains(GUIUtility.hotControl) )
+            if( GUIUtility.hotControl != 0 && !k_OrientationControlIDs.Contains(GUIUtility.hotControl) )
                 return;
 
-            foreach(var f in Faces)
+            foreach(var f in faces)
             {
                 if(f.IsVisible && EditorShapeUtility.PointerIsInFace(f))
                 {
@@ -327,7 +334,7 @@ namespace UnityEditor.ProBuilder
             switch(evt.type)
             {
                 case EventType.MouseDown:
-                    if ( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
+                    if ( k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
                         s_CurrentId = HandleUtility.nearestControl;
                         GUIUtility.hotControl = s_CurrentId;
@@ -335,7 +342,7 @@ namespace UnityEditor.ProBuilder
                     }
                    break;
                 case EventType.MouseUp:
-                    if (s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
+                    if (k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
@@ -343,9 +350,9 @@ namespace UnityEditor.ProBuilder
                         {
                             //Execute rotation
                             Vector3 targetedNormal = Vector3.zero;
-                            for(int i = 0; i < s_OrientationControlIDs.Length; i++)
+                            for(int i = 0; i < k_OrientationControlIDs.Length; i++)
                             {
-                                if(s_OrientationControlIDs[i] == s_CurrentId)
+                                if(k_OrientationControlIDs[i] == s_CurrentId)
                                 {
                                     targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
                                     break;
@@ -372,7 +379,7 @@ namespace UnityEditor.ProBuilder
                             float dist = HandleUtility.DistanceToRectangle( rectPos,
                                 Quaternion.LookRotation(face.Normal),
                                 HandleUtility.GetHandleSize(face.CenterPosition) * s_DefaultMidpointSquareSize/2f);
-                            HandleUtility.AddControl(s_OrientationControlIDs[i], dist);
+                            HandleUtility.AddControl(k_OrientationControlIDs[i], dist);
                         }
                         break;
                    case EventType.Repaint:
@@ -397,7 +404,7 @@ namespace UnityEditor.ProBuilder
                            s_ArrowsLines[i][1] = top;
                            s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
 
-                           bool selected = HandleUtility.nearestControl == s_OrientationControlIDs[i];
+                           bool selected = HandleUtility.nearestControl == k_OrientationControlIDs[i];
 
                            Color color = selected
                                ? EditorHandleDrawing.edgeSelectedColor
@@ -423,7 +430,7 @@ namespace UnityEditor.ProBuilder
                        }
                         break;
                 case EventType.MouseDrag:
-                    if(s_OrientationControlIDs.Contains(s_CurrentId) && HandleUtility.nearestControl != s_CurrentId)
+                    if(k_OrientationControlIDs.Contains(s_CurrentId) && HandleUtility.nearestControl != s_CurrentId)
                     {
                         GUIUtility.hotControl = 0;
                         s_CurrentId = -1;
@@ -433,7 +440,7 @@ namespace UnityEditor.ProBuilder
              return hasRotated;
         }
 
-        public static void ApplyProperties(ProBuilderShape proBuilderShape, Vector3 newCenterPosition, Vector3 newSize)
+        static void ApplyProperties(ProBuilderShape proBuilderShape, Vector3 newCenterPosition, Vector3 newSize)
         {
             var bounds = new Bounds();
             bounds.center = newCenterPosition;
