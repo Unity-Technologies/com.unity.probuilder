@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.topInternal.Any(x => x.selectedEdgeCount == 2); }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;

@@ -23,13 +23,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="common"></param>
         /// <returns>The new face as referenced on the mesh.</returns>
         internal static Face AppendFace(
-			this ProBuilderMesh mesh, 
-			Vector3[] positions, 
-			Color[] colors, 
+			this ProBuilderMesh mesh,
+			Vector3[] positions,
+			Color[] colors,
 			Vector2[] uv0s,
 			Vector4[] uv2s,
 			Vector4[] uv3s,
-            Face face, 
+            Face face,
 			int[] common)
         {
             if (mesh == null)
@@ -248,8 +248,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="indexes">The indexes of the vertices to join with the new polygon.</param>
-        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)? If indexes are not ordered this function will treat the polygon as a convex shape. Ordered paths will be triangulated allowing concave shapes.</param>
-        /// <returns>The new face created if the action was successfull, null if action failed.</returns>
+        /// <param name="holes">A list of index lists defining holes.</param>
+        /// <returns>The new face created if the action was successful, null if action failed.</returns>
         public static Face CreatePolygonWithHole(this ProBuilderMesh mesh, IList<int> indexes, IList<IList<int>> holes)
         {
             if (mesh == null)
@@ -802,14 +802,21 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 s);
         }
 
+        // backwards compatibility prevents us from just using insertOnEdge as an optional parameter
+        public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
+        {
+            return AppendVerticesToFace(mesh, face, points, true);
+        }
+
         /// <summary>
-        /// Add a set of points to a face and retriangulate. Points are added to the nearest edge.
+        /// Add a set of points to a face and re-triangulate. Points are added to the nearest edge.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to append points to.</param>
         /// <param name="points">Points to added to the face.</param>
+        /// <param name="insertOnEdge">True to force new points to edges.</param>
         /// <returns>The face created by appending the points.</returns>
-        public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points, bool insertOnEdge = true)
+        public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points, bool insertOnEdge)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
@@ -1044,7 +1051,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
                         modifiedFaces.Add(face, data);
 
-
                         //Ordering vertices in the new face
                         List<Vertex> orderedVertices = new List<Vertex>();
                         List<int> orderedSharedIndexes = new List<int>();
@@ -1161,6 +1167,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     continue;
 
+                //Keep submesh index when rebuilding to maintain material references
+                data.face.submeshIndex = face.submeshIndex;
                 data.face.ShiftIndexes(vertexCount);
                 face.CopyFrom(data.face);
 
@@ -1317,12 +1325,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return newFaces;
         }
 
-
         /// <summary>
         /// Insert a number of new points to each edge. Points are evenly spaced out along the edge.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="edge">The edge on which adding the point.</param>
+        /// <param name="originalEdge">The edge on which adding the point.</param>
         /// <param name="point">The point to insert on the edge.</param>
         /// <returns>The new edges created by the point insertion.</returns>//
         public static Vertex InsertVertexOnEdge(this ProBuilderMesh mesh, Edge originalEdge, Vector3 point)
@@ -1441,6 +1448,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     continue;
 
+                //Keep submesh index when rebuilding to maintain material references
+                data.face.submeshIndex = face.submeshIndex;
                 data.face.ShiftIndexes(vertexCount);
                 face.CopyFrom(data.face);
 
@@ -1472,8 +1481,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Add a point to a face.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="face">The face to append points to.</param>
         /// <param name="point">Point to added to the face.</param>
+        /// <param name="normal">The inserted point normal.</param>
         /// <returns>The face created by appending the points.</returns>
         public static Vertex InsertVertexInMesh(this ProBuilderMesh mesh, Vector3 point, Vector3 normal)
         {

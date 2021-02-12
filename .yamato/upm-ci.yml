@@ -1,6 +1,7 @@
 test_editors:
   - version: 2019.4
   - version: 2020.1
+  - version: 2020.2
   - version: trunk
 test_platforms:
   - name: win
@@ -72,7 +73,7 @@ publish:
   triggers:
     tags:
       only:
-        - /^(r|R)(c|C)-\d+\.\d+\.\d+(-preview(\.\d+)?)?$/
+        - /^(r|R)(c|C)-\d+\.\d+\.\d+(-pre(\.\d+)?)?$/
   artifacts:
     artifacts:
       paths:

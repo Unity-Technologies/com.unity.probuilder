@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace UnityEngine.ProBuilder
@@ -312,8 +313,8 @@ namespace UnityEngine.ProBuilder
         {
             // float dot;               // vars used in loop
             float hitDistance = Mathf.Infinity;
-            Vector3 hitNormal = new Vector3(0f, 0f, 0f);    // vars used in loop
-            Vector3 a, b, c;
+            Vector3 hitNormal = Vector3.zero;    // vars used in loop
+            Vector3 a, b, c, n = Vector3.zero;
             int hitFace = -1;
             Vector3 o = InRay.origin, d = InRay.direction;
 
@@ -324,11 +325,14 @@ namespace UnityEngine.ProBuilder
                 b = mesh[triangles[CurTri + 1]];
                 c = mesh[triangles[CurTri + 2]];
 
-                if (Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref hitNormal))
+                if (Math.RayIntersectsTriangle2(o, d, a, b, c, ref distance, ref n))
                 {
-                    hitFace = CurTri / 3;
-                    hitDistance = distance;
-                    break;
+                    if(distance < hitDistance)
+                    {
+                        hitFace = CurTri / 3;
+                        hitDistance = distance;
+                        hitNormal = n;
+                    }
                 }
             }
 

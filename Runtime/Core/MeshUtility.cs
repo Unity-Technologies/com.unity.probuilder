@@ -510,7 +510,9 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            if (vertices == null)
+            bool hasCollapsedVertices = vertices != null;
+
+            if(vertices == null)
                 vertices = mesh.GetVertices();
 
             int smc = mesh.subMeshCount;
@@ -544,10 +546,49 @@ namespace UnityEngine.ProBuilder
             }
 
             Vertex[] collapsed = subVertices.SelectMany(x => x.Keys).ToArray();
-            Vertex.SetMesh(mesh, collapsed);
-            mesh.subMeshCount = smc;
-            for (int i = 0; i < smc; i++)
-                mesh.SetTriangles(tris[i], i);
+            //Check if new vertices have been collapsed
+            hasCollapsedVertices |= (collapsed.Length != vertices.Length);
+            if(hasCollapsedVertices)
+            {
+                Vertex.SetMesh(mesh, collapsed);
+                mesh.subMeshCount = smc;
+                for(int i = 0; i < smc; i++)
+                    mesh.SetTriangles(tris[i], i);
+            }
+        }
+
+        /// <summary>
+        /// Scale mesh vertices to fit within a bounds size.
+        /// </summary>
+        /// <param name="mesh">The mesh to apply scaling to.</param>
+        /// <param name="currentSize">The bounding size of the original shape we want to fit.</param>
+        /// <param name="sizeToFit">The size to fit mesh contents within.</param>
+        public static void FitToSize(ProBuilderMesh mesh, Bounds currentSize, Vector3 sizeToFit)
+        {
+            if (mesh.vertexCount < 1)
+                return;
+
+            var scale = Math.Abs(sizeToFit).DivideBy(currentSize.size);
+            if (scale == Vector3.one || scale == Vector3.zero)
+                return;
+
+            var positions = mesh.positionsInternal;
+
+            if (System.Math.Abs(currentSize.size.x) < 0.001f)
+                scale.x = 0;
+            if (System.Math.Abs(currentSize.size.y) < 0.001f)
+                scale.y = 0;
+            if (System.Math.Abs(currentSize.size.z) < 0.001f)
+                scale.z = 0;
+
+            for (int i = 0, c = mesh.vertexCount; i < c; i++)
+            {
+                positions[i] -= currentSize.center;
+                positions[i].Scale(scale);
+                positions[i] += currentSize.center;
+            }
+
+            mesh.Rebuild();
         }
 
         internal static string SanityCheck(ProBuilderMesh mesh)
@@ -589,8 +630,37 @@ namespace UnityEngine.ProBuilder
 
                 sb.AppendFormat("vertex {0} contains invalid values:\n{1}\n\n", i, vertex.ToString());
             }
-
             return sb.ToString();
         }
+
+        internal static bool IsUsedInParticuleSystem(ProBuilderMesh pbmesh)
+        {
+#if USING_PARTICLE_SYSTEM
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                if(shapeModule.meshRenderer == pbmesh.renderer)
+                {
+                    shapeModule.meshRenderer = null;
+                    return true;
+                }
+            }
+#endif
+            return false;
+        }
+
+        internal static void RestoreParticuleSystem(ProBuilderMesh pbmesh)
+        {
+#if USING_PARTICLE_SYSTEM
+            ParticleSystem pSys;
+            if(pbmesh.TryGetComponent(out pSys))
+            {
+                var shapeModule = pSys.shape;
+                shapeModule.meshRenderer = pbmesh.renderer;
+            }
+#endif
+        }
+
     }
 }

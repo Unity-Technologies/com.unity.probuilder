@@ -85,6 +85,12 @@ namespace UnityEditor.ProBuilder
 
         Color m_CurrentHandleColor = k_HandleColor;
 
+        GUIContent m_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get { return m_IconContent; }
+        }
+
         //Handles and point placement
         int m_ControlId;
         bool m_PlacingPoint;
@@ -143,6 +149,13 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
+            m_IconContent = new GUIContent()
+            {
+                image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                text = "Create PolyShape",
+                tooltip = "Create PolyShape"
+            };
+
             s_HandleColorUseExistingVertex = Handles.selectedColor;
             s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
@@ -645,7 +658,7 @@ namespace UnityEditor.ProBuilder
                 return new ActionResult(ActionResult.Status.Failure, L10n.Tr("The current cut overlaps itself"));
             }
 
-            UndoUtility.RecordObject(m_Mesh, "Do Cut To Mesh");
+            UndoUtility.RecordObject(m_Mesh, "Execute Cut");
 
             List<Vertex> meshVertices = new List<Vertex>();
             m_Mesh.GetVerticesInList(meshVertices);
@@ -675,6 +688,7 @@ namespace UnityEditor.ProBuilder
             if (IsALoop)
             {
                 Face f = m_Mesh.CreatePolygon(cutIndexes, false);
+                f.submeshIndex = m_TargetFace.submeshIndex;
 
                 if(f == null)
                     return new ActionResult(ActionResult.Status.Failure, L10n.Tr("Cut Shape is not valid"));
@@ -780,6 +794,7 @@ namespace UnityEditor.ProBuilder
                      {
                          List<Face> toDelete;
                          Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
+                         newFace.submeshIndex = m_TargetFace.submeshIndex;
 
                          newFaces.Add(newFace);
                          facesToDelete.AddRange(toDelete);

@@ -190,7 +190,6 @@ namespace UnityEditor.ProBuilder
             set
             {
                 toolManager?.SetSelectMode(value);
-                Refresh();
             }
         }
 
@@ -319,8 +318,10 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged()
         {
+            Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
+            Repaint();
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -367,11 +368,8 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if (instance != null)
-            {
+            if(instance != null)
                 instance.UpdateSelection(vertexCountChanged);
-                SceneView.RepaintAll();
-            }
         }
 
         void OnGUI()
@@ -497,6 +495,7 @@ namespace UnityEditor.ProBuilder
                     SceneView.RepaintAll();
                 }
             }
+
             m_wasSelectingPath = pathSelectionModifier;
 
             if (Tools.current == Tool.View)
@@ -609,7 +608,6 @@ namespace UnityEditor.ProBuilder
 
                         EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
                         UpdateSelection();
-                        SceneView.RepaintAll();
                     }
                     else
                     {
@@ -676,7 +674,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DeselectAll()
@@ -713,7 +710,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void InvertSelection()
@@ -780,7 +776,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DoubleClick(Event e)
@@ -792,9 +787,9 @@ namespace UnityEditor.ProBuilder
                 if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                 {
                     if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().PerformAction());
                     else
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().PerformAction());
                 }
                 else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                 {
@@ -802,9 +797,9 @@ namespace UnityEditor.ProBuilder
                         (EventModifiers.Control | EventModifiers.Shift))
                         Actions.SelectFaceRing.MenuRingAndLoopFaces(MeshSelection.topInternal);
                     else if (e.control)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().PerformAction());
                     else if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().PerformAction());
                     else
                         mesh.SetSelectedFaces(mesh.facesInternal);
                 }
@@ -814,7 +809,6 @@ namespace UnityEditor.ProBuilder
                 }
 
                 UpdateSelection();
-                SceneView.RepaintAll();
                 m_WasDoubleClick = true;
             }
         }
@@ -928,7 +922,7 @@ namespace UnityEditor.ProBuilder
             if (selectionUpdated != null)
                 selectionUpdated(selection);
 
-            Repaint();
+            SceneView.RepaintAll();
         }
 
         internal static void UpdateMeshHandles(bool selectionOrVertexCountChanged = true)
@@ -974,6 +968,7 @@ namespace UnityEditor.ProBuilder
             m_Hovering.Clear();
             UpdateSelection();
             SetOverrideWireframe(true);
+            Repaint();
         }
 
         /// <summary>

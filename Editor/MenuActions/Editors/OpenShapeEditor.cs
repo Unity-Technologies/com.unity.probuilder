@@ -1,12 +1,17 @@
+﻿using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
+#if UNITY_2020_2_OR_NEWER
+using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
+using ToolManager = UnityEditor.EditorTools.ToolManager;
+#else
+using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
+using ToolManager = UnityEditor.EditorTools.EditorTools;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class OpenShapeEditor : MenuAction
+    sealed class OpenShapeEditor : MenuToolToggle
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
@@ -22,25 +27,72 @@ namespace UnityEditor.ProBuilder.Actions
                 keyCommandSuper, keyCommandShift, 'K'
             );
 
-        public override bool enabled
-        {
+        public override bool enabled {
             get { return true; }
         }
 
-        protected override MenuActionState optionsMenuState
+        bool m_revertSelectModeOnQuit = true;
+
+        protected override ActionResult PerformActionImplementation()
         {
-            get { return MenuActionState.VisibleAndEnabled; }
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            MeshSelection.SetSelection((GameObject)null);
+
+            m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
+            ToolManager.SetActiveTool(m_Tool);
+
+            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Draw Shape Tool");
+
+            MenuAction.onPerformAction += ActionPerformed;
+            ToolManager.activeToolChanging += LeaveTool;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            m_revertSelectModeOnQuit = true;
+
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
         }
 
-        public override ActionResult DoAction()
+        internal override ActionResult EndActivation()
         {
-            ShapeEditor.CreateActiveShape();
-            return new ActionResult(ActionResult.Status.Success, "Create Shape");
+            MenuAction.onPerformAction -= ActionPerformed;
+            ToolManager.activeToolChanging -= LeaveTool;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            Object.DestroyImmediate(m_Tool);
+
+            if(m_revertSelectModeOnQuit)
+                EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
+
+            ProBuilderEditor.instance.Repaint();
+
+            SceneView.RepaintAll();
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
         }
 
-        protected override void DoAlternateAction()
+        void ActionPerformed(MenuAction newActionPerformed)
         {
-            ShapeEditor.MenuOpenShapeCreator();
+            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
+                LeaveTool();
         }
+
+        void OnSelectModeChanged(SelectMode obj)
+        {
+            m_revertSelectModeOnQuit = false;
+            LeaveTool();
+        }
+
+        void LeaveTool()
+        {
+            ActionResult result = EndActivation();
+            EditorUtility.ShowNotification(result.notification);
+        }
+
+        static void CheckForSelectModeAfterToolQuit()
+        {
+            var toolType = EditorToolUtility.GetEnumWithEditorTool(EditorToolManager.activeTool);
+            if(toolType != UnityEditor.Tool.Custom && toolType != UnityEditor.Tool.None)
+                ProBuilderEditor.ResetToLastSelectMode();
+        }
+
     }
 }

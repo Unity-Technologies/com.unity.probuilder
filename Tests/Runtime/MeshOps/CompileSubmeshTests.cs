@@ -3,6 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder.Tests.Framework;
 
@@ -11,7 +12,7 @@ static class CompileSubmeshTests
     [Test]
     public static void MeshWithTwoMaterials_CreatesTwoSubmeshes()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
         mesh.renderer.sharedMaterials = new Material[2];
 
         Assert.AreEqual(1, mesh.mesh.subMeshCount);
@@ -26,7 +27,7 @@ static class CompileSubmeshTests
     [Test]
     public static void GetSubmeshes_DoesNot_ExceedMaterialCount()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.facesInternal[0].submeshIndex = 1;
         mesh.facesInternal[1].submeshIndex = 2;
@@ -50,7 +51,7 @@ static class CompileSubmeshTests
     [Test]
     public static void InvalidSubmeshIndex_CreatesValidMesh()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.renderer.sharedMaterials = new Material[2]
         {
@@ -73,7 +74,7 @@ static class CompileSubmeshTests
     [Test]
     public static void SubmeshIndexes_AreMappedToCorrectMaterial()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.renderer.sharedMaterials = new Material[2]
         {
@@ -100,7 +101,7 @@ static class CompileSubmeshTests
     [Test]
     public static void SubmeshIndexes_AreClamped()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.renderer.sharedMaterials = new Material[3]
         {
@@ -138,7 +139,7 @@ static class CompileSubmeshTests
     [Test]
     public static void Materials_AreCondensedToSmallestRepresentation()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
         mesh.renderer.sharedMaterials = new Material[3];
 
         mesh.facesInternal[0].submeshIndex = 0;
@@ -160,7 +161,7 @@ static class CompileSubmeshTests
     [Test]
     public static void FaceMaterialProperty_UpgradesCorrectly()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
         var meshFormat = typeof(ProBuilderMesh).GetField("m_MeshFormatVersion", BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(meshFormat);
         meshFormat.SetValue(mesh, -1);

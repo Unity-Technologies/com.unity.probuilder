@@ -58,6 +58,8 @@ namespace UnityEditor.ProBuilder
                 bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 #endif
 
+                var usedInParticuleSystem = UnityEngine.ProBuilder.MeshUtility.IsUsedInParticuleSystem(mesh);
+
                 // if generating UV2, the process is to manually split the mesh into individual triangles,
                 // generate uv2, then re-assemble with vertex collapsing where possible.
                 // if not generating uv2, just collapse vertices.
@@ -91,6 +93,9 @@ namespace UnityEditor.ProBuilder
                 {
                     UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh);
                 }
+
+                if(usedInParticuleSystem)
+                    UnityEngine.ProBuilder.MeshUtility.RestoreParticuleSystem(mesh);
             }
 
             if (s_AutoResizeCollisions)
@@ -150,7 +155,7 @@ namespace UnityEditor.ProBuilder
 
                             // also set the MeshCollider if it exists
                             pb.Refresh(RefreshMask.Collisions);
-                            
+
                             return;
                         }
                         else

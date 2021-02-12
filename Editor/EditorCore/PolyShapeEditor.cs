@@ -27,12 +27,7 @@ namespace UnityEditor.ProBuilder
                  {
                      if(GUILayout.Button("Edit Poly Shape"))
                      {
-                         ProBuilderEditor.selectMode = SelectMode.Object;
-                         polygon.polyEditMode = PolyShape.PolyEditMode.Edit;
-                         PolyShapeTool tool = ScriptableObject.CreateInstance<PolyShapeTool>();
-                         tool.polygon = polygon;
-                         ToolManager.SetActiveTool(tool);
-                         Undo.RegisterCreatedObjectUndo(tool, "Open Cut Tool");
+                         ToolManager.SetActiveTool<PolyShapeTool>();
                      }
 
                      EditorGUILayout.HelpBox(

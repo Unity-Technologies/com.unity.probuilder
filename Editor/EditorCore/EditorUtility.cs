@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
 
         [UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
-        static Pref<PivotLocation> s_NewShapesPivotAtVertex = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstVertex);
+        static Pref<PivotLocation> s_NewShapesPivotAtCenter = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.Center);
 
         [UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
         static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
 
         internal static PivotLocation newShapePivotLocation
         {
-            get { return s_NewShapesPivotAtVertex; }
+            get { return s_NewShapesPivotAtCenter; }
         }
 
         /// <value>
@@ -190,8 +190,10 @@ namespace UnityEditor.ProBuilder
 
                 if (state == MeshSyncState.Null)
                 {
+                    var versionID = mesh.versionID;
                     mesh.Rebuild();
                     mesh.Optimize();
+                    mesh.versionID = versionID;
                 }
                 else
                 // If the mesh ID doesn't match the gameObject Id, it could mean two things:
@@ -299,7 +301,6 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
 #endif
-
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
 
