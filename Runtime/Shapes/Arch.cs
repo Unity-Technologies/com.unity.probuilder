@@ -182,7 +182,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        static GUIContent m_Content = new GUIContent();
+        static readonly GUIContent k_ThicknessContent = new GUIContent("Thickness", L10n.Tr("Thickness of the arch borders. Larger value creates a smaller opening."));
+        static readonly GUIContent k_SidesContent = new GUIContent("Sides Count", L10n.Tr("Number of sides of the arch."));
+        static readonly GUIContent k_CircumferenceContent = new GUIContent("Arch Circumference", L10n.Tr("Circumference of the arch in degrees."));
+        static readonly GUIContent k_EndCapsContent = new GUIContent("End Caps", L10n.Tr("Whether to generate faces for the ends of the arch."));
+        static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the arch."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -194,16 +198,11 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Thickness";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), m_Content);
-                m_Content.text = "Sides Count";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
-                m_Content.text = "Arch Circumference";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_ArchDegrees"), m_Content);
-                m_Content.text = "End Caps";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_EndCaps"), m_Content);
-                m_Content.text = "Smooth";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), k_ThicknessContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), k_SidesContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_ArchDegrees"), k_CircumferenceContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_EndCaps"), k_EndCapsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), k_SmoothContent);
             }
 
             EditorGUI.indentLevel--;

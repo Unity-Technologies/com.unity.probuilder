@@ -521,7 +521,7 @@ namespace UnityEngine.ProBuilder.Shapes
         const bool k_ToggleOnLabelClick = true;
 
         static readonly GUIContent k_StepGenerationContent = new GUIContent("Steps Generation", L10n.Tr("Whether to generate steps using the number of steps or by step height."));
-        static readonly GUIContent k_StepsCountContent = new GUIContent("Steps Count", L10n.Tr("Number of steps in the stair."));
+        static readonly GUIContent k_StepsCountContent = new GUIContent("Steps Count", L10n.Tr("Number of steps of the stair."));
         static readonly GUIContent k_StepsHeightContent = new GUIContent("Steps Height", L10n.Tr("Height of each step of the generated stairs."));
         static readonly GUIContent k_HomogeneousStepsContent = new GUIContent("Homogeneous Steps", L10n.Tr("Whether to round the step height to create homogenous steps."));
         static readonly GUIContent k_CircumferenceContent = new GUIContent("Circumference", L10n.Tr("Circumference of the stairs. Use a negative number to rotate in the opposite direction."));
@@ -545,14 +545,11 @@ namespace UnityEngine.ProBuilder.Shapes
                     typeProperty.intValue = (int)typeEnum;
 
                 if(typeEnum == StepGenerationType.Count)
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"),
-                        k_StepsCountContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsCount"), k_StepsCountContent);
                 else
                 {
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"),
-                        k_StepsHeightContent);
-                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"),
-                        k_HomogeneousStepsContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_StepsHeight"), k_StepsHeightContent);
+                    EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), k_HomogeneousStepsContent);
                 }
 
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), k_CircumferenceContent);

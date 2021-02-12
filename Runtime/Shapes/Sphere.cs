@@ -191,7 +191,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        readonly GUIContent m_Content = new GUIContent("");
+        static readonly GUIContent k_SubdivisionsContent = new GUIContent("Subdivisions", L10n.Tr("Number of time each triangle of the basic sphere is divided."));
+        static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the sphere."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -203,10 +204,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Subdivisions";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), m_Content);
-                m_Content.text = "Smooth";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Subdivisions"), k_SubdivisionsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), k_SmoothContent);
             }
 
             EditorGUI.indentLevel--;

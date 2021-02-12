@@ -140,7 +140,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        static GUIContent m_Content = new GUIContent();
+        static readonly GUIContent k_HeightContent = new GUIContent("Pediment Height", L10n.Tr("Set the height of the door's top."));
+        static readonly GUIContent k_SideContent = new GUIContent("Side Width", L10n.Tr("Set the width of the door's sides."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -152,10 +153,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Pediment Height";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_DoorHeight"), m_Content);
-                m_Content.text = "Side Width";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_LegWidth"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_DoorHeight"), k_HeightContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_LegWidth"), k_SideContent);
             }
 
             EditorGUI.indentLevel--;

@@ -184,7 +184,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        static GUIContent m_Content = new GUIContent();
+        static readonly GUIContent k_RowsContent = new GUIContent("Rows", L10n.Tr("Set the number of faces used to define the tube's circumference."));
+        static readonly GUIContent k_ColumnsContent = new GUIContent("Columns", L10n.Tr("Set the number of faces used to define the torus's circumference / tube's length."));
+        static readonly GUIContent k_RadiusContent = new GUIContent("Tube Radius", L10n.Tr("Set the tube's radius."));
+        static readonly GUIContent k_HorCircumferenceContent = new GUIContent("Hor. Circ.", L10n.Tr("Circumference of the torus in degrees."));
+        static readonly GUIContent k_VertCircumferenceContent = new GUIContent("Vert. Circ.", L10n.Tr("Circumference of the torus' inner pipe in degrees."));
+        static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the torus."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -196,18 +201,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Rows";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Rows"), m_Content);
-                m_Content.text = "Columns";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Columns"), m_Content);
-                m_Content.text = "Tube Radius";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_TubeRadius"), m_Content);
-                m_Content.text = "Horizontal Circumference";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HorizontalCircumference"), m_Content);
-                m_Content.text = "Vertical Circumference";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_VerticalCircumference"), m_Content);
-                m_Content.text = "Smooth";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_TubeRadius"), k_RadiusContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Rows"), k_RowsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Columns"), k_ColumnsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HorizontalCircumference"), k_HorCircumferenceContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_VerticalCircumference"), k_VertCircumferenceContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), k_SmoothContent);
             }
 
             EditorGUI.indentLevel--;

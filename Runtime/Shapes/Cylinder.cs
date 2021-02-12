@@ -178,7 +178,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        static GUIContent m_Content = new GUIContent();
+        static readonly GUIContent k_SidesContent = new GUIContent("Sides Count", L10n.Tr("Number of sides of the cylinder."));
+        static readonly GUIContent k_HeightCutsContent = new GUIContent("Height Cuts", L10n.Tr("Number of divisions in the cylinder height."));
+        static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the cylinder."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -190,12 +192,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Sides Count";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), m_Content);
-                m_Content.text = "Height Cuts";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
-                m_Content.text = "Smooth";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_AxisDivisions"), k_SidesContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), k_HeightCutsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), k_SmoothContent);
             }
 
             EditorGUI.indentLevel--;
