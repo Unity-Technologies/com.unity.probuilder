@@ -145,7 +145,7 @@ namespace UnityEngine.ProBuilder.Shapes
             || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            m_ShapeBox = m_ShapePrimitive.RebuildMesh(mesh, size, rotation);
+            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
             RebuildPivot(mesh, size, rotation);
 
             Bounds bounds = m_ShapeBox;
@@ -159,8 +159,8 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             m_PivotLocation = location;
 
-            m_ShapePrimitive = shape;
-            if(m_ShapePrimitive is Plane || m_ShapePrimitive is Sprite)
+            m_Shape = shape;
+            if(m_Shape is Plane || m_Shape is Sprite)
             {
                 Bounds bounds = m_ShapeBox;
                 var newCenter = bounds.center;
@@ -208,7 +208,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
                 mesh.SetPivot(bbCenter);
                 m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
-                m_ShapeBox = m_ShapePrimitive.UpdateBounds(mesh, size, rotation, m_ShapeBox);
+                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
             }
         }
 
@@ -221,7 +221,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 mesh.SetPivot(m_PivotLocation, pivotWorldPos);
                 m_ShapeBox.center = mesh.transform.InverseTransformPoint(bbCenter);
                 m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
-                m_ShapeBox = m_ShapePrimitive.UpdateBounds(mesh, size, rotation, m_ShapeBox);
+                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
             }
         }
     }

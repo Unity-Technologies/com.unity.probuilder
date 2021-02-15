@@ -61,7 +61,7 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_ShapeProperty = serializedObject.FindProperty("m_ShapePrimitive");
+            m_ShapeProperty = serializedObject.FindProperty("m_Shape");
             m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
             m_ShapeSizeXProperty = serializedObject.FindProperty("m_Size.x");
             m_ShapeSizeYProperty = serializedObject.FindProperty("m_Size.y");
