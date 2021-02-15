@@ -527,7 +527,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal void AddCurrentPositionToPath()
+        internal void AddCurrentPositionToPath(bool optimize = true)
         {
             UndoUtility.RecordObject(this, "Add Vertex On Path");
 
@@ -544,7 +544,7 @@ namespace UnityEditor.ProBuilder
             m_PlacingPoint = true;
             m_SelectedIndex = m_CutPath.Count - 1;
 
-            RebuildCutShape();
+            RebuildCutShape(optimize);
         }
 
         /// <summary>
@@ -1334,7 +1334,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Rebuild the line mesh when updated
         /// </summary>
-        void RebuildCutShape()
+        void RebuildCutShape(bool optimize = true)
         {
             // If Undo is called immediately after creation this situation can occur
             if (m_Mesh == null)
@@ -1347,10 +1347,11 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
             SceneView.RepaintAll();
-            m_Dirty = false;
 
-            if(isALoop && m_IsCutValid)
+            if(optimize && isALoop && m_IsCutValid)
                 ExecuteCut();
+
+            m_Dirty = false;
         }
 
         void ValidateCutShape()
