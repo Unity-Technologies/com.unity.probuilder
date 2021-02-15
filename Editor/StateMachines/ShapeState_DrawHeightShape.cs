@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
                 || (tool.m_ProBuilderShape.shapePrimitive is UnityEngine.ProBuilder.Shapes.Sprite))
             {
                 //Skip Height definition for plane
-                return NextState();
+                return ValidateShape();
             }
 
             if(evt.type == EventType.KeyDown)
