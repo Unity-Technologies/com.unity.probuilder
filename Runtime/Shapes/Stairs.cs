@@ -8,8 +8,8 @@ namespace UnityEngine.ProBuilder.Shapes
         Count
     }
 
-    [ShapePrimitive("Stairs")]
-    public class Stairs : ShapePrimitive
+    [Shape("Stairs")]
+    public class Stairs : Shape
     {
         [SerializeField]
         StepGenerationType m_StepGenerationType = StepGenerationType.Count;
@@ -38,11 +38,11 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Stairs)
+            if(shape is Stairs)
             {
-                Stairs stairs = (Stairs) shapePrimitive;
+                Stairs stairs = (Stairs) shape;
                 m_StepGenerationType = stairs.m_StepGenerationType;
                 m_StepsHeight = stairs.m_StepsHeight;
                 m_StepsCount = stairs.m_StepsCount;

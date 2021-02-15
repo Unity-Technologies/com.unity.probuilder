@@ -197,7 +197,7 @@ namespace UnityEditor.ProBuilder
             s_LastSize.value = proBuilderShape.size;
             s_LastRotation.value = proBuilderShape.rotation;
 
-            EditorShapeUtility.SaveParams(proBuilderShape.shapePrimitive);
+            EditorShapeUtility.SaveParams(proBuilderShape.shape);
         }
 
         internal static void ApplyPrefsSettings(ProBuilderShape proBuilderShape)
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
             else
                 proBuilderShape = m_DuplicateGO.GetComponent<ProBuilderShape>();
 
-            EditorShapeUtility.CopyLastParams(proBuilderShape.shapePrimitive, proBuilderShape.shapePrimitive.GetType());
+            EditorShapeUtility.CopyLastParams(proBuilderShape.shape, proBuilderShape.shape.GetType());
             proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
         }
@@ -324,7 +324,7 @@ namespace UnityEditor.ProBuilder
             if (!m_IsShapeInit)
             {
                 var shapeComponent = currentShapeInOverlay;
-                EditorShapeUtility.CopyLastParams(shapeComponent.shapePrimitive, shapeComponent.shapePrimitive.GetType());
+                EditorShapeUtility.CopyLastParams(shapeComponent.shape, shapeComponent.shape.GetType());
                 shapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
                 shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
                 UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
@@ -413,7 +413,7 @@ namespace UnityEditor.ProBuilder
 
             EditorGUILayout.LabelField(EditorShapeUtility.shapeTypes[s_ActiveShapeIndex.value], m_BoldCenteredStyle, GUILayout.ExpandWidth(true));
 
-            var shape = currentShapeInOverlay.shapePrimitive;
+            var shape = currentShapeInOverlay.shape;
 
             int groupCount = EditorShapeUtility.shapeTypesGUI.Count;
             for(int i = 0; i < groupCount; i++)

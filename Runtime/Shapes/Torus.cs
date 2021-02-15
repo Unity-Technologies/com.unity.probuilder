@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Torus")]
-    public class Torus : ShapePrimitive
+    [Shape("Torus")]
+    public class Torus : Shape
     {
         [Range(3, 64)]
         [SerializeField]
@@ -29,11 +29,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Torus)
+            if(shape is Torus)
             {
-                Torus torus = (Torus) shapePrimitive;
+                Torus torus = (Torus) shape;
                 m_Rows = torus.m_Rows;
                 m_Columns = torus.m_Columns;
                 m_TubeRadius = torus.m_TubeRadius;

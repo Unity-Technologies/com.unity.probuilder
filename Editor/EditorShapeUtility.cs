@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 {
     internal static class EditorShapeUtility
     {
-        static Dictionary<string, ShapePrimitive> s_Prefs = new Dictionary<string, ShapePrimitive>();
+        static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
 
         static Type[] s_AvailableShapeTypes = null;
 
@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
             get
             {
                 if(s_AvailableShapeTypes == null)
-                    s_AvailableShapeTypes = TypeCache.GetTypesWithAttribute<ShapePrimitiveAttribute>().Where(t => t.BaseType == typeof(ShapePrimitive)).ToArray();
+                    s_AvailableShapeTypes = TypeCache.GetTypesWithAttribute<ShapeAttribute>().Where(t => t.BaseType == typeof(Shape)).ToArray();
                 return s_AvailableShapeTypes;
             }
         }
@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
             get
             {
                 if( s_ShapeTypes == null)
-                    s_ShapeTypes = availableShapeTypes.Select(x => ((ShapePrimitiveAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapePrimitiveAttribute))).name)
+                    s_ShapeTypes = availableShapeTypes.Select(x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name)
                         .ToArray();
                 return s_ShapeTypes;
             }
@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder
                 if(s_ShapeTypesGUILists == null)
                 {
                     s_ShapeTypesGUILists = new List<GUIContent[]>();
-                    string[] shapeTypeNames = availableShapeTypes.Select(x => ((ShapePrimitiveAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapePrimitiveAttribute))).name).ToArray();
+                    string[] shapeTypeNames = availableShapeTypes.Select(x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name).ToArray();
                     GUIContent[] shapeTypesGUI = null;
 
                     int i;
@@ -85,22 +85,22 @@ namespace UnityEditor.ProBuilder
 
         static EditorShapeUtility()
         {
-            var types = TypeCache.GetTypesDerivedFrom<ShapePrimitive>();
+            var types = TypeCache.GetTypesDerivedFrom<Shape>();
 
             foreach (var type in types)
             {
-                if (typeof(ShapePrimitive).IsAssignableFrom(type) && !type.IsAbstract)
+                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     var name = "ShapeBuilder." + type.Name;
-                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (ShapePrimitive)Activator.CreateInstance(type));
+                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape)Activator.CreateInstance(type));
                     if(pref == null)
-                        pref = (ShapePrimitive) Activator.CreateInstance(type);
+                        pref = (Shape) Activator.CreateInstance(type);
                     s_Prefs.Add(name, pref);
                 }
             }
         }
 
-        public static void SaveParams<T>(T shape) where T : ShapePrimitive
+        public static void SaveParams<T>(T shape) where T : Shape
         {
             var name = "ShapeBuilder." + shape.GetType().Name;
             if (s_Prefs.TryGetValue(name, out var data))
@@ -111,18 +111,18 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static void CopyLastParams(ShapePrimitive shapePrimitive, Type type)
+        public static void CopyLastParams(Shape shape, Type type)
         {
-            if (!typeof(ShapePrimitive).IsAssignableFrom(type))
+            if (!typeof(Shape).IsAssignableFrom(type))
             {
                 throw new ArgumentException(nameof(type));
             }
 
-            if(shapePrimitive == null)
+            if(shape == null)
             {
                 try
                 {
-                    shapePrimitive = Activator.CreateInstance(type) as ShapePrimitive;
+                    shape = Activator.CreateInstance(type) as Shape;
                 }
                 catch
                 {
@@ -135,28 +135,28 @@ namespace UnityEditor.ProBuilder
             if (s_Prefs.TryGetValue(name, out var data))
             {
                 if (data != null)
-                    shapePrimitive.CopyShape(data);
+                    shape.CopyShape(data);
             }
         }
 
-        public static ShapePrimitive CreateShape(Type type)
+        public static Shape CreateShape(Type type)
         {
-            ShapePrimitive shapePrimitive = null;
+            Shape shape = null;
             try
             {
-                shapePrimitive = Activator.CreateInstance(type) as ShapePrimitive;
+                shape = Activator.CreateInstance(type) as Shape;
             }
             catch
             {
                 Debug.LogError($"Cannot create shape of type { type.ToString() } because it doesn't have a default constructor.");
             }
 
-            if(shapePrimitive == null)
+            if(shape == null)
                 return null;
 
-            CopyLastParams(shapePrimitive, type);
+            CopyLastParams(shape, type);
 
-            return shapePrimitive;
+            return shape;
         }
 
         public sealed class FaceData

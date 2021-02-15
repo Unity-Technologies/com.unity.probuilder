@@ -219,7 +219,7 @@ namespace UnityEditor.ProBuilder
 
             var evt = Event.current;
 
-            var is2D = proBuilderShape.shapePrimitive is Plane || proBuilderShape.shapePrimitive is Sprite;
+            var is2D = proBuilderShape.shape is Plane || proBuilderShape.shape is Sprite;
             for(int i = 0; i < faceCount; i++)
             {
                 var face = faces[i];

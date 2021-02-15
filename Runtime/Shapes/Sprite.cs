@@ -2,10 +2,10 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Sprite")]
-    public class Sprite : ShapePrimitive
+    [Shape("Sprite")]
+    public class Sprite : Shape
     {
-        public override void CopyShape(ShapePrimitive shapePrimitive) {}
+        public override void CopyShape(Shape shape) {}
 
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {

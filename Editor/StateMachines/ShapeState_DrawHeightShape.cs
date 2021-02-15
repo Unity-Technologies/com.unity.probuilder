@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder
             //Finish initializing object and collider once it's completed
             EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
 
-            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shapePrimitive.GetType());
+            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shape.GetType());
 
             DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
 
@@ -32,8 +32,8 @@ namespace UnityEditor.ProBuilder
 
         public override ShapeState DoState(Event evt)
         {
-            if((tool.m_ProBuilderShape.shapePrimitive is Plane)
-                || (tool.m_ProBuilderShape.shapePrimitive is UnityEngine.ProBuilder.Shapes.Sprite))
+            if((tool.m_ProBuilderShape.shape is Plane)
+                || (tool.m_ProBuilderShape.shape is UnityEngine.ProBuilder.Shapes.Sprite))
             {
                 //Skip Height definition for plane
                 return ValidateShape();

@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Arch")]
-    public class Arch : ShapePrimitive
+    [Shape("Arch")]
+    public class Arch : Shape
     {
         [Min(0.01f)]
         [SerializeField]
@@ -24,11 +24,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Arch)
+            if(shape is Arch)
             {
-                Arch arch = ( (Arch) shapePrimitive );
+                Arch arch = ( (Arch) shape );
                 m_Thickness = arch.m_Thickness;
                 m_NumberOfSides = arch.m_NumberOfSides;
                 m_ArchDegrees = arch.m_ArchDegrees;

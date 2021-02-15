@@ -104,7 +104,7 @@ namespace UnityEditor.ProBuilder
 
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
-            EditorShapeUtility.CopyLastParams(shape.shapePrimitive, shape.shapePrimitive.GetType());
+            EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
 
             //Finish initializing object and collider once it's completed

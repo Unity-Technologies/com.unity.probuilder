@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Pipe")]
-    public class Pipe : ShapePrimitive
+    [Shape("Pipe")]
+    public class Pipe : Shape
     {
         [Min(0.01f)]
         [SerializeField]
@@ -21,11 +21,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Pipe)
+            if(shape is Pipe)
             {
-                Pipe pipe = (Pipe) shapePrimitive;
+                Pipe pipe = (Pipe) shape;
                 m_Thickness = pipe.m_Thickness;
                 m_NumberOfSides = pipe.m_NumberOfSides;
                 m_HeightCuts = pipe.m_HeightCuts;

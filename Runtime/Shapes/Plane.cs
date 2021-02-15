@@ -2,8 +2,8 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Plane")]
-    public class Plane : ShapePrimitive
+    [Shape("Plane")]
+    public class Plane : Shape
     {
         [Min(0)]
         [SerializeField]
@@ -13,12 +13,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Plane)
+            if(shape is Plane)
             {
-                m_HeightSegments = ((Plane)shapePrimitive).m_HeightSegments;
-                m_WidthSegments = ((Plane)shapePrimitive).m_WidthSegments;
+                m_HeightSegments = ((Plane)shape).m_HeightSegments;
+                m_WidthSegments = ((Plane)shape).m_WidthSegments;
             }
         }
 

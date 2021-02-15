@@ -48,8 +48,8 @@ namespace UnityEditor.ProBuilder
                 foreach(var comp in targets)
                 {
                     if(m_CurrentShapeType == null)
-                        m_CurrentShapeType = ( (ProBuilderShape) comp ).shapePrimitive.GetType();
-                    else if( m_CurrentShapeType != ( (ProBuilderShape) comp ).shapePrimitive.GetType() )
+                        m_CurrentShapeType = ( (ProBuilderShape) comp ).shape.GetType();
+                    else if( m_CurrentShapeType != ( (ProBuilderShape) comp ).shape.GetType() )
                         return true;
                 }
 
@@ -153,8 +153,8 @@ namespace UnityEditor.ProBuilder
                     foreach(var comp in targets)
                     {
                         ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
-                        ShapePrimitive shapePrimitive = proBuilderShape.shapePrimitive;
-                        if(shapePrimitive.GetType() != type)
+                        Shape shape = proBuilderShape.shape;
+                        if(shape.GetType() != type)
                         {
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;

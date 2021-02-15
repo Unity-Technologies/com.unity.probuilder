@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.Shapes
     sealed class ProBuilderShape : MonoBehaviour
     {
         [SerializeReference]
-        ShapePrimitive m_ShapePrimitive = new Cube();
+        Shape m_Shape = new Cube();
 
         [SerializeField]
         Vector3 m_Size = Vector3.one;
@@ -23,10 +23,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField] uint m_Hash;
 
-        public ShapePrimitive shapePrimitive
+        public Shape shape
         {
-            get => m_ShapePrimitive;
-            set => m_ShapePrimitive = value;
+            get => m_Shape;
+            set => m_Shape = value;
         }
 
         public PivotLocation pivotLocation
@@ -155,11 +155,11 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Hash = currentHash;
         }
 
-        internal void SetShape(ShapePrimitive shapePrimitive, PivotLocation location)
+        internal void SetShape(Shape shape, PivotLocation location)
         {
             m_PivotLocation = location;
 
-            m_ShapePrimitive = shapePrimitive;
+            m_ShapePrimitive = shape;
             if(m_ShapePrimitive is Plane || m_ShapePrimitive is Sprite)
             {
                 Bounds bounds = m_ShapeBox;

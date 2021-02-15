@@ -2,8 +2,8 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    [ShapePrimitive("Sphere")]
-    public class Sphere : ShapePrimitive
+    [Shape("Sphere")]
+    public class Sphere : Shape
     {
         static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
         {
@@ -59,11 +59,11 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
-        public override void CopyShape(ShapePrimitive shapePrimitive)
+        public override void CopyShape(Shape shape)
         {
-            if(shapePrimitive is Sphere)
+            if(shape is Sphere)
             {
-                Sphere sphere = ( (Sphere) shapePrimitive );
+                Sphere sphere = ( (Sphere) shape );
                 m_Subdivisions = sphere.m_Subdivisions;
                 m_BottomMostVertexIndex = sphere.m_BottomMostVertexIndex;
                 m_Smooth = sphere.m_Smooth;
