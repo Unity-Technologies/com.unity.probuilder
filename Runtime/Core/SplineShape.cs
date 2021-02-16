@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.Splines;
 using Unity.Mathematics;
+using UnityEditor;
 using Spline = UnityEngine.Splines.Spline;
 
 [AddComponentMenu("")]
@@ -12,6 +13,12 @@ using Spline = UnityEngine.Splines.Spline;
 
 public class SplineShape : MonoBehaviour
 {
+    public struct FloatKeyFrame
+    {
+        float Index;
+        float Value;
+    }
+
     // todo "radius" should be in a data buffer
     [Min(0.01f)]
     public float m_Radius = 0.25f;
@@ -22,10 +29,16 @@ public class SplineShape : MonoBehaviour
     [Min(0.05f)]
     public float m_SegmentsLength = 0.5f;
 
+    public bool m_ClosedSpline = false;
+
     public bool m_UseEndCaps = true;
+
+    public FloatKeyFrame[] m_RadiusBufferData;
 
     SplineContainer m_SplineContainer;
     Spline m_Spline;
+
+    public Spline spline => m_Spline;
 
     ProBuilderMesh m_Mesh;
 
@@ -47,6 +60,8 @@ public class SplineShape : MonoBehaviour
 
     void OnValidate()
     {
+        if(m_Spline != null)
+            m_Spline.Closed = m_ClosedSpline;
         UpdateSplineMesh();
     }
 
@@ -73,7 +88,9 @@ public class SplineShape : MonoBehaviour
         if(m_Radius > 0
            && m_SidesCount > 0
            && m_SegmentsLength > 0)
+        {
             Refresh();
+        }
     }
 
     /// <summary>
@@ -94,7 +111,6 @@ public class SplineShape : MonoBehaviour
         {
             mesh.Clear();
             UpdateMesh();
-            mesh.Refresh();
         }
     }
 
@@ -206,5 +222,7 @@ public class SplineShape : MonoBehaviour
         }
 
         mesh.RebuildWithPositionsAndFaces(vertices, faces);
+        mesh.ToMesh();
+        mesh.Refresh();
     }
 }
