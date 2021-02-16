@@ -1,9 +1,11 @@
 {
     "name": "Unity.ProBuilder",
+    "rootNamespace": "",
     "references": [
         "Unity.ProBuilder.Poly2Tri",
         "Unity.ProBuilder.KdTree",
-        "Unity.RenderPipelines.HighDefinition.Runtime"
+        "Unity.RenderPipelines.HighDefinition.Runtime",
+        "Unity.Splines"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
