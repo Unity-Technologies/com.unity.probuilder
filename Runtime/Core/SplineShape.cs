@@ -13,10 +13,11 @@ using Spline = UnityEngine.Splines.Spline;
 
 public class SplineShape : MonoBehaviour
 {
+    [Serializable]
     public struct FloatKeyFrame
     {
-        float Index;
-        float Value;
+        public float Index;
+        public float Value;
     }
 
     // todo "radius" should be in a data buffer
@@ -60,6 +61,9 @@ public class SplineShape : MonoBehaviour
 
     void OnValidate()
     {
+        //if(m_RadiusBufferData != null)
+        //    Array.Sort(m_RadiusBufferData, delegate(FloatKeyFrame x, FloatKeyFrame y) { return x.Index.CompareTo(y.Index);});
+
         if(m_Spline != null)
             m_Spline.Closed = m_ClosedSpline;
         UpdateSplineMesh();
@@ -131,8 +135,8 @@ public class SplineShape : MonoBehaviour
         {
             float angle0 = radialStepAngle * i * Mathf.Deg2Rad;
 
-            float x = Mathf.Cos(angle0) * m_Radius;
-            float y = Mathf.Sin(angle0) * m_Radius;
+            float x = Mathf.Cos(angle0);
+            float y = Mathf.Sin(angle0);
 
             circle[i] = new Vector2(x, y);
         }
@@ -166,8 +170,17 @@ public class SplineShape : MonoBehaviour
             var rightDir = math.normalize(math.cross(new float3(0, 1, 0), tangent));
             var upDir = math.normalize(math.cross(tangent, rightDir));
 
+            float radius;
+            if(!Evaluate(m_RadiusBufferData, index, out radius))
+                radius = m_Radius;
+
+            if(radius < 0.01f)
+                radius = 0.01f;
+
             for(int j = 0; j < m_SidesCount; j++)
-                vertices[vertexIndex++] = (Vector3) center + circle[j].x * (Vector3) rightDir + circle[j].y * (Vector3) upDir;
+                vertices[vertexIndex++] = (Vector3) center
+                                          + radius * circle[j].x * (Vector3) rightDir
+                                          + radius * circle[j].y * (Vector3) upDir;
 
             if(!m_Spline.Closed && m_UseEndCaps)
             {
@@ -224,5 +237,44 @@ public class SplineShape : MonoBehaviour
         mesh.RebuildWithPositionsAndFaces(vertices, faces);
         mesh.ToMesh();
         mesh.Refresh();
+    }
+
+    bool Evaluate(FloatKeyFrame[] frames, float index, out float result)
+    {
+        result = 0.01f;
+        if(frames == null || frames.Length == 0)
+            return false;
+
+        FloatKeyFrame[] framesCopy = new FloatKeyFrame[frames.Length];
+        Array.Copy(frames,framesCopy,frames.Length);
+        Array.Sort(framesCopy, delegate(FloatKeyFrame x, FloatKeyFrame y) { return x.Index.CompareTo(y.Index);});
+
+        if(index < framesCopy[0].Index)
+            result = framesCopy[0].Value;
+        else if(index > framesCopy[frames.Length - 1].Index)
+        {
+            if(!m_Spline.Closed)
+                result = framesCopy[frames.Length - 1].Value;
+            else
+            {
+                var lerpFactor = ( index - framesCopy[frames.Length - 1].Index ) / ( 1f - framesCopy[frames.Length - 1].Index );
+                result = Mathf.Lerp(framesCopy[frames.Length - 1].Value, framesCopy[0].Value, lerpFactor);
+            }
+        }
+        else
+        {
+            for(int i = 1; i < framesCopy.Length; i++)
+            {
+
+                if(framesCopy[i].Index < index)
+                    continue;
+
+                var lerpFactor = ( index - framesCopy[i-1].Index ) / ( framesCopy[i].Index - framesCopy[i-1].Index );
+                result = Mathf.Lerp(framesCopy[i-1].Value, framesCopy[i].Value, lerpFactor);
+                break;
+            }
+        }
+
+        return true;
     }
 }
