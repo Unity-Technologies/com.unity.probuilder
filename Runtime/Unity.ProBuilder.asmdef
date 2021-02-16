@@ -5,7 +5,8 @@
         "Unity.ProBuilder.Poly2Tri",
         "Unity.ProBuilder.KdTree",
         "Unity.RenderPipelines.HighDefinition.Runtime",
-        "Unity.Splines"
+        "Unity.Splines",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

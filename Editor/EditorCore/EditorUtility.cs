@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Linq;
 using System;
-using UnityEditor.Experimental.SceneManagement;
+
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
@@ -266,7 +266,7 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 #endif
-            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
             var activeScene = SceneManager.GetActiveScene();
 
             if (prefabStage != null)
