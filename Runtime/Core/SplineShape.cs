@@ -20,6 +20,13 @@ public class SplineShape : MonoBehaviour
         public float Value;
     }
 
+    [Serializable]
+    public struct ColorKeyFrame
+    {
+        public float Index;
+        public Color Color;
+    }
+
     // todo "radius" should be in a data buffer
     [Min(0.01f)]
     public float m_Radius = 0.25f;
@@ -35,6 +42,7 @@ public class SplineShape : MonoBehaviour
     public bool m_UseEndCaps = true;
 
     public FloatKeyFrame[] m_RadiusBufferData;
+    public ColorKeyFrame[] m_ColorBufferData;
 
     SplineContainer m_SplineContainer;
     Spline m_Spline;
@@ -155,6 +163,7 @@ public class SplineShape : MonoBehaviour
         }
 
         Vector3[] vertices = new Vector3[vertexCount];
+        Color[] colors = new Color[vertexCount];
         Face[] faces = new Face[faceCount];
 
         int vertexIndex = 0;
@@ -177,17 +186,30 @@ public class SplineShape : MonoBehaviour
             if(radius < 0.01f)
                 radius = 0.01f;
 
+            Color color;
+            Evaluate(m_ColorBufferData, index, out color);
+
             for(int j = 0; j < m_SidesCount; j++)
-                vertices[vertexIndex++] = (Vector3) center
+            {
+                vertices[vertexIndex] = (Vector3) center
                                           + radius * circle[j].x * (Vector3) rightDir
                                           + radius * circle[j].y * (Vector3) upDir;
+                colors[vertexIndex++] = color;
+            }
 
             if(!m_Spline.Closed && m_UseEndCaps)
             {
                 if(i == 0)
+                {
                     vertices[vertexCount - 2] = center;
+                    colors[vertexCount - 2] = color;
+                }
+
                 if(i == segmentsCount)
+                {
                     vertices[vertexCount - 1] = center;
+                    colors[vertexCount - 1] = color;
+                }
             }
         }
 
@@ -235,6 +257,7 @@ public class SplineShape : MonoBehaviour
         }
 
         mesh.RebuildWithPositionsAndFaces(vertices, faces);
+        mesh.colors = colors;
         mesh.ToMesh();
         mesh.Refresh();
     }
@@ -271,6 +294,45 @@ public class SplineShape : MonoBehaviour
 
                 var lerpFactor = ( index - framesCopy[i-1].Index ) / ( framesCopy[i].Index - framesCopy[i-1].Index );
                 result = Mathf.Lerp(framesCopy[i-1].Value, framesCopy[i].Value, lerpFactor);
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    bool Evaluate(ColorKeyFrame[] frames, float index, out Color result)
+    {
+        result = Color.white;
+        if(frames == null || frames.Length == 0)
+            return false;
+
+        ColorKeyFrame[] framesCopy = new ColorKeyFrame[frames.Length];
+        Array.Copy(frames,framesCopy,frames.Length);
+        Array.Sort(framesCopy, delegate(ColorKeyFrame x, ColorKeyFrame y) { return x.Index.CompareTo(y.Index);});
+
+        if(index < framesCopy[0].Index)
+            result = framesCopy[0].Color;
+        else if(index > framesCopy[frames.Length - 1].Index)
+        {
+            if(!m_Spline.Closed)
+                result = framesCopy[frames.Length - 1].Color;
+            else
+            {
+                var lerpFactor = ( index - framesCopy[frames.Length - 1].Index ) / ( 1f - framesCopy[frames.Length - 1].Index );
+                result = Color.Lerp(framesCopy[frames.Length - 1].Color, framesCopy[0].Color, lerpFactor);
+            }
+        }
+        else
+        {
+            for(int i = 1; i < framesCopy.Length; i++)
+            {
+
+                if(framesCopy[i].Index < index)
+                    continue;
+
+                var lerpFactor = ( index - framesCopy[i-1].Index ) / ( framesCopy[i].Index - framesCopy[i-1].Index );
+                result = Color.Lerp(framesCopy[i-1].Color, framesCopy[i].Color, lerpFactor);
                 break;
             }
         }
