@@ -12,6 +12,7 @@ using Spline = UnityEngine.Splines.Spline;
 
 public class SplineShape : MonoBehaviour
 {
+    // todo "radius" should be in a data buffer
     [Min(0.01f)]
     public float m_Radius = 0.25f;
 
@@ -152,10 +153,13 @@ public class SplineShape : MonoBehaviour
             for(int j = 0; j < m_SidesCount; j++)
                 vertices[vertexIndex++] = (Vector3) center + circle[j].x * (Vector3) rightDir + circle[j].y * (Vector3) upDir;
 
-            if(i == 0)
-                vertices[vertexCount-2] = center;
-            if(i == segmentsCount)
-                vertices[vertexCount-1] = center;
+            if(!m_Spline.Closed && m_UseEndCaps)
+            {
+                if(i == 0)
+                    vertices[vertexCount - 2] = center;
+                if(i == segmentsCount)
+                    vertices[vertexCount - 1] = center;
+            }
         }
 
         var maxSegmentCount = m_Spline.Closed ? segmentsCount + 1 : segmentsCount;
