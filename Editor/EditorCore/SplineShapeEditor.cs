@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.ProBuilder;
-using UnityEngine;
 
 [CustomEditor(typeof(SplineShape))]
 public class SplineShapeEditor : Editor

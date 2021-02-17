@@ -41,6 +41,7 @@ namespace UnityEditor.ProBuilder
                 new Actions.NewBezierShape(),
                 new Actions.NewSplineShape(),
                 new Actions.NewPolyShapeToggle(),
+                new Actions.NewPolySplineShape(),
                 new Actions.OpenMaterialEditor(),
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),

@@ -34,9 +34,25 @@ public class SplineShape : MonoBehaviour
 
     public bool m_UseEndCaps = true;
 
-    public ColorKeyFrame[] m_ColorBufferData;
-    public FloatSplineCurve m_RadiusCurve;
+    public ColorSplineData m_ColorBufferData;
+    public ColorSplineData colorBufferData
+    {
+        get
+        {
+            if(m_ColorBufferData == null)
+            {
+                if(!TryGetComponent(out m_ColorBufferData))
+                {
+                    m_ColorBufferData = gameObject.AddComponent<ColorSplineData>();
+                    m_ColorBufferData.changed += UpdateSplineMesh;
+                }
+            }
 
+            return m_ColorBufferData;
+        }
+    }
+
+    public FloatSplineCurve m_RadiusCurve;
     public FloatSplineCurve radiusCurve
     {
         get
@@ -211,8 +227,7 @@ public class SplineShape : MonoBehaviour
             if(radius < 0.01f)
                 radius = 0.01f;
 
-            Color color;
-            Evaluate(m_ColorBufferData, index, out color);
+            Color color = colorBufferData.Evaluate(index, m_Spline.Closed);
 
             for(int j = 0; j < m_SidesCount; j++)
             {
@@ -285,45 +300,5 @@ public class SplineShape : MonoBehaviour
         mesh.colors = colors;
         mesh.ToMesh();
         mesh.Refresh();
-    }
-
-
-    bool Evaluate(ColorKeyFrame[] frames, float index, out Color result)
-    {
-        result = Color.white;
-        if(frames == null || frames.Length == 0)
-            return false;
-
-        ColorKeyFrame[] framesCopy = new ColorKeyFrame[frames.Length];
-        Array.Copy(frames,framesCopy,frames.Length);
-        Array.Sort(framesCopy, delegate(ColorKeyFrame x, ColorKeyFrame y) { return x.Index.CompareTo(y.Index);});
-
-        if(index < framesCopy[0].Index)
-            result = framesCopy[0].Color;
-        else if(index > framesCopy[frames.Length - 1].Index)
-        {
-            if(!spline.Closed)
-                result = framesCopy[frames.Length - 1].Color;
-            else
-            {
-                var lerpFactor = ( index - framesCopy[frames.Length - 1].Index ) / ( 1f - framesCopy[frames.Length - 1].Index );
-                result = Color.Lerp(framesCopy[frames.Length - 1].Color, framesCopy[0].Color, lerpFactor);
-            }
-        }
-        else
-        {
-            for(int i = 1; i < framesCopy.Length; i++)
-            {
-
-                if(framesCopy[i].Index < index)
-                    continue;
-
-                var lerpFactor = ( index - framesCopy[i-1].Index ) / ( framesCopy[i].Index - framesCopy[i-1].Index );
-                result = Color.Lerp(framesCopy[i-1].Color, framesCopy[i].Color, lerpFactor);
-                break;
-            }
-        }
-
-        return true;
     }
 }
