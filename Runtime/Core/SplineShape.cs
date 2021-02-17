@@ -14,13 +14,6 @@ using Spline = UnityEngine.Splines.Spline;
 public class SplineShape : MonoBehaviour
 {
     [Serializable]
-    public struct FloatKeyFrame
-    {
-        public float Index;
-        public float Value;
-    }
-
-    [Serializable]
     public struct ColorKeyFrame
     {
         public float Index;
@@ -29,7 +22,7 @@ public class SplineShape : MonoBehaviour
 
     // todo "radius" should be in a data buffer
     [Min(0.01f)]
-    public float m_Radius = 0.25f;
+    public float m_Radius = 0.5f;
 
     [Range(3,36)]
     public int m_SidesCount = 4;
@@ -41,13 +34,45 @@ public class SplineShape : MonoBehaviour
 
     public bool m_UseEndCaps = true;
 
-    public FloatKeyFrame[] m_RadiusBufferData;
     public ColorKeyFrame[] m_ColorBufferData;
+    public FloatSplineCurve m_RadiusCurve;
+
+    public FloatSplineCurve radiusCurve
+    {
+        get
+        {
+            if(m_RadiusCurve == null)
+            {
+                if(!TryGetComponent(out m_RadiusCurve))
+                {
+                    m_RadiusCurve = gameObject.AddComponent<FloatSplineCurve>();
+                }
+                m_RadiusCurve.m_ParameterName = "Shape Radius";
+                m_RadiusCurve.m_Curve.AddKey(0, m_Radius);
+                m_RadiusCurve.m_Curve.AddKey(1, m_Radius);
+                m_RadiusCurve.curveUpdated += UpdateSplineMesh;
+            }
+
+            return m_RadiusCurve;
+        }
+    }
 
     SplineContainer m_SplineContainer;
     Spline m_Spline;
 
-    public Spline spline => m_Spline;
+    public Spline spline
+    {
+        get
+        {
+            if(m_SplineContainer == null)
+                m_SplineContainer = GetComponent<SplineContainer>();
+
+            if(m_Spline == null)
+                m_Spline = m_SplineContainer.Spline;
+
+            return m_Spline;
+        }
+    }
 
     ProBuilderMesh m_Mesh;
 
@@ -67,30 +92,33 @@ public class SplineShape : MonoBehaviour
         }
     }
 
+    internal bool m_IsPBEditorDirty = false;
+    internal bool isPBEditorDirty
+    {
+        get => m_IsPBEditorDirty;
+        set => m_IsPBEditorDirty = false;
+    }
+
+
     void OnValidate()
     {
-        //if(m_RadiusBufferData != null)
-        //    Array.Sort(m_RadiusBufferData, delegate(FloatKeyFrame x, FloatKeyFrame y) { return x.Index.CompareTo(y.Index);});
-
-        if(m_Spline != null)
-            m_Spline.Closed = m_ClosedSpline;
+        if(spline != null)
+            spline.Closed = m_ClosedSpline;
         UpdateSplineMesh();
     }
 
     public void Init()
     {
-        m_SplineContainer = GetComponent<SplineContainer>();
-        m_Spline = m_SplineContainer.Spline;
-        m_Spline.EditType = SplineType.Bezier;
-        m_SplineContainer.Spline.changed += SplineChanged;
+        spline.EditType = SplineType.Bezier;
+        spline.changed += SplineChanged;
 
         Refresh();
     }
 
     void SplineChanged()
     {
-        var newKnotPos = m_SplineContainer.Spline[m_SplineContainer.Spline.KnotCount - 1].Position;
-        var length = SplineUtility.CalculateSplineLength(m_Spline);
+        var newKnotPos = spline[spline.KnotCount - 1].Position;
+        var length = SplineUtility.CalculateSplineLength(spline);
         if(math.length(newKnotPos) > 0.0f && length > 0.0f)
             UpdateSplineMesh();
     }
@@ -102,6 +130,7 @@ public class SplineShape : MonoBehaviour
            && m_SegmentsLength > 0)
         {
             Refresh();
+            m_IsPBEditorDirty = true;
         }
     }
 
@@ -128,7 +157,7 @@ public class SplineShape : MonoBehaviour
 
     void UpdateMesh()
     {
-        float length = SplineUtility.CalculateSplineLength(m_Spline);
+        float length = SplineUtility.CalculateSplineLength(spline);
         if(length == 0)
         {
             mesh.ToMesh();
@@ -138,7 +167,6 @@ public class SplineShape : MonoBehaviour
         Vector2[] circle = new Vector2[m_SidesCount];
         float radialStepAngle = 360f / m_SidesCount;
         // get a circle
-
         for (int i = 0; i < m_SidesCount; i++)
         {
             float angle0 = radialStepAngle * i * Mathf.Deg2Rad;
@@ -152,11 +180,11 @@ public class SplineShape : MonoBehaviour
         int segmentsCount = (int) (length / m_SegmentsLength) + 1;
 
         var vertexCount = m_SidesCount * ( segmentsCount + 1 );
-        var faceCount = m_Spline.Closed ?
+        var faceCount = spline.Closed ?
                                 m_SidesCount * 2 * ( segmentsCount + 1 )
                                 : m_SidesCount * 2 * segmentsCount;
 
-        if(!m_Spline.Closed && m_UseEndCaps)
+        if(!spline.Closed && m_UseEndCaps)
         {
             vertexCount += 2;
             faceCount += 2 * m_SidesCount;
@@ -173,16 +201,13 @@ public class SplineShape : MonoBehaviour
             if(index > 1)
                 index = 1f;
 
-            var center = SplineUtility.EvaluateSplinePosition(m_Spline,index);
-            float3 tangent = SplineUtility.EvaluateSplineDirection(m_Spline,index);
+            var center = SplineUtility.EvaluateSplinePosition(spline,index);
+            float3 tangent = SplineUtility.EvaluateSplineDirection(spline,index);
 
             var rightDir = math.normalize(math.cross(new float3(0, 1, 0), tangent));
             var upDir = math.normalize(math.cross(tangent, rightDir));
 
-            float radius;
-            if(!Evaluate(m_RadiusBufferData, index, out radius))
-                radius = m_Radius;
-
+            float radius = radiusCurve.Evaluate(index);
             if(radius < 0.01f)
                 radius = 0.01f;
 
@@ -197,7 +222,7 @@ public class SplineShape : MonoBehaviour
                 colors[vertexIndex++] = color;
             }
 
-            if(!m_Spline.Closed && m_UseEndCaps)
+            if(!spline.Closed && m_UseEndCaps)
             {
                 if(i == 0)
                 {
@@ -213,7 +238,7 @@ public class SplineShape : MonoBehaviour
             }
         }
 
-        var maxSegmentCount = m_Spline.Closed ? segmentsCount + 1 : segmentsCount;
+        var maxSegmentCount = spline.Closed ? segmentsCount + 1 : segmentsCount;
         for(int i = 0; i < maxSegmentCount; i++)
         {
             for(int j = 0; j < m_SidesCount; j++)
@@ -236,7 +261,7 @@ public class SplineShape : MonoBehaviour
             }
         }
 
-        if(!m_Spline.Closed && m_UseEndCaps)
+        if(!spline.Closed && m_UseEndCaps)
         {
             var offset = m_SidesCount * 2 * segmentsCount;
             //Build end caps
@@ -262,44 +287,6 @@ public class SplineShape : MonoBehaviour
         mesh.Refresh();
     }
 
-    bool Evaluate(FloatKeyFrame[] frames, float index, out float result)
-    {
-        result = 0.01f;
-        if(frames == null || frames.Length == 0)
-            return false;
-
-        FloatKeyFrame[] framesCopy = new FloatKeyFrame[frames.Length];
-        Array.Copy(frames,framesCopy,frames.Length);
-        Array.Sort(framesCopy, delegate(FloatKeyFrame x, FloatKeyFrame y) { return x.Index.CompareTo(y.Index);});
-
-        if(index < framesCopy[0].Index)
-            result = framesCopy[0].Value;
-        else if(index > framesCopy[frames.Length - 1].Index)
-        {
-            if(!m_Spline.Closed)
-                result = framesCopy[frames.Length - 1].Value;
-            else
-            {
-                var lerpFactor = ( index - framesCopy[frames.Length - 1].Index ) / ( 1f - framesCopy[frames.Length - 1].Index );
-                result = Mathf.Lerp(framesCopy[frames.Length - 1].Value, framesCopy[0].Value, lerpFactor);
-            }
-        }
-        else
-        {
-            for(int i = 1; i < framesCopy.Length; i++)
-            {
-
-                if(framesCopy[i].Index < index)
-                    continue;
-
-                var lerpFactor = ( index - framesCopy[i-1].Index ) / ( framesCopy[i].Index - framesCopy[i-1].Index );
-                result = Mathf.Lerp(framesCopy[i-1].Value, framesCopy[i].Value, lerpFactor);
-                break;
-            }
-        }
-
-        return true;
-    }
 
     bool Evaluate(ColorKeyFrame[] frames, float index, out Color result)
     {
@@ -315,7 +302,7 @@ public class SplineShape : MonoBehaviour
             result = framesCopy[0].Color;
         else if(index > framesCopy[frames.Length - 1].Index)
         {
-            if(!m_Spline.Closed)
+            if(!spline.Closed)
                 result = framesCopy[frames.Length - 1].Color;
             else
             {

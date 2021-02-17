@@ -10,13 +10,16 @@ public class SplineShapeEditor : Editor
     void OnEnable()
     {
         foreach(var t in targets)
-            ( (SplineShape) target ).spline.changed += UpdateProBuilderDisplay;
+            ( (SplineShape) t ).spline.changed += UpdateProBuilderDisplay;
     }
 
     void OnDisable()
     {
         foreach(var t in targets)
-            ( (SplineShape) target ).spline.changed -= UpdateProBuilderDisplay;
+        {
+            if(t != null && ((SplineShape)t).spline != null)
+                ((SplineShape)t).spline.changed -= UpdateProBuilderDisplay;
+        }
     }
 
     void UpdateProBuilderDisplay()
@@ -37,6 +40,15 @@ public class SplineShapeEditor : Editor
         if(EditorGUI.EndChangeCheck())
         {
             UpdateProBuilderEditor();
+        }
+
+        foreach(var t in targets)
+        {
+            if(((SplineShape)t).isPBEditorDirty)
+            {
+                UpdateProBuilderEditor();
+                ( (SplineShape) t ).isPBEditorDirty = false;
+            }
         }
     }
 
