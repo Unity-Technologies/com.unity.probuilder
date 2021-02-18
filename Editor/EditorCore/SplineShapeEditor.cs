@@ -7,7 +7,7 @@ public class SplineShapeEditor : Editor
     void OnEnable()
     {
         foreach(var t in targets)
-            ( (SplineShape) t ).spline.changed += UpdateProBuilderDisplay;
+            ( (SplineShape) t ).spline.afterSplineWasModified += UpdateProBuilderDisplay;
     }
 
     void OnDisable()
@@ -15,7 +15,7 @@ public class SplineShapeEditor : Editor
         foreach(var t in targets)
         {
             if(t != null && ((SplineShape)t).spline != null)
-                ((SplineShape)t).spline.changed -= UpdateProBuilderDisplay;
+                ((SplineShape)t).spline.afterSplineWasModified -= UpdateProBuilderDisplay;
         }
     }
 

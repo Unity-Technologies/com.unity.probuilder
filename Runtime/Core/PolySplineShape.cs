@@ -79,7 +79,7 @@ public class PolySplineShape : MonoBehaviour
         spline.AddKnot(new BezierKnot(new float3(1,0,0), new float3(1,0,0.5f), new float3(1,0,-0.5f)));
         spline.AddKnot(new BezierKnot(new float3(0,0,-1), new float3(0.5f,0,-1), new float3(-0.5f,0,-1)));
         spline.AddKnot(new BezierKnot(new float3(-1,0,0), new float3(-1,0,-0.5f), new float3(-1,0,0.5f)));
-        spline.changed += SplineOnchanged;
+        spline.afterSplineWasModified += SplineOnchanged;
 
         return splineContainer;
     }

@@ -10,6 +10,7 @@ using Spline = UnityEngine.Splines.Spline;
 [DisallowMultipleComponent, ExcludeFromPreset, ExcludeFromObjectFactory]
 [RequireComponent(typeof(ProBuilderMesh))]
 [RequireComponent(typeof(SplineContainer))]
+[ExecuteInEditMode]
 
 public class SplineShape : MonoBehaviour
 {
@@ -44,8 +45,8 @@ public class SplineShape : MonoBehaviour
                 if(!TryGetComponent(out m_ColorBufferData))
                 {
                     m_ColorBufferData = gameObject.AddComponent<ColorSplineData>();
-                    m_ColorBufferData.changed += UpdateSplineMesh;
                 }
+                m_ColorBufferData.changed += UpdateSplineMesh;
             }
 
             return m_ColorBufferData;
@@ -83,9 +84,7 @@ public class SplineShape : MonoBehaviour
             if(m_SplineContainer == null)
                 m_SplineContainer = GetComponent<SplineContainer>();
 
-            if(m_Spline == null)
-                m_Spline = m_SplineContainer.Spline;
-
+            m_Spline = m_SplineContainer.Spline;
             return m_Spline;
         }
     }
@@ -126,17 +125,43 @@ public class SplineShape : MonoBehaviour
     public void Init()
     {
         spline.EditType = SplineType.Bezier;
-        spline.changed += SplineChanged;
+        spline.afterSplineWasModified += SplineChanged;
 
         Refresh();
     }
 
+    public void OnEnable()
+    {
+        spline.afterSplineWasModified += SplineChanged;
+        if(m_RadiusCurve)
+        {
+            m_RadiusCurve.curveUpdated -= UpdateSplineMesh;
+            m_RadiusCurve.curveUpdated += UpdateSplineMesh;
+        }
+
+        if(m_ColorBufferData)
+        {
+            m_ColorBufferData.changed -= UpdateSplineMesh;
+            m_ColorBufferData.changed += UpdateSplineMesh;
+        }
+    }
+
+    public void OnDisable()
+    {
+        spline.afterSplineWasModified -= SplineChanged;
+        m_RadiusCurve.curveUpdated -= UpdateSplineMesh;
+        m_ColorBufferData.changed -= UpdateSplineMesh;
+    }
+
     void SplineChanged()
     {
-        var newKnotPos = spline[spline.KnotCount - 1].Position;
-        var length = SplineUtility.CalculateSplineLength(spline);
-        if(math.length(newKnotPos) > 0.0f && length > 0.0f)
-            UpdateSplineMesh();
+        if(spline.KnotCount > 0)
+        {
+            var newKnotPos = spline[spline.KnotCount - 1].Position;
+            var length = SplineUtility.CalculateSplineLength(spline);
+            if(math.length(newKnotPos) > 0.0f && length > 0.0f)
+                UpdateSplineMesh();
+        }
     }
 
     void UpdateSplineMesh()
