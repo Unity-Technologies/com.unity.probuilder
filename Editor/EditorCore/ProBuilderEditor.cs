@@ -550,10 +550,15 @@ namespace UnityEditor.ProBuilder
             if (Event.current.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_DefaultControl);
 
-            if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
+            HandleMouseEvent(sceneView, m_DefaultControl);
+        }
+
+        internal void HandleMouseEvent(SceneView sceneView, int controlID)
+        {
+            if(m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID)
             {
                 // double clicking object
-                if (m_CurrentEvent.clickCount > 1)
+                if(m_CurrentEvent.clickCount > 1)
                 {
                     DoubleClick(m_CurrentEvent);
                 }
@@ -563,47 +568,48 @@ namespace UnityEditor.ProBuilder
                 // MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
                 m_IsReadyForMouseDrag = true;
 
-                GUIUtility.hotControl = m_DefaultControl;
+                GUIUtility.hotControl = controlID;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == m_DefaultControl)
+            if(m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == controlID)
             {
-                if (!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
+                if(!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) >
+                    k_MouseDragThreshold)
                 {
                     sceneView.Repaint();
                     m_IsDragging = true;
                 }
             }
 
-            if (m_CurrentEvent.type == EventType.Ignore)
+            if(m_CurrentEvent.type == EventType.Ignore)
             {
-                if (m_IsDragging)
+                if(m_IsDragging)
                 {
                     m_IsReadyForMouseDrag = false;
                     m_IsDragging = false;
                     EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
                 }
 
-                if (m_WasDoubleClick)
+                if(m_WasDoubleClick)
                     m_WasDoubleClick = false;
 
-                if (GUIUtility.hotControl == m_DefaultControl)
+                if(GUIUtility.hotControl == controlID)
                     GUIUtility.hotControl = 0;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
+            if(m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == controlID)
             {
                 GUIUtility.hotControl = 0;
 
-                if (m_WasDoubleClick)
+                if(m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
                 }
                 else
                 {
-                    if (!m_IsDragging)
+                    if(!m_IsDragging)
                     {
-                        if (UVEditor.instance)
+                        if(UVEditor.instance)
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
@@ -614,12 +620,12 @@ namespace UnityEditor.ProBuilder
                         m_IsDragging = false;
                         m_IsReadyForMouseDrag = false;
 
-                        if (UVEditor.instance)
+                        if(UVEditor.instance)
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
 
-                        if (GUIUtility.hotControl == m_DefaultControl)
+                        if(GUIUtility.hotControl == controlID)
                             GUIUtility.hotControl = 0;
                     }
                 }

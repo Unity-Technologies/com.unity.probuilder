@@ -336,7 +336,7 @@ namespace UnityEngine.ProBuilder
 
             if(usedInParticuleSystem)
                 MeshUtility.RestoreParticuleSystem(this);
-            
+
             m_VersionID++;
         }
 

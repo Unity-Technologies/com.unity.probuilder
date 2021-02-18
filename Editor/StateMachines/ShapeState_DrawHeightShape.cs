@@ -10,33 +10,33 @@ namespace UnityEditor.ProBuilder
         protected override void EndState()
         {
             tool.RebuildShape();
-            tool.m_LastShapeCreated = tool.m_ShapeComponent;
-            tool.m_ShapeComponent = null;
+            tool.m_LastShapeCreated = tool.m_ProBuilderShape;
+            tool.m_ProBuilderShape = null;
         }
 
         ShapeState ValidateShape()
         {
             tool.RebuildShape();
-            tool.m_ShapeComponent.pivotGlobalPosition = tool.m_BB_Origin;
-            tool.m_ShapeComponent.gameObject.hideFlags = HideFlags.None;
+            tool.m_ProBuilderShape.pivotGlobalPosition = tool.m_BB_Origin;
+            tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
 
             //Finish initializing object and collider once it's completed
-            EditorUtility.InitObject(tool.m_ShapeComponent.mesh);
+            EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
 
-            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ShapeComponent.shape.GetType());
+            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shape.GetType());
 
-            DrawShapeTool.SaveShapeParams(tool.m_ShapeComponent);
+            DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
 
             return NextState();
         }
 
         public override ShapeState DoState(Event evt)
         {
-            if((tool.m_ShapeComponent.shape is Plane)
-                || (tool.m_ShapeComponent.shape is UnityEngine.ProBuilder.Shapes.Sprite))
+            if((tool.m_ProBuilderShape.shape is Plane)
+                || (tool.m_ProBuilderShape.shape is UnityEngine.ProBuilder.Shapes.Sprite))
             {
                 //Skip Height definition for plane
-                return NextState();
+                return ValidateShape();
             }
 
             if(evt.type == EventType.KeyDown)

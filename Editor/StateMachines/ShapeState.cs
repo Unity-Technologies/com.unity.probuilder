@@ -50,8 +50,8 @@ namespace UnityEditor.ProBuilder
 
         public static ShapeState ResetState()
         {
-            if (tool.m_ShapeComponent != null)
-                UnityEngine.Object.DestroyImmediate(tool.m_ShapeComponent.gameObject);
+            if (tool.m_ProBuilderShape != null)
+                UnityEngine.Object.DestroyImmediate(tool.m_ProBuilderShape.gameObject);
 
             s_defaultState.InitState();
             SceneView.RepaintAll();
