@@ -98,6 +98,7 @@ namespace UnityEditor.ProBuilder
         bool m_ModifyingPoint; // State machine instead? //Status
         int m_SelectedIndex = -2;
         bool m_IsCutValid = true;
+        bool m_Dirty = false;
 
         //Cut tool elements
         internal Face m_TargetFace;
@@ -126,7 +127,7 @@ namespace UnityEditor.ProBuilder
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
         const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
-        public bool IsALoop
+        public bool isALoop
         {
             get
             {
@@ -138,7 +139,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public int ConnectionsToBordersCount
+        public int connectionsToBordersCount
         {
             get
             {
@@ -147,19 +148,34 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Update the mouse cursor depending on the tool status
+        /// </summary>
+        /// <returns>the texture to use as a cursor</returns>
+        Texture2D cursorTexture
+        {
+            get
+            {
+                if(m_CutPath.Count > 0)
+                    return m_CutAddCursorTexture;
+
+                return m_CutCursorTexture;
+            }
+        }
+
         void OnEnable()
         {
             m_IconContent = new GUIContent()
             {
                 image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
-                text = "Create PolyShape",
-                tooltip = "Create PolyShape"
+                text = "Cut Tool",
+                tooltip = "Cut Tool"
             };
 
             s_HandleColorUseExistingVertex = Handles.selectedColor;
             s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
-            m_OverlayTitle = new GUIContent("Cut Tool");
+            m_OverlayTitle = new GUIContent("Cut Settings");
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
 
@@ -170,6 +186,7 @@ namespace UnityEditor.ProBuilder
             if(MeshSelection.selectedObjectCount == 1)
             {
                 m_Mesh = MeshSelection.activeMesh;
+                m_Mesh.ClearSelection();
 
                 m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
                 m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
@@ -199,12 +216,14 @@ namespace UnityEditor.ProBuilder
 
             m_SelectedVertices = null;
             m_SelectedEdges = null;
+
+            EditorHandleDrawing.ClearHandles();
         }
 
         /// <summary>
         /// Undo/Redo callback: Reset and recompute lines, and update the targeted face if needed
         /// </summary>
-        private void UndoRedoPerformed()
+        void UndoRedoPerformed()
         {
             if(m_CutPath.Count == 0 && m_Mesh != null)
             {
@@ -217,7 +236,49 @@ namespace UnityEditor.ProBuilder
             m_SelectedIndex = -1;
             m_MeshConnections.Clear();
 
-            RebuildCutShape();
+            m_Dirty = true;
+        }
+
+        /// <summary>
+        /// Update the mesh targeted by the tool.
+        /// This is used when the mesh selection is changed to refresh the tool.
+        /// </summary>
+        internal void UpdateTarget()
+        {
+            if(MeshSelection.activeMesh != m_Mesh)
+            {
+                Clear();
+                if(MeshSelection.selectedObjectCount == 1)
+                {
+                    m_Mesh = MeshSelection.activeMesh;
+                    m_Mesh.ClearSelection();
+
+                    m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                    m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+
+                    if(m_CutPath.Count > 0)
+                    {
+                        m_CutPath.Clear();
+                        m_MeshConnections.Clear();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a toggle for cut tool overlays.
+        /// </summary>
+        /// <param name="label">toggle title</param>
+        /// <param name="val">starting value for the toggle</param>
+        /// <returns>new toggle value</returns>
+        bool DoOverlayToggle(string label, bool val)
+        {
+            using(new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField(label, GUILayout.Width(225));
+                GUILayout.FlexibleSpace();
+                return EditorGUILayout.Toggle(val);
+            }
         }
 
         /// <summary>
@@ -248,6 +309,10 @@ namespace UnityEditor.ProBuilder
                     HandleUtility.AddDefaultControl(m_ControlId);
 
                 DoPointPlacement();
+
+                //Refresh the cut shape if points have been added to it or removed.
+                if(m_Dirty)
+                    RebuildCutShape();
 
                 if(currentEvent.type == EventType.Repaint)
                 {
@@ -299,55 +364,66 @@ namespace UnityEditor.ProBuilder
             if(MeshSelection.selectedObjectCount != 1)
                 GUI.enabled = false;
 
-            if(m_Mesh == null)
+            using(new GUILayout.HorizontalScope())
             {
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
+                if(m_Mesh == null)
                 {
-                    m_Mesh = MeshSelection.activeMesh;
-                    m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
-                    m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
-
-                    if(m_CutPath.Count > 0)
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
                     {
-                        m_CutPath.Clear();
-                        m_MeshConnections.Clear();
+                        UpdateTarget();
+                    }
+
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
+                    {
+                        Clear();
+                        ToolManager.RestorePreviousTool();
                     }
                 }
+                else
+                {
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
+                        ExecuteCut();
+                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
+                        Clear();
+                }
             }
-            else
-            {
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cut")))
-                    ExecuteCut();
-            }
+
             GUI.enabled = true;
         }
 
+
         /// <summary>
-        /// Creates a toggle for cut tool overlays
+        /// Handle key events
         /// </summary>
-        /// <param name="label">toggle title</param>
-        /// <param name="val">starting value for the toggle</param>
-        /// <returns>new toggle value</returns>
-        bool DoOverlayToggle(string label, bool val)
+        /// <param name="evt">the current event to check</param>
+        void HandleKeyEvent(Event evt)
         {
-            using(new GUILayout.HorizontalScope())
+            KeyCode key = evt.keyCode;
+
+            switch (key)
             {
-                EditorGUILayout.LabelField(label, GUILayout.Width(225));
-                GUILayout.FlexibleSpace();
-                return EditorGUILayout.Toggle(val);
+                case KeyCode.Backspace:
+                {
+                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
+                    m_CutPath.RemoveAt(m_CutPath.Count-1);
+                    m_Dirty = true;
+                    evt.Use();
+                    break;
+                }
+
+                case KeyCode.Escape:
+                    evt.Use();
+                    Clear();
+                    break;
+
+                case KeyCode.KeypadEnter:
+                case KeyCode.Return:
+                case KeyCode.Space:
+                    evt.Use();
+                    ExecuteCut();
+                    ToolManager.RestorePreviousTool();
+                    break;
             }
-        }
-
-        /// <summary>
-        /// Update the mouse cursor depending on the tool status
-        /// </summary>
-        /// <returns>the texture to use as a cursor</returns>
-        Texture2D GetCursorTexture()
-        {
-            if(m_CutPath.Count > 0)
-                return m_CutAddCursorTexture;
-
-            return m_CutCursorTexture;
         }
 
         /// <summary>
@@ -368,12 +444,14 @@ namespace UnityEditor.ProBuilder
                 m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
                 m_ModifyingPoint = evt.shift;
 
-                if(!m_SnappingPoint && !m_ModifyingPoint && !m_PlacingPoint)
+                if(!m_SnappingPoint &&
+                   !m_ModifyingPoint &&
+                   !m_PlacingPoint)
                     m_SelectedIndex = -1;
 
                 if (hasHitPosition)
                 {
-                    m_CurrentCutCursor = GetCursorTexture();
+                    m_CurrentCutCursor = cursorTexture;
                     if( (m_CurrentVertexTypes & (VertexTypes.ExistingVertex | VertexTypes.VertexInShape)) != 0)
                         m_CurrentHandleColor = m_ModifyingPoint ? k_HandleColorModifyVertex : s_HandleColorUseExistingVertex;
                     else if ((m_CurrentVertexTypes & VertexTypes.AddedOnEdge) != 0)
@@ -411,7 +489,7 @@ namespace UnityEditor.ProBuilder
                         CutVertexData data = m_CutPath[m_SelectedIndex];
                         data.position = m_CurrentPosition;
                         m_CutPath[m_SelectedIndex] = data;
-                        RebuildCutShape();
+                        m_Dirty = true;
                     }
                 }
 
@@ -424,11 +502,10 @@ namespace UnityEditor.ProBuilder
                     m_PlacingPoint = false;
                     m_SelectedIndex = -1;
                 }
-
-                SceneView.RepaintAll();
             }
-            //If the user is adding the current position to the cut
-            else if (evtType == EventType.MouseDown
+            //If the user is adding the current position to the cut.
+            else if (hasHitPosition
+                     && evtType == EventType.MouseDown
                      && HandleUtility.nearestControl == m_ControlId)
             {
                 int polyCount = m_CutPath.Count;
@@ -439,9 +516,18 @@ namespace UnityEditor.ProBuilder
                     evt.Use();
                 }
             }
+
+            //If nothing in the current cut, then pass the mouse event to ProBuilder Editor to handle selection.
+            //This might disable the tool depending on the new selection.
+            if(m_CutPath.Count == 0
+                && !hasHitPosition
+                && HandleUtility.nearestControl == m_ControlId)
+            {
+                ProBuilderEditor.instance.HandleMouseEvent(SceneView.lastActiveSceneView, m_ControlId);
+            }
         }
 
-        internal void AddCurrentPositionToPath()
+        internal void AddCurrentPositionToPath(bool optimize = true)
         {
             UndoUtility.RecordObject(this, "Add Vertex On Path");
 
@@ -455,12 +541,10 @@ namespace UnityEditor.ProBuilder
             }
 
             m_CutPath.Add(new CutVertexData(m_CurrentPosition, m_CurrentPositionNormal, m_CurrentVertexTypes));
-            UpdateMeshConnections();
-
             m_PlacingPoint = true;
             m_SelectedIndex = m_CutPath.Count - 1;
 
-            RebuildCutShape();
+            RebuildCutShape(optimize);
         }
 
         /// <summary>
@@ -515,7 +599,7 @@ namespace UnityEditor.ProBuilder
                          .Select(v => v.position).ToList();
 
             Vector3[] verticesPositions = m_Mesh.positionsInternal;
-            if(!IsALoop)
+            if(!isALoop)
             {
                 //Connects to start and the end of the path to create a loop
                 float minDistToStart = Single.PositiveInfinity, minDistToStart2 = Single.PositiveInfinity;
@@ -578,7 +662,7 @@ namespace UnityEditor.ProBuilder
                 if(bestVertexIndexToEnd >= 0)
                     m_MeshConnections.Add(new SimpleTuple<int, int>(m_CutPath.Count - 1,bestVertexIndexToEnd));
             }
-            else if(IsALoop && ConnectionsToBordersCount < 2)
+            else if(isALoop && connectionsToBordersCount < 2)
             {
                 //The path must have minimum connections with the face borders, find the closest vertices
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
@@ -625,7 +709,7 @@ namespace UnityEditor.ProBuilder
                     (int)Mathf.Sign(Vector3.Distance(m_CutPath[a.item1].position, verticesPositions[a.item2])
                                     - Vector3.Distance(m_CutPath[b.item1].position, verticesPositions[b.item2])));
 
-                int connectionsCount = 2 - ConnectionsToBordersCount;
+                int connectionsCount = 2 - connectionsToBordersCount;
                 m_MeshConnections.RemoveRange(connectionsCount,m_MeshConnections.Count - connectionsCount);
             }
         }
@@ -685,7 +769,7 @@ namespace UnityEditor.ProBuilder
 
             List<Face> newFaces = new List<Face>();
             // If the cut defines a loop in the face, create the polygon corresponding to that loop
-            if (IsALoop)
+            if (isALoop)
             {
                 Face f = m_Mesh.CreatePolygon(cutIndexes, false);
                 f.submeshIndex = m_TargetFace.submeshIndex;
@@ -704,7 +788,7 @@ namespace UnityEditor.ProBuilder
 
             //Compute the rest of the new faces (faces outside of the loop or division of the original face)
             List<Face> faces = ComputeNewFaces(m_TargetFace, cutIndexes);
-            if(!IsALoop)
+            if(!isALoop)
                 newFaces.AddRange(faces);
 
             //Remove inserted vertices only if they were inserted for the process
@@ -811,6 +895,8 @@ namespace UnityEditor.ProBuilder
             return newFaces;
         }
 
+
+
         /// <summary>
         ///    The method computes all the possible faces that can be made starting by the vertices in polygonStart and ending with the cut
         /// This method creates faces that are not the final one and that must be deleted at the end. These invalid faces are returned in facesToDelete
@@ -838,7 +924,7 @@ namespace UnityEditor.ProBuilder
 
             //Go through the cut in reverse direction
             int index;
-            int finalIndex = IsALoop ?(startIndex - cutIndexes.Count) : 0;
+            int finalIndex = isALoop ?(startIndex - cutIndexes.Count) : 0;
             bool connected = false;
             List<int> candidate = new List<int>();
             for(index = startIndex - 1; index >= finalIndex; index--)
@@ -858,7 +944,7 @@ namespace UnityEditor.ProBuilder
                 closureCandidates.Add(candidate);
 
             //Go through the cut in forward direction
-            finalIndex = IsALoop ? (startIndex + cutIndexes.Count) : cutIndexes.Count;
+            finalIndex = isALoop ? (startIndex + cutIndexes.Count) : cutIndexes.Count;
             connected = false;
             candidate = new List<int>();
             for(index = startIndex + 1; index < finalIndex; index++)
@@ -1173,42 +1259,6 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Handle key events
-        /// </summary>
-        /// <param name="evt">the current event to check</param>
-        void HandleKeyEvent(Event evt)
-        {
-            KeyCode key = evt.keyCode;
-
-            switch (key)
-            {
-                case KeyCode.Backspace:
-                {
-                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
-                    m_CutPath.RemoveAt(m_CutPath.Count-1);
-                    UpdateMeshConnections();
-                    RebuildCutShape();
-                    evt.Use();
-                    break;
-                }
-
-                case KeyCode.Escape:
-                    evt.Use();
-                    Clear();
-                    ProBuilderEditor.ResetToLastSelectMode();
-                    break;
-
-                case KeyCode.KeypadEnter:
-                case KeyCode.Return:
-                case KeyCode.Space:
-                    evt.Use();
-                    ExecuteCut();
-                    ProBuilderEditor.ResetToLastSelectMode();
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Display existing points of the cut
         /// </summary>
         void DoExistingPointsGUI()
@@ -1286,7 +1336,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Rebuild the line mesh when updated
         /// </summary>
-        void RebuildCutShape()
+        void RebuildCutShape(bool optimize = true)
         {
             // If Undo is called immediately after creation this situation can occur
             if (m_Mesh == null)
@@ -1299,6 +1349,11 @@ namespace UnityEditor.ProBuilder
             // advantage of the `vertexCountChanged = false` optimization here.
             ProBuilderEditor.Refresh();
             SceneView.RepaintAll();
+
+            if(optimize && isALoop && m_IsCutValid)
+                ExecuteCut();
+
+            m_Dirty = false;
         }
 
         void ValidateCutShape()
@@ -1313,7 +1368,7 @@ namespace UnityEditor.ProBuilder
                 Vector2 segment1Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i].position));
                 Vector2 segment1End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i+1].position));
 
-                int lastVertexIndex = (IsALoop && i == 0) ? m_CutPath.Count-2 : m_CutPath.Count-1;
+                int lastVertexIndex = (isALoop && i == 0) ? m_CutPath.Count-2 : m_CutPath.Count-1;
                 //Test intersections with the rest of the cut path
                 for(int j = i + 2; j < lastVertexIndex && m_IsCutValid; j++)
                 {
@@ -1371,7 +1426,7 @@ namespace UnityEditor.ProBuilder
 
                     Vector2 segment2Start2D =
                         HandleUtility.WorldToGUIPoint(
-                            m_Mesh.transform.TransformPoint(m_CutPath[connection2.item1].position) );
+                            m_Mesh.transform.TransformPoint(m_CutPath[connection2.item1].position));
                     Vector2 segment2End2D =
                         HandleUtility.WorldToGUIPoint(
                             m_Mesh.transform.TransformPoint(verticesPositions[connection2.item2]));

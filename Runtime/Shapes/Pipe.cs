@@ -18,6 +18,9 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_HeightCuts = 0;
 
+        [SerializeField]
+        bool m_Smooth = true;
+
         public override void CopyShape(Shape shape)
         {
             if(shape is Pipe)
@@ -26,6 +29,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 m_Thickness = pipe.m_Thickness;
                 m_NumberOfSides = pipe.m_NumberOfSides;
                 m_HeightCuts = pipe.m_HeightCuts;
+                m_Smooth = pipe.m_Smooth;
             }
         }
 
@@ -135,6 +139,14 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.GeometryWithPoints(v.ToArray());
 
+            //Smooth internal and external faces
+            if(m_Smooth)
+            {
+                int smoothCount = 2 * heightSegments * m_NumberOfSides;
+                for(int i = 0; i < smoothCount; i++)
+                    mesh.facesInternal[i].smoothingGroup = 1;
+            }
+
             return UpdateBounds(mesh, size, rotation, new Bounds());
         }
     }
@@ -147,7 +159,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
         const bool k_ToggleOnLabelClick = true;
 
-        static GUIContent m_Content = new GUIContent();
+        static readonly GUIContent k_ThicknessContent = new GUIContent("Thickness", L10n.Tr("Thickness of the pipe borders. Larger value creates a smaller hole."));
+        static readonly GUIContent k_SidesContent = new GUIContent("Sides Count", L10n.Tr("Number of sides of the pipe."));
+        static readonly GUIContent k_HeightCutsContent = new GUIContent("Height Cuts", L10n.Tr("Number of divisions in the pipe height."));
+        static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the pipe."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -159,12 +174,10 @@ namespace UnityEngine.ProBuilder.Shapes
 
             if(s_foldoutEnabled)
             {
-                m_Content.text = "Thickness";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), m_Content);
-                m_Content.text = "Sides Count";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), m_Content);
-                m_Content.text = "Height Cuts";
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), m_Content);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Thickness"), k_ThicknessContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_NumberOfSides"), k_SidesContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HeightCuts"), k_HeightCutsContent);
+                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Smooth"), k_SmoothContent);
             }
 
             EditorGUI.indentLevel--;

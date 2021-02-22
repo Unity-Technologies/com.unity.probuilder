@@ -85,20 +85,23 @@ namespace UnityEditor.ProBuilder
 				EditorUtility.ShowNotification(instance.PerformAction().notification);
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", true, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Shape %#k", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_OpenShapeEditorMenuItem()
 		{
-			var instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
+			var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/Open Shape Editor Menu Item %#k", false, PreferenceKeys.menuEditor + 1)]
-		static void MenuPerform_OpenShapeEditorMenuItem()
-		{
-			var instance = EditorToolbarLoader.GetInstance<OpenShapeEditorMenuItem>();
-			if(instance != null && instance.enabled)
-				EditorUtility.ShowNotification(instance.PerformAction().notification);
-		}
+        [MenuItem(k_MenuPrefix + "Editors/New Shape %#k", false, PreferenceKeys.menuEditor + 1)]
+        static void MenuPerform_OpenShapeEditorMenuItem()
+        {
+            var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
+            if(instance != null && instance.enabled)
+            {
+                var result = ToolManager.IsActiveTool(instance.Tool) ? instance.EndActivation() : instance.StartActivation();
+                EditorUtility.ShowNotification(result);
+            }
+        }
 
 		[MenuItem(k_MenuPrefix + "Editors/Open Smoothing Editor", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_OpenSmoothingEditor()
