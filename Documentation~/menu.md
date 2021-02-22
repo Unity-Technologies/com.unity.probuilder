@@ -1,8 +1,10 @@
 # The ProBuilder menu
 
-Use the ProBuilder menu to access most of the ProBuilder editors and tools, and the special tools that are only available through this menu. For example, you can access tools to repair and debug ProBuilder, or access the experimental [Boolean](boolean.md) tool. 
+Use the ProBuilder menu to access most of the ProBuilder editors, actions, tools, and a few special features that are only available through this menu. For example, you can repair and debug ProBuilder, or access the experimental [Boolean](boolean.md) Editor window. 
 
 ![The ProBuilder menu](images/pb_menu.png)
+
+<span style="color:blue">@DEVNOTE: Is the **Tools > Debug** menu entry permanent? If so, can you give me some context for these? Who are the users? What would you do with them? </span>
 
 The ProBuilder menu items include the following:
 
@@ -15,8 +17,8 @@ The ProBuilder menu items include the following:
 * [Geometry](menu-geometry.md)
 * [Materials](menu-materials.md)
 * [Vertex Colors](menu-vertexcolors.md)
-* [Experimental](menu-experimental.md)
 * [Repair](menu-repair.md)
+* [Experimental](menu-experimental.md)
 * [Export](menu-export.md)
 * [Debug](menu-debug.md)
 * [Actions](menu-actions.md)

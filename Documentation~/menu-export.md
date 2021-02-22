@@ -1,5 +1,7 @@
 # Export
 
+Use this sub-menu to export selected ProBuilder Meshes in various formats.
+
 ![Tools > ProBuilder > Export menu](images/menu-export.png)
 
 ## Export Asset

@@ -6,17 +6,14 @@ Even if the vertex color isn't currently visible (for example, if it has a Mater
 
 ![Select all orange faces on the Mesh](images/Example_SelectByVertexColor.png)
 
-This tool is useful for grouping out sections of your Mesh with different vertex colors. It is available in the [vertex, edge, and face modes](modes.md).
+This action is useful for grouping out sections of your Mesh with different vertex colors. It is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Vertex Color**).
+> **Tip:** You can also access this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Vertex Color**).
 
 ## Select by Colors Options
 
-By default, the **Current Selection** option is enabled. This means that ProBuilder only extends the selection to other faces on the currently selected GameObject. 
+Enable the **Current Selection** option to extend the selection to other faces on the currently selected GameObject(s). By default, this option is disabled. 
 
-Disable this option if you want to select every face with the currently selected vertex color on any GameObject in the Scene. 
+When disabled, ProBuilder selects every face with the currently selected vertex color on any GameObject in the scene.
 
-![Grow Selection Options](images/Selection_SelectByVertexColor_props.png) 
-
-
-
+![Grow Selection Options](images/Selection_SelectByVertexColor_props.png)

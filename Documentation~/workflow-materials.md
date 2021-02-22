@@ -8,9 +8,11 @@ Use the [Material Editor](material-tools.md) to easily manage Materials you are 
 * [Saving your Material arrangement](material-tools.md#save) in a new Material Palette so that you can find it easily and re-use it in other Scenes and Projects.
 * [Loading](material-tools.md#load) a previously saved Material Palette into the Material Editor.
 
-![Material Tools](images/MaterialTools_WithExample.png)
+![Drag your Materials onto the slots in the Material Editor from the Project view](images/MaterialTools_WithExample.png)
 
-The Materials you use in the Material Editor are standard Unity Materials. If you want to create your own standard Unity Material, follow the instructions in [Creating and Using Materials](https://docs.unity3d.com/Manual/Materials.html) in the Unity manual. For Texture Materials, follow the instructions in [Creating a Texture Material](#texmat).
+The Materials you use in the Material Editor are standard Unity Materials. If you want to create your own standard Unity Material, follow the instructions in [Creating a material asset and assigning a Unity shader to it](https://docs.unity3d.com/Manual/materials-introduction.html#creating-a-material) in the Unity manual. For Texture Materials, follow the instructions in [Creating a Texture Material](#texmat).
+
+**Note**: If you are using either the [Universal Render Pipeline](https://docs.unity3d.com/Manual/universal-render-pipeline.html) (URP) or the [High Definition Render Pipeline](https://docs.unity3d.com/Manual/high-definition-render-pipeline.html) (HDRP), you also need to import the corresponding URP or HDRP Shaders needed to display vertex colors and textures correctly. For more information, see [Support for scriptable render pipelines](installing.md).
 
 
 

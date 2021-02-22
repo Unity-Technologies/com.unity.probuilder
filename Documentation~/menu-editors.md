@@ -1,22 +1,28 @@
 # Editors
 
-This sub-menu provides access to editor and component windows.
+This sub-menu provides access to tools and editor windows.
 
 ![Tools > ProBuilder > Editors menu](images/menu-editors.png)
 
 ## New Bezier Shape
 
-Use the **Bezier Shape** component to define a bezier curve around which ProBuilder extrudes a Mesh.
+Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a Mesh.
 
-> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Use these with caution.
+> **Warning:** This tool is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Use with caution.
 
-For more information, see the [Bezier Shape](bezier.md) component documentation.
+For more information, see the [Bezier Shape tool](bezier.md) documentation.
+
+## New Shape
+
+Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
+
+For more information, see the [Shape tool](shape-tool.md) documentation.
 
 ## New Poly Shape
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
+Use the **Poly Shape** tool to create custom ProBuilder Mesh shapes.
 
-For more information, see the [Shape Tool](shape-tool.md) window documentation.
+For more information, see the [Poly Shape tool](shape-tool.md) documentation.
 
 ## Open Lightmap UV Editor
 

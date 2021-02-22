@@ -24,20 +24,20 @@ Use the ProBuilder Edit modes to access the individual elements of your Mesh, or
 
 1. Click the button that matches the object or element mode you'd like to edit in from the [Edit mode toolbar](edit-mode-toolbar.md).
 
-  | **Icon Mode**                                        | **Description**                                            |
+  | **Icon Mode**                                          | **Description**                                              |
   | ------------------------------------------------------ | ------------------------------------------------------------ |
-  | ![Object edit mode](images/icons/EditModes_Object.png) | Select objects, modify the normals and the pivot, and merge objects together. For a complete list of actions you can perform in this mode, see [Object tools](object-actions.md). |
-  | ![Vertex edit mode](images/icons/EditModes_Vertex.png) | Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, see [Vertex tools](vertex.md). |
-  | ![Edge edit mode](images/icons/EditModes_Edge.png)     | Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, see [Edge tools](edge.md). |
-  | ![Face edit mode](images/icons/EditModes_Face.png)     | Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, see [Face tools](face.md). |
+  | ![Object edit mode](images/icons/EditModes_Object.png) | Select objects, modify the normals and the pivot, and merge objects together. For a complete list of actions you can perform in this mode, see [Object actions](object-actions.md). |
+  | ![Vertex edit mode](images/icons/EditModes_Vertex.png) | Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, see [Vertex actions](vertex.md). |
+  | ![Edge edit mode](images/icons/EditModes_Edge.png)     | Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, see [Edge actions](edge.md). |
+  | ![Face edit mode](images/icons/EditModes_Face.png)     | Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, see [Face actions](face.md). |
 
 2. Click or drag to select the element you want to use.
 
 3. With the object(s) or element(s) selected, you can: 
 
-  * Use one of the tools on the [ProBuilder toolbar](toolbar.md) to apply an action to the selected element(s).
-  * Use one of the tools on the [ProBuilder menu](menu.md) to apply an action to the selected element(s).
-  * Use one of the [ProBuilder hotkeys](hotkeys.md) to run one of the [ProBuilder tools](ref_tools.md) on the selected element(s).
-  * Use any of the standard Unity Transform controls to move, rotate, or scale the element(s).
+  * Click one of the enabled buttons on the [ProBuilder toolbar](toolbar.md) to apply an action to the selection or activate a tool.
+  * Select one of the enabled items on the [ProBuilder menu](menu.md) to apply an action to the selection or activate a tool.
+  * Use one of the [ProBuilder hotkeys](hotkeys.md) to run one of the [ProBuilder actions](ref_action.md) on the selection.
+  * Use any of the standard Unity Transform controls to move, rotate, or scale the selection.
   * **Shift+Drag** while using any of the standard Unity Transform controls to extrude or inset the element(s).
 

@@ -6,7 +6,7 @@ To open this window, launch the [toolbar option](overview-ui.md#pb_options) on t
 
 > **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Lightmap UV Editor**).
 
-This is a very useful setting to enable, because it removes the process of manually building lightmap UVs. However, it can also be very resource-intensive, especially for older or less powerful systems. If __Auto Lightmap UVs__ has a heavy impact on performance, it might be more efficient to disable __Auto Lightmap UVs__ and just use the [Lightmap UVs](Object_LightmapUVs.md) tool ( ![Generate Lightmaps icon](images/icons/Object_LightmapUVs.png)) when you need it.
+This is a very useful setting to enable, because it removes the process of manually building lightmap UVs. However, it can also be very resource-intensive, especially for older or less powerful systems. If __Auto Lightmap UVs__ has a heavy impact on performance, it might be more efficient to disable __Auto Lightmap UVs__ and just use the [Lightmap UVs](Object_LightmapUVs.md) action ( ![Generate Lightmaps icon](images/icons/Object_LightmapUVs.png)) when you need it.
 
 ![The Lightmap UV Editor window](images/lightmap-uv.png)
 

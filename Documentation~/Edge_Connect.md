@@ -1,8 +1,8 @@
 # ![Connect Edges icon](images/icons/Edge_Connect.png) Connect Edges
 
-The __Connect Edges__ tool inserts an edge that connects the centers of each selected edge.
+The __Connect Edges__ action inserts an edge that connects the centers of each selected edge.
 
-> **Tip:** You can also use this tool with the **Alt/Opt+E** hotkey.
+> **Tip:** You can also use this action with the **Alt/Opt+E** hotkey.
 
 ![Create vertical edge on side of cube](images/ConnectEdges_Example.png)
 

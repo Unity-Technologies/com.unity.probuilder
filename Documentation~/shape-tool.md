@@ -1,8 +1,8 @@
-# ![Shape Tool icon](images/icons/Panel_Shapes.png) Shape panel
+# ![Shape Tool icon](images/icons/Panel_Shapes.png) Shape tool
 
 Use the Shape tool to [create new ProBuilder meshes](workflow-create-predefined.md) based on common primitive shapes, such as cylinders, arches, and stairs. When you activate the Shape tool to create a new shape, the **Draw Shape** panel appears in the bottom of the Scene view. You can either draw in the Scene view or set the properties directly in the **Draw Shape** panel to define a bounding box that will hold the new shape. You can also customize any shape-specific settings, and then either exit the tool or create another new shape. 
 
-**Tip**: After you create a new shape and exit the tool, you can redefine the bounding box, switch primitive shapes, and change the shape-specific settings when you select the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) from the **Tools** panel. If you made any modifications to the mesh topology (such as [splitting vertices](Vert_Split.md), [connecting edges](Edge_Connect.md), or [extruding faces](Face_Extrude.md)), you must reset the shape to remove all manual changes before you can proceed.
+> **Tip**: After you create a new shape and exit the tool, you can redefine the bounding box, switch primitive shapes, and change the shape-specific settings when you select the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) from the **Tools** panel. If you made any modifications to the mesh topology (such as [splitting vertices](Vert_Split.md), [connecting edges](Edge_Connect.md), or [extruding faces](Face_Extrude.md)), you must reset the shape to remove all manual changes before you can proceed.
 
 ![When you create a new shape, the Draw Shape properties appear. When you edit an existing shape, the Edit Shape properties appear.](images/shape-tool.png) 
 

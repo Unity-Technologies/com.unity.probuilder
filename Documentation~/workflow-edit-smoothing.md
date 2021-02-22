@@ -28,7 +28,7 @@ To smooth a portion of your Mesh:
 
 2. Select the faces that you want to have smooth adjoining edges.
 
-3. Click the ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) **Smoothing** tool from the [The ProBuilder toolbar](toolbar).
+3. Click the ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) **Smoothing** action from the [The ProBuilder toolbar](toolbar).
 
 4. Click an unused smooth group number on the [Smooth Group Editor](smoothing-groups.md) window.
 

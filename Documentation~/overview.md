@@ -1,6 +1,6 @@
 # Getting started 
 
-You can access all of ProBuilder's editing tools from the [ProBuilder toolbar](toolbar.md), which dynamically adapts to your [Edit mode](edit-mode-toolbar.md) and your current selection.
+You can access all of ProBuilder's editing tools and actions from the [ProBuilder toolbar](toolbar.md), which dynamically adapts to your [Edit mode](edit-mode-toolbar.md) and your current selection.
 
 ![Toolbar Example](images/ProBuilderToolbar_GeoActionsArea.png)
 
@@ -8,11 +8,11 @@ Every toolbar button has a tooltip that shows a short summary about its use. Vie
 
 ## Building and editing complex Meshes
 
-ProBuilder Meshes act like regular GameObjects in Unity. You can apply Transform values to them and add components to them. They respond to the physics system, and you can animate them and attach scripts to them in order to control them. However, standard Unity Meshes are not the same as ProBuilder Meshes: you can't edit them with ProBuilder tools until you [convert them into ProBuilder objects](Object_ProBuilderize.md). 
+ProBuilder Meshes act like regular GameObjects in Unity. You can apply Transform values to them and add components to them. They respond to the physics system, and you can animate them and attach scripts to them in order to control them. However, standard Unity Meshes are not the same as ProBuilder Meshes: you can't edit them with ProBuilder actions until you [convert them into ProBuilder objects](Object_ProBuilderize.md). 
 
 ![ProBuilder vs. Unity Meshes](images/PBvsUnityMeshes.png)
 
-The most common way to build a ProBuilder Mesh is to [create it](workflow-create.md) and [edit it](workflow-edit.md) entirely with ProBuilder tools. 
+The most common way to build a ProBuilder Mesh is to [create it](workflow-create.md) and [edit it](workflow-edit.md) entirely with ProBuilder tools and actions. 
 
 ## Applying Materials and Vertex Colors
 

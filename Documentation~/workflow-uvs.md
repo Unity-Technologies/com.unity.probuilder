@@ -2,7 +2,7 @@
 
 To give your walls, doors, floors, or other objects a realistic look, use a Texture Material, which is just a special Material with a 2-dimensional image defined on it. You can [create it yourself](workflow-materials.md#texmat) or [download one from the Asset Store](https://docs.unity3d.com/Manual/AssetStore.html).
 
-After you [apply the Texture Material](workflow-materials.md#apply), open the UV Editor to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping tools to help you get the position, orientation, and size just right.
+After you [apply the Texture Material](workflow-materials.md#apply), open the UV Editor to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping helpers for getting the position, orientation, and size just right.
 
 > **Tip:** Before you start to manually edit UVs, delete any hidden faces. This helps simplify the UV unwrapping process, because it simplifies the complexity of the UV elements that appear in the UV Editor.
 
@@ -79,11 +79,11 @@ This procedure removes any group that any of the selected face(s) belongs to.
 
 ## Manual UV mode features
 
-Any time you modify edges or vertices in the UV Editor, you enter the **Manual UV** mode. You can also select the face(s) you want to set as manual, and click the **Convert to Manual** button instead. The Actions panel provides a completely different set of tools, and the UV Editor displays manual faces as yellow or orange in the UV Editor, whereas automatic faces appear turquoise or blue.
+Any time you modify edges or vertices in the UV Editor, you enter the **Manual UV** mode. You can also select the face(s) you want to set as manual, and click the **Convert to Manual** button instead. The Actions panel provides a completely different set of options, and the UV Editor displays manual faces as yellow or orange in the UV Editor, whereas automatic faces appear turquoise or blue.
 
 To start manually editing UVs, choose between the [box and planar](manual-uvs-actions.md#Project) projection modes. This difference between these is that **planar** projects the image from a single point across all faces, while the **box** method uses a planar projection for each face.  
 
-When you've done this, you can use the transform tools to move, rotate, and scale UV elements, with the auto-snapping (**Ctrl/Cmd+translate**) hotkey combination where needed. The [Fit UVs tool](manual-uvs-actions.md#fit-uvs) shrinks or grows your UV face uniformly. You can also move faces into place, and then select either the vertices or edges and weld them together to make an [island](manual-uvs-actions.md#Edit). 
+When you've done this, you can use the transform tools to move, rotate, and scale UV elements, with the auto-snapping (**Ctrl/Cmd+translate**) hotkey combination where needed. [Fit UVs](manual-uvs-actions.md#fit-uvs) shrinks or grows your UV face uniformly. You can also move faces into place, and then select either the vertices or edges and weld them together to make an [island](manual-uvs-actions.md#Edit). 
 
 If you need to change the shape of the UV face, move the vertices and edges directly. Alternatively, you can use the [auto-stitch](manual-uvs-actions.md#autostitching) method to make ProBuilder build more islands. If you need to break them apart again, select each face you want to break off, then click the [Split UVs](manual-uvs-actions.md#split-uvs) button. Now you can move them around independently.
 
@@ -97,7 +97,7 @@ To mirror the UV mapping on a face, you can [flip the UVs](manual-uvs-actions.md
 
 ## Common texture mapping tasks
 
-This section describes some of the most common ways you can use the ProBuilder texture-mapping tools. There any many more possibilities, but these should give you a good place to start developing your own workflow.
+This section describes some of the most common ways you can use ProBuilder for texture-mapping. There any many more possibilities, but these should give you a good place to start developing your own workflow.
 
 * **Wooden beams**: Select the UV face(s) and [rotate them in Auto UV mode](auto-uvs-actions.md#Transform) until the grain goes down the length of the beam. With the UV Editor open, you can select all faces at once in the Scene view by double-clicking on any face on the object.
 
@@ -124,7 +124,7 @@ This section describes some of the most common ways you can use the ProBuilder t
 
 ### Finding more inspiration
 
-Use the Unity ProBuilder channel to find lots of videos that demonstrate how to use the tools effectively:
+Use the Unity ProBuilder channel to find lots of videos that demonstrate how to use these features effectively:
 
 * [ProBuilder Simple Objects - Crates and Barrels](https://www.youtube.com/watch?v=lmLG4nC9tm0)
 * [Prototyping a "Medieval House" in Unity with ProBuilder3D](https://www.youtube.com/watch?v=xEEUhSyrq7M)
@@ -133,7 +133,9 @@ Use the Unity ProBuilder channel to find lots of videos that demonstrate how to 
 * [ProBuilder Tutorial 5: Texturing Part I - Materials and Vertex Colors (v2.3, Unity)](https://www.youtube.com/watch?v=m085rEQmVP8)
 * [ProBuilder Tutorial 6: Texturing Part II - UV Editing and Unwrapping (v2.3, Unity)](https://www.youtube.com/watch?v=U_5f8RlciWQ)
 
- 
+ <span style="color:blue">@DEVNOTE: Do you have some more up to date videos I could put here? Most of these are quite old. </span>
+
+
 
 ## Creating a UV template
 

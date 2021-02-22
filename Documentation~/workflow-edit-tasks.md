@@ -18,7 +18,9 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
 	[Subdividing](Edge_Subdivide.md) the two selected edges then creates a third vertex, which you can connect up with the vertices at the base of the peaked section to create four perfectly even sections on the front and the back. This approach is much easier than trying to subdivide a five-sided polygon.
 
-- **Boolean operations**: Some geometry is hard to create just by moving faces, edges, and vertices. The [Boolean](boolean.md) tool allows you to quickly combine two Meshes together to create a new Mesh. The final Mesh is either the addition of the two, the difference between the two, or only the common geometry between them, depending on the mode.
+- **Cutting**: This is similar to [subdividing faces](Face_Subdivide.md) except that you control the shape of the new face, instead of letting ProBuilder split the face evenly. You click on the face to define the location of the edges and vertices using the modal [Cut](cut-tool.md) tool.
+
+- **Boolean operations**: Some geometry is hard to create just by moving faces, edges, and vertices. The experimental [Boolean](boolean.md) feature allows you to quickly combine two Meshes together to create a new Mesh. The final Mesh is either the addition of the two, the difference between the two, or only the common geometry between them, depending on the mode.
 
 ## Object-specific tasks
 
@@ -50,6 +52,8 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
 - **Make a building with towers**: start with a [cube](Cube.md) and [inset](Face_Inset.md) on the top face, then [extrude](Face_Extrude.md) upward. Repeat this as many times as you like. You could also [subdivide the top face](Face_Subdivide.md) to create multiple extrusions.
 
+<span style="color:blue">@DEVNOTE: Do you have some good examples for using the Cut tool to make either objects or buildings for this section here? </span>
+
 ## Finding more inspiration
 
 Use the Unity ProBuilder channel to find videos that demonstrate how to use the tools effectively:
@@ -59,3 +63,5 @@ Use the Unity ProBuilder channel to find videos that demonstrate how to use the 
 * [Prototyping a "Medieval House" in Unity with ProBuilder3D](https://www.youtube.com/watch?v=xEEUhSyrq7M)
 * [ProBuilder Greyboxing an Interior FPS Level](https://www.youtube.com/watch?v=dYBOBgfcTgY)
 * [Unity at GDC - Rapid worldbuilding with ProBuilder](https://www.youtube.com/watch?v=7k-81UEluyg)
+
+<span style="color:blue">@DEVNOTE: Do you have some more up to date videos I could put here? Most of these are quite old. </span>

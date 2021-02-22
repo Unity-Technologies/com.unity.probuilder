@@ -1,6 +1,6 @@
 # ![Bevel Edges icon](images/icons/Edge_Bevel.png) Bevel Edge
 
-The __Bevel Edge__ tool splits the selected edge(s) into two edges, with a new face between.
+The __Bevel Edge__ action splits the selected edge(s) into two edges, with a new face between.
 
 ![Bevel 3 edges on cube](images/BevelEdges_Example.png)
 

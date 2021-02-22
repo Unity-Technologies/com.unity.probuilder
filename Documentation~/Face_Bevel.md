@@ -1,6 +1,6 @@
 # ![Bevel icon](images/icons/Edge_Bevel.png) Bevel (Faces)
 
-The __Bevel__ tool performs the [Bevel Edge](Edge_Bevel.md) action on all the edges of the selected face(s).
+The __Bevel__ action performs the [Bevel Edge](Edge_Bevel.md) action on all the edges of the selected face(s).
 
 ![Bevel top of cube](images/BevelFace_Example.png)
 

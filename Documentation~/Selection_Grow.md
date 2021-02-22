@@ -1,18 +1,18 @@
 # ![Grow Selection](images/icons/Selection_Grow.png) Grow Selection
 
-The __Grow Selection__ tool expands the selection outward to adjacent faces, edges, or vertices.
+The __Grow Selection__ action expands the selection outward to adjacent faces, edges, or vertices.
 
 ![Grow Selection Examples](images/GrowSelection_Example.png)
 
-This tool is available in the [vertex, edge, and face modes](modes.md).
+This action is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also use this tool with the **Alt/Opt+G** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Grow Selection**).
+> **Tip:** You can also use this action with the **Alt/Opt+G** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Grow Selection**).
 
 
 
 ## Grow Selection Options
 
-![Grow Selection Options](images/Selection_Grow_props.png) 
+![Grow Selection Options](images/Selection_Grow_props.png)
 
 | **Property:**       | **Description:**                                           |
 | --------------------- | ------------------------------------------------------------ |

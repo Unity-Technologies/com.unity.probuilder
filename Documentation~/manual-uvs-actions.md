@@ -1,10 +1,10 @@
 # Actions panel: Manual UV Mode
 
-In Manual mode, the **Actions** panel displays the **UV Mode: Manual** label and the manual UV manipulation tools. The Manual mode provides the following tools to help you with texture mapping:
+In Manual mode, the **Actions** panel displays the **UV Mode: Manual** label and helpers for manual UV manipulation. The Manual mode provides the following functionality to help you with texture mapping:
 
 * The [Project UVs](#Project) section provides different UV projection methods.
 * The [Selection](#Selection) section allows you to expand which UV elements are selected.
-* The [Edit](#Edit) section provides manipulation tools.
+* The [Edit](#Edit) section provides manipulation functionality.
 
 ![UV Editor in Manual UV mode](images/UVPanel_ManualActions.png)
 
@@ -14,7 +14,7 @@ To access this panel, either click the **Convert to Manual** button from the [Ac
 
 To switch back to the **Actions** panel in **Auto UV Mode** and convert all selected faces to [Auto UVs](auto-uvs-actions), click the **Convert to Auto** button.
 
-> **Tip:** Before you start to manipulate UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, delete the face pressed up aganst the wall. It is a waste of resources to render faces that aren't visible. 
+> **Tip:** Before you start to manipulate UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, delete the face pressed up aganst the wall. It is a waste of resources to render faces that aren't visible.
 
 
 
@@ -26,7 +26,7 @@ Select how you want ProBuilder to project the UVs: using the **Planar** or **Box
 
 ### Planar
 
-Unwraps the selected face(s) using a Planar projection method. 
+Unwraps the selected face(s) using a Planar projection method.
 
 ![Planar projection onto a 2-dimensional Mesh](images/PlanarProject_Example.png)
 
@@ -69,7 +69,7 @@ With a Vertex or Edge selected, click to select all elements on the same face.
 
 ## Edit
 
-ProBuilder provides a number of manual manipulation tools for working in the UV Editor: [welding](#Weld) vertices; [splitting](#Split) and [collapsing](#Collapse) UVs; flipping UV elements [horizontally](#Horizontal) and [vertically](#Vertical); and [resizing](#Fit) UV elements to match the UV space.
+ProBuilder provides a number of manual manipulation features for working in the UV Editor: [welding](#Weld) vertices; [splitting](#Split) and [collapsing](#Collapse) UVs; flipping UV elements [horizontally](#Horizontal) and [vertically](#Vertical); and [resizing](#Fit) UV elements to match the UV space.
 
 <a name="Weld"></a>
 
@@ -81,7 +81,7 @@ To adjust the distance modifier, click the **+** button on the right side of the
 
 ![Reduce edges that are near to a single edge](images/UVExamples_WeldUVs.png)
 
-For example, it is good practice to use a low value, such as 0.01. Then you can select all of the UVs at the same time and use the **Weld** tool to reduce duplicate UV vertices. This is an important step if you are planning on autostitching, because it requires faces to be adjacent, and duplicate edges produce undesired results.
+For example, it is good practice to use a low value, such as 0.01. Then you can select all of the UVs at the same time and use **Weld** to reduce duplicate UV vertices. This is an important step if you are planning on autostitching, because it requires faces to be adjacent, and duplicate edges produce undesired results.
 
 <a name="Collapse"></a>
 
@@ -135,13 +135,13 @@ You can autostitch any two adjacent faces together. To do this, follow this proc
 
 2. Open the UV Editor window and switch to UV Face editing mode.
 
-3. Select a face on the Mesh and then **Ctrl+Click** a face that shares an edge with the current selection. 
+3. Select a face on the Mesh and then **Ctrl+Click** a face that shares an edge with the current selection.
 
 	> **Important:** Use the **Ctrl** key for both macOS and Windows.
 
 4. You can continue to **Ctrl+Click** one face at a time as long as it is adjacent to the selected face.
 
-Autostitching allows you to control how ProBuilder projects the Texture image across the Mesh. It is like building a UV quilt that uses [planar projection](#Project). 
+Autostitching allows you to control how ProBuilder projects the Texture image across the Mesh. It is like building a UV quilt that uses [planar projection](#Project).
 
 
 
@@ -153,7 +153,7 @@ You can copy UVs from one face to another. For example, if you are working on a 
 
 1. Open the UV Editor. ProBuilder can only perform UV editing tasks when the UV Editor is open.  
 
-2. In the Scene view, select the face you want to copy from. 
+2. In the Scene view, select the face you want to copy from.
 
 3. **Ctrl+Shift+Click** on the face you want to copy to.
 

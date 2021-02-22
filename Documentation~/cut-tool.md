@@ -12,15 +12,13 @@ To create a new face on an existing mesh face:
 
 2. In the ProBuilder toolbar, click **Cut**. The **Cut Tool** panel appears at the bottom of the Scene view. If the ProBuilder toolbar is using [Text mode](customizing.md#text-vs-icon-mode), the button text background becomes red.
 
-  **Note**: 
-
 3. To control how close to any nearby edges you can place, use the options on the [Cut Tool panel](#cut-tool_panel).
 
 5. Click on the mesh face where you want the vertices for the new face to be. ProBuilder creates the cutout shape based on the edges you draw with these points. For example, you can specify three points on the mesh to define a triangular shape and the fourth to close it:
 
   ![Example of a triangular cutout on a face](images/cut-tool-example.png)
 
-  **Tip**: ProBuilder displays red edges as a visual warning if your points make an invalid edge or face. When this happens, undo adding each point until all the edges become blue again.
+  > **Tip**: ProBuilder displays red edges as a visual warning if your points make an invalid edge or face. When this happens, undo adding each point until all the edges become blue again.
 
   As soon as you return to the first point and click it again (such as the fourth point in the triangle example), the cut is complete and you can either exit the tool or start another cut. 
 

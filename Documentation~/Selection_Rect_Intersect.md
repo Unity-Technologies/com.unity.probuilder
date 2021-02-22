@@ -1,16 +1,16 @@
 # ![Selection Rect icon](images/icons/Selection_Rect_Intersect.png) Rect
 
-Use the __Rect__ tool to choose whether drag selection should only select elements completely inside the drag rectangle, or also elements that are partially inside the the drag rectangle.
+Use the __Rect__ action to choose whether drag selection should only select elements completely inside the drag rectangle, or also elements that are partially inside the the drag rectangle.
 
 ![Same drag action has different effect depending on Rect setting](images/DragRect_Example.png)
 
-This tool is available only in the [edge and face modes](modes.md).
+This action is available only in the [edge and face modes](modes.md).
 
 
 
 ## Visual cues
 
-Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the tool is in:
+Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the action is in:
 
 | **Icon mode:**                                        | **Text mode:**       | **Description:**                                           |
 | :------------------------------------------------------ | ------------------- | ------------------------------------------------------------ |

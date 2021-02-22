@@ -26,14 +26,14 @@ To access the **Auto Lightmap UVs** setting:
 
 2. Disable the **Auto Lightmap UVs** option.
 
-	![Disable the Auto Generate option](images/faq-norender.png)
+	![Disable the Lightmap UVs option](images/faq-norender.png)
 
 If you turn off the automatic lightmapping option and you still see faces that are not rendering, it may be that you have doubled vertices in your Mesh.
 
 To fix elements that are sharing the same place:
 
 1. Select the entire Mesh.
-2. [Open the **Options** window](workflow-edit.md#edit) for the **Weld Vertices** tool and make sure that the **Weld Distance** value is very low (for example, 0.01 or 0.0001). This ensures the tool doesn't weld vertices that are close but not doubled.
+2. [Open the **Options** window](workflow-edit.md#edit) for the **Weld Vertices** action and make sure that the **Weld Distance** value is very low (for example, 0.01 or 0.0001). This ensures the action doesn't weld vertices that are close but not doubled.
 3. Click the **Weld Vertices** button.
 
 > **Tip:** You can enable the __Show Scene Info__ property in the [ProBuilder Preferences](preferences.md#info_overlay) window while debugging. This displays information about the selected Mesh, including the total number of vertices, edges, and faces, and how many are currently selected in the top left corner of the Scene view.
@@ -59,7 +59,7 @@ This happens when the GameObject does not have a UV2 channel.
 To build the UV2 channel:
 
 1. Select the affected GameObject(s).
-2. Run the [Lightmap UVs](Object_LightmapUVs.md) tool.
+2. Run the [Lightmap UVs](Object_LightmapUVs.md) action.
 
 
 
@@ -81,6 +81,3 @@ To resolve these errors, you can follow either of these fixes:
 
 * Re-import the **FBX Exporter** package.
 * Open **PlayerSettings** (from the top menu: **Edit** > **Project Settings** > **Player**) and remove the **PROBUILDER_FBX_PLUGIN_ENABLED** flag from **Scripting Define Symbols**.
-
-
-

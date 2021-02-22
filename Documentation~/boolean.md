@@ -1,14 +1,14 @@
 # Boolean (Experimental) window
 
-> **Warning:** The Boolean Tool is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Please use with caution.
+> **Warning:** The Boolean feature is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Please use with caution.
 
-The experimental Boolean Tool provides an interface for creating new Meshes from boolean operations.
+The experimental Boolean features provides an interface for creating new Meshes from boolean operations.
 
 ![Boolean (Experimental) window](images/Experimental_BooleanWindow.png)
 
 Each type of operation takes two ProBuilder Mesh objects as the *left* and *right* inputs. ProBuilder combines the two input Meshes to create a new Mesh shape based on the operation you select.
 
-You can only access this tool from the menu, because it is experimental:
+You can only access this feature from the menu, because it is experimental:
 
 1. To open the Boolean (Experimental) window, navigate to Unity's top menu and go to **Tools** > **ProBuilder** > **Experimental** > **Boolean (CSG) Tool**.
 2. Set references to the ProBuilder meshes just under the preview windows on the left and the right side.
