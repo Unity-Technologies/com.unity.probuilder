@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Linq;
+using UnityEditor.ProBuilder.Actions;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.Shapes;
@@ -80,18 +81,7 @@ namespace UnityEditor.ProBuilder
                 if (m_ScriptStripping == false)
                     continue;
 
-                if(mesh.TryGetComponent(out BezierShape bezier))
-                    Object.DestroyImmediate(bezier);
-
-                if(mesh.TryGetComponent(out PolyShape poly))
-                    Object.DestroyImmediate(poly);
-
-                mesh.preserveMeshAssetOnDestroy = true;
-                Object.DestroyImmediate(mesh);
-                Object.DestroyImmediate(entity);
-
-                if(gameObject.TryGetComponent(out ShapeComponent shapeComponent))
-                    Object.DestroyImmediate(shapeComponent);
+                StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(gameObject, mesh, true);
             }
         }
 

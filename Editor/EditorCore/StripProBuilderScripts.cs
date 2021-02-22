@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
     /// Menu items for stripping ProBuilder scripts from GameObjects.
     /// </summary>
     /// @TODO MOVE TO ACTIONS
-    sealed class StripProBuilderScripts : Editor
+    internal sealed class StripProBuilderScripts : Editor
     {
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
         public static void StripAllScenes()
@@ -82,15 +82,9 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
-                if (go.TryGetComponent(out PolyShape polyShape))
-                    DestroyImmediate(polyShape);
-
-                if (go.TryGetComponent(out BezierShape bezierShape))
-                    DestroyImmediate(bezierShape);
-
                 if (pb.mesh == null)
                 {
-                    DestroyProBuilderMeshAndDependencies(go, pb);
+                    DestroyProBuilderMeshAndDependencies(go, pb, false);
                     return;
                 }
 
@@ -100,16 +94,13 @@ namespace UnityEditor.ProBuilder.Actions
                 // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
                 if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh))
                 {
-                    pb.preserveMeshAssetOnDestroy = true;
-                    DestroyImmediate(pb);
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
+                    DestroyProBuilderMeshAndDependencies(go, pb, true);
                 }
                 else
                 {
                     Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
 
-                    DestroyProBuilderMeshAndDependencies(go, pb);
+                    DestroyProBuilderMeshAndDependencies(go, pb, false);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
                     if (go.TryGetComponent(out MeshCollider meshCollider))
@@ -119,15 +110,24 @@ namespace UnityEditor.ProBuilder.Actions
             catch {}
         }
 
-        static void DestroyProBuilderMeshAndDependencies(GameObject go, ProBuilderMesh pb)
+        internal static void DestroyProBuilderMeshAndDependencies(GameObject go, ProBuilderMesh pb, bool preserveMeshAssets)
         {
-            DestroyImmediate(pb);
+            Undo.RecordObject(pb, "Removing ProBuilderMesh during scripts striping");
+
+            if (go.TryGetComponent(out PolyShape polyShape))
+                DestroyImmediate(polyShape);
+
+            if (go.TryGetComponent(out BezierShape bezierShape))
+                DestroyImmediate(bezierShape);
+
+            pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
+            Undo.DestroyObjectImmediate(pb);
 
             if (go.TryGetComponent(out Entity entity))
-                DestroyImmediate(entity);
+                Undo.DestroyObjectImmediate(entity);
 
             if (go.TryGetComponent(out ShapeComponent shapeComponent))
-                DestroyImmediate(shapeComponent);
+                Undo.DestroyObjectImmediate(shapeComponent);
         }
     }
 }
