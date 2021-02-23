@@ -52,16 +52,16 @@ public class StripProBuilderScriptsTest
     public void StripProBuilderScripts_RemovesMeshAndShapeComponents()
     {
         var go = new GameObject();
-        var shape = go.AddComponent<ShapeComponent>();
+        var shape = go.AddComponent<ProBuilderShape>();
         shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(go.GetComponent<ShapeComponent>() != null);
+        Assume.That(go.GetComponent<ProBuilderShape>() != null);
 
         StripProBuilderScripts.DoStrip(go.GetComponent<ProBuilderMesh>());
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(go.GetComponent<ShapeComponent>() == null);
+        Assert.That(go.GetComponent<ProBuilderShape>() == null);
 
         UObject.DestroyImmediate(go);
     }
@@ -70,24 +70,24 @@ public class StripProBuilderScriptsTest
     public void OnPostProcessScene_StripProBuilderScripts_RemovesMeshAndShapeOnEnabledObjects()
     {
         var go = new GameObject();
-        var shape = go.AddComponent<ShapeComponent>();
+        var shape = go.AddComponent<ProBuilderShape>();
         shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(go.GetComponent<ShapeComponent>() != null);
+        Assume.That(go.GetComponent<ProBuilderShape>() != null);
 
         var goChild = GameObject.Instantiate(go, go.transform);
         goChild.name = "Child GO";
 
         Assume.That(goChild.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(goChild.GetComponent<ShapeComponent>() != null);
+        Assume.That(goChild.GetComponent<ProBuilderShape>() != null);
 
         UnityScenePostProcessor.OnPostprocessScene();
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(go.GetComponent<ShapeComponent>() == null);
+        Assert.That(go.GetComponent<ProBuilderShape>() == null);
         Assert.That(goChild.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(goChild.GetComponent<ShapeComponent>() == null);
+        Assert.That(goChild.GetComponent<ProBuilderShape>() == null);
 
         UObject.DestroyImmediate(go);
     }
@@ -96,28 +96,28 @@ public class StripProBuilderScriptsTest
     public void OnPostProcessScene_StripProBuilderScripts_RemovesMeshAndShapeOnDisabledObjects()
     {
         var go = new GameObject("Parent GO");
-        var shape = go.AddComponent<ShapeComponent>();
+        var shape = go.AddComponent<ProBuilderShape>();
         shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(go.GetComponent<ShapeComponent>() != null);
+        Assume.That(go.GetComponent<ProBuilderShape>() != null);
 
         var goChild = GameObject.Instantiate(go, go.transform);
         goChild.name = "Child GO";
 
         Assume.That(goChild.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(goChild.GetComponent<ShapeComponent>() != null);
+        Assume.That(goChild.GetComponent<ProBuilderShape>() != null);
 
         go.SetActive(false);
-        goChild.GetComponent<ShapeComponent>().enabled = false;
+        goChild.GetComponent<ProBuilderShape>().enabled = false;
         goChild.GetComponent<ProBuilderMesh>().enabled = false;
 
         UnityScenePostProcessor.OnPostprocessScene();
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(go.GetComponent<ShapeComponent>() == null);
+        Assert.That(go.GetComponent<ProBuilderShape>() == null);
         Assert.That(goChild.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(goChild.GetComponent<ShapeComponent>() == null);
+        Assert.That(goChild.GetComponent<ProBuilderShape>() == null);
 
         UObject.DestroyImmediate(go);
     }

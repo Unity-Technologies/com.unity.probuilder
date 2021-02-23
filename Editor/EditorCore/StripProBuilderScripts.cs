@@ -126,8 +126,8 @@ namespace UnityEditor.ProBuilder.Actions
             if (go.TryGetComponent(out Entity entity))
                 Undo.DestroyObjectImmediate(entity);
 
-            if (go.TryGetComponent(out ShapeComponent shapeComponent))
-                Undo.DestroyObjectImmediate(shapeComponent);
+            if (go.TryGetComponent(out ProBuilderShape shape))
+                Undo.DestroyObjectImmediate(shape);
         }
     }
 }
