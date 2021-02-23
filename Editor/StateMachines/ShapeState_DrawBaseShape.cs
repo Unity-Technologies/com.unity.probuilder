@@ -97,7 +97,7 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape()
         {
-            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ShapeComponent>();
+            var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ProBuilderShape>();
             shape.gameObject.name = shape.gameObject.name + "-Copy";
             EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder
             //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
 
-            tool.m_ShapeComponent = null;
+            tool.m_ProBuilderShape = null;
             tool.m_LastShapeCreated = shape;
 
             if(tool.m_DuplicateGO != null)

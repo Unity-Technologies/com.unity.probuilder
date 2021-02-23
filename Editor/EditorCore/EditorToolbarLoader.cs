@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
             s_LoadedMenuActions = new List<MenuAction>()
             {
                 // tools
-                new Actions.OpenShapeEditor(),
+                new Actions.NewShapeToggle(),
                 new Actions.NewBezierShape(),
                 new Actions.NewPolyShapeToggle(),
                 new Actions.OpenMaterialEditor(),

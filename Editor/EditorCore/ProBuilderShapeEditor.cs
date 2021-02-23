@@ -16,8 +16,8 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 namespace UnityEditor.ProBuilder
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(ShapeComponent))]
-    class ShapeComponentEditor : Editor
+    [CustomEditor(typeof(ProBuilderShape))]
+    class ProBuilderShapeEditor : Editor
     {
         IMGUIContainer m_ShapeField;
 
@@ -48,8 +48,8 @@ namespace UnityEditor.ProBuilder
                 foreach(var comp in targets)
                 {
                     if(m_CurrentShapeType == null)
-                        m_CurrentShapeType = ( (ShapeComponent) comp ).shape.GetType();
-                    else if( m_CurrentShapeType != ( (ShapeComponent) comp ).shape.GetType() )
+                        m_CurrentShapeType = ( (ProBuilderShape) comp ).shape.GetType();
+                    else if( m_CurrentShapeType != ( (ProBuilderShape) comp ).shape.GetType() )
                         return true;
                 }
 
@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.activeToolType != typeof(DrawShapeTool)
                && ToolManager.activeToolType != typeof(EditShapeTool) )
             {
-                if(GUILayout.Button("Edit Shape Tool"))
+                if(GUILayout.Button("Edit Shape"))
                 {
                     ProBuilderEditor.selectMode = SelectMode.Object;
                     ToolManager.SetActiveTool<EditShapeTool>();
@@ -93,22 +93,22 @@ namespace UnityEditor.ProBuilder
 
             int editedShapesCount = 0;
             foreach(var comp in targets)
-                editedShapesCount += ( (ShapeComponent) comp ).isEditable ? 0 : 1;
+                editedShapesCount += ( (ProBuilderShape) comp ).isEditable ? 0 : 1;
 
             if(editedShapesCount > 0)
             {
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.HelpBox(
                     L10n.Tr(
-                        "You have manually modified Shape(s). Revert manual changes to access to procedural parameters"),
+                        "You have manually modified the selected shape(s). Reset the shape to remove all manual changes in order to proceed."),
                     MessageType.Info);
 
                 if(GUILayout.Button("Reset Shape"))
                 {
                     foreach(var comp in targets)
                     {
-                        var shapeComponent = comp as ShapeComponent;
-                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
+                        var shapeComponent = comp as ProBuilderShape;
+                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
                         shapeComponent.UpdateComponent();
                         ProBuilderEditor.Refresh();
                     }
@@ -152,14 +152,14 @@ namespace UnityEditor.ProBuilder
                     var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
                     foreach(var comp in targets)
                     {
-                        ShapeComponent shapeComponent = ( (ShapeComponent) comp );
-                        Shape shape = shapeComponent.shape;
+                        ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
+                        Shape shape = proBuilderShape.shape;
                         if(shape.GetType() != type)
                         {
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
-                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Change Shape");
-                            shapeComponent.SetShape(EditorShapeUtility.CreateShape(type), shapeComponent.pivotLocation);
+                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(proBuilderShape.GetComponents(typeof(Component)),"Change Shape");
+                            proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
                             ProBuilderEditor.Refresh();
                         }
                     }
@@ -183,10 +183,10 @@ namespace UnityEditor.ProBuilder
             {
                 foreach(var comp in targets)
                 {
-                    var shapeComponent = comp as ShapeComponent;
+                    var shapeComponent = comp as ProBuilderShape;
                     if(shapeComponent.isEditable)
                     {
-                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
+                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
                         shapeComponent.UpdateComponent();
                         if(tool != null)
                         {
