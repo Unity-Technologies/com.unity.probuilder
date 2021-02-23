@@ -99,7 +99,7 @@ namespace UnityEditor.ProBuilder.Actions
                         res = ExportMesh(assetPath, pb, options.replaceOriginal, true);
 
                         if (options.replaceOriginal)
-                            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(pb.gameObject, pb, true);
+                            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(pb.gameObject, pb, true, true);
                     }
                 }
             }
@@ -169,7 +169,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (replaceOriginal)
             {
-                StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(mesh.gameObject, mesh, true);
+                StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(mesh.gameObject, mesh, true, true);
             }
             else
             {
@@ -232,7 +232,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             var component = go.GetComponent<ProBuilderMesh>();
             Undo.RecordObject(component, "Export ProBuilderMesh as Replacement");
-            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(go, component, true);
+            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(go, component, true, true);
 
             go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
             var meshCollider = go.GetComponent<MeshCollider>();

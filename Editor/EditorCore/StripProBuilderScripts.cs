@@ -100,7 +100,7 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
 
-                    DestroyProBuilderMeshAndDependencies(go, pb, false);
+                    DestroyProBuilderMeshAndDependencies(go, pb);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
                     if (go.TryGetComponent(out MeshCollider meshCollider))
@@ -110,24 +110,52 @@ namespace UnityEditor.ProBuilder.Actions
             catch {}
         }
 
-        internal static void DestroyProBuilderMeshAndDependencies(GameObject go, ProBuilderMesh pb, bool preserveMeshAssets)
+        internal static void DestroyProBuilderMeshAndDependencies(
+            GameObject go,
+            ProBuilderMesh pb,
+            bool preserveMeshAssets = false,
+            bool useUndoDestroy = false)
         {
-            Undo.RecordObject(pb, "Removing ProBuilderMesh during scripts striping");
+            if(useUndoDestroy)
+                Undo.RecordObject(pb, "Removing ProBuilderMesh during scripts striping");
 
             if (go.TryGetComponent(out PolyShape polyShape))
-                DestroyImmediate(polyShape);
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(polyShape);
+                else
+                    DestroyImmediate(polyShape);
+            }
 
             if (go.TryGetComponent(out BezierShape bezierShape))
-                DestroyImmediate(bezierShape);
-
-            pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
-            Undo.DestroyObjectImmediate(pb);
-
-            if (go.TryGetComponent(out Entity entity))
-                Undo.DestroyObjectImmediate(entity);
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(bezierShape);
+                else
+                    DestroyImmediate(bezierShape);
+            }
 
             if (go.TryGetComponent(out ProBuilderShape shape))
-                Undo.DestroyObjectImmediate(shape);
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(shape);
+                else
+                    DestroyImmediate(shape);
+            }
+
+            pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
+            if(useUndoDestroy)
+                Undo.DestroyObjectImmediate(pb);
+            else
+                DestroyImmediate(pb);
+
+            if(go.TryGetComponent(out Entity entity))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(entity);
+                else
+                    DestroyImmediate(entity);
+            }
         }
     }
 }
