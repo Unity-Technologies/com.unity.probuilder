@@ -27,6 +27,7 @@ CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "ProBuilderCG.cginc"
 
             struct appdata
             {
@@ -43,15 +44,8 @@ CGPROGRAM
             v2f vert (appdata v)
             {
                 v2f o;
-                o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                //Offsetting the edges to avoid z-fighting problems occuring with Unity 20.2
-                o.pos.xy *= lerp(.99, 1, unity_OrthoParams.w);
-                //Moving edges closer when using orthographic camera
-                o.pos.z *= lerp(.99, .95, unity_OrthoParams.w);
-                o.pos = mul(UNITY_MATRIX_P, o.pos);
-
+				o.pos = UnityObjectToClipPosWithOffset(v.vertex.xyz);
                 o.color = v.color;
-
                 return o;
             }
 

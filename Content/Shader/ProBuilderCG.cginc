@@ -24,6 +24,19 @@ inline float4 ScreenToClip(float4 v)
 inline float4 UnityObjectToClipPosWithOffset(float3 pos)
 {
     float4 ret = float4(UnityObjectToViewPos(pos), 1);
+    //Offsetting the edges to avoid z-fighting problems
+	//Do not offset when using orthographic camera as XY are
+    //screen coords, this would shift the rendering
+    ret.xy *= lerp(.99, 1, unity_OrthoParams.w);
+    //Moving edges closer
+	//.99 is not suffisient for Orthographic Camera
+    ret.z *= 0.95;
+    return mul(UNITY_MATRIX_P, ret);
+}
+
+inline float4 UnityObjectToClipPosWithOffsetMetal(float3 pos)
+{
+    float4 ret = float4(UnityObjectToViewPos(pos), 1);
     ret *= lerp(.99, .95, ORTHO);
     return mul(UNITY_MATRIX_P, ret);
 }

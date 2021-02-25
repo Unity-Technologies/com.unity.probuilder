@@ -52,7 +52,7 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
             {
                 v2f o;
 
-                o.pos = UnityObjectToClipPosWithOffset(v.vertex.xyz);
+                o.pos = UnityObjectToClipPosWithOffsetMetal(v.vertex.xyz);
 
                 // convert vertex to screen space, add pixel-unit xy to vertex, then transform back to clip space.
                 float4 clip = o.pos;
