@@ -27,10 +27,10 @@ inline float4 UnityObjectToClipPosWithOffset(float3 pos)
     //Offsetting the edges to avoid z-fighting problems
 	//Do not offset when using orthographic camera as XY are
     //screen coords, this would shift the rendering
-    ret.xy *= lerp(.99, 1, unity_OrthoParams.w);
+    ret.xyz *= lerp(.99, 1, unity_OrthoParams.w);
     //Moving edges closer
-	//.99 is not suffisient for Orthographic Camera
-    ret.z *= 0.95;
+	//.99 is not sufficient for Orthographic Camera
+    ret.z *= lerp(1, 0.95, unity_OrthoParams.w);
     return mul(UNITY_MATRIX_P, ret);
 }
 
