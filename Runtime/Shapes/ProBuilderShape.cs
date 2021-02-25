@@ -2,7 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
-    sealed class ShapeComponent : MonoBehaviour
+    sealed class ProBuilderShape : MonoBehaviour
     {
         [SerializeReference]
         Shape m_Shape = new Cube();

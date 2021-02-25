@@ -21,36 +21,36 @@ namespace UnityEditor.ProBuilder
 
         static bool s_Initialized;
 
-        static ObjectPool<Mesh> m_MeshPool2;
+        static ObjectPool<Mesh> s_MeshPool2;
 
-        static Dictionary<ProBuilderMesh, MeshHandle> m_WireHandles;
-        static Dictionary<ProBuilderMesh, MeshHandle> m_VertexHandles;
-        static Dictionary<ProBuilderMesh, MeshHandle> m_SelectedFaceHandles;
-        static Dictionary<ProBuilderMesh, MeshHandle> m_SelectedVertexHandles;
-        static Dictionary<ProBuilderMesh, MeshHandle> m_SelectedEdgeHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_WireHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_VertexHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_SelectedFaceHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_SelectedVertexHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_SelectedEdgeHandles;
 
         // Edge, vert, wire, and line materials Can be either point to a geometry shader or an alternative for devices
         // without geometry shader support
-        static Material m_EdgeMaterial;
-        static Material m_VertMaterial;
-        static Material m_WireMaterial;
-        static Material m_LineMaterial;
-        static Material m_FaceMaterial;
-        static Material m_GlWireMaterial;
+        static Material s_EdgeMaterial;
+        static Material s_VertMaterial;
+        static Material s_WireMaterial;
+        static Material s_LineMaterial;
+        static Material s_FaceMaterial;
+        static Material s_GlWireMaterial;
 
-        static Material edgeMaterial { get { Init(); return m_EdgeMaterial; } }
-        static Material vertMaterial { get { Init(); return m_VertMaterial; } }
-        static Material wireMaterial { get { Init(); return m_WireMaterial; } }
-        static Material lineMaterial { get { Init(); return m_LineMaterial; } }
-        static Material faceMaterial { get { Init(); return m_FaceMaterial; } }
-        static Material glWireMaterial { get { Init(); return m_GlWireMaterial; } }
+        static Material edgeMaterial { get { Init(); return s_EdgeMaterial; } }
+        static Material vertMaterial { get { Init(); return s_VertMaterial; } }
+        static Material wireMaterial { get { Init(); return s_WireMaterial; } }
+        static Material lineMaterial { get { Init(); return s_LineMaterial; } }
+        static Material faceMaterial { get { Init(); return s_FaceMaterial; } }
+        static Material glWireMaterial { get { Init(); return s_GlWireMaterial; } }
 
-        static ObjectPool<Mesh> meshPool { get { Init(); return m_MeshPool2; } }
-        static Dictionary<ProBuilderMesh, MeshHandle> wireHandles { get { Init(); return m_WireHandles; } }
-        static Dictionary<ProBuilderMesh, MeshHandle> vertexHandles { get { Init(); return m_VertexHandles; } }
-        static Dictionary<ProBuilderMesh, MeshHandle> selectedFaceHandles { get { Init(); return m_SelectedFaceHandles; } }
-        static Dictionary<ProBuilderMesh, MeshHandle> selectedVertexHandles { get { Init(); return m_SelectedVertexHandles; } }
-        static Dictionary<ProBuilderMesh, MeshHandle> selectedEdgeHandles { get { Init(); return m_SelectedEdgeHandles; } }
+        static ObjectPool<Mesh> meshPool { get { Init(); return s_MeshPool2; } }
+        static Dictionary<ProBuilderMesh, MeshHandle> wireHandles { get { Init(); return s_WireHandles; } }
+        static Dictionary<ProBuilderMesh, MeshHandle> vertexHandles { get { Init(); return s_VertexHandles; } }
+        static Dictionary<ProBuilderMesh, MeshHandle> selectedFaceHandles { get { Init(); return s_SelectedFaceHandles; } }
+        static Dictionary<ProBuilderMesh, MeshHandle> selectedVertexHandles { get { Init(); return s_SelectedVertexHandles; } }
+        static Dictionary<ProBuilderMesh, MeshHandle> selectedEdgeHandles { get { Init(); return s_SelectedEdgeHandles; } }
 
         static Color wireframeColor { get { return s_UseUnityColors ? k_WireframeDefault : s_WireframeColorPref; } }
         internal static Color faceSelectedColor { get { return s_UseUnityColors ? Handles.selectedColor : s_SelectedFaceColorPref; } }
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
         static bool m_ForceWireframeLinesGL;
 
 
-        static Dictionary<ProBuilderMesh, MeshHandle> temporaryHandles;
+        static Dictionary<ProBuilderMesh, MeshHandle> s_TemporaryHandles;
 
         static readonly Color k_VertexUnselectedDefault = new Color(.7f, .7f, .7f, 1f);
         static readonly Color k_WireframeDefault = new Color(94.0f / 255.0f, 119.0f / 255.0f, 155.0f / 255.0f, 1f);
@@ -177,14 +177,14 @@ namespace UnityEditor.ProBuilder
 
             ReleaseResources();
 
-            m_MeshPool2 = new ObjectPool<Mesh>(0, 8, CreateMesh, DestroyMesh);
-            m_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-            m_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-            m_SelectedFaceHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-            m_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
-            m_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_MeshPool2 = new ObjectPool<Mesh>(0, 8, CreateMesh, DestroyMesh);
+            s_WireHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_VertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_SelectedFaceHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_SelectedEdgeHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_SelectedVertexHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
-            temporaryHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
+            s_TemporaryHandles = new Dictionary<ProBuilderMesh, MeshHandle>();
 
             var lineShader = BuiltinMaterials.geometryShadersSupported
                 ? BuiltinMaterials.lineShader
@@ -193,12 +193,12 @@ namespace UnityEditor.ProBuilder
                 ? BuiltinMaterials.pointShader
                 : BuiltinMaterials.dotShader;
 
-            m_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
-            m_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
-            m_LineMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::GeneralUseLineMaterial");
-            m_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
-            m_GlWireMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::GLWire");
-            m_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
+            s_EdgeMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::LineMaterial");
+            s_WireMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::WireMaterial");
+            s_LineMaterial = CreateMaterial(Shader.Find(lineShader), "ProBuilder::GeneralUseLineMaterial");
+            s_VertMaterial = CreateMaterial(Shader.Find(vertShader), "ProBuilder::VertexMaterial");
+            s_GlWireMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::GLWire");
+            s_FaceMaterial = CreateMaterial(Shader.Find(BuiltinMaterials.faceShader), "ProBuilder::FaceMaterial");
 
             ResetPreferences();
         }
@@ -206,14 +206,14 @@ namespace UnityEditor.ProBuilder
         internal static void ReleaseResources()
         {
             ClearHandles();
-            if(m_MeshPool2 != null)
-                m_MeshPool2.Dispose();
-            if(m_EdgeMaterial != null) UnityObject.DestroyImmediate(m_EdgeMaterial);
-            if(m_WireMaterial != null) UnityObject.DestroyImmediate(m_WireMaterial);
-            if(m_LineMaterial != null) UnityObject.DestroyImmediate(m_LineMaterial);
-            if(m_VertMaterial != null) UnityObject.DestroyImmediate(m_VertMaterial);
-            if(m_GlWireMaterial != null) UnityObject.DestroyImmediate(m_GlWireMaterial);
-            if(m_FaceMaterial != null) UnityObject.DestroyImmediate(m_FaceMaterial);
+            if(s_MeshPool2 != null)
+                s_MeshPool2.Dispose();
+            if(s_EdgeMaterial != null) UnityObject.DestroyImmediate(s_EdgeMaterial);
+            if(s_WireMaterial != null) UnityObject.DestroyImmediate(s_WireMaterial);
+            if(s_LineMaterial != null) UnityObject.DestroyImmediate(s_LineMaterial);
+            if(s_VertMaterial != null) UnityObject.DestroyImmediate(s_VertMaterial);
+            if(s_GlWireMaterial != null) UnityObject.DestroyImmediate(s_GlWireMaterial);
+            if(s_FaceMaterial != null) UnityObject.DestroyImmediate(s_FaceMaterial);
         }
 
         internal static void ResetPreferences()
@@ -322,25 +322,25 @@ namespace UnityEditor.ProBuilder
                 {
                     // When in Edge mode, use the same material for wireframe
                     Render(wireHandles, m_ForceEdgeLinesGL ? glWireMaterial : edgeMaterial, edgeUnselectedColor, CompareFunction.LessEqual, false);
-                    if(xRay) Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, edgeSelectedColor * k_OccludedTint, CompareFunction.Greater);
-                    Render(m_SelectedEdgeHandles, m_ForceEdgeLinesGL ? m_GlWireMaterial : m_EdgeMaterial, edgeSelectedColor, CompareFunction.LessEqual);
+                    if(xRay) Render(s_SelectedEdgeHandles, m_ForceEdgeLinesGL ? s_GlWireMaterial : s_EdgeMaterial, edgeSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(s_SelectedEdgeHandles, m_ForceEdgeLinesGL ? s_GlWireMaterial : s_EdgeMaterial, edgeSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
                     Render(wireHandles, m_ForceWireframeLinesGL ? glWireMaterial : wireMaterial, wireframeColor, CompareFunction.LessEqual, false);
-                    if(xRay) Render(m_SelectedFaceHandles, m_FaceMaterial, faceSelectedColor * k_OccludedTint, CompareFunction.Greater);
-                    Render(m_SelectedFaceHandles, m_FaceMaterial, faceSelectedColor, CompareFunction.LessEqual);
+                    if(xRay) Render(s_SelectedFaceHandles, s_FaceMaterial, faceSelectedColor * k_OccludedTint, CompareFunction.Greater);
+                    Render(s_SelectedFaceHandles, s_FaceMaterial, faceSelectedColor, CompareFunction.LessEqual);
                     break;
                 }
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                 {
-                    Render(m_WireHandles, m_ForceWireframeLinesGL ? m_GlWireMaterial : m_WireMaterial, wireframeColor, CompareFunction.LessEqual, false);
-                    Render(m_VertexHandles, m_VertMaterial, vertexUnselectedColor, CompareFunction.LessEqual, false);
-                    if(xRay) Render(m_SelectedVertexHandles, m_VertMaterial, vertexSelectedColor * k_OccludedTint, CompareFunction.Greater, false);
-                    Render(m_SelectedVertexHandles, m_VertMaterial, vertexSelectedColor, CompareFunction.LessEqual, false);
+                    Render(s_WireHandles, m_ForceWireframeLinesGL ? s_GlWireMaterial : s_WireMaterial, wireframeColor, CompareFunction.LessEqual, false);
+                    Render(s_VertexHandles, s_VertMaterial, vertexUnselectedColor, CompareFunction.LessEqual, false);
+                    if(xRay) Render(s_SelectedVertexHandles, s_VertMaterial, vertexSelectedColor * k_OccludedTint, CompareFunction.Greater, false);
+                    Render(s_SelectedVertexHandles, s_VertMaterial, vertexSelectedColor, CompareFunction.LessEqual, false);
                     break;
                 }
                 default:
@@ -367,16 +367,18 @@ namespace UnityEditor.ProBuilder
 
         public static void ClearHandles()
         {
-            if(m_WireHandles != null)
+            if(s_WireHandles != null)
                 ClearHandlesInternal(wireHandles);
-            if(m_VertexHandles != null)
-                ClearHandlesInternal(m_VertexHandles);
+            if(s_VertexHandles != null)
+                ClearHandlesInternal(s_VertexHandles);
             if(selectedFaceHandles != null)
-                ClearHandlesInternal(m_SelectedFaceHandles);
-            if(m_SelectedEdgeHandles != null)
-                ClearHandlesInternal(m_SelectedEdgeHandles);
-            if(m_SelectedVertexHandles != null)
-                ClearHandlesInternal(m_SelectedVertexHandles);
+                ClearHandlesInternal(s_SelectedFaceHandles);
+            if(s_SelectedEdgeHandles != null)
+                ClearHandlesInternal(s_SelectedEdgeHandles);
+            if(s_SelectedVertexHandles != null)
+                ClearHandlesInternal(s_SelectedVertexHandles);
+            if(s_TemporaryHandles != null)
+                ClearHandlesInternal(s_TemporaryHandles);
         }
 
         public static void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
@@ -474,8 +476,8 @@ namespace UnityEditor.ProBuilder
 
         public static void HighlightFaces(ProBuilderMesh mesh, IList<Face> faces, Color highlightColor)
         {
-            RebuildMeshHandleFromFaces(mesh, faces, temporaryHandles, MeshHandles.CreateFaceMeshFromFaces);
-            Render(temporaryHandles, m_FaceMaterial, highlightColor,CompareFunction.LessEqual, false);
+            RebuildMeshHandleFromFaces(mesh, faces, s_TemporaryHandles, MeshHandles.CreateFaceMeshFromFaces);
+            Render(s_TemporaryHandles, s_FaceMaterial, highlightColor,CompareFunction.LessEqual, false);
         }
 
         public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, bool highlight = true)
@@ -485,14 +487,14 @@ namespace UnityEditor.ProBuilder
 
         public static void HighlightEdges(ProBuilderMesh mesh, IList<Edge> edges, Color highlightColor)
         {
-            var handle = GetMeshHandle(mesh, temporaryHandles);
+            var handle = GetMeshHandle(mesh, s_TemporaryHandles);
 
             if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
                 MeshHandles.CreateEdgeMesh(mesh, handle.mesh, edges.ToArray());
             else
                 MeshHandles.CreateEdgeBillboardMesh(mesh, handle.mesh, edges.ToArray());
 
-            Render(temporaryHandles, m_EdgeMaterial, highlightColor, CompareFunction.LessEqual, false);
+            Render(s_TemporaryHandles, s_EdgeMaterial, highlightColor, CompareFunction.LessEqual, false);
         }
 
         public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, bool highlight = true)
@@ -502,10 +504,10 @@ namespace UnityEditor.ProBuilder
 
         public static void HighlightVertices(ProBuilderMesh mesh, IList<int> vertexIndexes, Color highlightColor)
         {
-            var handle = GetMeshHandle(mesh, temporaryHandles);
+            var handle = GetMeshHandle(mesh, s_TemporaryHandles);
             MeshHandles.CreateVertexMesh(mesh, handle.mesh, vertexIndexes);
 
-            Render(temporaryHandles, m_VertMaterial, highlightColor, CompareFunction.LessEqual, false);
+            Render(s_TemporaryHandles, s_VertMaterial, highlightColor, CompareFunction.LessEqual, false);
         }
     }
 }
