@@ -18,6 +18,5 @@ You can customize the shape of a cylinder with these shape-specific properties:
 |:-- |:-- |
 | __Sides Count__ | Set the number of sides for the cylinder. The more sides you use, the smoother the sides of the cylinder become. The default value is 6. Valid values range from 4 to 64. |
 | __Height Cuts__ | Set the number of divisions to use for the height of the cylinder. For example, a value of 3 produces 4 faces on every side of the cylinder. The default value is 0. |
-| __Smoothing Group__ | Increase this value to make the edges of the polygons smoother. The default value is -1. |
+| __Smooth__ | Enable this option to smooth the edges of the polygons. This property is enabled by default. |
 
-<span style="color:blue">**@DEV**: How does the Smooth value work? I tried different values (in smaller increments) and nothing seemed to make a difference. At first I though this was related to the Smooth Group Editor, but I tried to set up smoothing groups and it didn't seem to work. </span>

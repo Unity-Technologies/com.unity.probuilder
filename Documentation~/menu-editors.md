@@ -26,7 +26,7 @@ For more information, see the [Poly Shape tool](shape-tool.md) documentation.
 
 ## Open Lightmap UV Editor
 
-Use the **Lightmap UV Editor** window to access the settings for generating light map UVs. 
+Use the **Lightmap UV Editor** window to access the settings for generating light map UVs.
 
 For more information, see the [Lightmap UV Editor](lightmap-uv.md) window documentation.
 
@@ -36,7 +36,7 @@ Use the **Material Editor** window to apply materials to objects or faces.
 
 For more information, see the [Material Editor](material-tools.md) window documentation.
 
-## Open Shape Editor Menu Item
+## New Shape
 
 Use the **Shape Tool** window to create new ProBuilder Mesh shapes, such as cylinders, arches, and stairs.
 

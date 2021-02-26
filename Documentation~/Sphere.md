@@ -18,4 +18,5 @@ You can customize the shape of a sphere with this shape-specific property:
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Subdivisions__ | Set the number of times to subdivide each triangle. The default value is 3. Valid values range from 0 to 5.<br /><br />The more subdivisions you create, the smoother the sphere appears. However, remember that each subdivision increases the number of triangles exponentially, which means that it uses a lot more resources to render. |
+| __Subdivisions__ | Set the number of times to subdivide each triangle. The default value is 3. Valid values range from 1 to 5.<br /><br />The more subdivisions you create, the smoother the sphere appears. However, remember that each subdivision increases the number of triangles exponentially, which means that it uses a lot more resources to render. |
+| **Smooth** | Enable this option to smooth the edges of the polygons. This property is enabled by default. |

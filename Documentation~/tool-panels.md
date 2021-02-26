@@ -12,19 +12,19 @@ For more information, see [Shape tool](shape-tool.md).
 
 ## ![Poly Shape Tool icon](images/icons/NewPolyShape.png) New Poly Shape
 
-Use the **Poly Shape** tool to create a custom 2-dimensional shape and then extrude that shape to create a 3-dimensional mesh.
+Use the **Poly Shape** tool to create a custom 2-dimensional shape and then extrude that shape to create a 3-dimensional Mesh.
 
 For more information, see [Poly Shape tool](polyshape.md).
 
 ## ![Bezier Shape icon](images/icons/NewBezierSpline.png) New Bezier Shape
 
-Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a mesh.
+Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a Mesh.
 
 > ***Warning:*** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
 For more information, see [Bezier Shape tool](bezier.md).
 
-## ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) Smoothing 
+## ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) Smoothing
 
 Use the **Smooth Group Editor** window to create a smooth and rounded look.
 
@@ -47,4 +47,3 @@ For more information, see the [Material Editor](material-tools.md) window refere
 Use the **UV Editor** window to apply textures to objects or faces. You can also use it to automatically or manually wrap and unwrap textures.
 
 For more information, see the [UV Editor](uv-editor.md) window reference.
-
