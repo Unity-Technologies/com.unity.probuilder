@@ -1,5 +1,5 @@
 # Sphere
-A sphere is a perfectly round 3D object. In ProBuilder, a sphere is actually a polygon with 42 vertices, in which five triangles (faces) share each vertex.
+A sphere is a perfectly round 3D object. In ProBuilder, a sphere is actually an icosahedron with a minimum of 42 vertices (for 1 subdivision) shared across multiple triangles (faces). When you increase the subdivisions, the shape looks smoother, more sphere-like, but the geometry also becomes more complex. For example, with 2 subdivisions, the shape has 162 vertices; and for 5 subdivisions (the maximum), the shape has 2562 vertices.
 
 ![Sphere shapes](images/shape-tool_sphere.png)
 

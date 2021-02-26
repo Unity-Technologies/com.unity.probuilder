@@ -8,7 +8,7 @@ ProBuilder provides these ways to edit ProBuilder Meshes:
 
   ProBuilder provides a modal [Cut tool](cut-tool.md) that lets you draw a custom sub-face onto an existing Mesh face.
 
-  You can also modify any regular Unity GameObject with ProBuilder, if you [Probuilderize](Object_ProBuilderize.md) it first.
+  You can also modify any regular Unity GameObject with ProBuilder tools, if you [Probuilderize](Object_ProBuilderize.md) it first.
 
 - In addition to modifying Mesh elements, there are special editing modes for (predefined) Shapes, Poly Shapes, and Bezier Shapes that allow you to return to the shape you created or last defined:
 

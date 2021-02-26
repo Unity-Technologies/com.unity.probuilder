@@ -16,7 +16,7 @@ To create a Mesh from a predefined shape:
 
 2. From the ProBuilder toolbar, click the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) tool. The [Create Shape](shape-tool.md) panel appears in the bottom of the Scene view and the **New Shape** text button is highlighted.
 
-  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey to activate the Shape tool and leave the panel open, or use the menu (**Tools** > **ProBuilder** > **Editors** > **New Shape**).
+  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey or use the menu (**Tools** > **ProBuilder** > **Editors** > **New Shape**) to activate the Shape tool.
 
 3. From the top of the **Create Shape** panel, choose the icon that matches the shape you'd like to create. Any shape-specific properties appear under the **&lt;Shape&gt; Settings** section at the bottom.
 
@@ -26,7 +26,7 @@ To create a Mesh from a predefined shape:
 
 5. While the Shape tool is active, you can't use the transform tools, but you can use the camera to orbit around the new shape and zoom in and out.
 
-6. In the Scene view, click and hold the left mouse button to draw the base of the bounding box (along the x-axis and the z-axis) and then release the mouse button to validate the base. Move the mouse up (or down) along the y-axis to draw the height, and then click to finalize the new Mesh.
+6. In the Scene view, click and hold the left mouse button to draw the base of the bounding box (along the x-axis and the z-axis) and then release the mouse button to validate the base. Move the mouse up (or down) the y-axis to draw the height, and then click to finalize the new Mesh.
 
   > **Tip**: Alternatively, you can set all the properties on the **Create Shape** panel, including the bounding-box dimensions, and then hover over the Scene view while holding Shift to see a preview of the Mesh. When you are satisfied with how it looks and where it appears in the scene, click in the Scene view to finish creating the new Mesh.
   >

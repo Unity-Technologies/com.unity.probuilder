@@ -1,7 +1,7 @@
 # Stairs
 You can create straight stairs, curved stairs, long stairs, stairs with a lot of steps, wide stairs, and stairs without side polygons.
 
-![Stair shapes](images/shape-tool_stair.png)
+![Stairs shapes](images/shape-tool_stair.png)
 
 You can customize the shape of your stairs with these shape-specific properties:
 
@@ -21,7 +21,6 @@ You can customize the shape of your stairs with these shape-specific properties:
 
 
 
-
 <table>
 <thead>
 <tr>
@@ -32,12 +31,12 @@ You can customize the shape of your stairs with these shape-specific properties:
 <tbody>
 <tr>
 <td colspan="2"><strong>Steps Generation</strong></td>
-<td>Select whether you want ProBuilder to build the same number of steps regardless of how the size of the stairs changes (the default) or make each step the same height but change the number of steps to match the size.</td>
+<td>Select whether you want ProBuilder to build the same number of steps regardless of how the size of the stairs changes (the default) or make each step the same height and automatically adapt the number of steps to match the stairs size.</td>
 </tr>
 <tr>
 <td></td>
 <td><strong>Height</strong></td>
-<td>Select this method if you want ProBuilder to generate a predictable height for each step in the staircase. This means that if you increase the height of the overall size of the staircase, the number of of steps increases.</td>
+<td>Select this method if you want ProBuilder to generate a predictable height for each step in the staircase. This means that if you increase the height of the overall size of the staircase, the number of steps increases.</td>
 </tr>
 <tr>
 <td></td>
@@ -50,7 +49,7 @@ You can customize the shape of your stairs with these shape-specific properties:
 </tr>
 <tr>
 <td colspan="2"><strong>Homogeneous Steps</strong></td>
-<td>Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />This property is only available when the <strong>Steps Generation</strong> method is set to <strong>Height</strong>.</td>
+<td>Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />If disabled, the height of the last step is smaller than the others depending on the remaining height.<br /><br />This property is only available when the <strong>Steps Generation</strong> method is set to <strong>Height</strong>.</td>
 </tr>
 <tr>
 <td colspan="2"><strong>Steps Count</strong></td>
@@ -62,8 +61,9 @@ You can customize the shape of your stairs with these shape-specific properties:
 </tr>
 <tr>
 <td colspan="2"><strong>Circumference</strong></td>
-<td>Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360.</td>
+<td>Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from -360 (full turn to the left) to 360 (full turn to the right).</td>
 </tr>
 </tbody>
 </table>
+
 
