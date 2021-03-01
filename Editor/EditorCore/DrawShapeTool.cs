@@ -108,7 +108,8 @@ namespace UnityEditor.ProBuilder
 
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                //image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
                 text = "Shape Settings",
                 tooltip = "Shape Settings"
             };

@@ -167,7 +167,8 @@ namespace UnityEditor.ProBuilder
         {
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                //image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                image = IconUtility.GetIcon("Toolbar/CutTool"),
                 text = "Cut Tool",
                 tooltip = "Cut Tool"
             };
