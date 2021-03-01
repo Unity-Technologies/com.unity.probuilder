@@ -855,14 +855,10 @@ namespace UnityEditor.ProBuilder
 
                         evt.Use();
                     }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
+                            || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                        evt.Use();
-                    }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
-                    {
-                        SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        LeaveTool();
                         evt.Use();
                     }
 
