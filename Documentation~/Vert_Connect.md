@@ -6,7 +6,7 @@ The __Connect Vertices__ action creates a new edge that connects the selected ve
 
 
 
-> **Tip:** You can also use this action with the **Alt/Opt+E** hotkey.
+> **Tip:** You can also use this action with the **Alt/Opt+E** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Smart Connect**).
 
 If you select more than two vertices, ProBuilder creates as many new edges as possible, and adds extra vertices where necessary in order to keep the geometry valid. For example, if you connect three vertices around a quad, ProBuilder creates a new vertex in the middle to support the three new edges.
 

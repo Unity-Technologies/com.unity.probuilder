@@ -40,6 +40,12 @@ Use the **Detach Faces** action to detach the selected face(s) from the rest of 
 
 For more information, see the [Detach Faces](Face_Detach.md) action documentation.
 
+## Duplicate Faces
+
+Use the **Duplicate Faces** action to copy each selected face and move it to either a new Mesh or leave it as a sub-Mesh.
+
+For more information, see the [Duplicate Faces](Face_Duplicate.md) action documentation.
+
 ## Extrude
 
 In Edge edit mode, use the **Extrude Edges** action to push a new edge out from each selected edge.
@@ -50,7 +56,7 @@ For more information, see the documentation for the [Extrude Edges](Edge_Extrude
 
 ## Fill Hole
 
-In Vertex and Edge editing modes, use the **Fill Hole** action to create a new face that fills any holes that touch the selected vertices or edges.
+In Vertex and Edge edit modes, use the **Fill Hole** action to create a new face that fills any holes that touch the selected vertices or edges.
 
 For more information, see the documentation for the [Fill Hole (vertices)](Vert_FillHole.md) and [Fill Hole (edges)](Edge_FillHole.md) actions.
 
@@ -77,6 +83,16 @@ For more information, see the [Insert Edge Loop](Edge_InsertLoop.md) action docu
 Use the **Merge Faces** action to merge selected faces into a single face, and remove any dividing edges.
 
 For more information, see the [Merge Faces](Face_Merge.md) action documentation.
+
+## Offset Elements
+
+In Vertex edit mode, use the **Offset Elements** action to move the selected vertex or vertices.
+
+In Edge edit mode, use the **Offset Elements** action to move the selected edge(s).
+
+In Face edit mode, use the **Offset Elements** action to move the selected face(s).
+
+For more information, see the [Offset Elements](Offset_Elements.md) action documentation.
 
 ## Set Pivot To Selection
 

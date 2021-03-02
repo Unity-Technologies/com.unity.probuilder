@@ -30,7 +30,7 @@ ProBuilder provides several ways to interact with its tools and actions:
 
 ## Scene Information
 
-![Dimensions Overlay](images/dimoverlay.png)
+![Dimensions Overlay](images/show-scene-info.png)
 
 **Scene Information** displays information about the Meshes in the Scene, and which elements are selected. 
 
@@ -54,9 +54,9 @@ To access these windows, use the [Probuilder menu](menu.md), [hotkeys](hotkeys.m
 
 ## Component sections in the Inspector
 
-![Shape, Poly Shape, Bezier Shape, and ProBuilder Mesh components](images/pb_comp.png)
+![Pro Builder Shape, Poly Shape, ProBuilder MeshFilter, and Bezier Shape components](images/pb_comp.png)
 
-These component sections appear in the Inspector when you create a Mesh with one of the creation tools: 
+Most of these component sections appear in the Inspector when you create a Mesh with one of the creation tools: 
 
 * [Shape](shape-tool.md)
 * [Poly Shape](polyshape.md) 
@@ -64,9 +64,9 @@ These component sections appear in the Inspector when you create a Mesh with one
 
 When you first activate a creation tool, Unity adds these components to the new GameObject. They expose specific properties defined in the corresponding scripts which help define the topology. After you create the new Mesh, you can re-activate the tool for the same Mesh and change these properties to modify the Mesh's shape. 
 
-**Note**: When you re-activate one of these tools, you lose any modifications you made to the Mesh through an action or through the [Cut](cut-tool.md) tool. For example, imagine you create a new Poly Shape with five points, and then extrude one of the faces. Next, you decide to remove one of the points, so you enter Poly Shape editing mode again. The extrusion disappears as soon as you re-enter Poly Shape editing mode.
+> **Note**: When you re-activate one of these tools, you lose any modifications you made to the Mesh through an action or through the [Cut](cut-tool.md) tool. For example, imagine you create a new Poly Shape with five points, and then extrude one of the faces. Next, you decide to remove one of the points, so you enter Poly Shape editing mode again. The extrusion disappears as soon as you re-enter Poly Shape editing mode.
 
-In addition to these creation tool components, every ProBuilder object has a [Pro Builder Mesh](ProBuilderMesh.md) component. It lets you customize lightmap UV parameters for each object. When you [ProBuilderize](Object_ProBuilderize.md) a Mesh that was either exported into Unity or created as a regular primitive Unity Mesh, Unity adds this component to the Mesh.
+In addition to these creation tool components, every ProBuilder object has a [ProBuilder MeshFilter](ProBuilderMesh.md) component. It lets you customize lightmap UV parameters for each object. When you [ProBuilderize](Object_ProBuilderize.md) a Mesh that was either exported into Unity or created as a regular primitive Unity Mesh, Unity adds this component to the Mesh.
 
 
 

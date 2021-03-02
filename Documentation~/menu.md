@@ -18,7 +18,7 @@ The ProBuilder menu items include the following:
 * [Materials](menu-materials.md)
 * [Vertex Colors](menu-vertexcolors.md)
 * [Repair](menu-repair.md)
-* [Experimental](menu-experimental.md)
+* [Experimental](menu-experimental.md) (only available when you enable the [experimental features preference](preferences.md#experimental))
 * [Export](menu-export.md)
 * [Debug](menu-debug.md)
 * [Actions](menu-actions.md)

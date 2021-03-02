@@ -6,6 +6,8 @@ Mirroring is especially useful when you want to create symmetrical items. You ca
 
 ![Mirror action example](images/Mirror_Example.png)
 
+> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Mirror Objects**).
+
 ## Mirror Objects Options
 
 ![Object Mirror options](images/Object_Mirror_props.png)

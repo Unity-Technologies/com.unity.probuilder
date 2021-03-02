@@ -64,8 +64,8 @@ Use the **Subdivide Object** action to divide every face on selected objects.
 
 For more information, see the [Subdivide Object](Object_Subdivide.md) action documentation.
 
-## Triangulate
+## Triangulate Object
 
-Use the **Triangulate** action to reduce all polygons to their base triangles.
+Use the **Triangulate Object** action to reduce all polygons to their base triangles.
 
 For more information, see the [Triangulate](Object_Triangulate.md) action documentation.

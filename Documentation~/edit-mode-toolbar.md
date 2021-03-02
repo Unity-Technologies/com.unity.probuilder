@@ -23,5 +23,4 @@ In addition to the Scene view toolbar, [hotkeys](hotkeys.md) (keyboard shortcuts
 - `G` toggles between the **Object** and **Element** modes. For example, if you are in **Vertex** mode, press `G` once to return to **Object** mode, and press it again to switch back to **Vertex** mode.
 - `H` toggles between the **Element** modes (**Vertex**, **Edge**, and **Face**).
 
-If you prefer to have dedicated keys for each mode, you can enable the [Unique Mode Shortcuts](hotkeys.md#unique_mode) preference.
-
+You can use the [Shortcuts Manager](https://docs.unity3d.com/Manual/UnityHotkeys.html) to change the key assignments if you prefer.

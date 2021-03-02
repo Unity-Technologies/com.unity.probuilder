@@ -2,12 +2,13 @@
 
 There are a number of ways to customize the way you work with ProBuilder. You can set preferences on the [ProBuilder Preferences](preferences.md) window:
 
+* [Dimensions Overlay](preferences.md#dimover): Customize which elements are used for the dimensions overlay.
 * [Experimental](preferences.md#experimental): Toggle ProBuilder beta features.
 * [General](preferences.md#general): This section contains a variety of settings, many of which control what information appears in the Scene view (see [Interaction and display](#toolbar)).
 * [Graphics](preferences.md#graphics): Mostly these settings control the look of Unity (see [Interaction and display](#toolbar)).
 * [Mesh Editing](preferences.md#mesh-editing): Define behavior specific to editing Meshes.
 * [Mesh Settings](preferences.md#mesh-settings): Define defaults for ProBuilder Meshes (such as default Material, collider type, and shadows).
-* [Shortcuts](preferences.md#shortcuts): Change the default key mappings for [ProBuilder hotkeys](hotkeys.md).
+* [Snap Settings](preferences.md#snapping): Customize how snapping behaves with ProBuilder.
 * [Toolbar](preferences.md#toolbar): Customize how the toolbars appear. See [below](#toolbar) for details.
 * [UV Editor](preferences.md#uv-editor): Change the size of the grid on the [UV Editor](uv-editor.md) window.
 

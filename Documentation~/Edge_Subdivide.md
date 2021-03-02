@@ -1,14 +1,14 @@
-# ![Subdivide Edge icon](images/icons/Edge_Subdivide.png) Subdivide Edge
+# ![Subdivide Edge icon](images/icons/Edge_Subdivide.png) Subdivide Edges
 
-The __Subdivide Edge__ action divides the selected edge(s) into multiple edges. By default, ProBuilder splits the edge in two, but you can set your own number of __Subdivisions__ in the Options window.
+The __Subdivide Edges__ action divides the selected edge(s) into multiple edges. By default, ProBuilder splits the edge in two, but you can set your own number of __Subdivisions__ in the Options window.
 
-> **Tip:** You can also use this action with the **Alt/Opt+S** hotkey.
+> **Tip:** You can also use this action with the **Alt/Opt+S** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Smart Subdivide**).
 
 ![Split edge, then extrude them separately](images/SubdivideEdge_Example.png)
 
 
 
-## Subdivide Edge Options
+## Subdivide Edges Options
 
 ![Subdivide Edges options](images/Edge_Subdivide_props.png)
 

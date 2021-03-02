@@ -12,12 +12,6 @@ Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder e
 
 For more information, see the [Bezier Shape tool](bezier.md) documentation.
 
-## New Shape
-
-Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
-
-For more information, see the [Shape tool](shape-tool.md) documentation.
-
 ## New Poly Shape
 
 Use the **Poly Shape** tool to create custom ProBuilder Mesh shapes.
@@ -38,9 +32,9 @@ For more information, see the [Material Editor](material-tools.md) window docume
 
 ## New Shape
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes, such as cylinders, arches, and stairs.
+Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
 
-For more information, see the [Shape Tool](shape-tool.md) window documentation.
+For more information, see the [Shape tool](shape-tool.md) documentation.
 
 ## Open Smoothing Editor
 
@@ -58,7 +52,7 @@ For more information, see the [UV Editor](uv-editor.md) window documentation.
 
 Use the **Vertex Colors** window to apply or paint vertex colors onto Meshes.
 
-For more information, see the [Vertex Colors](material-tools.md) window documentation.
+For more information, see the [Vertex Colors](vertex-colors.md) window documentation.
 
 ## Open Vertex Position Editor
 

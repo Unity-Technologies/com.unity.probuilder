@@ -6,6 +6,8 @@ Use the __Rect__ action to choose whether drag selection should only select elem
 
 This action is available only in the [edge and face modes](modes.md).
 
+> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Rect Mode**).
+
 
 
 ## Visual cues

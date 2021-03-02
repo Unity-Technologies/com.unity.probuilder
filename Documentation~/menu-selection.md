@@ -10,12 +10,6 @@ Use the **Grow Selection** action to expand the selection outward to adjacent fa
 
 For more information, see the [Grow Selection](Selection_Grow.md) action documentation.
 
-## Invert Selection
-
-Use the **Invert Selection** action to select the inverse of the current selection.
-
-For more information, see the [Invert Selection](Selection_Invert.md) action documentation.
-
 ## Select Hole
 
 Use the **Select Holes** action to select all elements along the selected open vertex or edge.

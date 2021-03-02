@@ -15,6 +15,7 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | ![Connect Vertices Icon](images/icons/Vert_Connect.png) |[Connect Vertices](Vert_Connect.md) | | x | | |
 | ![Delete Faces icon](images/icons/Face_Delete.png) |[Delete Faces](Face_Delete.md) | | | | x |
 | ![Detach Face icon](images/icons/Face_Detach.png) |[Detach Faces](Face_Detach.md) | | | | x |
+| ![Duplicate Face icon](images/icons/Face_Duplicate.png) |[Duplicate Faces](Face_Duplicate.md) | | | | x |
 | ![Export icon](images/icons/Object_Export.png) |[Export](Object_Export.md) | x | | | |
 | ![Extrude Edges icon](images/icons/Edge_Extrude.png) |[Extrude Edges](Edge_Extrude.md) | | | x | |
 | ![Extrude Face icon](images/icons/Face_Extrude.png) |[Extrude Faces](Face_Extrude.md) | | | | x |
@@ -29,10 +30,10 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | ![Grow Selection](images/icons/Selection_Grow.png) |[Grow Selection](Selection_Grow.md) | | x | x | x |
 | ![Insert Edge Loop icon](images/icons/Edge_InsertLoop.png) |[Insert Edge Loop](Edge_InsertLoop.md)  | | | | |
 |   |[Inset](Face_Inset.md) | | | | x |
-| ![Invert Selection](images/icons/Selection_Invert.png) |[Invert Selection](Selection_Invert.md) | | x | x | x |
 | ![Merge Faces icon](images/icons/Face_Merge.png) |[Merge Faces](Face_Merge.md) | | | | x |
 | ![Merge Objects icon](images/icons/Object_Merge.png) |[Merge Objects](Object_Merge.md) | x | | | |
 | ![Mirror Objects icon](images/icons/Object_Mirror.png) |[Mirror Objects](Object_Mirror.md) | x | | | |
+| ![Offset Elements icon](images/icons/Offset_Elements.png) |[Offset Elements](Offset_Elements.md) |  | x | x | x |
 | ![Handle Alignment Local](images/icons/HandleAlign_Local.png) |[Orientation](HandleAlign.md) | x | x | x | x |
 | ![ProBuilderize icon](images/icons/Object_ProBuilderize.png) |[ProBuilderize](Object_ProBuilderize.md) | x | | | |
 | ![Selection Rect icon](images/icons/Selection_Rect_Intersect.png) |[Rect](Selection_Rect_Intersect.md) | | | x | x |

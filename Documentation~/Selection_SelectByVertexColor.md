@@ -1,6 +1,6 @@
 # ![Select by Vertex Color icon](images/icons/Selection_SelectByVertexColor.png) Select by Colors
 
-The __Select by Vertex Color__ selects all faces on this object which have the same vertex color as the selected face. You can also extend the selection to other GameObjects if you disable the **Current Selection** option.
+The __Select by Colors__ selects all faces on this object which have the same vertex color as the selected face. You can also extend the selection to other GameObjects if you disable the **Current Selection** option.
 
 Even if the vertex color isn't currently visible (for example, if it has a Material that doesn't show colors, like the checkerboard Material), the colored faces are still selected.
 

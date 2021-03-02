@@ -2,7 +2,7 @@
 
 The __Connect Edges__ action inserts an edge that connects the centers of each selected edge.
 
-> **Tip:** You can also use this action with the **Alt/Opt+E** hotkey.
+> **Tip:** You can also use this action with the **Alt/Opt+E** hotkey, or from the ProBuilder menu, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Smart Connect**).
 
 ![Create vertical edge on side of cube](images/ConnectEdges_Example.png)
 

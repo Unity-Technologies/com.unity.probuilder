@@ -6,6 +6,6 @@ ProBuilder only considers faces part of a ring if they are quads (contain exactl
 
 ![Only bottom faces selected on multi-level Mesh](images/SelectFaceRing_Example.png)
 
-This tool is available only in [face mode](modes.md).
+This action is available only in [face mode](modes.md).
 
-> **Tip:** You can also use this tool with the **Ctrl/Cmd+Shift+L+Double-Click** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).
+> **Tip:** You can also use this tool with the **Alt/Opt+R** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).

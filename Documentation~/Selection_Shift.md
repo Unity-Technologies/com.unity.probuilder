@@ -14,3 +14,5 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 | ![SHIFT Modifier Difference](images/icons/Selection_ShiftDifference.png) | **Shift: Difference** | __Shift+Click__ toggles the selection - so it adds unselected elements, and removes selected elements. |
 
 This action is available in the [vertex, edge, and face modes](modes.md).
+
+> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Selection Mode**).

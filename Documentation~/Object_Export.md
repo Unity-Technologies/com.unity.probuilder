@@ -2,6 +2,8 @@
 
 The __Export__ action [exports](workflow-exporting.md#export) the selected ProBuilder object(s) to a 3D Model file. 
 
+> **Tip:** You can also export to each format by selecting the specific format from the ProBuilder menu (**Tools** > **ProBuilder** > **Export** > **Export &lt;format&gt;**).
+
 For an overview of how to export ProBuilder objects and and re-import the exported files, see [Exporting and re-importing](workflow-exporting.md).
 
 

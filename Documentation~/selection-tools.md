@@ -15,17 +15,23 @@ The documentation for each action includes information about these visual indica
 
 > **Note:** Some actions also have extra options or custom settings available. These action buttons have a special indicator in the top-right corner. The documentation for each action includes information about these options.
 
+## ![Selection Rect icon](images/icons/Selection_Rect_Intersect.png) Rect
+
+Use the **Rect** action to define whether drag selection should only select elements inside the drag-rect, or any intersected elements.
+
+For more information, see the [Rect](Selection_Rect_Intersect.md) action documentation.
+
 ## ![Shift Modifier icon](images/icons/Selection_ShiftDifference.png) Shift
 
 Use the **Shift** action to define how holding the **Shift** key affects selection.
 
 For more information, see the [Shift](Selection_Shift.md) action documentation.
 
-## ![Selection Rect icon](images/icons/Selection_Rect_Intersect.png) Rect
+## ![Orientation](images/icons/HandleAlign_Local.png) Orientation
 
-Use the **Rect** action to define whether drag selection should only select elements inside the drag-rect, or any intersected elements.
+Use the **Orientation** action to set the orientation for Scene handles (__Global__, __Local__, or __Normal__).
 
-For more information, see the [Rect](Selection_Rect_Intersect.md) action documentation.
+For more information, see the [Orientation](HandleAlign.md) action documentation.
 
 ## ![Select Hidden ON](images/icons/Selection_SelectHidden-ON.png) Select Hidden
 
@@ -69,11 +75,11 @@ Use the **Select by Colors** action to select all faces on this object which hav
 
 For more information, see the [Select by Colors](Selection_SelectByVertexColor) action documentation.
 
-## ![Select Hole icon](images/icons/Selection_SelectHole.png) Select Holes
+## ![Shrink Selection](images/icons/Selection_Shrink.png) Shrink Selection
 
-Use the **Select Holes** action to select all elements along the selected open vertex or edge.
+Use the **Shrink Selection** action to remove the elements on the perimeter of the current selection ([Grow Selection](Selection_Grow.md) in reverse).
 
-For more information, see the [Select Holes](Selection_SelectHole.md) action documentation.
+For more information, see the [Shrink Selection](Selection_Shrink.md) action documentation.
 
 ## ![Grow Selection](images/icons/Selection_Grow.png) Grow Selection
 
@@ -81,15 +87,9 @@ Use the **Grow Selection** action to expand the selection outward to adjacent fa
 
 For more information, see the [Grow Selection](Selection_Grow.md) action documentation.
 
-## ![Shrink Selection](images/icons/Selection_Shrink.png) Shrink Selection
+## ![Select Hole icon](images/icons/Selection_SelectHole.png) Select Holes
 
-Use the **Shrink Selection** action to remove the elements on the perimeter of the current selection ([Grow Selection](Selection_Grow.md) in reverse).
+Use the **Select Holes** action to select all elements along the selected open vertex or edge.
 
-For more information, see the [Shrink Selection](Selection_Shrink.md) action documentation.
-
-## ![Invert Selection](images/icons/Selection_Invert.png) Invert Selection
-
-Use the **Invert Selection** action to select the inverse of the current selection.
-
-For more information, see the [Invert Selection](Selection_Invert.md) action documentation.
+For more information, see the [Select Holes](Selection_SelectHole.md) action documentation.
 

@@ -2,7 +2,7 @@
 
 Use the __Set Pivot__ action to move the pivot point of this Mesh to the average center of the selected vertices.
 
-> **Tip:** You can also use this action with the **Ctrl/Cmd+J** hotkey.
+> **Tip:** You can also launch this action with the **Ctrl/Cmd+J** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Set Pivot**). 
 
 
 

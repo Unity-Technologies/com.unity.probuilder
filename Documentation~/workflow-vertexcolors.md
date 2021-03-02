@@ -32,16 +32,6 @@ To apply a vertex color:
 
 	The [Vertex Colors window](vertex-colors.md) appears.
 
-4. Click the **Apply** button next to the color you want to apply. 
+4. Click the **Apply** button next to the color you want to apply. Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+Shift+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Vertex Colors** > **Set Selected Faces to Preset &lt;number&gt;**).
 
-
-
-**Tip:** If you know the number of the color preset, you can apply it directly with either of these methods: 
-
-* Use the **Alt/Opt+Shift+#** hotkey.
-
-* Select the color preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Vertex Colors** > **Set Selected Faces to Preset #**).
-
-
-
-**Note:** To remove a vertex color, apply the white vertex color (**#FFFFFF**).
+> **Note:** To remove a vertex color, apply the white vertex color (**#FFFFFF**).

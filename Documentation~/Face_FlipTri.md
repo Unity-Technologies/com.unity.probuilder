@@ -6,8 +6,10 @@ The __Flip Face Edge__ action swaps the triangle orientation on the selected fac
 
 Use this to smooth ridges in quads with varied height corners.
 
-> **Note:** This only works on quads.
+> **Note:** This only works on quads (four-sided polygons).
 
 This action is often called **Turn Edges** in other 3D modeling applications.
 
 <!-- Formerly called **Flip Triangles**; also called **Turn Edges** in other DCCs) -->
+
+> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Flip Face Edge**).

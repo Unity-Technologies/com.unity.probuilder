@@ -12,3 +12,6 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 | ![Select Hidden OFF](images/icons/Selection_SelectHidden-OFF.png) | **Hidden: Off** | Drag selection ignores any [elements](modes.md) that you can't currently see. |
 
 This action is available in all [edit modes](modes.md).
+
+> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Select Back Faces**).
+

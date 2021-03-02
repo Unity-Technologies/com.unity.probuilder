@@ -2,11 +2,11 @@
 
 You can open the **ProBuilder** toolbar from Unity’s top menu: __Tools__ > __ProBuilder__ > __ProBuilder Window__. 
 
-![The ProBuilder toolbar, displaying Icons and dockable](images/toolbar_main.png)
+![The ProBuilder toolbar, displaying text buttons in a dockable container](images/toolbar_main.png)
 
 When you open the main **ProBuilder** toolbar, the [Edit mode toolbar](edit-mode-toolbar.md) also opens in the active Scene view, where you can see and change the [current editing mode](modes.md).
 
-Use this toolbar to access Editor windows, as well as selection, creation, and editing tools for Meshes. 
+Use the **ProBuilder** toolbar to access Editor windows, selection, creation, and editing tools for Meshes. 
 
 
 

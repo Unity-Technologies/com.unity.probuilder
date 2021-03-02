@@ -6,7 +6,7 @@ The __Insert Edge Loop__ action adds a new edge loop from the selected edge(s). 
 
 ![Insert horizontal loop on plane](images/InsertEdgeLoop_Example.png)
 
-> **Tip:** You can also use this action with the **Alt/Opt+U** hotkey.
+> **Tip:** You can also use this action with the **Alt/Opt+U** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Insert Edge Loop**).
 
 This creates more geometry than [Connect Edges](Edge_Connect.md) or [Connect Vertices](Vert_Connect.md), but it makes the geometry cleaner. For example, if you insert an edge on a single face of a cube you get a T-junction, but if you insert an edge loop instead, you get the same geometry all around the cube, provided that the loop is only passing through quads.
 

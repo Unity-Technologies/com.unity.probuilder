@@ -1,14 +1,14 @@
-# Pro Builder Mesh component
+# ProBuilder MeshFilter component
 
 This component appears on any ProBuilder Mesh GameObject. It displays the **Object Size** of the ProBuilder Mesh in **X**, **Y**, and **Z**. It also allows you to generate lightmap UVs for the Mesh, and customize how ProBuilder generates them. 
 
-![Pro Builder Mesh component](images/ProBuilderMesh.png) 
+![ProBuilder MeshFilter component](images/ProBuilderMesh.png) 
 
 ## Lightmap UVs and their parameters
 
 To customize and generate lightmap UV parameters for this Mesh, enable the **Lightmap Static** option. A new section appears below the option.
 
-![Lightmap parameters on the Pro Builder Mesh component](images/ProBuilderMesh-lightmapUVs.png) 
+![Lightmap parameters on the ProBuilder MeshFilter component](images/ProBuilderMesh-lightmapUVs.png) 
 
 **(A)** The **Unwrap Parameters** section contains standard UV parameters for [Generating Lightmap UVs](https://docs.unity3d.com/Manual/LightingGiUvs-GeneratingLightmappingUVs.html) on this ProBuilder Mesh.
 

@@ -2,7 +2,7 @@
 
 ProBuilder provides some default "entity" behaviors. These are MonoBehaviours that provide some commonly used functionality.
 
-> **Note:** These actions are only available from the [The ProBuilder toolbar](toolbar.md) in [text mode](toolbar.md#buttonmode).
+> **Note:** These actions are not available from the [The ProBuilder toolbar](toolbar.md) in [icon mode](toolbar.md#buttonmode).
 
 
 
@@ -16,7 +16,7 @@ The __Set Trigger__ action assigns the **Trigger Behaviour** script to selected 
 - The **Trigger Behaviour** script sets the [Mesh Renderer](https://docs.unity3d.com/Manual/class-MeshRenderer.md) Material to ProBuilder's **Trigger** Material.
 - The **Trigger Behaviour** script automatically disables the Mesh Renderer when you enter **Play Mode** or build your project.
 
-> **Tip:** You can also use the **T** hotkey to set the selected object(s) as a trigger. If you want to change this hotkey assignment, you can modify it in the ProBuilder Preferences [Shortcut Settings](preferences.md#shortcuts).
+> **Tip:** You can also use the **T** hotkey to set the selected object(s) as a trigger, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Set Trigger**). 
 
 
 
@@ -30,4 +30,5 @@ The __Set Collider__ action assigns the **Collider Behaviour** script to selecte
 - The **Collider Behaviour** script sets the [MeshRenderer](https://docs.unity3d.com/Manual/class-MeshRenderer.md) Material to ProBuilder's **Collider** Material.
 - The **Collider Behaviour** script automatically disables the MeshRenderer when you enter **Play Mode** or build your project.
 
-> **Tip:** You can also use the **C** hotkey to set the selected object(s) as a collider. If you want to change this hotkey assignment, you can modify it in the ProBuilder Preferences [Shortcut Settings](preferences.md#shortcuts).
+> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Set Collider**).
+

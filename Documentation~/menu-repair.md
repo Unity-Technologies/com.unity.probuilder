@@ -16,6 +16,6 @@ Discards all shared vertex position data and rebuilds based on proximity.
 
 Deletes triangles on a Mesh that are either taking up no space, or are duplicates.
 
-## Convert to Package Manager
+## Check for Broken ProBuilder References
 
-Use this script if you are upgrading an older ProBuilder project to this version. 
+Checks for and repairs any missing or broken ProBuilder references in the Scene.

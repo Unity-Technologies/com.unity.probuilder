@@ -2,13 +2,13 @@
 
 The __ProBuilderize__ action converts the selected object(s) into ProBuilder-editable objects.
 
-
+> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **ProBuilderize**).
 
 ## ProBuilderize options
 
 ![ProBuilderize options](images/Object_ProBuilderize_props.png)
 
-<span style="color:blue">@DEVNOTE: What is the **Preserve Faces** option?</span>
+<span style="color:blue">@DEVNOTE: What is the **Preserve Faces** option? It is mentioned in the info box on the options</span>
 
 | **Property:**         | **Description:**                                           |
 | :---------------------- | :----------------------------------------------------------- |

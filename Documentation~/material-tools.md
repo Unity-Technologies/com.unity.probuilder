@@ -71,7 +71,7 @@ You can also save your Palette as a custom Palette and load it in other Scenes o
 
 **(B)** Set a reference to the Material Palette you want to load.
 
-**(C)** Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+#**).
+**(C)** Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset &lt;number&gt;**).
 
 **(D)** Set a reference to the Material you want to use in this slot of the Material Palette.
 
