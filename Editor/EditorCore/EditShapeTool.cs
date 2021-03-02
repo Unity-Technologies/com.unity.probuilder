@@ -175,7 +175,7 @@ namespace UnityEditor.ProBuilder
                 if(snapDisabled)
                     EditorGUILayout.Toggle("Snapping (only Global)", false);
                 else
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
             Editor.CreateCachedEditor(targets.ToArray(), typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
