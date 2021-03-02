@@ -38,13 +38,13 @@ To fix elements that are sharing the same place:
 
 > **Tip:** You can enable the __Show Scene Info__ property in the [ProBuilder Preferences](preferences.md#info_overlay) window while debugging. This displays information about the selected Mesh, including the total number of vertices, edges, and faces, and how many are currently selected in the top left corner of the Scene view.
 
+
+
 <a name="pink"></a>
 
 ## Pink Shaders
 
-If you are upgrading a project from the Asset Store package make sure to run the [Convert to Package Manager](installing.md#convert-to-package-manager) utility.
-
-If you are using the new Standard Rendering Pipeline (SRP) you may have issues compiling the ProBuilder default Shader. As a workaround, you can set the [default Material](preferences.md#defmat) preference.
+If you are using the new Scriptable Rendering Pipeline (SRP), make sure you import the corresponding URP or HDRP Shaders needed to display vertex colors and textures correctly. For more information, see [Support for scriptable render pipelines](installing.md).
 
 
 

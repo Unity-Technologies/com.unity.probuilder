@@ -73,7 +73,7 @@ For more information, see the [Select by Material](Selection_SelectByMaterial.md
 
 Use the **Select by Colors** action to select all faces on this object which have the same vertex color. 
 
-For more information, see the [Select by Colors](Selection_SelectByVertexColor) action documentation.
+For more information, see the [Select by Colors](Selection_SelectByVertexColor.md) action documentation.
 
 ## ![Shrink Selection](images/icons/Selection_Shrink.png) Shrink Selection
 

@@ -18,7 +18,7 @@ If you select the object before you open the UV Editor window, the Actions panel
 
 To switch between the [Auto](auto-uvs-actions.md) and [Manual](manual-uvs-actions.md) UV modes, click the **Convert to Manual** or **Convert to Auto** button at the top of the **Actions** panel. Both modes provide their own options in the Actions panel.
 
-> **Note:** When using [Auto UVs](auto-uvs-actions) you may only edit UVs by face. Editing an edge or vertex automatically converts the selected UVs to [Manual UVs](manual-uvs-actions).
+> **Note:** When using [Auto UVs](auto-uvs-actions) you may only edit UVs by face. Editing an edge or vertex automatically converts the selected UVs to [Manual UVs](manual-uvs-actions.md).
 
 
 

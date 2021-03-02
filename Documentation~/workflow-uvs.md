@@ -2,7 +2,7 @@
 
 To give your walls, doors, floors, or other objects a realistic look, use a Texture Material, which is just a special Material with a 2-dimensional image defined on it. You can [create it yourself](workflow-materials.md#texmat) or [download one from the Asset Store](https://docs.unity3d.com/Manual/AssetStore.html).
 
-After you [apply the Texture Material](workflow-materials.md#apply), open the UV Editor to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping helpers for getting the position, orientation, and size just right.
+After you [apply the Texture Material](material-tools.md#apply), open the UV Editor to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping helpers for getting the position, orientation, and size just right.
 
 > **Tip:** Before you start to manually edit UVs, delete any hidden faces. This helps simplify the UV unwrapping process, because it simplifies the complexity of the UV elements that appear in the UV Editor.
 
@@ -10,7 +10,7 @@ After you [apply the Texture Material](workflow-materials.md#apply), open the UV
 
 ## Manipulating UV elements in the UV Editor
 
-You can manipulate elements with the [ProBuilder edit modes](edit-mode-toolbar) in the UV Editor, but you are actually moving UI elements rather than geometry. In addition, when the UV Editor window is open, you can still manipulate elements in the Scene view: if you turn on the ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope control, you are moving geometry; if you turn it off (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), you are moving UVs.
+You can manipulate elements with the [ProBuilder edit modes](edit-mode-toolbar.md) in the UV Editor, but you are actually moving UI elements rather than geometry. In addition, when the UV Editor window is open, you can still manipulate elements in the Scene view: if you turn on the ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope control, you are moving geometry; if you turn it off (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), you are moving UVs.
 
 You can [translate, rotate, and scale](https://docs.unity3d.com/Manual/PositioningGameObjects.html) elements to move them into place:
 

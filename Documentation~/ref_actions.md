@@ -45,7 +45,7 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | ![Select Face Ring icon](images/icons/Selection_Ring_Face.png) |[Select Face Ring](Selection_Ring_Face.md) | | | | x |
 | ![Select Hidden ON](images/icons/Selection_SelectHidden-ON.png) |[Select Hidden](Selection_SelectHidden.md) | x | x | x | x |
 | ![Select Hole icon](images/icons/Selection_SelectHole.png) |[Select Holes](Selection_SelectHole.md) | | x | x | |
-|   |[Set Collider](Entity_Trigger#Collider.md) | x | | | |
+|   |[Set Collider](Entity_Trigger.md#Collider) | x | | | |
 | ![Set Pivot icon](images/icons/SetPivot.png) |[Set Pivot](Edge_SetPivot.md) (Edges) | | | x | |
 | ![Set Pivot icon](images/icons/SetPivot.png) |[Set Pivot](Face_SetPivot.md) (Faces) | | | | x |
 | ![Set Pivot icon](images/icons/SetPivot.png) |[Set Pivot](Vert_SetPivot.md) (Vertices) | | x | | |

@@ -2,7 +2,7 @@
 
 The Lightmap UV Editor window contains the __Auto Lightmap UVs__ setting. Use this to set whether or not you want ProBuilder to automatically rebuild lightmap UVs every time the Mesh changes for this Project. You can also toggle this setting on the [ProBuilder Preferences window](preferences.md#autouvs).
 
-To open this window, launch the [toolbar option](overview-ui.md#pb_options) on the **Lightmap UVs** button ( ![Generate Lightmaps icon](images/icons/Object_LightmapUVs.png)) from the [ProBuilder toolbar](toolbar.md).
+To open this window, launch the [toolbar option](toolbar.md#pb_options) on the **Lightmap UVs** button ( ![Generate Lightmaps icon](images/icons/Object_LightmapUVs.png)) from the [ProBuilder toolbar](toolbar.md).
 
 > **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Lightmap UV Editor**).
 

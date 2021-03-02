@@ -38,7 +38,7 @@ This page gives an overview of the default ProBuilder keyboard shortcuts. Where 
 | **Ctrl/Cmd+E**                                               | Extrude [edges](Edge_Extrude.md) and [faces](Face_Extrude.md) using the default options. |
 | **Ctrl/Cmd+J**                                               | Move the pivot to the center of the currently selected elements: <br /> - [Vertices](Vert_SetPivot.md)<br /> - [Edges](Edge_SetPivot.md)<br /> - [Faces](Face_SetPivot.md) |
 | **Ctrl/Cmd+K**                                               | Create a [new Mesh cube](Cube.md).                           |
-| **Ctrl/Cmd+Shift+K**                                         | Activate the [Shape tool](shape-tool).                       |
+| **Ctrl/Cmd+Shift+K**                                         | Activate the [Shape tool](shape-tool.md).                    |
 | **Shift+Drag** (while moving, rotating, or scaling)          | Extrude [edges](Edge_Extrude.md) or [faces](Face_Extrude.md). |
 | **Shift+Hover**                                              | Show tooltips when hovering over an action icon in the ProBuilder toolbar. |
 

@@ -9,9 +9,9 @@ Actions are immediate changes, such as selecting all faces with a specific color
 Actions are often only available in specific [Edit modes](modes.md), whereas tools are generally available in all modes. For example, you can launch the Cut tool in every mode except the Object mode and it behaves exactly the same, but most actions are specific to the selected element and behave differently, such as subdividing an element:
 
 * [Subdivide Edge](Edge_Subdivide.md) divides the selected edge(s) into multiple edges.
-* [Subdivide Face](Face_Subdivide) adds a vertex at the center of each selected face and connects them in the center.
-* [Subdivide Object](Object_Subdivide) divides every face on the selected objects.
+* [Subdivide Face](Face_Subdivide.md) adds a vertex at the center of each selected face and connects them in the center.
+* [Subdivide Object](Object_Subdivide.md) divides every face on the selected objects.
 
 For a list of tools available in this version of ProBuilder, see [Tools reference](ref_tools.md).
 
-For a list of actions available in this version of ProBuilder, see [Action reference](ref_action.md).
+For a list of actions available in this version of ProBuilder, see [Action reference](ref_actions.md).

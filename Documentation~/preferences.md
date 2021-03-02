@@ -12,7 +12,7 @@ ProBuilder provides the following preference sections, which you can change to s
 - [Experimental](#experimental) 
 - [General](#general)
 - [Graphics](#graphics)
-- [Mesh Editing](#editing)
+- [Mesh Editing](#prefs_editing)
 - [Mesh Settings](#settings)
 - [Snap Settings](#snapping)
 - [Toolbar](#toolbar)
@@ -49,10 +49,10 @@ Use these settings to enable and disable ProBuilder experimental features.
 
 ![Experimental section](images/prefs_experimental.png)
 
-| **Property:**                                            | **Description:**                                           |
-| :--------------------------------------------------------- | :----------------------------------------------------------- |
-| __Experimental Features Enabled__                          | Enable this option to access the [New Bezier Shape](bezier.md) experimental feature in the ProBuilder toolbar, and the __Store Mesh as Asset__ option. <br /><br />**Note:** This setting has no affect on the [Boolean (CSG) Tool](boolean.md), which is always available from the [Experimental menu](menu.md#experimental). |
-| __Meshes Are Assets__                                      | Enable this option to store Mesh information in the Project instead of in each separate Scene level. |
+| **Property:**                     | **Description:**                                             |
+| :-------------------------------- | :----------------------------------------------------------- |
+| __Experimental Features Enabled__ | Enable this option to access the [New Bezier Shape](bezier.md) experimental feature in the ProBuilder toolbar, and the __Store Mesh as Asset__ option. <br /><br />**Note:** This setting has no affect on the [Boolean (CSG) Tool](boolean.md), which is always available from the [Experimental menu](menu-experimental.md). |
+| __Meshes Are Assets__             | Enable this option to store Mesh information in the Project instead of in each separate Scene level. |
 
 <span style="color:blue"> @DEVNOTE: Turning on and off the __Experimental Features Enabled__ option is an odd experience: it seems like you have to click twice to get it to work, but that's just because it's very "laggy". It often doesn't seem like it's turning on, but then after 20+ sec it works, but in the meantime I've tried again so sometimes the net result is just turning it off. </span>
 
@@ -249,7 +249,7 @@ Use these properties to customize how snapping behaves with ProBuilder.
 
 ## Toolbar
 
-Use these properties to set default behavior for the [ProBuilder toolbar](toolbar).
+Use these properties to set default behavior for the [ProBuilder toolbar](toolbar.md).
 
 ![Toolbar section](images/prefs_toolbar.png)
 

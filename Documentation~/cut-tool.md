@@ -6,7 +6,7 @@ To create a new face on an existing Mesh face:
 
 1. Open the ProBuilder window (in Unity's top menu: **Tools** > **ProBuilder window**).
 
-	The [Edit Mode toolbar](overview-ui.md#edit-mode-toolbar) and the [ProBuilder toolbar](toolbar.md) appear.
+	The [Edit Mode toolbar](edit-mode-toolbar.md) and the [ProBuilder toolbar](toolbar.md) appear.
 
 1. Switch to one of the element [editing modes](modes.md).
 

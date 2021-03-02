@@ -37,7 +37,7 @@ Use the ProBuilder Edit modes to access the individual elements of your Mesh, or
 
   * Click one of the enabled buttons on the [ProBuilder toolbar](toolbar.md) to apply an action to the selection or activate a tool.
   * Select one of the enabled items on the [ProBuilder menu](menu.md) to apply an action to the selection or activate a tool.
-  * Use one of the [ProBuilder hotkeys](hotkeys.md) to run one of the [ProBuilder actions](ref_action.md) on the selection.
+  * Use one of the [ProBuilder hotkeys](hotkeys.md) to run one of the [ProBuilder actions](ref_actions.md) on the selection.
   * Use any of the standard Unity Transform controls to move, rotate, or scale the selection.
   * **Shift+Drag** while using any of the standard Unity Transform controls to extrude or inset the element(s).
 

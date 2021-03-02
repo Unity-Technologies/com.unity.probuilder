@@ -9,6 +9,6 @@ These features are still under development; they are not fully tested, and might
 
 By default, experimental features are disabled.
 
-To enable them, enable the [Experimental Features](preferences.html#experimental) preference.
+To enable them, enable the [Experimental Features](preferences.md#experimental) preference.
 
 ![Unity Preferences window](images/Experimental_Preferences.png)

@@ -12,7 +12,7 @@ The Auto mode provides the following features to help you with texture mapping:
 
 ![Actions Panel on the UV Editor window](images/UV_AutoActions.png)
 
-To switch back to the **Actions** panel in **Manual UV Mode** and convert all selected faces to [use manual UVs](auto-uvs-actions.md), click the **Convert to Manual** button.
+To switch back to the **Actions** panel in **Manual UV Mode** and convert all selected faces to [use manual UVs](manual-uvs-actions.md), click the **Convert to Manual** button.
 
 > **Tip:** When you convert from Auto UVs to Manual there is no loss of resolution. However, if you modify vertices or edges individually in Manual mode, those changes don't transfer over to Auto mode.
 
@@ -24,7 +24,7 @@ These settings are interconnected: if you change a **Transform** setting, it mig
 
 ## Tiling &amp; Alignment
 
-Use the **Fill Mode** and **Anchor** properties to define how you want the image to appear across the selected face(s). These are basic guidelines for ProBuilder to be able to manage the Texture projection automatically. For more precise controls, use the [Manual mode](auto-uvs-actions.md) instead.
+Use the **Fill Mode** and **Anchor** properties to define how you want the image to appear across the selected face(s). These are basic guidelines for ProBuilder to be able to manage the Texture projection automatically. For more precise controls, use the [Manual mode](manual-uvs-actions.md) instead.
 
 ### Fill Mode
 
