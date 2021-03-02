@@ -84,6 +84,7 @@ namespace UnityEditor.ProBuilder
                     {
                         var result = isActiveTool ? EndActivation() : StartActivation();
                         EditorUtility.ShowNotification(result.notification);
+                        ProBuilderAnalytics.SendActionEvent(this, ProBuilderAnalytics.TriggerType.ProBuilderUI);
                     }
                 }
 
@@ -127,6 +128,7 @@ namespace UnityEditor.ProBuilder
                 {
                     var result = isActiveTool ? EndActivation() : StartActivation();
                     EditorUtility.ShowNotification(result.notification);
+                    ProBuilderAnalytics.SendActionEvent(this, ProBuilderAnalytics.TriggerType.ProBuilderUI);
                 }
 
                 MenuActionState altState = optionsMenuState;
