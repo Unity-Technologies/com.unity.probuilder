@@ -143,10 +143,6 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             polygon = null;
-
-#if UNITY_2020_2_OR_NEWER
-            EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
-#endif
         }
 
 #if !UNITY_2020_2_OR_NEWER
