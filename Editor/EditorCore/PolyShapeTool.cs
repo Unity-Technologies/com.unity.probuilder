@@ -159,10 +159,7 @@ namespace UnityEditor.ProBuilder
                     End();
             }
             else if(polygon != null)
-            {
                 End();
-                EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
-            }
         }
 #else
         public override void OnActivated()
@@ -170,12 +167,7 @@ namespace UnityEditor.ProBuilder
             UpdateTarget();
         }
 #endif
-        static void CheckForSelectModeAfterToolQuit()
-        {
-            var toolType = EditorToolUtility.GetEnumWithEditorTool(EditorToolManager.activeTool);
-            if(toolType != Tool.Custom && toolType != Tool.None)
-                ProBuilderEditor.ResetToLastSelectMode();
-        }
+
 
         internal void UpdateTarget(PolyShape shape = null)
         {
@@ -203,17 +195,12 @@ namespace UnityEditor.ProBuilder
             };
         }
 
-        void LeaveTool(bool restoreLastMode = true)
+        void LeaveTool()
         {
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
             ToolManager.RestorePreviousTool();
-            if(restoreLastMode)
-            {
-                //EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
-                ProBuilderEditor.ResetToLastSelectMode();
-            }
         }
 
         /// <summary>
@@ -931,7 +918,7 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape != null && shape != polygon || selectMode != SelectMode.Object)
-                    LeaveTool(false);
+                    LeaveTool();
             }
         }
 
@@ -944,7 +931,7 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape == null)
-                    LeaveTool(true);
+                    LeaveTool();
                 else if(shape != polygon)
                     UpdateTarget(shape);
             }
