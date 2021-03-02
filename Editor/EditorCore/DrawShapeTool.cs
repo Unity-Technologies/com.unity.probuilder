@@ -45,8 +45,7 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting]
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
-        [UserSetting]
-        public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false);
+        public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false, SettingsScope.Project);
 
         [UserSetting]
         internal static Pref<int> s_LastPivotLocation = new Pref<int>("ShapeBuilder.LastPivotLocation", (int)PivotLocation.FirstCorner);
@@ -416,12 +415,28 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        void ResetPrefs()
+        {
+            var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
+            if(currentShapeInOverlay == m_LastShapeCreated)
+                m_LastShapeCreated = null;
+
+            UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+            currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
+            SetBounds(currentShapeInOverlay.size);
+
+            ProBuilderEditor.Refresh();
+        }
+
         void DrawShapeGUI()
         {
             if(m_BoldCenteredStyle == null)
                 m_BoldCenteredStyle = new GUIStyle("BoldLabel") { alignment = TextAnchor.MiddleCenter };
 
             EditorGUILayout.LabelField(EditorShapeUtility.shapeTypes[s_ActiveShapeIndex.value], m_BoldCenteredStyle, GUILayout.ExpandWidth(true));
+
+            if(EditorShapeUtility.s_ResetUserPrefs.value)
+                ResetPrefs();
 
             var shape = currentShapeInOverlay.shape;
 
