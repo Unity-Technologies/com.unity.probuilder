@@ -212,83 +212,60 @@ namespace UnityEditor.ProBuilder
 
             var signs = Math.Sign(bounds.size);
             var pos = Vector3.zero;
-            if(Mathf.Abs(extents.x) > Mathf.Epsilon)
-            {
-                // -X
-                pos = -new Vector3(extents.x * scale.x, 0, 0);
-                faces[0].SetData(pos, -( scale.x * signs.x * Vector3.right ).normalized);
-                faces[0].Points[0] = pointX0Y1Z1;
-                faces[0].Points[1] = pointX0Y0Z1;
-                faces[0].Points[2] = pointX0Y0Z0;
-                faces[0].Points[3] = pointX0Y1Z0;
-                faces[0].IsValid = true;
 
-                // +X
-                pos = new Vector3(extents.x * scale.x, 0, 0);
-                faces[1].SetData(pos, ( scale.x * signs.x * Vector3.right ).normalized);
-                faces[1].Points[0] = pointX1Y1Z1;
-                faces[1].Points[1] = pointX1Y0Z1;
-                faces[1].Points[2] = pointX1Y0Z0;
-                faces[1].Points[3] = pointX1Y1Z0;
-                faces[1].IsValid = true;
-            }
-            else
-            {
-                faces[0].IsValid = false;
-                faces[1].IsValid = false;
-            }
+            // -X
+            pos = -new Vector3(extents.x * scale.x, 0, 0);
+            faces[0].SetData(pos, -( scale.x * signs.x * Vector3.right ).normalized);
+            faces[0].Points[0] = pointX0Y1Z1;
+            faces[0].Points[1] = pointX0Y0Z1;
+            faces[0].Points[2] = pointX0Y0Z0;
+            faces[0].Points[3] = pointX0Y1Z0;
+            faces[0].IsValid = Mathf.Abs(extents.x) > Mathf.Epsilon;
 
-            if(Mathf.Abs(extents.y) > Mathf.Epsilon)
-            {
-                // -Y
-                pos = -new Vector3(0, extents.y * scale.y, 0);
-                faces[2].SetData(pos, -( scale.y * signs.y * Vector3.up ).normalized);
-                faces[2].Points[0] = pointX1Y0Z1;
-                faces[2].Points[1] = pointX0Y0Z1;
-                faces[2].Points[2] = pointX0Y0Z0;
-                faces[2].Points[3] = pointX1Y0Z0;
-                faces[2].IsValid = true;
+            // +X
+            pos = new Vector3(extents.x * scale.x, 0, 0);
+            faces[1].SetData(pos, ( scale.x * signs.x * Vector3.right ).normalized);
+            faces[1].Points[0] = pointX1Y1Z1;
+            faces[1].Points[1] = pointX1Y0Z1;
+            faces[1].Points[2] = pointX1Y0Z0;
+            faces[1].Points[3] = pointX1Y1Z0;
+            faces[1].IsValid = Mathf.Abs(extents.x) > Mathf.Epsilon;
 
-                // +Y
-                pos = new Vector3(0, extents.y * scale.y, 0);
-                faces[3].SetData(pos, ( scale.y * signs.y * Vector3.up ).normalized);
-                faces[3].Points[0] = pointX1Y1Z1;
-                faces[3].Points[1] = pointX0Y1Z1;
-                faces[3].Points[2] = pointX0Y1Z0;
-                faces[3].Points[3] = pointX1Y1Z0;
-                faces[3].IsValid = true;
-            }
-            else
-            {
-                faces[2].IsValid = false;
-                faces[3].IsValid = false;
-            }
+            // -Y
+            pos = -new Vector3(0, extents.y * scale.y, 0);
+            faces[2].SetData(pos, -( scale.y * signs.y * Vector3.up ).normalized);
+            faces[2].Points[0] = pointX1Y0Z1;
+            faces[2].Points[1] = pointX0Y0Z1;
+            faces[2].Points[2] = pointX0Y0Z0;
+            faces[2].Points[3] = pointX1Y0Z0;
+            faces[2].IsValid = Mathf.Abs(extents.y) > Mathf.Epsilon;
 
-            if(Mathf.Abs(extents.z) > Mathf.Epsilon)
-            {
-                // -Z
-                pos = -new Vector3(0, 0, extents.z * scale.z);
-                faces[4].SetData(pos, -(scale.z * signs.z * Vector3.forward).normalized);
-                faces[4].Points[0] = pointX1Y1Z0;
-                faces[4].Points[1] = pointX1Y0Z0;
-                faces[4].Points[2] = pointX0Y0Z0;
-                faces[4].Points[3] = pointX0Y1Z0;
-                faces[4].IsValid = true;
+            // +Y
+            pos = new Vector3(0, extents.y * scale.y, 0);
+            faces[3].SetData(pos, ( scale.y * signs.y * Vector3.up ).normalized);
+            faces[3].Points[0] = pointX1Y1Z1;
+            faces[3].Points[1] = pointX0Y1Z1;
+            faces[3].Points[2] = pointX0Y1Z0;
+            faces[3].Points[3] = pointX1Y1Z0;
+            faces[3].IsValid = Mathf.Abs(extents.y) > Mathf.Epsilon;
 
-                // +Z
-                pos = new Vector3(0, 0, extents.z * scale.z);
-                faces[5].SetData(pos, (scale.z * signs.z * Vector3.forward).normalized);
-                faces[5].Points[0] = pointX1Y1Z1;
-                faces[5].Points[1] = pointX1Y0Z1;
-                faces[5].Points[2] = pointX0Y0Z1;
-                faces[5].Points[3] = pointX0Y1Z1;
-                faces[5].IsValid = true;
-            }
-            else
-            {
-                faces[4].IsValid = false;
-                faces[5].IsValid = false;
-            }
+            // -Z
+            pos = -new Vector3(0, 0, extents.z * scale.z);
+            faces[4].SetData(pos, -(scale.z * signs.z * Vector3.forward).normalized);
+            faces[4].Points[0] = pointX1Y1Z0;
+            faces[4].Points[1] = pointX1Y0Z0;
+            faces[4].Points[2] = pointX0Y0Z0;
+            faces[4].Points[3] = pointX0Y1Z0;
+            faces[4].IsValid = Mathf.Abs(extents.z) > Mathf.Epsilon;
+
+            // +Z
+            pos = new Vector3(0, 0, extents.z * scale.z);
+            faces[5].SetData(pos, (scale.z * signs.z * Vector3.forward).normalized);
+            faces[5].Points[0] = pointX1Y1Z1;
+            faces[5].Points[1] = pointX1Y0Z1;
+            faces[5].Points[2] = pointX0Y0Z1;
+            faces[5].Points[3] = pointX0Y1Z1;
+            faces[5].IsValid = Mathf.Abs(extents.z) > Mathf.Epsilon;
         }
 
         internal static bool PointerIsInFace(FaceData face)
