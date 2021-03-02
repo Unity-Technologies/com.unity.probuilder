@@ -335,6 +335,7 @@ namespace UnityEditor.ProBuilder
                 EditorShapeUtility.CopyLastParams(shapeComponent.shape, shapeComponent.shape.GetType());
                 shapeComponent.gameObject.hideFlags = HideFlags.HideInHierarchy;
                 shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
+                shapeComponent.rotation = Quaternion.identity;
                 UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
                 EditorUtility.InitObject(shapeComponent.mesh);
                 m_IsShapeInit = true;
