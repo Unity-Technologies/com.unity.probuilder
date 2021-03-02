@@ -170,6 +170,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 bounds.center = newCenter;
                 bounds.size = newSize;
                 m_ShapeBox = bounds;
+                m_Size.y = 0;
             }
             //Else if coming from a 2D-state and being back to a 3D shape
             //No changes is pivot is centered
