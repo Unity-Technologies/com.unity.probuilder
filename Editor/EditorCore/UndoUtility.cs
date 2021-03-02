@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
 {
@@ -25,6 +26,8 @@ namespace UnityEditor.ProBuilder
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
                 var versionID = mesh.versionID;
+                if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
+                    shape.UpdateComponent();
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();
                 mesh.versionID = versionID;
@@ -33,6 +36,8 @@ namespace UnityEditor.ProBuilder
             foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
                 var versionID = mesh.versionID;
+                if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
+                    shape.UpdateComponent();
                 mesh.InvalidateCaches();
                 mesh.Rebuild();
                 mesh.Optimize();
