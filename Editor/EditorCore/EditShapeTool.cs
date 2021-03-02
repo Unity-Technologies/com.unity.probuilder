@@ -52,7 +52,10 @@ namespace UnityEditor.ProBuilder
         //Size Handle management
         static Vector2 s_StartMousePosition;
         static Vector3 s_StartSize;
-        static Vector3 s_StartPosition;
+        static Vector3 s_StartPositionLocal;
+        static Vector3 s_StartPositionGlobal;
+        static Vector3 s_StartScale;
+        static Vector3 s_StartScaleInverse;
         static Vector3 s_StartCenter;
         static Vector3 s_Scaling;
         static bool s_SizeManipulationInit;
@@ -245,37 +248,51 @@ namespace UnityEditor.ProBuilder
 
                 if( DoFaceSizeHandle(face, s_FaceControlIDs[i]) )
                 {
-                    float modifier = 1f;
-                    if(evt.alt)
-                        modifier = 2f;
 
                     if(!s_SizeManipulationInit)
                     {
                         s_StartCenter = proBuilderShape.transform.position + proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
-                        s_StartPosition = face.CenterPosition;
+                        s_StartScale = proBuilderShape.transform.lossyScale;
+                        s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
+                        s_StartPositionLocal = face.CenterPosition;
+                        s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(Vector3.Scale(face.CenterPosition, s_StartScale));
                         s_StartSize = proBuilderShape.size;
                         s_SizeManipulationInit = true;
                         s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
 
-                    var delta = modifier * ( s_SizeDelta * s_Faces[i].Normal );
+                    var targetSize = s_StartSize;
+                    if(Math.IsCardinalAxis(proBuilderShape.transform.up)
+                       && EditorSnapSettings.gridSnapEnabled
+                       && !EditorSnapSettings.incrementalSnapActive
+                       && !evt.alt)
+                    {
+                        var faceDelta = ( s_SizeDelta * s_Faces[i].Normal );
+                        var facePosition = s_StartPositionGlobal + faceDelta;
+                        facePosition = ProBuilderSnapping.Snap(facePosition, EditorSnapping.activeMoveSnapValue);
+                        targetSize += Vector3.Scale((facePosition - s_StartPositionGlobal), s_Scaling);
+                    }
+                    else
+                    {
+                        //Should we expand on the 2 sides?
+                        var modifier = evt.alt ? 2f : 1f;
+                        var delta = modifier * ( s_SizeDelta * s_Faces[i].Normal );
+                        delta.Scale(s_Scaling);
+                        delta.Scale(s_StartScaleInverse);
 
-                    delta.Scale(s_Scaling);
+                        targetSize += delta;
+                        var snap = EditorSnapSettings.incrementalSnapActive
+                            ? Vector3.Scale(EditorSnapping.activeMoveSnapValue, Math.Abs(face.Normal))
+                            : Vector3.zero;
 
-                    var scale = proBuilderShape.transform.lossyScale;
-                    var scaleInverse = new Vector3(1f / Mathf.Abs(scale.x), 1f/Mathf.Abs(scale.y), 1f/Mathf.Abs(scale.z));
-
-                    var targetSize = s_StartSize + Vector3.Scale(delta,scaleInverse);
-                    var snap = Math.IsCardinalAxis(proBuilderShape.transform.up) && EditorSnapSettings.gridSnapEnabled ?
-                                        EditorSnapping.activeMoveSnapValue :
-                                        Vector3.zero;
-                    targetSize = ProBuilderSnapping.Snap(targetSize, snap);
+                        targetSize = ProBuilderSnapping.Snap(targetSize, snap);
+                    }
 
                     var center = Vector3.zero;
                     if(!evt.alt)
                     {
                         center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Scaling);
-                        center = Vector3.Scale(center, Math.Sign(proBuilderShape.transform.lossyScale));
+                        center = Vector3.Scale(center, Math.Sign(s_StartScale));
                         center = proBuilderShape.transform.TransformVector(center);
                     }
 
@@ -330,7 +347,7 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseDrag:
                     if(s_CurrentId == controlID)
                     {
-                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_StartPosition, face.Normal);
+                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_StartPositionLocal, face.Normal);
                         return true;
                     }
                     break;
