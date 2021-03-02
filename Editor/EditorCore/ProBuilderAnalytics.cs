@@ -2,7 +2,7 @@
 //#define PB_ANALYTICS_LOGGING
 
 // Will allow data to be send if using a dev build
-#define PB_ANALYTICS_ALLOW_DEVBUILD
+//#define PB_ANALYTICS_ALLOW_DEVBUILD
 
 // Will allow data to be send from automated tests or scripts
 //#define PB_ANALYTICS_ALLOW_AUTOMATION
