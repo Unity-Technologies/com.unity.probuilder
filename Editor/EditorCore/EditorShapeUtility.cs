@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using UnityEditor.IMGUI.Controls;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
@@ -12,7 +13,22 @@ namespace UnityEditor.ProBuilder
 {
     internal static class EditorShapeUtility
     {
+        [UserSetting]
+        public static Pref<bool> s_ResetUserPrefs = new Pref<bool>("ShapeComponent.ResetSettings", true);
+
         static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
+
+        static Dictionary<string, Shape> prefs
+        {
+            get
+            {
+                if(s_ResetUserPrefs.value)
+                    ResetPrefs();
+
+                return s_Prefs;
+            }
+        }
+
 
         static Type[] s_AvailableShapeTypes = null;
 
@@ -85,28 +101,39 @@ namespace UnityEditor.ProBuilder
 
         static EditorShapeUtility()
         {
+            ResetPrefs();
+        }
+
+        static void ResetPrefs()
+        {
             var types = TypeCache.GetTypesDerivedFrom<Shape>();
 
-            foreach (var type in types)
+            foreach(var type in types)
             {
-                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                if(typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     var name = "ShapeBuilder." + type.Name;
-                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape)Activator.CreateInstance(type));
+                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape) Activator.CreateInstance(type));
                     if(pref == null)
                         pref = (Shape) Activator.CreateInstance(type);
-                    s_Prefs.Add(name, pref);
+
+                    if(s_Prefs.ContainsKey(name))
+                        s_Prefs[name] = pref;
+                    else
+                        s_Prefs.Add(name, pref);
                 }
             }
+
+            s_ResetUserPrefs.value = false;
         }
 
         public static void SaveParams<T>(T shape) where T : Shape
         {
             var name = "ShapeBuilder." + shape.GetType().Name;
-            if (s_Prefs.TryGetValue(name, out var data))
+            if (prefs.TryGetValue(name, out var data))
             {
                 data.CopyShape(shape);
-                s_Prefs[name] = data;
+                prefs[name] = data;
                 ProBuilderSettings.Set(name, data);
             }
         }
@@ -132,7 +159,7 @@ namespace UnityEditor.ProBuilder
             }
 
             var name = "ShapeBuilder." + type.Name;
-            if (s_Prefs.TryGetValue(name, out var data))
+            if (prefs.TryGetValue(name, out var data))
             {
                 if (data != null)
                     shape.CopyShape(data);
