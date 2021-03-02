@@ -21,8 +21,8 @@ namespace UnityEditor.ProBuilder
             tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
 
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shape.GetType());
-
             DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
+            MeshSelection.SetSelection(tool.m_ProBuilderShape.gameObject);
 
             return NextState();
         }
