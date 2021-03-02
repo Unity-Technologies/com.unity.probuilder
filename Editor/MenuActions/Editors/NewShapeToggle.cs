@@ -31,8 +31,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        bool m_revertSelectModeOnQuit = true;
-
         protected override ActionResult PerformActionImplementation()
         {
             ProBuilderEditor.selectMode = SelectMode.Object;
@@ -47,8 +45,6 @@ namespace UnityEditor.ProBuilder.Actions
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            m_revertSelectModeOnQuit = true;
-
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
         }
 
@@ -59,9 +55,6 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             Object.DestroyImmediate(m_Tool);
-
-            if(m_revertSelectModeOnQuit)
-                EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
 
             ProBuilderEditor.instance.Repaint();
 
@@ -77,7 +70,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            m_revertSelectModeOnQuit = false;
             LeaveTool();
         }
 
@@ -85,13 +77,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             ActionResult result = EndActivation();
             EditorUtility.ShowNotification(result.notification);
-        }
-
-        static void CheckForSelectModeAfterToolQuit()
-        {
-            var toolType = EditorToolUtility.GetEnumWithEditorTool(EditorToolManager.activeTool);
-            if(toolType != UnityEditor.Tool.Custom && toolType != UnityEditor.Tool.None)
-                ProBuilderEditor.ResetToLastSelectMode();
         }
 
     }
