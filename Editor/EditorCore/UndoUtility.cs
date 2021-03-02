@@ -27,7 +27,10 @@ namespace UnityEditor.ProBuilder
             {
                 var versionID = mesh.versionID;
                 if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
+                {
                     shape.UpdateComponent();
+                    versionID = shape.currentHash;
+                }
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();
                 mesh.versionID = versionID;
@@ -37,7 +40,10 @@ namespace UnityEditor.ProBuilder
             {
                 var versionID = mesh.versionID;
                 if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
+                {
                     shape.UpdateComponent();
+                    versionID = shape.currentHash;
+                }
                 mesh.InvalidateCaches();
                 mesh.Rebuild();
                 mesh.Optimize();

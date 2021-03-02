@@ -82,7 +82,7 @@ namespace UnityEngine.ProBuilder.Shapes
         Bounds m_ShapeBox;
         public Bounds shapeBox => m_ShapeBox;
 
-        uint currentHash => mesh.versionID;
+        internal uint currentHash => mesh.versionID;
         public bool isEditable => m_Hash == currentHash;
 
         /// <summary>
