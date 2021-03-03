@@ -19,7 +19,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-    [EditorTool("Edit Shape", typeof(ShapeComponent))]
+    [EditorTool("Edit Shape", typeof(ProBuilderShape))]
     sealed class EditShapeTool : EditorTool
     {
         Editor m_ShapeEditor;
@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder
 
         static FaceData[] s_Faces;
 
-        public static FaceData[] Faces
+        public static FaceData[] faces
         {
             get
             {
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 
         //Handle Manipulation
         static int s_CurrentId = -1;
-        static int[] s_OrientationControlIDs = new int[4];
+        static readonly int[] k_OrientationControlIDs = new int[4];
 
         //Size Handle management
         static Vector3 s_StartSize;
@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
         static Vector3 s_StartCenter;
         static Vector3 s_TargetSize;
         static Vector3 s_Scaling;
-        static bool s_sizeManipulationInit;
+        static bool s_SizeManipulationInit;
 
         static float s_DefaultMidpointHandleSize = 0.03f;
         static float s_DefaultMidpointSquareSize = 0.15f;
@@ -65,6 +65,9 @@ namespace UnityEditor.ProBuilder
         static Quaternion s_ShapeRotation = Quaternion.identity;
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
+#if UNITY_2021_1_OR_NEWER
+        public override bool gridSnapEnabled => true;
+#endif
 
         static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
@@ -75,8 +78,8 @@ namespace UnityEditor.ProBuilder
                     s_IconContent = new GUIContent()
                     {
                         image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
-                        text = "Edit Shape Tool",
-                        tooltip = "Edit Shape Tool"
+                        text = "Edit Shape",
+                        tooltip = "Edit Shape"
                     };
                 return s_IconContent;
             }
@@ -84,7 +87,7 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_OverlayTitle = new GUIContent("Edit Shape Tool");
+            m_OverlayTitle = new GUIContent("Edit Shape");
             for(int i = 0; i < s_ArrowsLines.Length; i++)
                 s_ArrowsLines[i] = new Vector3[3];
 
@@ -132,7 +135,7 @@ namespace UnityEditor.ProBuilder
         }
 #endif
 
-        public void OnSelectModeChanged(SelectMode selectMode)
+        void OnSelectModeChanged(SelectMode selectMode)
         {
             if(ToolManager.IsActiveTool(this) && selectMode != SelectMode.Object)
                 ToolManager.RestorePreviousTool();
@@ -150,61 +153,76 @@ namespace UnityEditor.ProBuilder
 
             foreach(var obj in targets)
             {
-                var shape = obj as ShapeComponent;
+                var shape = obj as ProBuilderShape;
 
                 if (shape != null && shape.isEditable)
-                    DoEditingGUI(shape);
+                    DoEditingHandles(shape);
             }
         }
 
         void OnOverlayGUI(Object obj, SceneView view)
         {
-            EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
-
-            Editor.CreateCachedEditor(targets.ToArray(), typeof(ShapeComponentEditor), ref m_ShapeEditor);
+#if !UNITY_2021_1_OR_NEWER
+            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
+            using(new EditorGUI.DisabledScope(snapDisabled))
+            {
+                if(snapDisabled)
+                    EditorGUILayout.Toggle("Snapping (only Global)", false);
+                else
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+            }
+#endif
+            Editor.CreateCachedEditor(targets.ToArray(), typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
-                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeGUI(null);
-                ( (ShapeComponentEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
+                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             }
         }
 
-        internal static void DoEditingGUI(ShapeComponent shapeComponent, bool updatePrefs = false)
+        /// <summary>
+        /// The Editing handles are used to manipulate and resize ProBuilderShapes
+        /// These handles are used in 2 tools : EditShapeTool and DrawShapeTool. In this second tool,
+        /// these handles allow to modified the last created shape.
+        /// </summary>
+        /// <param name="proBuilderShape">The Shape on which to attach the handles</param>
+        /// <param name="updatePrefs">Parameter used to update the DrawShapeTool when needed</param>
+        internal static void DoEditingHandles(ProBuilderShape proBuilderShape, bool updatePrefs = false)
         {
-            if(shapeComponent == null)
+            if(proBuilderShape == null)
                 return;
 
-            var scale = shapeComponent.transform.lossyScale;
-            var position = shapeComponent.transform.position
-                           + Vector3.Scale(shapeComponent.transform.TransformDirection(shapeComponent.shapeBox.center),scale);
-            var matrix = Matrix4x4.TRS(position, shapeComponent.transform.rotation, Vector3.one);
+            var scale = proBuilderShape.transform.lossyScale;
+            var position = proBuilderShape.transform.position
+                           + Vector3.Scale(proBuilderShape.transform.TransformDirection(proBuilderShape.shapeBox.center),scale);
+            var matrix = Matrix4x4.TRS(position, proBuilderShape.transform.rotation, Vector3.one);
 
             using (new Handles.DrawingScope(matrix))
             {
-                EditorShapeUtility.UpdateFaces(shapeComponent.editionBounds, scale, Faces);
+                EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, scale, faces);
 
                 for(int i = 0; i <4; ++i)
-                    s_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
+                    k_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
-                var absSize = Math.Abs(shapeComponent.editionBounds.size);
+                var absSize = Math.Abs(proBuilderShape.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandlesGUI(shapeComponent, updatePrefs);
+                    DoOrientationHandles(proBuilderShape, updatePrefs);
 
-                DoSizeHandlesGUI(shapeComponent, updatePrefs);
+                DoSizeHandles(proBuilderShape, updatePrefs);
             }
         }
 
-        static void DoSizeHandlesGUI(ShapeComponent shapeComponent, bool updatePrefs)
+        static void DoSizeHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
         {
             int faceCount = s_Faces.Length;
 
             var evt = Event.current;
 
-            var is2D = shapeComponent.shape is Plane || shapeComponent.shape is Sprite;
+            var is2D = proBuilderShape.shape is Plane || proBuilderShape.shape is Sprite;
             for(int i = 0; i < faceCount; i++)
             {
-                var face = Faces[i];
+                var face = faces[i];
                 if(is2D && !face.IsValid)
                     continue;
 
@@ -226,12 +244,12 @@ namespace UnityEditor.ProBuilder
                     if(evt.alt)
                         modifier = 2f;
 
-                    if(!s_sizeManipulationInit)
+                    if(!s_SizeManipulationInit)
                     {
-                        s_StartCenter = shapeComponent.transform.position + shapeComponent.transform.TransformVector(shapeComponent.shapeBox.center);
+                        s_StartCenter = proBuilderShape.transform.position + proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
                         s_StartPosition = face.CenterPosition;
-                        s_StartSize = shapeComponent.size;
-                        s_sizeManipulationInit = true;
+                        s_StartSize = proBuilderShape.size;
+                        s_SizeManipulationInit = true;
 
                         s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
@@ -241,7 +259,7 @@ namespace UnityEditor.ProBuilder
 
                     var targetSize = s_StartSize + targetDelta;
 
-                    var snap = Math.IsCardinalAxis(shapeComponent.transform.up) && EditorSnapSettings.gridSnapEnabled ?
+                    var snap = Math.IsCardinalAxis(proBuilderShape.transform.up) && EditorSnapSettings.gridSnapEnabled ?
                                         EditorSnapping.activeMoveSnapValue :
                                         Vector3.zero;
                     targetSize = ProBuilderSnapping.Snap(targetSize, snap);
@@ -250,14 +268,14 @@ namespace UnityEditor.ProBuilder
                     if(!evt.alt)
                     {
                         center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Scaling);
-                        center = Vector3.Scale(center, Math.Sign(shapeComponent.transform.lossyScale));
-                        center = shapeComponent.transform.TransformVector(center);
+                        center = Vector3.Scale(center, Math.Sign(proBuilderShape.transform.lossyScale));
+                        center = proBuilderShape.transform.TransformVector(center);
                     }
 
-                    ApplyProperties(shapeComponent, s_StartCenter + center, targetSize);
+                    ApplyProperties(proBuilderShape, s_StartCenter + center, targetSize);
 
                     if(updatePrefs)
-                        DrawShapeTool.SaveShapeParams(shapeComponent);
+                        DrawShapeTool.SaveShapeParams(proBuilderShape);
                 }
             }
         }
@@ -279,36 +297,36 @@ namespace UnityEditor.ProBuilder
                 return true;
 
             if(GUIUtility.hotControl == 0)
-                s_sizeManipulationInit = false;
+                s_SizeManipulationInit = false;
 
             return false;
         }
 
-        static void DoOrientationHandlesGUI(ShapeComponent shapeComponent, bool updatePrefs)
+        static void DoOrientationHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
         {
-            if( GUIUtility.hotControl != 0 && !s_OrientationControlIDs.Contains(GUIUtility.hotControl) )
+            if( GUIUtility.hotControl != 0 && !k_OrientationControlIDs.Contains(GUIUtility.hotControl) )
                 return;
 
-            foreach(var f in Faces)
+            foreach(var f in faces)
             {
                 if(f.IsVisible && EditorShapeUtility.PointerIsInFace(f))
                 {
-                    if(DoOrientationHandle(f, shapeComponent))
+                    if(DoOrientationHandle(f, proBuilderShape))
                     {
-                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shapeComponent.GetComponents(typeof(Component)),"Rotate Shape");
-                        shapeComponent.RotateInsideBounds(s_ShapeRotation);
+                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(proBuilderShape.GetComponents(typeof(Component)),"Rotate Shape");
+                        proBuilderShape.RotateInsideBounds(s_ShapeRotation);
 
                         ProBuilderEditor.Refresh();
 
                         if(updatePrefs)
-                            DrawShapeTool.SaveShapeParams(shapeComponent);
+                            DrawShapeTool.SaveShapeParams(proBuilderShape);
                     }
                 }
             }
 
         }
 
-        static bool DoOrientationHandle(FaceData face, ShapeComponent shapeComponent)
+        static bool DoOrientationHandle(FaceData face, ProBuilderShape proBuilderShape)
         {
             Event evt = Event.current;
             bool hasRotated = false;
@@ -316,7 +334,7 @@ namespace UnityEditor.ProBuilder
             switch(evt.type)
             {
                 case EventType.MouseDown:
-                    if ( s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
+                    if ( k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
                         s_CurrentId = HandleUtility.nearestControl;
                         GUIUtility.hotControl = s_CurrentId;
@@ -324,7 +342,7 @@ namespace UnityEditor.ProBuilder
                     }
                    break;
                 case EventType.MouseUp:
-                    if (s_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
+                    if (k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && evt.button == 0 )
                     {
                         GUIUtility.hotControl = 0;
                         evt.Use();
@@ -332,9 +350,9 @@ namespace UnityEditor.ProBuilder
                         {
                             //Execute rotation
                             Vector3 targetedNormal = Vector3.zero;
-                            for(int i = 0; i < s_OrientationControlIDs.Length; i++)
+                            for(int i = 0; i < k_OrientationControlIDs.Length; i++)
                             {
-                                if(s_OrientationControlIDs[i] == s_CurrentId)
+                                if(k_OrientationControlIDs[i] == s_CurrentId)
                                 {
                                     targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
                                     break;
@@ -342,8 +360,8 @@ namespace UnityEditor.ProBuilder
                             }
 
                             var currentNormal = face.Normal;
-                            currentNormal.Scale(Math.Sign(shapeComponent.size));
-                            targetedNormal.Scale(Math.Sign(shapeComponent.size));
+                            currentNormal.Scale(Math.Sign(proBuilderShape.size));
+                            targetedNormal.Scale(Math.Sign(proBuilderShape.size));
                             Vector3 rotationAxis = Vector3.Cross(currentNormal,targetedNormal);
                             var angle = Vector3.SignedAngle(currentNormal, targetedNormal, rotationAxis);
                             s_ShapeRotation = Quaternion.AngleAxis(angle, rotationAxis);
@@ -361,7 +379,7 @@ namespace UnityEditor.ProBuilder
                             float dist = HandleUtility.DistanceToRectangle( rectPos,
                                 Quaternion.LookRotation(face.Normal),
                                 HandleUtility.GetHandleSize(face.CenterPosition) * s_DefaultMidpointSquareSize/2f);
-                            HandleUtility.AddControl(s_OrientationControlIDs[i], dist);
+                            HandleUtility.AddControl(k_OrientationControlIDs[i], dist);
                         }
                         break;
                    case EventType.Repaint:
@@ -386,7 +404,7 @@ namespace UnityEditor.ProBuilder
                            s_ArrowsLines[i][1] = top;
                            s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
 
-                           bool selected = HandleUtility.nearestControl == s_OrientationControlIDs[i];
+                           bool selected = HandleUtility.nearestControl == k_OrientationControlIDs[i];
 
                            Color color = selected
                                ? EditorHandleDrawing.edgeSelectedColor
@@ -403,16 +421,16 @@ namespace UnityEditor.ProBuilder
                                    Handles.DrawAAPolyLine(3f,
                                        new Vector3[]
                                        {
-                                           Vector3.Scale(shapeComponent.rotation * Vector3.up, shapeComponent.size / 2f),
+                                           Vector3.Scale(proBuilderShape.rotation * Vector3.up, proBuilderShape.size / 2f),
                                            Vector3.zero,
-                                           Vector3.Scale(shapeComponent.rotation * Vector3.forward, shapeComponent.size / 2f)
+                                           Vector3.Scale(proBuilderShape.rotation * Vector3.forward, proBuilderShape.size / 2f)
                                        });
                                }
                            }
                        }
                         break;
                 case EventType.MouseDrag:
-                    if(s_OrientationControlIDs.Contains(s_CurrentId) && HandleUtility.nearestControl != s_CurrentId)
+                    if(k_OrientationControlIDs.Contains(s_CurrentId) && HandleUtility.nearestControl != s_CurrentId)
                     {
                         GUIUtility.hotControl = 0;
                         s_CurrentId = -1;
@@ -422,14 +440,14 @@ namespace UnityEditor.ProBuilder
              return hasRotated;
         }
 
-        public static void ApplyProperties(ShapeComponent shape, Vector3 newCenterPosition, Vector3 newSize)
+        static void ApplyProperties(ProBuilderShape proBuilderShape, Vector3 newCenterPosition, Vector3 newSize)
         {
             var bounds = new Bounds();
             bounds.center = newCenterPosition;
             bounds.size = newSize;
 
-            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ShapeComponent>(shape.GetComponents(typeof(Component)),"Resize Shape");
-            shape.UpdateBounds(bounds);
+            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(proBuilderShape.GetComponents(typeof(Component)),"Resize Shape");
+            proBuilderShape.UpdateBounds(bounds);
 
             ProBuilderEditor.Refresh(false);
         }

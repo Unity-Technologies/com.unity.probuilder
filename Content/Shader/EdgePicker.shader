@@ -27,6 +27,7 @@ CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "ProBuilderCG.cginc"
 
             struct appdata
             {
@@ -43,9 +44,8 @@ CGPROGRAM
             v2f vert (appdata v)
             {
                 v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
+				o.pos = UnityObjectToClipPosWithOffset(v.vertex.xyz);
                 o.color = v.color;
-
                 return o;
             }
 

@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder.Actions
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            Selection.selectionChanged += OnSelectionChanged;
 
             //Give the focus back to scene view to handle key inputs directly
             SceneView.lastActiveSceneView.Focus();
@@ -72,6 +73,7 @@ namespace UnityEditor.ProBuilder.Actions
             MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= LeaveTool;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            Selection.selectionChanged -= OnSelectionChanged;
 
             Object.DestroyImmediate(m_Tool);
 
@@ -88,7 +90,17 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnSelectModeChanged(SelectMode obj)
         {
-            LeaveTool();
+            if(!obj.IsPositionMode())
+                LeaveTool();
+        }
+
+        void OnSelectionChanged()
+        {
+            if(MeshSelection.activeMesh == null
+            || MeshSelection.selectedObjectCount != 1)
+                LeaveTool();
+            else
+                ((CutTool)m_Tool).UpdateTarget();
         }
 
         void LeaveTool()

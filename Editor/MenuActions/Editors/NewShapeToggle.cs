@@ -11,7 +11,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class OpenShapeEditor : MenuToolToggle
+    sealed class NewShapeToggle : MenuToolToggle
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
@@ -22,8 +22,8 @@ namespace UnityEditor.ProBuilder.Actions
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "New Shape Tool",
-                "Opens the Shape Editor window.\n\nThe Shape Editor is a window that allows you to interactively create new 3d primitives.",
+                "New Shape",
+                "Opens the Shape window.\n\nThis tool allows you to interactively create new 3d primitives.",
                 keyCommandSuper, keyCommandShift, 'K'
             );
 
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder.Actions
             m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
             ToolManager.SetActiveTool(m_Tool);
 
-            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Draw Shape Tool");
+            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Shape Tool");
 
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;

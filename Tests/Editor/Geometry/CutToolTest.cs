@@ -135,8 +135,63 @@ public class CutToolTest
         Object.DestroyImmediate(tool);
     }
 
+        [Test]
+    public void CutTool_CutUsing3NewVerticesNoLoop_TestInsertionTypes_TestCreates2Faces()
+    {
+        CutTool tool = ScriptableObject.CreateInstance<CutTool>();
+        ToolManager.SetActiveTool(tool);
+
+        int originalFaceCount = m_PBMesh.faces.Count;
+        Face face = m_PBMesh.faces[0];
+        Assume.That(face, Is.Not.Null);
+
+        Vertex[] vertices = m_PBMesh.GetVertices();
+        var faceIndexes = face.distinctIndexes;
+        Assume.That(faceIndexes.Count, Is.EqualTo(4));
+
+        Vector3 pos_a = Math.Average(new Vector3[]{vertices[faceIndexes[0]].position, vertices[faceIndexes[1]].position, vertices[faceIndexes[2]].position});
+        Vector3 pos_b = Math.Average(new Vector3[]{vertices[faceIndexes[1]].position, vertices[faceIndexes[2]].position, vertices[faceIndexes[3]].position});
+        Vector3 pos_c = Math.Average(new Vector3[]{vertices[faceIndexes[0]].position, vertices[faceIndexes[1]].position, vertices[faceIndexes[3]].position});
+
+        //Creating a first new vertex
+        tool.UpdateCurrentPosition(face, pos_a, Vector3.up);
+        Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
+
+        //Insert first vertex to the path
+        tool.AddCurrentPositionToPath();
+        Assert.That(tool.m_CutPath.Count, Is.EqualTo(1));
+        //No connection is created yet
+        Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(0));
+
+        //Creating a second new vertex
+        tool.UpdateCurrentPosition(face, pos_b, Vector3.up);
+        Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
+
+        //Insert 2nd point to the path
+        tool.AddCurrentPositionToPath();
+        Assert.That(tool.m_CutPath.Count, Is.EqualTo(2));
+        //Check that the created path is connected twice to the containing face
+        Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
+
+        //Creating a third new vertex
+        tool.UpdateCurrentPosition(face, pos_c, Vector3.up);
+        Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex));
+
+        //Insert 3rd point to the path
+        tool.AddCurrentPositionToPath();
+        Assert.That(tool.m_CutPath.Count, Is.EqualTo(3));
+        //Check that the created path is connected twice to the containing face
+        Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
+
+        ActionResult result = tool.DoCut();
+        Assert.That(result.status, Is.EqualTo(ActionResult.Success.status));
+        Assert.That(m_PBMesh.faces.Count, Is.EqualTo(originalFaceCount -1 /*removed face*/ +2 /*added faces*/));
+
+        Object.DestroyImmediate(tool);
+    }
+
     [Test]
-    public void CutTool_CutUsing3NewVertices_TestInsertionTypes_TestCreates3Faces()
+    public void CutTool_CutUsing3NewVerticesAsLoop_TestInsertionTypes_TestCreates3Faces()
     {
         CutTool tool = ScriptableObject.CreateInstance<CutTool>();
         ToolManager.SetActiveTool(tool);
@@ -187,8 +242,9 @@ public class CutToolTest
         tool.UpdateCurrentPosition(face, pos_a, Vector3.up);
         Assert.That(tool.m_CurrentVertexTypes, Is.EqualTo(CutTool.VertexTypes.NewVertex|CutTool.VertexTypes.VertexInShape));
 
-        //Insert 4th point to the path
-        tool.AddCurrentPositionToPath();
+        //Insert 4th point to the path creating a loop
+        //Don't optimize to NOT trigger the cut right away
+        tool.AddCurrentPositionToPath(false);
         Assert.That(tool.m_CutPath.Count, Is.EqualTo(4));
         Assert.That(tool.m_MeshConnections.Count, Is.EqualTo(2));
 
