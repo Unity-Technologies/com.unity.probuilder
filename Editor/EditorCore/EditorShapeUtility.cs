@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using UnityEditor.IMGUI.Controls;
 using UnityEditor.SettingsManagement;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
-    internal static class EditorShapeUtility
+    static class EditorShapeUtility
     {
         [UserSetting]
         public static Pref<bool> s_ResetUserPrefs = new Pref<bool>("ShapeComponent.ResetSettings", true);

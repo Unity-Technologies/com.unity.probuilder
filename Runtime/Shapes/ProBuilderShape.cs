@@ -2,6 +2,7 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [AddComponentMenu(""), DisallowMultipleComponent]
     sealed class ProBuilderShape : MonoBehaviour
     {
         [SerializeReference]
