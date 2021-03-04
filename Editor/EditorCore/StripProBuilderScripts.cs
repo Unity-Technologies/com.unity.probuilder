@@ -124,7 +124,7 @@ namespace UnityEditor.ProBuilder.Actions
                 if(useUndoDestroy)
                     Undo.DestroyObjectImmediate(polyShape);
                 else
-                    DestroyImmediate(polyShape);
+                    DestroyImmediate(polyShape, true);
             }
 
             if (go.TryGetComponent(out BezierShape bezierShape))
@@ -132,7 +132,7 @@ namespace UnityEditor.ProBuilder.Actions
                 if(useUndoDestroy)
                     Undo.DestroyObjectImmediate(bezierShape);
                 else
-                    DestroyImmediate(bezierShape);
+                    DestroyImmediate(bezierShape, true);
             }
 
             if (go.TryGetComponent(out ProBuilderShape shape))
@@ -140,21 +140,21 @@ namespace UnityEditor.ProBuilder.Actions
                 if(useUndoDestroy)
                     Undo.DestroyObjectImmediate(shape);
                 else
-                    DestroyImmediate(shape);
+                    DestroyImmediate(shape, true);
             }
 
             pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
             if(useUndoDestroy)
                 Undo.DestroyObjectImmediate(pb);
             else
-                DestroyImmediate(pb);
+                DestroyImmediate(pb, true);
 
             if(go.TryGetComponent(out Entity entity))
             {
                 if(useUndoDestroy)
                     Undo.DestroyObjectImmediate(entity);
                 else
-                    DestroyImmediate(entity);
+                    DestroyImmediate(entity, true);
             }
         }
     }
