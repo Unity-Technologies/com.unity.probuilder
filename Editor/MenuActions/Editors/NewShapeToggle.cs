@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             Object.DestroyImmediate(m_Tool);
 
-            ProBuilderEditor.instance.Repaint();
+            ProBuilderEditor.Refresh();
 
             SceneView.RepaintAll();
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");

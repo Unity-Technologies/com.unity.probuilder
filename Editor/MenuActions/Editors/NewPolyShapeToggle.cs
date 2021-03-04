@@ -110,7 +110,7 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            ProBuilderEditor.instance.Repaint();
+            ProBuilderEditor.Refresh();
         }
 
         internal override ActionResult EndActivation()
