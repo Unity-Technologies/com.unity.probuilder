@@ -171,6 +171,19 @@ namespace UnityEngine.ProBuilder
 #pragma warning restore 109
 
         /// <value>
+        /// Simple uint tracking number of time ToMesh() and Refresh() function are called to modify the mesh
+        /// Used to check if 2 versions of the ProBuilderMesh are the same or not.
+        /// </value>
+        [SerializeField]
+        uint m_VersionID = 0;
+
+        internal uint versionID
+        {
+            get => m_VersionID;
+            set => m_VersionID = value;
+        }
+
+        /// <value>
         /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
         /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
         /// </value>
@@ -471,7 +484,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="vertices">The list that will be filled by the method.</param>
         /// <returns></returns>
-        public void GetVerticesInList(IList<Vertex> vertices)
+        internal void GetVerticesInList(IList<Vertex> vertices)
         {
             int vc = vertexCount;
 

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 
 static class BridgeEdgesTests
@@ -10,7 +11,7 @@ static class BridgeEdgesTests
     [Test]
     public static void Bridge_TwoEdges_CreatesQuad()
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeFactory.Instantiate<Cube>();
         cube.DeleteFace(cube.faces[0]);
         var holes = ElementSelection.FindHoles(cube, cube.sharedVertices.Select(x => x[0]));
         Assert.AreEqual(1, holes.Count, "found exactly 1 hole");
@@ -34,7 +35,7 @@ static class BridgeEdgesTests
     [Test]
     public static void Bridge_TwoConnectedEdges_CreatesTriangle()
     {
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var cube = ShapeFactory.Instantiate<Cube>();
         cube.DeleteFace(cube.faces[0]);
         var holes = ElementSelection.FindHoles(cube, cube.sharedVertices.Select(x => x[0]));
         Assert.AreEqual(1, holes.Count, "found exactly 1 hole");

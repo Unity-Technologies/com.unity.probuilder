@@ -70,12 +70,12 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (GUILayout.Button("Select Vertex Color"))
             {
-                DoAction();
+                PerformAction();
                 SceneView.RepaintAll();
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             UndoUtility.RecordSelection("Select Faces with Vertex Colors");
 

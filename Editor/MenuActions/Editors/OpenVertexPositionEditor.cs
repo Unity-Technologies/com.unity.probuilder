@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             VertexPositionEditor.MenuOpenVertexEditor();
             return new ActionResult(ActionResult.Status.Success, "Open Vertex Editor Window");

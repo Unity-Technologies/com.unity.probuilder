@@ -58,7 +58,7 @@ namespace ProBuilder.ExampleActions
 		protected override void OnSettingsEnable()
 		{
 			if( showPreview )
-				DoAction();
+				PerformAction();
 		}
 
 		protected override void OnSettingsGUI()
@@ -88,13 +88,13 @@ namespace ProBuilder.ExampleActions
 				EditorPrefs.SetInt("pb_CreateShadowObject_extrudeMethod", (int) extrudeMethod);
 
 			if(EditorGUI.EndChangeCheck())
-				DoAction();
+				PerformAction();
 
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Create Shadow Volume"))
 			{
-				DoAction();
+				PerformAction();
 				SceneView.RepaintAll();
 //				MenuOption.CloseAll();
 			}
@@ -104,7 +104,7 @@ namespace ProBuilder.ExampleActions
 		/// Perform the action.
 		/// </summary>
 		/// <returns>Return a pb_ActionResult indicating the success/failure of action.</returns>
-		public override ActionResult DoAction()
+		protected override ActionResult PerformActionImplementation()
 		{
 			ShadowCastingMode shadowMode = (ShadowCastingMode) EditorPrefs.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			float extrudeDistance = EditorPrefs.GetFloat("pb_CreateShadowObject_volumeSize", .08f);

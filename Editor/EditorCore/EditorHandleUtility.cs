@@ -15,11 +15,7 @@ namespace UnityEditor.ProBuilder
 
         public static bool SceneViewInUse(Event e)
         {
-            return e.alt
-                || Tools.current == Tool.View
-                || (e.isMouse && e.button > 0)
-                || Tools.viewTool == ViewTool.FPS
-                || Tools.viewTool == ViewTool.Orbit;
+            return Tools.viewToolActive;
         }
 
         public static bool IsAppendModifier(EventModifiers em)
@@ -505,30 +501,49 @@ namespace UnityEditor.ProBuilder
             Handles.matrix = s_HandleMatrix.Pop();
         }
 
+        static Vector3 GetBitangent(Vector3 planeNormal)
+        {
+            var rhs = Vector3.forward;
+            if(Mathf.Abs(Vector3.Dot(planeNormal, rhs)) > .9f)
+                rhs = Vector3.right;
+
+            return Vector3.Cross(planeNormal, Vector3.Cross( rhs , planeNormal));
+        }
+
         /// <summary>
         /// Get a plane suitable for mouse input in a scene view.
         /// </summary>
         /// <param name="mousePosition"></param>
+        /// <param name="alignOnGrid"></param>
         /// <returns></returns>
         internal static Plane FindBestPlane(Vector2 mousePosition)
+        {
+            var res = FindBestPlaneAndBitangent(mousePosition);
+            return res.item1;
+        }
+
+        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition)
         {
             // Priority in finding the "best" plane for input from a mouse position:
             // 1. Take the plane from the first hit mesh.
             // 2. If ProGrids is drawing a grid, use the plane normal and raycast for position
-            // 3. Use the nearest matching plane based on the scene camera direction
+            // 3. Use the nearest matching plane based on the scene snapping settings or else the scene camera direction
 
             Plane plane;
+            Vector3 bitangent;
 
-            if (GetPlaneFromPickedObject(mousePosition, out plane))
-                return plane;
+            if(GetPlaneFromPickedObject(mousePosition, out plane, out bitangent))
+                return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
-            if(GetPlaneFromProGridsAxis(mousePosition, out plane))
-                return plane;
+            if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
+                plane = GetPlaneFromSceneView();
 
-            return GetPlaneFromCameraDirection();
+            bitangent = GetBitangent(plane.normal);
+
+            return new SimpleTuple<Plane, Vector3>(plane, bitangent);
         }
 
-        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane)
+        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane, out Vector3 bitangent)
         {
             GameObject go = null;
             var ignorePicking = new List<GameObject>();
@@ -539,7 +554,7 @@ namespace UnityEditor.ProBuilder
                     ignorePicking.Add(go);
 
                 go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
-            } while (go != null && (go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null));
+            } while (go != null && go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null);
 
             if (go != null)
             {
@@ -554,6 +569,9 @@ namespace UnityEditor.ProBuilder
                         plane = new Plane(
                             go.transform.TransformDirection(hit.normal),
                             go.transform.TransformPoint(hit.point));
+
+                        bitangent = GetBitangent(plane.normal);
+
                         return true;
                     }
                 }
@@ -562,13 +580,16 @@ namespace UnityEditor.ProBuilder
                     UnityEngine.RaycastHit hit;
                     if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(mousePosition), out hit))
                     {
-                        plane = new Plane(hit.normal,hit.point);
+                        plane = new Plane(hit.normal, hit.point);
+                        var forward = go.transform.forward;
+                        bitangent = Mathf.Abs(Vector3.Dot(plane.normal, forward)) > .9f ? go.transform.up : forward;
                         return true;
                     }
                 }
             }
 
             plane = default(Plane);
+            bitangent = Vector3.forward;
             return false;
         }
 
@@ -643,6 +664,45 @@ namespace UnityEditor.ProBuilder
             }
 
             return true;
+        }
+
+        static Plane GetPlaneFromSceneView()
+        {
+            Plane plane;
+            Vector3 normal = Vector3.up;
+            if(EditorSnapSettings.gridSnapEnabled || SceneView.lastActiveSceneView.showGrid)
+            {
+                var sceneView = SceneView.lastActiveSceneView;
+                var cameraTransform = sceneView.camera.transform;
+                var axis = sceneView.sceneViewGrids.gridAxis;
+                var point = sceneView.sceneViewGrids.GetPivot(axis);
+
+                switch (axis)
+                {
+                    case SceneViewGrid.GridRenderAxis.X:
+                        normal = Vector3.right;
+                        break;
+
+                    case SceneViewGrid.GridRenderAxis.Y:
+                        normal = Vector3.up;
+                        break;
+                    case SceneViewGrid.GridRenderAxis.Z:
+                        normal = Vector3.forward;
+                        break;
+                }
+
+                //Invert normal if camera if facing the other side of the plane
+                if(Vector3.Dot(cameraTransform.forward, normal) > 0)
+                    normal *= -1f;
+
+                plane = new Plane(normal, point);
+
+                //If the camera if on the right side of the plane, return this plane
+                if(plane.GetSide(cameraTransform.position))
+                    return plane;
+            }
+
+            return GetPlaneFromCameraDirection();
         }
 
         static Plane GetPlaneFromCameraDirection()

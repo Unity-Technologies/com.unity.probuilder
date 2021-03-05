@@ -109,7 +109,7 @@ namespace UnityEditor.ProBuilder
             void Begin()
             {
                 vertMaterial.SetColor("_Color", color);
-                vertMaterial.SetInt("_HandleZTest", (int)zTest);
+                vertMaterial.SetFloat("_HandleZTest", (int)zTest);
 
                 if (!vertMaterial.SetPass(0))
                     throw new Exception("Failed initializing vertex material.");
@@ -230,7 +230,7 @@ namespace UnityEditor.ProBuilder
                 {
                     lineMaterial.SetColor("_Color", color);
                     lineMaterial.SetFloat("_Scale", thickness * EditorGUIUtility.pixelsPerPoint);
-                    lineMaterial.SetInt("_HandleZTest", (int)zTest);
+                    lineMaterial.SetFloat("_HandleZTest", (int)zTest);
                 }
 
                 if (m_Wire || !lineMaterial.SetPass(0))
@@ -366,7 +366,7 @@ namespace UnityEditor.ProBuilder
             void Begin()
             {
                 faceMaterial.SetColor("_Color", color);
-                faceMaterial.SetInt("_HandleZTest", (int)zTest);
+                faceMaterial.SetFloat("_HandleZTest", (int)zTest);
 
                 if (!faceMaterial.SetPass(0))
                     throw new Exception("Failed initializing face material.");

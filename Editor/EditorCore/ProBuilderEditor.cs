@@ -49,7 +49,6 @@ namespace UnityEditor.ProBuilder
         static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
-        static Pref<SelectMode> s_LastActiveSelectMode = new Pref<SelectMode>("editor.lastActiveSelectMode", SelectMode.Face);
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -191,7 +190,6 @@ namespace UnityEditor.ProBuilder
             set
             {
                 toolManager?.SetSelectMode(value);
-                Refresh();
             }
         }
 
@@ -286,8 +284,6 @@ namespace UnityEditor.ProBuilder
             InitGUI();
             EditorApplication.delayCall += () => UpdateSelection();
             SetOverrideWireframe(true);
-
-            selectMode = s_LastActiveSelectMode;
         }
 
         void OnDisable()
@@ -311,6 +307,7 @@ namespace UnityEditor.ProBuilder
             m_Toolbar.Dispose();
             if(m_ToolManager != null)
                 m_ToolManager.Dispose();
+            OnSelectModeChanged();
             ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
             SceneView.RepaintAll();
@@ -321,8 +318,10 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged()
         {
+            Refresh();
             if (selectModeChanged != null)
                 selectModeChanged(ProBuilderToolManager.selectMode);
+            Repaint();
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -369,11 +368,8 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if (instance != null)
-            {
+            if(instance != null)
                 instance.UpdateSelection(vertexCountChanged);
-                SceneView.RepaintAll();
-            }
         }
 
         void OnGUI()
@@ -499,6 +495,7 @@ namespace UnityEditor.ProBuilder
                     SceneView.RepaintAll();
                 }
             }
+
             m_wasSelectingPath = pathSelectionModifier;
 
             if (Tools.current == Tool.View)
@@ -553,10 +550,15 @@ namespace UnityEditor.ProBuilder
             if (Event.current.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_DefaultControl);
 
-            if (m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == m_DefaultControl)
+            HandleMouseEvent(sceneView, m_DefaultControl);
+        }
+
+        internal void HandleMouseEvent(SceneView sceneView, int controlID)
+        {
+            if(m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID)
             {
                 // double clicking object
-                if (m_CurrentEvent.clickCount > 1)
+                if(m_CurrentEvent.clickCount > 1)
                 {
                     DoubleClick(m_CurrentEvent);
                 }
@@ -566,64 +568,64 @@ namespace UnityEditor.ProBuilder
                 // MouseDrag event is sent with no corresponding MouseDown/MouseUp event.
                 m_IsReadyForMouseDrag = true;
 
-                GUIUtility.hotControl = m_DefaultControl;
+                GUIUtility.hotControl = controlID;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == m_DefaultControl)
+            if(m_CurrentEvent.type == EventType.MouseDrag && m_IsReadyForMouseDrag && GUIUtility.hotControl == controlID)
             {
-                if (!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) > k_MouseDragThreshold)
+                if(!m_IsDragging && Vector2.Distance(m_CurrentEvent.mousePosition, m_InitialMousePosition) >
+                    k_MouseDragThreshold)
                 {
                     sceneView.Repaint();
                     m_IsDragging = true;
                 }
             }
 
-            if (m_CurrentEvent.type == EventType.Ignore)
+            if(m_CurrentEvent.type == EventType.Ignore)
             {
-                if (m_IsDragging)
+                if(m_IsDragging)
                 {
                     m_IsReadyForMouseDrag = false;
                     m_IsDragging = false;
                     EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
                 }
 
-                if (m_WasDoubleClick)
+                if(m_WasDoubleClick)
                     m_WasDoubleClick = false;
 
-                if (GUIUtility.hotControl == m_DefaultControl)
+                if(GUIUtility.hotControl == controlID)
                     GUIUtility.hotControl = 0;
             }
 
-            if (m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == m_DefaultControl)
+            if(m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == controlID)
             {
                 GUIUtility.hotControl = 0;
 
-                if (m_WasDoubleClick)
+                if(m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
                 }
                 else
                 {
-                    if (!m_IsDragging)
+                    if(!m_IsDragging)
                     {
-                        if (UVEditor.instance)
+                        if(UVEditor.instance)
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
                         UpdateSelection();
-                        SceneView.RepaintAll();
                     }
                     else
                     {
                         m_IsDragging = false;
                         m_IsReadyForMouseDrag = false;
 
-                        if (UVEditor.instance)
+                        if(UVEditor.instance)
                             UVEditor.instance.ResetUserPivot();
 
                         EditorSceneViewPicker.DoMouseDrag(m_MouseDragRect, selectMode, m_ScenePickerPreferences);
 
-                        if (GUIUtility.hotControl == m_DefaultControl)
+                        if(GUIUtility.hotControl == controlID)
                             GUIUtility.hotControl = 0;
                     }
                 }
@@ -678,7 +680,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DeselectAll()
@@ -715,7 +716,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void InvertSelection()
@@ -782,7 +782,6 @@ namespace UnityEditor.ProBuilder
             }
 
             Refresh();
-            SceneView.RepaintAll();
         }
 
         void DoubleClick(Event e)
@@ -794,9 +793,9 @@ namespace UnityEditor.ProBuilder
                 if (selectMode.ContainsFlag(SelectMode.Edge | SelectMode.TextureEdge))
                 {
                     if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeRing>().PerformAction());
                     else
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectEdgeLoop>().PerformAction());
                 }
                 else if (selectMode.ContainsFlag(SelectMode.Face | SelectMode.TextureFace))
                 {
@@ -804,9 +803,9 @@ namespace UnityEditor.ProBuilder
                         (EventModifiers.Control | EventModifiers.Shift))
                         Actions.SelectFaceRing.MenuRingAndLoopFaces(MeshSelection.topInternal);
                     else if (e.control)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceRing>().PerformAction());
                     else if (e.shift)
-                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().DoAction());
+                        EditorUtility.ShowNotification(EditorToolbarLoader.GetInstance<Actions.SelectFaceLoop>().PerformAction());
                     else
                         mesh.SetSelectedFaces(mesh.facesInternal);
                 }
@@ -816,7 +815,6 @@ namespace UnityEditor.ProBuilder
                 }
 
                 UpdateSelection();
-                SceneView.RepaintAll();
                 m_WasDoubleClick = true;
             }
         }
@@ -930,7 +928,7 @@ namespace UnityEditor.ProBuilder
             if (selectionUpdated != null)
                 selectionUpdated(selection);
 
-            Repaint();
+            SceneView.RepaintAll();
         }
 
         internal static void UpdateMeshHandles(bool selectionOrVertexCountChanged = true)
@@ -976,6 +974,7 @@ namespace UnityEditor.ProBuilder
             m_Hovering.Clear();
             UpdateSelection();
             SetOverrideWireframe(true);
+            Repaint();
         }
 
         /// <summary>

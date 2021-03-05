@@ -79,10 +79,10 @@ namespace UnityEditor.ProBuilder.Actions
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Mirror"))
-                EditorUtility.ShowNotification(DoAction().notification);
+                EditorUtility.ShowNotification(PerformAction().notification);
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             Vector3 scale = new Vector3(
                     (m_MirrorAxes & MirrorSettings.X) > 0 ? -1f : 1f,

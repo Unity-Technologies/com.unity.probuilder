@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -12,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
     /// Menu items for stripping ProBuilder scripts from GameObjects.
     /// </summary>
     /// @TODO MOVE TO ACTIONS
-    sealed class StripProBuilderScripts : Editor
+    internal sealed class StripProBuilderScripts : Editor
     {
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
         public static void StripAllScenes()
@@ -81,20 +82,9 @@ namespace UnityEditor.ProBuilder.Actions
 
                 EditorUtility.SynchronizeWithMeshFilter(pb);
 
-
-                if (go.TryGetComponent(out PolyShape polyShape))
-                    DestroyImmediate(polyShape);
-
-                if (go.TryGetComponent(out BezierShape bezierShape))
-                    DestroyImmediate(bezierShape);
-
                 if (pb.mesh == null)
                 {
-                    DestroyImmediate(pb);
-
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
-
+                    DestroyProBuilderMeshAndDependencies(go, pb, false);
                     return;
                 }
 
@@ -104,19 +94,13 @@ namespace UnityEditor.ProBuilder.Actions
                 // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
                 if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh))
                 {
-                    pb.preserveMeshAssetOnDestroy = true;
-                    DestroyImmediate(pb);
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
+                    DestroyProBuilderMeshAndDependencies(go, pb, true);
                 }
                 else
                 {
                     Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
 
-                    DestroyImmediate(pb);
-
-                    if (go.TryGetComponent(out Entity entity))
-                        DestroyImmediate(entity);
+                    DestroyProBuilderMeshAndDependencies(go, pb);
 
                     go.GetComponent<MeshFilter>().sharedMesh = m;
                     if (go.TryGetComponent(out MeshCollider meshCollider))
@@ -124,6 +108,54 @@ namespace UnityEditor.ProBuilder.Actions
                 }
             }
             catch {}
+        }
+
+        internal static void DestroyProBuilderMeshAndDependencies(
+            GameObject go,
+            ProBuilderMesh pb,
+            bool preserveMeshAssets = false,
+            bool useUndoDestroy = false)
+        {
+            if(useUndoDestroy)
+                Undo.RecordObject(pb, "Removing ProBuilderMesh during scripts striping");
+
+            if (go.TryGetComponent(out PolyShape polyShape))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(polyShape);
+                else
+                    DestroyImmediate(polyShape);
+            }
+
+            if (go.TryGetComponent(out BezierShape bezierShape))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(bezierShape);
+                else
+                    DestroyImmediate(bezierShape);
+            }
+
+            if (go.TryGetComponent(out ProBuilderShape shape))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(shape);
+                else
+                    DestroyImmediate(shape);
+            }
+
+            pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
+            if(useUndoDestroy)
+                Undo.DestroyObjectImmediate(pb);
+            else
+                DestroyImmediate(pb);
+
+            if(go.TryGetComponent(out Entity entity))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(entity);
+                else
+                    DestroyImmediate(entity);
+            }
         }
     }
 }

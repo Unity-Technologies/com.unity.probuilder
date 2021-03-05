@@ -5,6 +5,7 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 
 class SelectFacesByColor
 {
@@ -13,10 +14,10 @@ class SelectFacesByColor
 
     void Setup(bool withColor = false)
     {
-        ProBuilderMesh shape1 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape1 = ShapeFactory.Instantiate<Cube>();
         shape1.transform.position = Vector3.zero - shape1.GetComponent<MeshRenderer>().bounds.center;
 
-        ProBuilderMesh shape2 = ShapeGenerator.CreateShape(ShapeType.Cube);
+        ProBuilderMesh shape2 = ShapeFactory.Instantiate<Cube>();
         shape2.transform.position = Vector3.zero - shape2.GetComponent<MeshRenderer>().bounds.center;
 
         if (withColor)
@@ -78,7 +79,7 @@ class SelectFacesByColor
         }
 
         UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-        selectColorAction.DoAction();
+        selectColorAction.PerformAction();
 
         foreach (var currObject in selectables)
         {
@@ -108,7 +109,7 @@ class SelectFacesByColor
         Assert.AreEqual(selectables[1].selectedFacesInternal.Length, 0);
 
         UnityEditor.ProBuilder.Actions.SelectVertexColor selectColorAction = new UnityEditor.ProBuilder.Actions.SelectVertexColor();
-        selectColorAction.DoAction();
+        selectColorAction.PerformAction();
 
         //Validate that after a face is selected on both cube
         Color[] colors0 = selectables[0].colorsInternal;

@@ -1,22 +1,34 @@
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 
 static class SubdivideElementsTests
 {
-    static ShapeType[] shapeTypes
-    {
-        get { return (ShapeType[])typeof(ShapeType).GetEnumValues(); }
+    public static List<Type> shapeTypes {
+        get {
+            var list = new List<Type>();
+            var types = typeof(Shape).Assembly.GetTypes();
+            foreach (var type in types)
+            {
+                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                {
+                    list.Add(type);
+                }
+            }
+            return list;
+        }
     }
 
     [Test]
-    public static void SubdivideFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] ShapeType shape)
+    public static void SubdivideFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
-        var pb = ShapeGenerator.CreateShape(shape);
+        var pb = ShapeFactory.Instantiate(shape);
 
         try
         {
@@ -40,7 +52,7 @@ static class SubdivideElementsTests
     [Test]
     public static void SubdivideObject_RetainsMaterial()
     {
-        var mesh = ShapeGenerator.CreateShape(ShapeType.Cube);
+        var mesh = ShapeFactory.Instantiate<Cube>();
 
         mesh.facesInternal[0].submeshIndex = 1;
 

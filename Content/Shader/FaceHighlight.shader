@@ -23,6 +23,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "ProBuilderCG.cginc"
 
             float4 _Color;
             float _Dither;
@@ -40,12 +41,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
             v2f vert (appdata v)
             {
                 v2f o;
-
-                // https://www.opengl.org/discussion_boards/showthread.php/166719-Clean-Wireframe-Over-Solid-Mesh
-                o.pos = float4(UnityObjectToViewPos(v.vertex.xyz), 1);
-                o.pos.xyz *= .99;
-                o.pos = mul(UNITY_MATRIX_P, o.pos);
-
+				o.pos = UnityObjectToClipPosWithOffset(v.vertex.xyz);
                 return o;
             }
 

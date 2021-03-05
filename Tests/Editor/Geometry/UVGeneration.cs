@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 
 public class UVGeneration
 {
@@ -16,10 +17,20 @@ public class UVGeneration
             UObject.DestroyImmediate(m_PBMesh.gameObject);
     }
 
+    static ProBuilderMesh GenerateCone(PivotLocation pivotType, float radius, float height, int subdivAxis)
+    {
+        ProBuilderMesh pb = ShapeFactory.Instantiate(typeof(Cone), pivotType);
+        Cone cone = pb.GetComponent<ProBuilderShape>().shape as Cone;
+        cone.m_NumberOfSides = subdivAxis;
+        cone.RebuildMesh(pb,new Vector3(radius, height, radius), Quaternion.identity);
+        pb.RefreshUV(pb.faces);
+        return pb;
+    }
+
     [Test, TestCaseSource(typeof(UVGeneration), "s_ConeSubDivAxes")]
     public void NewShape_CreateCone_FaceUVsAreConsistent(int subDivAxis)
     {
-        m_PBMesh = ShapeGenerator.GenerateCone(PivotLocation.Center, 0.5f, 1f, subDivAxis);
+        m_PBMesh = GenerateCone(PivotLocation.Center, 0.5f, 1f, subDivAxis);
 
         var faces = m_PBMesh.facesInternal;
         var uvs = m_PBMesh.texturesInternal;

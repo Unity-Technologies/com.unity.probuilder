@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -45,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             var opt = s_ExportAssetOptions.value;
             var res = ExportWithFileDialog(MeshSelection.topInternal, opt);
@@ -98,11 +99,7 @@ namespace UnityEditor.ProBuilder.Actions
                         res = ExportMesh(assetPath, pb, options.replaceOriginal, true);
 
                         if (options.replaceOriginal)
-                        {
-                            pb.preserveMeshAssetOnDestroy = true;
-                            Undo.DestroyObjectImmediate(pb);
-                        }
-
+                            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(pb.gameObject, pb, true, true);
                     }
                 }
             }
@@ -172,8 +169,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (replaceOriginal)
             {
-                mesh.preserveMeshAssetOnDestroy = true;
-                Undo.DestroyObjectImmediate(mesh);
+                StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(mesh.gameObject, mesh, true, true);
             }
             else
             {
@@ -236,8 +232,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             var component = go.GetComponent<ProBuilderMesh>();
             Undo.RecordObject(component, "Export ProBuilderMesh as Replacement");
-            component.preserveMeshAssetOnDestroy = true;
-            Undo.DestroyObjectImmediate(component);
+            StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(go, component, true, true);
 
             go.GetComponent<MeshFilter>().sharedMesh = meshAsset;
             var meshCollider = go.GetComponent<MeshCollider>();

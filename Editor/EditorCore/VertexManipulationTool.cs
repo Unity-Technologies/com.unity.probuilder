@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
+using UnityEngine.ProBuilder.Shapes;
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;

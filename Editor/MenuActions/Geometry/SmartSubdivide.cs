@@ -46,15 +46,15 @@ namespace UnityEditor.ProBuilder.Actions
             get { return true; }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             switch (ProBuilderEditor.selectMode)
             {
                 case SelectMode.Edge:
-                    return EditorToolbarLoader.GetInstance<SubdivideEdges>().DoAction();
+                    return EditorToolbarLoader.GetInstance<SubdivideEdges>().PerformAction();
 
                 default:
-                    return EditorToolbarLoader.GetInstance<SubdivideFaces>().DoAction();
+                    return EditorToolbarLoader.GetInstance<SubdivideFaces>().PerformAction();
             }
         }
     }

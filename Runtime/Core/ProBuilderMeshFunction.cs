@@ -62,10 +62,14 @@ namespace UnityEngine.ProBuilder
             //Ensure no element is selected at awake
             ClearSelection();
 
-            if (vertexCount > 0
-                && faceCount > 0
-                && meshSyncState == MeshSyncState.Null)
+            if(vertexCount > 0
+               && faceCount > 0
+               && meshSyncState == MeshSyncState.Null)
+            {
+                var version = m_VersionID;
                 Rebuild();
+                m_VersionID = version;
+            }
         }
 
         void Reset()
@@ -214,7 +218,7 @@ namespace UnityEngine.ProBuilder
             return mesh;
         }
 
-        void GeometryWithPoints(Vector3[] points)
+        internal void GeometryWithPoints(Vector3[] points)
         {
             // Wrap in faces
             Face[] f = new Face[points.Length / 4];
@@ -238,7 +242,7 @@ namespace UnityEngine.ProBuilder
             positions = points;
             m_Faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
-            InvalidateSharedVertexLookup();
+            InvalidateCaches();
             ToMesh();
             Refresh();
         }
@@ -278,6 +282,8 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
+            bool usedInParticuleSystem = false;
+
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
             {
@@ -288,6 +294,7 @@ namespace UnityEngine.ProBuilder
             }
             else if (mesh.vertexCount != vertexCount)
             {
+                usedInParticuleSystem = MeshUtility.IsUsedInParticuleSystem(this);
                 mesh.Clear();
             }
 
@@ -326,6 +333,11 @@ namespace UnityEngine.ProBuilder
             mesh.name = string.Format("pb_Mesh{0}", id);
 
             EnsureMeshFilterIsAssigned();
+
+            if(usedInParticuleSystem)
+                MeshUtility.RestoreParticuleSystem(this);
+
+            m_VersionID++;
         }
 
         /// <summary>
@@ -392,6 +404,11 @@ namespace UnityEngine.ProBuilder
 
             if ((mask & RefreshMask.Collisions) > 0)
                 EnsureMeshColliderIsAssigned();
+
+            if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
+                mesh.RecalculateBounds();
+
+            m_VersionID++;
         }
 
         internal void EnsureMeshColliderIsAssigned()
@@ -401,6 +418,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
+
                 collider.sharedMesh = mesh;
             }
         }

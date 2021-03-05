@@ -56,12 +56,12 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        public override ActionResult DoAction()
+        protected override ActionResult PerformActionImplementation()
         {
             if (ProBuilderEditor.selectMode == SelectMode.Edge)
-                return EditorToolbarLoader.GetInstance<SelectEdgeRing>().DoAction();
+                return EditorToolbarLoader.GetInstance<SelectEdgeRing>().PerformAction();
             else if (ProBuilderEditor.selectMode == SelectMode.Face)
-                return EditorToolbarLoader.GetInstance<SelectFaceRing>().DoAction();
+                return EditorToolbarLoader.GetInstance<SelectFaceRing>().PerformAction();
             return ActionResult.NoSelection;
         }
     }
