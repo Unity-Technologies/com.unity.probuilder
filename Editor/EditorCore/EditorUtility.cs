@@ -324,7 +324,7 @@ namespace UnityEditor.ProBuilder
                     // This little dance is required to prevent the Prefab system from detecting an overridden property
                     // before ProBuilderMesh.RefreshCollisions has a chance to mark the MeshCollider.sharedMesh property
                     // as driven. "AddComponent<MeshCollider>" constructs the MeshCollider and simultaneously assigns
-                    // the "m_Mesh" property, marking the property dirty. So we undo that change, here then assign the
+                    // the "m_Mesh" property, marking the property dirty. So we undo that change here, then assign the
                     // mesh through our own method.
                     collider.sharedMesh = null;
                     collider.convex = s_MeshColliderIsConvex;

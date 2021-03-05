@@ -26,7 +26,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-
         static Type[] s_AvailableShapeTypes = null;
 
         public static Type[] availableShapeTypes
@@ -50,6 +49,15 @@ namespace UnityEditor.ProBuilder
                         .ToArray();
                 return s_ShapeTypes;
             }
+        }
+
+        public static string GetName<T>(T shape) where T : Shape
+        {
+            var type = shape == null ? typeof(T) : shape.GetType();
+            if (Attribute.GetCustomAttribute(type, typeof(ShapeAttribute)) is ShapeAttribute attrib)
+                return attrib.name;
+            var str = type.ToString();
+            return str.Substring(str.LastIndexOf('.') + 1);
         }
 
         static int s_MaxContentPerGroup = 6;
@@ -94,7 +102,6 @@ namespace UnityEditor.ProBuilder
                 return s_ShapeTypesGUILists;
             }
         }
-
 
         static EditorShapeUtility()
         {

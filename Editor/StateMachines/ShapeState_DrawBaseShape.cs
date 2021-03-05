@@ -98,11 +98,10 @@ namespace UnityEditor.ProBuilder
         public void CreateLastShape()
         {
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ProBuilderShape>();
-            shape.gameObject.name = shape.gameObject.name + "-Copy";
             EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
 
-            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
