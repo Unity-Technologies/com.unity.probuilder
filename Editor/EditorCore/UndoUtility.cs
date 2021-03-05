@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder
 {
@@ -21,37 +20,30 @@ namespace UnityEditor.ProBuilder
             if (SceneDragAndDropListener.isDragging)
                 return;
 
+            // Two passes
+            // 1. Ensure every ProBuilderMesh in the scene has a valid mesh
+            // 2. Rebuild every ProBuilderMesh in the selection to reflect undone changes.
+
             // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
             // for the FindObjectsOfType call.
             foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
             {
-                var versionID = mesh.versionID;
-                if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
-                {
-                    shape.UpdateComponent();
-                    versionID = shape.currentHash;
-                }
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();
-                mesh.versionID = versionID;
             }
 
             foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
             {
-                var versionID = mesh.versionID;
-                if(mesh.TryGetComponent<ProBuilderShape>(out ProBuilderShape shape))
-                {
-                    shape.UpdateComponent();
-                    versionID = shape.currentHash;
-                }
                 mesh.InvalidateCaches();
-                mesh.Rebuild();
-                mesh.Optimize();
-                mesh.versionID = versionID;
+
+                using (new ProBuilderMesh.NonVersionedEditScope(mesh))
+                {
+                    mesh.Rebuild();
+                    mesh.Optimize();
+                }
             }
 
             ProBuilderEditor.Refresh();
-            SceneView.RepaintAll();
         }
 
         /**

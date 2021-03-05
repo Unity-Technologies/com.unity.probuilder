@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
             if(target == null || serializedObject == null)
                 return;
 
-            serializedObject.Update ();
+            serializedObject.Update();
 
             var foldoutEnabled = tool == null ? s_foldoutEnabled : DrawShapeTool.s_SettingsEnabled.value;
             foldoutEnabled = EditorGUILayout.Foldout(foldoutEnabled, m_ShapePropertyLabel, true);
@@ -158,7 +158,8 @@ namespace UnityEditor.ProBuilder
                         {
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
-                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(proBuilderShape.GetComponents(typeof(Component)),"Change Shape");
+
+                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
                             proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
                             ProBuilderEditor.Refresh();
                         }

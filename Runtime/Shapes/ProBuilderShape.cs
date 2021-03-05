@@ -22,7 +22,8 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         Vector3 m_PivotPosition;
 
-        [SerializeField] uint m_Hash;
+        [SerializeField]
+        internal ushort m_UnmodifiedMeshVersion;
 
         public Shape shape
         {
@@ -83,8 +84,7 @@ namespace UnityEngine.ProBuilder.Shapes
         Bounds m_ShapeBox;
         public Bounds shapeBox => m_ShapeBox;
 
-        internal uint currentHash => mesh.versionID;
-        public bool isEditable => m_Hash == currentHash;
+        public bool isEditable => m_UnmodifiedMeshVersion == mesh.versionIndex;
 
         /// <summary>
         /// Reference to the <see cref="ProBuilderMesh"/> that this component is creating.
@@ -153,7 +153,7 @@ namespace UnityEngine.ProBuilder.Shapes
             bounds.size = Math.Abs(m_ShapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
 
-            m_Hash = currentHash;
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         internal void SetShape(Shape shape, PivotLocation location)
@@ -194,7 +194,6 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <summary>
         /// Rotates the Shape by a given quaternion while respecting the bounds
         /// </summary>
-        /// <param name="rotation">The angles to rotate by</param>
         internal void RotateInsideBounds(Quaternion deltaRotation)
         {
             ResetPivot(mesh, size, rotation);
