@@ -22,7 +22,11 @@ namespace UnityEditor.ProBuilder
 
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shape.GetType());
             DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
-            MeshSelection.SetSelection(tool.m_ProBuilderShape.gameObject);
+
+            // make sure that the whole shape creation process is a single undo group
+            var group = Undo.GetCurrentGroup() - 1;
+            Selection.activeObject = tool.m_ProBuilderShape.gameObject;
+            Undo.CollapseUndoOperations(group);
 
             return NextState();
         }
