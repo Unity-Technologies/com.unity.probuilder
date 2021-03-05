@@ -5,17 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.0.0-pre.12] - 2021-03-05
 
 ### Bug Fixes
 
 - [case: 1317773] Fixing undo after shape creation.
+- Fixed shape creation requiring two undos to remove new shape.
+- Fixed shape preview flickering when executing shortcut to redo.
+- Fixed new shapes instantiating with generic "Shape" name instead of the primitive name.
 
 ## [5.0.0-pre.11] - 2021-02-25
 
 ### Bug Fixes
 
-- [case: 1317148] Fixing edge picking problem with some Unity versions. 
+- [case: 1317148] Fixing edge picking problem with some Unity versions.
 - [case: 1312537] Fixing script stripping on disabled objects when building.
 - [case: 1311258] Fixing material reverting when subdividing edge.
 - Added Particle System and IMGUI modules as a dependency.
@@ -67,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1285654] Fixed selected faces highlight for isometric camera mode in sceneview.
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
 - [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
-- [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter. 
+- [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter.
 
 ### Changes
 
