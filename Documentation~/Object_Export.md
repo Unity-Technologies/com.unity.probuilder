@@ -1,6 +1,6 @@
 # ![Export icon](images/icons/Object_Export.png) Export
 
-The __Export__ action [exports](workflow-exporting.md#export) the selected ProBuilder object(s) to a 3D Model file. 
+The __Export__ action [exports](workflow-exporting.md#export) the selected ProBuilder object(s) to a 3D Model file.
 
 > **Tip:** You can also export to each format by selecting the specific format from the ProBuilder menu (**Tools** > **ProBuilder** > **Export** > **Export &lt;format&gt;**).
 
@@ -20,7 +20,7 @@ Select the [format you want to export to](workflow-exporting.md#formats) from th
 * [Asset-specific options](#Asset)
 * [Prefab-specific options](#Prefab)
 
-The one option that applies to all file format types is the __Include Children__ property, which you can enable to include not only selected Meshes, but also the children of selected objects in the exported Model. 
+The one option that applies to all file format types is the __Include Children__ property, which you can enable to include not only selected Meshes, but also the children of selected objects in the exported Model.
 
 <a name="Asset"></a>
 
@@ -28,9 +28,9 @@ The one option that applies to all file format types is the __Include Children__
 
 ![Asset-specific export options](images/Object_Export_propsAsset.png)
 
-The Asset format type also provides the **Replace Source** option, which tells ProBuilder whether to replace the saved Mesh data or not. 
+The Asset format type also provides the **Replace Source** option.
 
-<span style="color:blue">@DEVNOTE: Can you provide more information for this option please? Use cases? </span>
+[!include[](_ReplaceSource.md)]
 
 
 
@@ -40,7 +40,7 @@ The Asset format type also provides the **Replace Source** option, which tells P
 
 ![STL-specific export options](images/Object_Export_propsSTL.png)
 
-The STL format type also provides the __STL Format__ option, which lets you choose whether to use the **ASCII** or **Binary** representation of the STL file specification. 
+The STL format type also provides the __STL Format__ option, which lets you choose whether to use the **ASCII** or **Binary** representation of the STL file specification.
 
 
 
@@ -87,7 +87,6 @@ The OBJ format type also provides the following options:
 
 ![Asset-specific export options](images/Object_Export_propsPrefab.png)
 
-The [Prefab](https://docs.unity3d.com/Manual/Prefabs.html) format type also provides the **Replace Source** option, which tells ProBuilder whether to replace the saved Mesh data or not.
+The [Prefab](https://docs.unity3d.com/Manual/Prefabs.html) format type also provides the **Replace Source** option.
 
-
-
+[!include[](_ReplaceSource.md)]

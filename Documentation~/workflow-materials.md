@@ -1,9 +1,9 @@
 # Creating and Applying Materials
 
-Use the [Material Editor](material-tools.md) to easily manage Materials you are using in the Scene. You can carry out a number of editing tasks, including the following: 
+Use the [Material Editor](material-tools.md) to easily manage Materials you are using in the Scene. You can carry out a number of editing tasks, including the following:
 
-* [Setting a quick Material](material-tools.md#qset) and then using a hotkey to [apply it](material-tools.md#qapply) to the selected face(s).
-* [Assigning up to 10 Materials](material-tools.md#set) to hotkeys and buttons in the editor so you can easily [apply multiple Materials to faces](material-tools.md#apply) without having to use the Project view to find them. 
+* [Setting a quick Material](material-tools.md#qset) and then using a shortcut to [apply it](material-tools.md#qapply) to the selected face(s).
+* [Assigning up to 10 Materials](material-tools.md#set) to shortcuts and buttons in the editor so you can easily [apply multiple Materials to faces](material-tools.md#apply) without having to use the Project view to find them. 
 * [Defining extra Material slots](material-tools.md#wells) in your Palette so that you can manage extra Materials at once.
 * [Saving your Material arrangement](material-tools.md#save) in a new Material Palette so that you can find it easily and re-use it in other Scenes and Projects.
 * [Loading](material-tools.md#load) a previously saved Material Palette into the Material Editor.
@@ -36,4 +36,3 @@ Before you create the Material, make sure you have a 2-dimensional image file (B
 
 
 Now that you have a Texture Material, you can [set it as the quick Material](material-tools.md#qset), [add it to your Material Palette](material-tools.md#palette), and [apply it to a whole object or only specific faces](material-tools.md#apply).
-

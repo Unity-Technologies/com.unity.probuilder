@@ -1,4 +1,4 @@
-# ![Bezier Shape Icon](images/icons/NewBezierSpline.png) Bezier Shape tool
+# Bezier Shape component
 
 > **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 

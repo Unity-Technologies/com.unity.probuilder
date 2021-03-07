@@ -2,13 +2,13 @@
 
 Use the Shape tool to [create new ProBuilder Meshes](workflow-create-predefined.md) based on common primitive shapes, such as cylinders, arches, and stairs. When you activate the Shape tool to create a new shape, the **Create Shape** panel appears in the bottom of the Scene view. You can either draw in the Scene view or set the properties directly in the **Create Shape** panel to define a bounding box that will hold the new shape. You can also customize any shape-specific settings, and then either exit the tool or create another new shape. 
 
-> **Tip**: After you create a new shape and exit the tool, you can redefine the bounding box, switch primitive shapes, and change the shape-specific settings when you select the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) from the **Tools** panel. If you made any modifications to the Mesh topology (such as [splitting vertices](Vert_Split.md), [connecting edges](Edge_Connect.md), or [extruding faces](Face_Extrude.md)), you must reset the shape to remove all manual changes before you can proceed.
+> **Tip**: After you create a new shape and exit the tool, you can redefine the bounding box, switch primitive shapes, and change the shape-specific settings when you select the Edit Shape icon ![Edit Shape icon](images/icons/Panel_Shapes.png) from the **Tools** panel. If you made any modifications to the Mesh topology (such as [splitting vertices](Vert_Split.md), [connecting edges](Edge_Connect.md), or [extruding faces](Face_Extrude.md)), you must reset the shape to remove all manual changes before you can proceed.
 
 ![When you create a new shape, the Create Shape properties appear. When you edit an existing shape, the Edit Shape properties appear.](images/shape-tool.png)
 
 **(A)** Shape icons let you choose the shape's primitive when you are drawing a new shape.
 
-**(B)** The **Tools** panel displays the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) when you have a Shape Mesh selected. You can toggle this icon to turn the editing mode on and off.
+**(B)** The **Tools** panel displays the Edit Shape icon ![Edit Shape icon](images/icons/Panel_Shapes.png) when you have a Shape Mesh selected. You can toggle this icon to turn the editing mode on and off.
 
 **(C)** The **Snapping** option only appears when you use ProBuilder inside a version of Unity prior to 2021.1. It enables auto-snapping for the Shape tool. For more information, see [Snapping](#Snapping).
 

@@ -1,4 +1,4 @@
-# Creating a Mesh with the Bezier Shape tool
+# ![Bezier Shape Icon](images/icons/NewBezierSpline.png) Bezier Shape tool
 
 The Bezier Shape tool uses a Bezier spline (curve) and extrudes along it to create a 3D version of the curve. You fine-tune the shape by using the tangent handles on the control points to bend the shape.
 

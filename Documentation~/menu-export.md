@@ -26,4 +26,3 @@ Exports the selected object(s) as ASCII `.stl` files (stereolithography, standar
 
 Exports the selected object(s) as Binary `.stl` files (stereolithography, standard tessellation, or standard triangle format). This is a widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry.
 
-<span style="color:blue">@DEVNOTE: Should the Prefab format be in this list too?</span>

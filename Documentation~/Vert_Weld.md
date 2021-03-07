@@ -4,7 +4,7 @@ The __Weld Vertices__ action merges selected vertices within a specific distance
 
 ![Reduce flat narrow face to a single edge on top of Mesh](images/WeldVerts_Example.png)
 
-> **Tip:** You can also use this action with the **Alt/Opt+V** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Weld Vertices**).
+> **Tip:** You can also use this action with the **Alt/Opt+V** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Weld Vertices**).
 
 ## Weld Vertices Options
 

@@ -16,7 +16,7 @@ Use this to set the **Rect** action to **Intersect**. This means that drag selec
 
 For more information, see the [Rect](Selection_Rect_Intersect.md) action documentation.
 
-## Toggle Handle Orientation [p]
+## Toggle Handle Orientation
 
 Use this to toggle between the three orientation states for Scene handles (__Global__, __Local__, or __Normal__).
 

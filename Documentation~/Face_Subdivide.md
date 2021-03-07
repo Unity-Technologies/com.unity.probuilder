@@ -2,7 +2,7 @@
 
 The __Subdivide Face__ action splits each selected face. To do this, it adds a vertex at the center of each edge and connects them in the center.
 
-> **Tip:** You can also use this action with the **Alt/Opt+S** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Smart Subdivide**).
+> **Tip:** You can also use this action with the **Alt/Opt+S** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Smart Subdivide**).
 
 ![Split side of cube into 4 squares](images/SubdivideFace_Example.png)
 

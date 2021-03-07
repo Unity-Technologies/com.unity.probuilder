@@ -14,4 +14,4 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 
 This action is available in all [edit modes](modes.md).
 
-> **Tip:** You can also use this action with the **P** hotkey, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Handle Orientation**).
+> **Tip:** You can also use this action with the **P** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Handle Orientation**).

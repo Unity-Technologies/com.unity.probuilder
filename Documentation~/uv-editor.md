@@ -23,6 +23,8 @@ To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click 
 
 **(D)** You can use the UV viewer to view and edit the selected object's UV elements directly.
 
+> **Tip**: While working in the UV viewer's work area (canvas), sometimes the Texture becomes only partially visible (for example, if you zoomed in so you could see more detail on the Texture). To quickly re-center the Texture, use the **0** shortcut. You can also re-map this shortcut with the Shortcuts Manager.
+
 
 
 <a name="uv-modes"></a>

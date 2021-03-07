@@ -46,13 +46,17 @@ This page describes some of the most common ways you can use the ProBuilder tool
   * Select all the edges on one side only of the hole and use **Shift**+**Translate** until they connect up with the edge on the other side.
   * Then [weld the vertices](Vert_Weld.md) together where the edges meet.
 
-- **Add a door**: follow the *Make a hole* procedure, but to start, create a [Door shape](Door.md). Fit the hole to match, [merge the two objects](Object_Merge.md), and then [weld the door to the frame](Vert_Weld.md) you created.
+- **Add a door**: follow the "Make a hole" procedure, but to start, create a [Door shape](Door.md). Fit the hole to match, [merge the two objects](Object_Merge.md), and then [weld the door to the frame](Vert_Weld.md) you created.
 
 - **Make a tunnel with normals on both the inside and outside**: duplicate the tunnel object and scale it slightly so that you [bridge the edges](Edge_Bridge.md). Next, [flip the normals](Object_FlipNormals.md) on the smaller one.
 
 - **Make a building with towers**: start with a [cube](Cube.md) and [inset](Face_Inset.md) on the top face, then [extrude](Face_Extrude.md) upward. Repeat this as many times as you like. You could also [subdivide the top face](Face_Subdivide.md) to create multiple extrusions.
 
-<span style="color:blue">@DEVNOTE: Do you have some good examples for using the Cut tool to make either objects or buildings for this section here? </span>
+<!--
+
+<span style="color:red">@TODO: Follow up with Gabriel to get some good examples for using the Cut tool to make either objects or buildings for this section  </span>
+
+-->
 
 ## Finding more inspiration
 
@@ -64,4 +68,10 @@ Use the Unity ProBuilder channel to find videos that demonstrate how to use the 
 * [ProBuilder Greyboxing an Interior FPS Level](https://www.youtube.com/watch?v=dYBOBgfcTgY)
 * [Unity at GDC - Rapid worldbuilding with ProBuilder](https://www.youtube.com/watch?v=7k-81UEluyg)
 
-<span style="color:blue">@DEVNOTE: Do you have some more up to date videos I could put here? Most of these are quite old. </span>
+
+
+<!--
+
+<span style="color:red">@TODO: Follow up with Gabriel to get some more up to date videos for this section. </span>
+
+-->

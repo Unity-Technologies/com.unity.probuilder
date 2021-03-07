@@ -6,7 +6,9 @@ The main updates in this release include:
 
 ### Added
 
-* New [Cut](cut-tool.md) tool which allows you to add points on an existing face to define a new sub-face.
+* ProBuilder now supports a special modal "tool" mode for some features (the new [Cut tool](cut-tool.md), and the refactored [Shape](shape-tool.md) and [Poly Shape](polyshape.md) tools). Because of these changes, the other features that have a more immediate effect haven been rebranded "actions". For more information, see [Tools vs. actions](tools.md).
+* Added a new [Cut](cut-tool.md) tool which allows you to add points on an existing face to define a new sub-face.
+* Added a new [Selection X-Ray](preferences.md#sel-xray) option to highlight hidden element selections with a muted color. The default shortcut is **Ctrl/Alt+Shift+X** (modifiable in the Shortcuts Manager), and you can also access it through the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle X Ray**).
 
 ### Updated
 
@@ -16,7 +18,12 @@ The main updates in this release include:
 ### Fixed
 
 * Fixed Undo completely reverting all actions.
+* Selection, picking and highlight shaders have been updated to be compatible with SRPs as well as with orthographic cameras (there are several bug fixes that directly support these adjustments).
 
 For a full list of changes and updates in this version, see the [ProBuilder package changelog](../changelog/CHANGELOG.html).
 
-<span style="color:blue">@DEVNOTE: We are now supposed to include a **What's new** page for every major release of packages. This is supposed to be a quick overview of the major new and improved features, and any important bug fixes. Is there anything you feel should be highlighted here? </span>
+<!-- 
+
+<span style="color:red">@TODO: SelectPath documentation </span> 
+
+-->

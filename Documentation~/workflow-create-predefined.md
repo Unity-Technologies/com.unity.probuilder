@@ -16,7 +16,7 @@ To create a Mesh from a predefined shape:
 
 2. From the ProBuilder toolbar, click the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) tool. The [Create Shape](shape-tool.md) panel appears in the bottom of the Scene view and the **New Shape** text button is highlighted.
 
-  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** hotkey or use the menu (**Tools** > **ProBuilder** > **Editors** > **New Shape**) to activate the Shape tool.
+  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** shortcut or use the menu (**Tools** > **ProBuilder** > **Editors** > **New Shape**) to activate the Shape tool.
 
 3. From the top of the **Create Shape** panel, choose the icon that matches the shape you'd like to create. Any shape-specific properties appear under the **&lt;Shape&gt; Settings** section at the bottom.
 
@@ -38,7 +38,7 @@ To create a Mesh from a predefined shape:
 
 9. To exit the tool, click the **New Shape** button again or select Esc.
 
-  **Note**: If you decide later that you want to switch primitive shapes, change the size of the bounding box, or modify any of the shape-specific properties, select the Edit Shape icon ![Edit Shape icon](images/icons/tool-arch.png) from the **Tools** panel.
+  **Note**: If you decide later that you want to switch primitive shapes, change the size of the bounding box, or modify any of the shape-specific properties, select the Edit Shape icon ![Edit Shape icon](images/icons/Panel_Shapes.png) from the **Tools** panel.
 
 
 After you create a Mesh shape, you can use any of the [ProBuilder editing tools](workflow-edit.md) to fine-tune or customize that shape further. For example, you can build a plain cube and then use the **Extrude Face** and **Delete Face** tools to create windows and doorways to make a house.

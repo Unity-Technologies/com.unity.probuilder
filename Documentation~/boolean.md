@@ -1,4 +1,4 @@
-# Boolean (Experimental) window
+# Boolean operations
 
 > **Warning:** The Boolean feature is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Please use with caution.
 

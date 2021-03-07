@@ -4,9 +4,9 @@ Use the **Material Editor** to apply Materials to objects or faces.
 
 ![The Material Editor window](images/material-tools.png)
 
-**(A)** Use the [Quick Material](#quick) section to set up a Material to apply with a button or a hotkey.
+**(A)** Use the [Quick Material](#quick) section to set up a Material to apply with a button or a shortcut.
 
-**(B)** Use the [Material Palette](#palette) section to designate several Materials to use with buttons or hotkeys. You can also save and load new Palettes, and add more slots to use for Materials.
+**(B)** Use the [Material Palette](#palette) section to designate several Materials to use with buttons or shortcuts. You can also save and load new Palettes, and add more slots to use for Materials.
 
 To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **Material Editor** button ( ![Material Editor icon](images/icons/Panel_Materials.png) ).
 
@@ -20,7 +20,7 @@ For an overview of working with Materials and texture mapping, see [Materials, S
 
 ## Quick Material
 
-The **Quick Material** section allows you to specify a Material to apply with either the hotkey combination or the **Apply** button.
+The **Quick Material** section allows you to specify a Material to apply with either the shortcut combination or the **Apply** button.
 
 ![Quick Material section](images/material-tools-quick.png)
 
@@ -51,7 +51,7 @@ If there's a face on a GameObject in the Scene that is already using the Materia
 To apply the quick Material:
 
 1. Select the object or face(s) you want to apply the quick Material to.
-2. Click the **Apply** button or use the **Ctrl/Cmd+Shift+Click** hotkey combination.
+2. Click the **Apply** button or use the **Ctrl/Cmd+Shift+Click** shortcut combination.
 
 
 
@@ -59,7 +59,7 @@ To apply the quick Material:
 
 ## Material Palette
 
-A Material Palette is a convenient way to keep several Materials ready to apply, either with the Material Editor or with hotkey combinations.
+A Material Palette is a convenient way to keep several Materials ready to apply, either with the Material Editor or with shortcut combinations.
 
 You can set up to 10 different Materials on the Palette, or expand the slots in your Palette if you need more.
 
@@ -71,7 +71,7 @@ You can also save your Palette as a custom Palette and load it in other Scenes o
 
 **(B)** Set a reference to the Material Palette you want to load.
 
-**(C)** Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset &lt;number&gt;**).
+**(C)** Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the shortcut displayed on the button (**Alt/Opt+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset &lt;number&gt;**).
 
 **(D)** Set a reference to the Material you want to use in this slot of the Material Palette.
 
@@ -98,7 +98,7 @@ To apply a specific Material from the Palette:
 
 > **Tip:** You can find the number of the Material preset on each slot's button. Then you can use that number to apply its Material directly using either of these methods:
 >
-> * Use the **Alt/Opt+#** hotkey.
+> * Use the **Alt/Opt+#** shortcut.
 > * Select the Material preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset #**).
 
 
@@ -115,7 +115,7 @@ By default, the Material Palette provides 10 slots (numbered 1 to 0) for your Ma
 
 2. Pick your new Material to use in the new slot.
 
-> **Note:** You can't set up new hotkeys for the new slots but you can click their buttons in the Material Editor to apply them.
+> **Note:** You can't set up new shortcuts for the new slots but you can click their buttons in the Material Editor to apply them.
 
 
 

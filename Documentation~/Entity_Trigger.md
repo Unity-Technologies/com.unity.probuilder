@@ -16,7 +16,7 @@ The __Set Trigger__ action assigns the **Trigger Behaviour** script to selected 
 - The **Trigger Behaviour** script sets the [Mesh Renderer](https://docs.unity3d.com/Manual/class-MeshRenderer.md) Material to ProBuilder's **Trigger** Material.
 - The **Trigger Behaviour** script automatically disables the Mesh Renderer when you enter **Play Mode** or build your project.
 
-> **Tip:** You can also use the **T** hotkey to set the selected object(s) as a trigger, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Set Trigger**). 
+> **Tip:** You can also use the **T** shortcut to set the selected object(s) as a trigger, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Set Trigger**). 
 
 
 
@@ -31,4 +31,3 @@ The __Set Collider__ action assigns the **Collider Behaviour** script to selecte
 - The **Collider Behaviour** script automatically disables the MeshRenderer when you enter **Play Mode** or build your project.
 
 > **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Set Collider**).
-
