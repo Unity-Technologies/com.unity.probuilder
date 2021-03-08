@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine.ProBuilder.Shapes;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -66,9 +67,8 @@ namespace UnityEngine.ProBuilder
                && faceCount > 0
                && meshSyncState == MeshSyncState.Null)
             {
-                var version = m_VersionID;
-                Rebuild();
-                m_VersionID = version;
+                using(new NonVersionedEditScope(this))
+                    Rebuild();
             }
         }
 
@@ -105,6 +105,12 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        void IncrementVersionIndex()
+        {
+            // it doesn't matter if the version index wraps. the important thing is that it is changed.
+            unchecked { m_VersionIndex++; }
+        }
+
         /// <summary>
         /// Reset all the attribute arrays on this object.
         /// </summary>
@@ -124,6 +130,7 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             m_MeshFormatVersion = k_MeshFormatVersion;
+            IncrementVersionIndex();
             ClearSelection();
         }
 
@@ -282,7 +289,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            bool usedInParticuleSystem = false;
+            bool usedInParticleSystem = false;
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
@@ -294,7 +301,7 @@ namespace UnityEngine.ProBuilder
             }
             else if (mesh.vertexCount != vertexCount)
             {
-                usedInParticuleSystem = MeshUtility.IsUsedInParticuleSystem(this);
+                usedInParticleSystem = MeshUtility.IsUsedInParticleSystem(this);
                 mesh.Clear();
             }
 
@@ -334,10 +341,10 @@ namespace UnityEngine.ProBuilder
 
             EnsureMeshFilterIsAssigned();
 
-            if(usedInParticuleSystem)
-                MeshUtility.RestoreParticuleSystem(this);
+            if(usedInParticleSystem)
+                MeshUtility.RestoreParticleSystem(this);
 
-            m_VersionID++;
+            IncrementVersionIndex();
         }
 
         /// <summary>
@@ -408,7 +415,7 @@ namespace UnityEngine.ProBuilder
             if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
                 mesh.RecalculateBounds();
 
-            m_VersionID++;
+            IncrementVersionIndex();
         }
 
         internal void EnsureMeshColliderIsAssigned()
@@ -489,6 +496,8 @@ namespace UnityEngine.ProBuilder
                 mesh.SetUVs(2, m_Textures2);
             if (HasArrays(MeshArrays.Texture3))
                 mesh.SetUVs(3, m_Textures3);
+
+            IncrementVersionIndex();
         }
 
         internal void SetGroupUV(AutoUnwrapSettings settings, int group)
@@ -578,6 +587,8 @@ namespace UnityEngine.ProBuilder
 
             foreach (var face in faces)
                 face.submeshIndex = index;
+
+            IncrementVersionIndex();
         }
 
         void RefreshNormals()
