@@ -5,45 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [5.0.0-pre.11] - 2021-02-25
-
-### Changed
-
-* Updated documentation for v5.0.0.
-
-### Changes
-
-- Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
-
-## [5.0.0-pre.12] - 2021-03-05
-
-### Bug Fixes
-
-- [case: 1317773] Fixing undo after shape creation.
-- Fixed shape creation requiring two undos to remove new shape.
-- Fixed shape preview flickering when executing shortcut to redo.
-- Fixed new shapes instantiating with generic "Shape" name instead of the primitive name.
-
-## [5.0.0-pre.11] - 2021-02-25
-
-### Bug Fixes
-
-- [case: 1317148] Fixing edge picking problem with some Unity versions.
-- [case: 1312537] Fixing script stripping on disabled objects when building.
-- [case: 1311258] Fixing material reverting when subdividing edge.
-- Added Particle System and IMGUI modules as a dependency.
-
-## [5.0.0-pre.10] - 2021-01-22
+## [5.0.0] - 2021-03-08
 
 ### Features
 
-- Redesigned shape creation workflow: Shapes are now interactively drawn in the Scene View, and remain configurable after the point of creation via the `ShapeComponent` Inspector.
-- Added Point-to-point Cut tool.
-- Added a selection preview when using the Select Path tool.
+- Redesigned shape creation workflow. Shapes are now interactively drawn in the Scene View, and remain configurable after the point of creation via the `ShapeComponent` Inspector. Default shapes can still be created through the `GameObject/ProBuilder` menu.
+- Added `Point to Point Cut` tool.
+- Added a selection preview when using the `Select Path` tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
 - Added Analytics for Actions and Menu Shortcuts
 
 ### Bug Fixes
+
 - [case: 1304442] Update package description for SRPs : warning to users to add samples projects.
 - [case: 1300329] Fixing Undo completely reverting all actions.
 - [case: 1299638] Fixed missing dependency on com.unity.modules.physics.
@@ -82,6 +55,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
 - [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
 - [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter.
+- [case: 1317148] Fixed edge selection returning incorrect results with some Unity versions.
+- [case: 1312537] Fixed script stripping on disabled objects when building.
+- [case: 1311258] Fixed material reverting when subdividing edge.
+- [case: 1317773] Fixed undo after shape creation.
 
 ### Changes
 
@@ -93,6 +70,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed unused HDRP shader variants.
 - `MergeElements.Merge` moved to public API.
 - Upgraded `PolyShape` tool to EditorTool and correct some features in it.
+- Updated documentation for ProBuilder 5.0.0.
+- Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
+- Added `com.unity.modules.physics` and `com.unity.modules.imgui` modules as dependencies.
 
 ### Internal
 
