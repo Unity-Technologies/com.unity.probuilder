@@ -240,7 +240,7 @@ namespace UnityEditor.ProBuilder
 
         internal void DuplicatePreview(Vector3 position)
         {
-            if(position.Equals(Vector3.positiveInfinity))
+            if(position.Equals(Vector3.positiveInfinity) || !Event.current.isMouse)
                 return;
 
             var pivotLocation = (PivotLocation)s_LastPivotLocation.value;
@@ -276,9 +276,11 @@ namespace UnityEditor.ProBuilder
             }
 
             ProBuilderShape proBuilderShape;
+
             if(m_DuplicateGO == null)
             {
-                proBuilderShape = ShapeFactory.Instantiate(activeShapeType, ( (PivotLocation)s_LastPivotLocation.value )).GetComponent<ProBuilderShape>();
+                var instantiated = ShapeFactory.Instantiate(activeShapeType, ((PivotLocation)s_LastPivotLocation.value));
+                proBuilderShape = instantiated.GetComponent<ProBuilderShape>();
                 m_DuplicateGO = proBuilderShape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 ApplyPrefsSettings(proBuilderShape);

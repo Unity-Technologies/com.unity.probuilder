@@ -136,14 +136,12 @@ namespace UnityEngine.ProBuilder.Shapes
             size = bounds.size;
             transform.position = bounds.center;
             transform.rotation = rotation;
-
             Rebuild();
         }
 
         void Rebuild()
         {
-            if(gameObject == null
-            || gameObject.hideFlags == HideFlags.HideAndDontSave)
+            if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
             m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
