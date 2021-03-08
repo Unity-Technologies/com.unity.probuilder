@@ -167,7 +167,8 @@ namespace UnityEditor.ProBuilder
         {
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                //image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                image = IconUtility.GetIcon("Toolbar/CutTool"),
                 text = "Cut Tool",
                 tooltip = "Cut Tool"
             };
@@ -197,7 +198,7 @@ namespace UnityEditor.ProBuilder
         {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
-            ExecuteCut();
+            ExecuteCut(false);
             Clear();
         }
 
@@ -218,6 +219,8 @@ namespace UnityEditor.ProBuilder
             m_SelectedEdges = null;
 
             EditorHandleDrawing.ClearHandles();
+
+            ProBuilderEditor.Refresh();
         }
 
         /// <summary>
@@ -369,9 +372,7 @@ namespace UnityEditor.ProBuilder
                 if(m_Mesh == null)
                 {
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Start")))
-                    {
                         UpdateTarget();
-                    }
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
                     {
@@ -383,8 +384,12 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
                         ExecuteCut();
+
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
+                    {
                         Clear();
+                        ToolManager.RestorePreviousTool();
+                    }
                 }
             }
 
@@ -717,10 +722,13 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Compute the cut result and display a notification
         /// </summary>
-        void ExecuteCut()
+        void ExecuteCut(bool restorePrevious = true)
         {
             ActionResult result = DoCut();
             EditorUtility.ShowNotification(result.notification);
+
+            if(restorePrevious)
+                ToolManager.RestorePreviousTool();
         }
 
         /// <summary>
@@ -811,6 +819,7 @@ namespace UnityEditor.ProBuilder
             //Update mesh selection after the cut has been performed
             MeshSelection.ClearElementSelection();
             m_Mesh.SetSelectedFaces(newFaces);
+            ProBuilderEditor.Refresh();
 
             Clear();
 

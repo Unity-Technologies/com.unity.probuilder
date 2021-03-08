@@ -41,7 +41,8 @@ namespace UnityEditor.ProBuilder
                 if(s_IconContent == null)
                     s_IconContent = new GUIContent()
                     {
-                        image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                        //image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
+                        image = IconUtility.GetIcon("Toolbar/NewPolyShape"),
                         text = "Create PolyShape",
                         tooltip = "Create PolyShape"
                     };
@@ -142,10 +143,6 @@ namespace UnityEditor.ProBuilder
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
             polygon = null;
-
-#if UNITY_2020_2_OR_NEWER
-            EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
-#endif
         }
 
 #if !UNITY_2020_2_OR_NEWER
@@ -158,10 +155,7 @@ namespace UnityEditor.ProBuilder
                     End();
             }
             else if(polygon != null)
-            {
                 End();
-                EditorApplication.delayCall += () => CheckForSelectModeAfterToolQuit();
-            }
         }
 #else
         public override void OnActivated()
@@ -169,12 +163,7 @@ namespace UnityEditor.ProBuilder
             UpdateTarget();
         }
 #endif
-        static void CheckForSelectModeAfterToolQuit()
-        {
-            var toolType = EditorToolUtility.GetEnumWithEditorTool(EditorToolManager.activeTool);
-            if(toolType != Tool.Custom && toolType != Tool.None)
-                ProBuilderEditor.ResetToLastSelectMode();
-        }
+
 
         internal void UpdateTarget(PolyShape shape = null)
         {
@@ -202,17 +191,12 @@ namespace UnityEditor.ProBuilder
             };
         }
 
-        void LeaveTool(bool restoreLastMode = true)
+        void LeaveTool()
         {
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
             ToolManager.RestorePreviousTool();
-            if(restoreLastMode)
-            {
-                //EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
-                ProBuilderEditor.ResetToLastSelectMode();
-            }
         }
 
         /// <summary>
@@ -855,14 +839,10 @@ namespace UnityEditor.ProBuilder
 
                         evt.Use();
                     }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
+                            || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                        evt.Use();
-                    }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
-                    {
-                        SetPolyEditMode(PolyShape.PolyEditMode.None);
+                        LeaveTool();
                         evt.Use();
                     }
 
@@ -934,7 +914,7 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape != null && shape != polygon || selectMode != SelectMode.Object)
-                    LeaveTool(false);
+                    LeaveTool();
             }
         }
 
@@ -947,7 +927,7 @@ namespace UnityEditor.ProBuilder
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
                 if(shape == null)
-                    LeaveTool(true);
+                    LeaveTool();
                 else if(shape != polygon)
                     UpdateTarget(shape);
             }

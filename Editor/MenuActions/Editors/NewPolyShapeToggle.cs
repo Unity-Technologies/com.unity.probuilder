@@ -110,15 +110,13 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            ProBuilderEditor.instance.Repaint();
+            ProBuilderEditor.Refresh();
         }
 
         internal override ActionResult EndActivation()
         {
             Clear();
             ToolManager.RestorePreviousTool();
-            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
-
             return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
         }
 

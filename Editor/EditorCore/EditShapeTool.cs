@@ -47,14 +47,19 @@ namespace UnityEditor.ProBuilder
         //Handle Manipulation
         static int s_CurrentId = -1;
         static readonly int[] k_OrientationControlIDs = new int[4];
+        static int[] s_FaceControlIDs = new int[6];
 
         //Size Handle management
+        static Vector2 s_StartMousePosition;
         static Vector3 s_StartSize;
-        static Vector3 s_StartPosition;
+        static Vector3 s_StartPositionLocal;
+        static Vector3 s_StartPositionGlobal;
+        static Vector3 s_StartScale;
+        static Vector3 s_StartScaleInverse;
         static Vector3 s_StartCenter;
-        static Vector3 s_TargetSize;
         static Vector3 s_Scaling;
         static bool s_SizeManipulationInit;
+        static float s_SizeDelta;
 
         static float s_DefaultMidpointHandleSize = 0.03f;
         static float s_DefaultMidpointSquareSize = 0.15f;
@@ -77,7 +82,8 @@ namespace UnityEditor.ProBuilder
                 if(s_IconContent == null)
                     s_IconContent = new GUIContent()
                     {
-                        image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                        //image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                        image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
                         text = "Edit Shape",
                         tooltip = "Edit Shape"
                     };
@@ -169,7 +175,7 @@ namespace UnityEditor.ProBuilder
                 if(snapDisabled)
                     EditorGUILayout.Toggle("Snapping (only Global)", false);
                 else
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Snapping", EditorSnapSettings.gridSnapEnabled);
+                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
             Editor.CreateCachedEditor(targets.ToArray(), typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
@@ -204,6 +210,8 @@ namespace UnityEditor.ProBuilder
 
                 for(int i = 0; i <4; ++i)
                     k_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
+                for(int i = 0; i <faces.Length; ++i)
+                    s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
                 var absSize = Math.Abs(proBuilderShape.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
@@ -238,37 +246,53 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if( DoFaceSizeHandle(face) )
+                if( DoFaceSizeHandle(face, s_FaceControlIDs[i]) )
                 {
-                    float modifier = 1f;
-                    if(evt.alt)
-                        modifier = 2f;
 
                     if(!s_SizeManipulationInit)
                     {
                         s_StartCenter = proBuilderShape.transform.position + proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
-                        s_StartPosition = face.CenterPosition;
+                        s_StartScale = proBuilderShape.transform.lossyScale;
+                        s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
+                        s_StartPositionLocal = face.CenterPosition;
+                        s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(Vector3.Scale(face.CenterPosition, s_StartScale));
                         s_StartSize = proBuilderShape.size;
                         s_SizeManipulationInit = true;
-
                         s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
 
-                    var targetDelta = modifier * (s_TargetSize - s_StartPosition);
-                    targetDelta.Scale(s_Scaling);
+                    var targetSize = s_StartSize;
+                    if(Math.IsCardinalAxis(proBuilderShape.transform.up)
+                       && EditorSnapSettings.gridSnapEnabled
+                       && !EditorSnapSettings.incrementalSnapActive
+                       && !evt.alt)
+                    {
+                        var faceDelta = ( s_SizeDelta * s_Faces[i].Normal );
+                        var facePosition = s_StartPositionGlobal + faceDelta;
+                        facePosition = ProBuilderSnapping.Snap(facePosition, EditorSnapping.activeMoveSnapValue);
+                        targetSize += Vector3.Scale((facePosition - s_StartPositionGlobal), s_Scaling);
+                    }
+                    else
+                    {
+                        //Should we expand on the 2 sides?
+                        var modifier = evt.alt ? 2f : 1f;
+                        var delta = modifier * ( s_SizeDelta * s_Faces[i].Normal );
+                        delta.Scale(s_Scaling);
+                        delta.Scale(s_StartScaleInverse);
 
-                    var targetSize = s_StartSize + targetDelta;
+                        targetSize += delta;
+                        var snap = EditorSnapSettings.incrementalSnapActive
+                            ? Vector3.Scale(EditorSnapping.activeMoveSnapValue, Math.Abs(face.Normal))
+                            : Vector3.zero;
 
-                    var snap = Math.IsCardinalAxis(proBuilderShape.transform.up) && EditorSnapSettings.gridSnapEnabled ?
-                                        EditorSnapping.activeMoveSnapValue :
-                                        Vector3.zero;
-                    targetSize = ProBuilderSnapping.Snap(targetSize, snap);
+                        targetSize = ProBuilderSnapping.Snap(targetSize, snap);
+                    }
 
                     var center = Vector3.zero;
                     if(!evt.alt)
                     {
                         center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Scaling);
-                        center = Vector3.Scale(center, Math.Sign(proBuilderShape.transform.lossyScale));
+                        center = Vector3.Scale(center, Math.Sign(s_StartScale));
                         center = proBuilderShape.transform.TransformVector(center);
                     }
 
@@ -280,25 +304,54 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static bool DoFaceSizeHandle(FaceData face)
+        static bool DoFaceSizeHandle(FaceData face, int controlID)
         {
+            if( k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && !EditorShapeUtility.PointerIsInFace(face) )
+                return false;
+
+            Event evt = Event.current;
             float handleSize = HandleUtility.GetHandleSize(face.CenterPosition) * s_DefaultMidpointHandleSize;
+            bool isSelected = (HandleUtility.nearestControl == controlID && s_CurrentId == -1) || s_CurrentId == controlID;
 
-            var snap = Vector3.Scale(EditorSnapping.incrementalSnapMoveValue, face.Normal).magnitude;
-
-            EditorGUI.BeginChangeCheck();
-
-            Color color = k_BoundsHandleColor;
-            color.a *= face.IsVisible ? 1f : 0.25f;
-            using(new Handles.DrawingScope(color))
-                s_TargetSize = Handles.Slider(face.CenterPosition, face.Normal, handleSize, Handles.DotHandleCap, snap);
-
-            if (EditorGUI.EndChangeCheck())
-                return true;
-
-            if(GUIUtility.hotControl == 0)
-                s_SizeManipulationInit = false;
-
+            switch(evt.GetTypeForControl(controlID))
+            {
+                case EventType.MouseDown:
+                    if (HandleUtility.nearestControl == controlID && evt.button == 0)
+                    {
+                        s_CurrentId = controlID;
+                        GUIUtility.hotControl = controlID;
+                        s_StartMousePosition = evt.mousePosition;
+                        s_SizeManipulationInit = false;
+                        evt.Use();
+                        SceneView.RepaintAll();
+                    }
+                    break;
+                case EventType.MouseUp:
+                    if (GUIUtility.hotControl == controlID && evt.button == 0)
+                    {
+                        GUIUtility.hotControl = 0;
+                        evt.Use();
+                        s_CurrentId = -1;
+                        s_SizeManipulationInit = false;
+                    }
+                    break;
+                case EventType.Layout:
+                    HandleUtility.AddControl(controlID, HandleUtility.DistanceToLine(face.CenterPosition, face.CenterPosition) / 2f);
+                    break;
+                case EventType.Repaint:
+                    Color color = isSelected ? EditorHandleDrawing.edgeSelectedColor : k_BoundsHandleColor;
+                    color.a *= face.IsVisible ? 1f : 0.25f;
+                    using(new Handles.DrawingScope(color))
+                        Handles.DotHandleCap(controlID, face.CenterPosition , Quaternion.identity, handleSize, EventType.Repaint);
+                    break;
+                case EventType.MouseDrag:
+                    if(s_CurrentId == controlID)
+                    {
+                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_StartPositionLocal, face.Normal);
+                        return true;
+                    }
+                    break;
+            }
             return false;
         }
 

@@ -1,18 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using UnityEditor.IMGUI.Controls;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
 {
-    internal static class EditorShapeUtility
+    static class EditorShapeUtility
     {
+        [UserSetting]
+        public static Pref<bool> s_ResetUserPrefs = new Pref<bool>("ShapeComponent.ResetSettings", true);
+
         static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
+
+        static Dictionary<string, Shape> prefs
+        {
+            get
+            {
+                if(s_ResetUserPrefs.value)
+                    ResetPrefs();
+
+                return s_Prefs;
+            }
+        }
 
         static Type[] s_AvailableShapeTypes = null;
 
@@ -37,6 +49,15 @@ namespace UnityEditor.ProBuilder
                         .ToArray();
                 return s_ShapeTypes;
             }
+        }
+
+        public static string GetName<T>(T shape) where T : Shape
+        {
+            var type = shape == null ? typeof(T) : shape.GetType();
+            if (Attribute.GetCustomAttribute(type, typeof(ShapeAttribute)) is ShapeAttribute attrib)
+                return attrib.name;
+            var str = type.ToString();
+            return str.Substring(str.LastIndexOf('.') + 1);
         }
 
         static int s_MaxContentPerGroup = 6;
@@ -82,31 +103,41 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-
         static EditorShapeUtility()
+        {
+            ResetPrefs();
+        }
+
+        static void ResetPrefs()
         {
             var types = TypeCache.GetTypesDerivedFrom<Shape>();
 
-            foreach (var type in types)
+            foreach(var type in types)
             {
-                if (typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
+                if(typeof(Shape).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     var name = "ShapeBuilder." + type.Name;
-                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape)Activator.CreateInstance(type));
+                    var pref = ProBuilderSettings.Get(name, SettingsScope.Project, (Shape) Activator.CreateInstance(type));
                     if(pref == null)
                         pref = (Shape) Activator.CreateInstance(type);
-                    s_Prefs.Add(name, pref);
+
+                    if(s_Prefs.ContainsKey(name))
+                        s_Prefs[name] = pref;
+                    else
+                        s_Prefs.Add(name, pref);
                 }
             }
+
+            s_ResetUserPrefs.value = false;
         }
 
         public static void SaveParams<T>(T shape) where T : Shape
         {
             var name = "ShapeBuilder." + shape.GetType().Name;
-            if (s_Prefs.TryGetValue(name, out var data))
+            if (prefs.TryGetValue(name, out var data))
             {
                 data.CopyShape(shape);
-                s_Prefs[name] = data;
+                prefs[name] = data;
                 ProBuilderSettings.Set(name, data);
             }
         }
@@ -132,7 +163,7 @@ namespace UnityEditor.ProBuilder
             }
 
             var name = "ShapeBuilder." + type.Name;
-            if (s_Prefs.TryGetValue(name, out var data))
+            if (prefs.TryGetValue(name, out var data))
             {
                 if (data != null)
                     shape.CopyShape(data);
@@ -212,83 +243,60 @@ namespace UnityEditor.ProBuilder
 
             var signs = Math.Sign(bounds.size);
             var pos = Vector3.zero;
-            if(Mathf.Abs(extents.x) > Mathf.Epsilon)
-            {
-                // -X
-                pos = -new Vector3(extents.x * scale.x, 0, 0);
-                faces[0].SetData(pos, -( scale.x * signs.x * Vector3.right ).normalized);
-                faces[0].Points[0] = pointX0Y1Z1;
-                faces[0].Points[1] = pointX0Y0Z1;
-                faces[0].Points[2] = pointX0Y0Z0;
-                faces[0].Points[3] = pointX0Y1Z0;
-                faces[0].IsValid = true;
 
-                // +X
-                pos = new Vector3(extents.x * scale.x, 0, 0);
-                faces[1].SetData(pos, ( scale.x * signs.x * Vector3.right ).normalized);
-                faces[1].Points[0] = pointX1Y1Z1;
-                faces[1].Points[1] = pointX1Y0Z1;
-                faces[1].Points[2] = pointX1Y0Z0;
-                faces[1].Points[3] = pointX1Y1Z0;
-                faces[1].IsValid = true;
-            }
-            else
-            {
-                faces[0].IsValid = false;
-                faces[1].IsValid = false;
-            }
+            // -X
+            pos = -new Vector3(extents.x * scale.x, 0, 0);
+            faces[0].SetData(pos, -( scale.x * signs.x * Vector3.right ).normalized);
+            faces[0].Points[0] = pointX0Y1Z1;
+            faces[0].Points[1] = pointX0Y0Z1;
+            faces[0].Points[2] = pointX0Y0Z0;
+            faces[0].Points[3] = pointX0Y1Z0;
+            faces[0].IsValid = Mathf.Abs(extents.x) > Mathf.Epsilon;
 
-            if(Mathf.Abs(extents.y) > Mathf.Epsilon)
-            {
-                // -Y
-                pos = -new Vector3(0, extents.y * scale.y, 0);
-                faces[2].SetData(pos, -( scale.y * signs.y * Vector3.up ).normalized);
-                faces[2].Points[0] = pointX1Y0Z1;
-                faces[2].Points[1] = pointX0Y0Z1;
-                faces[2].Points[2] = pointX0Y0Z0;
-                faces[2].Points[3] = pointX1Y0Z0;
-                faces[2].IsValid = true;
+            // +X
+            pos = new Vector3(extents.x * scale.x, 0, 0);
+            faces[1].SetData(pos, ( scale.x * signs.x * Vector3.right ).normalized);
+            faces[1].Points[0] = pointX1Y1Z1;
+            faces[1].Points[1] = pointX1Y0Z1;
+            faces[1].Points[2] = pointX1Y0Z0;
+            faces[1].Points[3] = pointX1Y1Z0;
+            faces[1].IsValid = Mathf.Abs(extents.x) > Mathf.Epsilon;
 
-                // +Y
-                pos = new Vector3(0, extents.y * scale.y, 0);
-                faces[3].SetData(pos, ( scale.y * signs.y * Vector3.up ).normalized);
-                faces[3].Points[0] = pointX1Y1Z1;
-                faces[3].Points[1] = pointX0Y1Z1;
-                faces[3].Points[2] = pointX0Y1Z0;
-                faces[3].Points[3] = pointX1Y1Z0;
-                faces[3].IsValid = true;
-            }
-            else
-            {
-                faces[2].IsValid = false;
-                faces[3].IsValid = false;
-            }
+            // -Y
+            pos = -new Vector3(0, extents.y * scale.y, 0);
+            faces[2].SetData(pos, -( scale.y * signs.y * Vector3.up ).normalized);
+            faces[2].Points[0] = pointX1Y0Z1;
+            faces[2].Points[1] = pointX0Y0Z1;
+            faces[2].Points[2] = pointX0Y0Z0;
+            faces[2].Points[3] = pointX1Y0Z0;
+            faces[2].IsValid = Mathf.Abs(extents.y) > Mathf.Epsilon;
 
-            if(Mathf.Abs(extents.z) > Mathf.Epsilon)
-            {
-                // -Z
-                pos = -new Vector3(0, 0, extents.z * scale.z);
-                faces[4].SetData(pos, -(scale.z * signs.z * Vector3.forward).normalized);
-                faces[4].Points[0] = pointX1Y1Z0;
-                faces[4].Points[1] = pointX1Y0Z0;
-                faces[4].Points[2] = pointX0Y0Z0;
-                faces[4].Points[3] = pointX0Y1Z0;
-                faces[4].IsValid = true;
+            // +Y
+            pos = new Vector3(0, extents.y * scale.y, 0);
+            faces[3].SetData(pos, ( scale.y * signs.y * Vector3.up ).normalized);
+            faces[3].Points[0] = pointX1Y1Z1;
+            faces[3].Points[1] = pointX0Y1Z1;
+            faces[3].Points[2] = pointX0Y1Z0;
+            faces[3].Points[3] = pointX1Y1Z0;
+            faces[3].IsValid = Mathf.Abs(extents.y) > Mathf.Epsilon;
 
-                // +Z
-                pos = new Vector3(0, 0, extents.z * scale.z);
-                faces[5].SetData(pos, (scale.z * signs.z * Vector3.forward).normalized);
-                faces[5].Points[0] = pointX1Y1Z1;
-                faces[5].Points[1] = pointX1Y0Z1;
-                faces[5].Points[2] = pointX0Y0Z1;
-                faces[5].Points[3] = pointX0Y1Z1;
-                faces[5].IsValid = true;
-            }
-            else
-            {
-                faces[4].IsValid = false;
-                faces[5].IsValid = false;
-            }
+            // -Z
+            pos = -new Vector3(0, 0, extents.z * scale.z);
+            faces[4].SetData(pos, -(scale.z * signs.z * Vector3.forward).normalized);
+            faces[4].Points[0] = pointX1Y1Z0;
+            faces[4].Points[1] = pointX1Y0Z0;
+            faces[4].Points[2] = pointX0Y0Z0;
+            faces[4].Points[3] = pointX0Y1Z0;
+            faces[4].IsValid = Mathf.Abs(extents.z) > Mathf.Epsilon;
+
+            // +Z
+            pos = new Vector3(0, 0, extents.z * scale.z);
+            faces[5].SetData(pos, (scale.z * signs.z * Vector3.forward).normalized);
+            faces[5].Points[0] = pointX1Y1Z1;
+            faces[5].Points[1] = pointX1Y0Z1;
+            faces[5].Points[2] = pointX0Y0Z1;
+            faces[5].Points[3] = pointX0Y1Z1;
+            faces[5].IsValid = Mathf.Abs(extents.z) > Mathf.Epsilon;
         }
 
         internal static bool PointerIsInFace(FaceData face)

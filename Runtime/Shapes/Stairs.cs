@@ -316,7 +316,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 Vector3 v0 = new Vector3(-Mathf.Cos(inc0), 0f, Mathf.Sin(inc0));
                 Vector3 v1 = new Vector3(-Mathf.Cos(inc1), 0f, Mathf.Sin(inc1));
 
-                /**
+                /*
                  *
                  *      /6-----/7
                  *     /      /
