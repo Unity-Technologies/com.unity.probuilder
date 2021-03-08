@@ -95,10 +95,9 @@ namespace UnityEditor.ProBuilder
         public void CreateLastShape()
         {
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ProBuilderShape>();
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
-
-            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape");
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
@@ -108,11 +107,9 @@ namespace UnityEditor.ProBuilder
 
             tool.m_ProBuilderShape = null;
             tool.m_LastShapeCreated = shape;
-
-            if(tool.m_DuplicateGO != null)
-                GameObject.DestroyImmediate(tool.m_DuplicateGO);
-
-            MeshSelection.SetSelection(shape.gameObject);
+            Object.DestroyImmediate(tool.m_DuplicateGO);
+            Object.DestroyImmediate(null);
+            Selection.activeGameObject = shape.gameObject;
         }
     }
 }
