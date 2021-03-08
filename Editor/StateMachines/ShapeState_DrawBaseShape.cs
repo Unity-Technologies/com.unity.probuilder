@@ -40,10 +40,7 @@ namespace UnityEditor.ProBuilder
                             m_IsDragging = true;
 
                             if(tool.m_DuplicateGO != null)
-                                GameObject.DestroyImmediate(tool.m_DuplicateGO);
-
-                            if(Selection.activeGameObject != null)
-                                MeshSelection.SetSelection((GameObject)null);
+                                Object.DestroyImmediate(tool.m_DuplicateGO);
 
                             Drag(evt.mousePosition);
                         }
