@@ -39,8 +39,6 @@ namespace UnityEditor.ProBuilder.Actions
             m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
             ToolManager.SetActiveTool(m_Tool);
 
-            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Shape Tool");
-
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
