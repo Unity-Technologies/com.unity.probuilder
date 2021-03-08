@@ -86,6 +86,7 @@
 	* [Select Smoothing Group](Selection_SmoothingGroup)
 	* [Select Hidden](Selection_SelectHidden)
 	* [Select Holes](Selection_SelectHole)
+	* [Select Path](SelectPath)
 	* [Set Collider](Entity_Trigger#Collider)
 	* [Set Pivot - Edges](Edge_SetPivot)
 	* [Set Pivot - Faces](Face_SetPivot)

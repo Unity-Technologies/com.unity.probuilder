@@ -54,11 +54,9 @@ Use these settings to enable and disable ProBuilder experimental features.
 | __Experimental Features Enabled__ | Enable this option to access the [New Bezier Shape](bezier.md) experimental feature in the ProBuilder toolbar, and the __Store Mesh as Asset__ option. <br /><br />**Note:** This setting has no affect on access to the [Boolean (CSG) Tool](boolean.md), which is always available from the [Experimental menu](menu-experimental.md). |
 | __Meshes Are Assets__             | Enable this option to store Mesh information in the Project instead of in each separate Scene level. |
 
-<!--
+> **Note**: When you toggle Experimental Features on or off, Unity has to recompile scripts because the changes add or remove functionality in Unity. This means that there is a delay before this option appears to change.
 
-<span style="color:red"> @TODO: Follow up with this... Turning on and off the __Experimental Features Enabled__ option is an odd experience: it seems like you have to click twice to get it to work, but that's just because it's very "laggy". It often doesn't seem like it's turning on, but then after 20+ sec it works, but in the meantime I've tried again so sometimes the net result is just turning it off. </span>
 
--->
 
 
 
@@ -75,7 +73,7 @@ Use these properties to set some basic options for ProBuilder.
 |__Show Action Notifications__ |Enable this option if you want ProBuilder to notify you when performing actions. |
 |<a name="autouvs"></a>__Auto Lightmap UVs__ |Enable this option to generate the UV2 channel after every geometry edit. This means you don't have to manually generate them every time the Mesh changes.<br/><br/>UV2 channel generation for Meshes is necessary for lighting, but can be time-consuming. If you are editing objects with large numbers of vertices, disable this to save resources. |
 |__Show Missing Lightmap UVs Warning__ |Enable this option to show a warning in the console if ProBuilder shapes are missing a valid UV2 channel when Unity performs a lightmap bake. |
-|__Show Handle Info__ |Enable this option to show the information for moving, rotating, and scaling deltas. <br /><br /><!-- <span style="color:red">@TODO: Follow up with where this information is supposed to app.?</span> --> |
+|__Show Handle Info__ |Enable this option to display the information for moving, rotating, and scaling deltas in the bottom right of the Scene view. <br /><br />**Note**: If you have the [Component Editor **Tools** panel](https://docs.unity3d.com/Manual/UsingCustomEditorTools.html#ToolModesAccessSceneViewPanel) open in the Scene view, it covers this information. Close the panel to display the information. |
 |<a name="info_overlay"></a>__Show Scene Info__ |Enable this option to display the Mesh information overlay in the top left of the Scene view. These details include overall face, vertex and triangle counts, and the number of elements currently selected:<br />![Scene information overlay](images/info_overlay.png) |
 |__Script Stripping__ |Enable this option to automatically remove the extra data ProBuilder stores in a Scene. This includes all ProBuilder scripts, so if you are using the runtime API you should disable this feature. |
 
