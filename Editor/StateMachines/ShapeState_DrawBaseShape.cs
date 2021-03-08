@@ -108,7 +108,6 @@ namespace UnityEditor.ProBuilder
             tool.m_ProBuilderShape = null;
             tool.m_LastShapeCreated = shape;
             Object.DestroyImmediate(tool.m_DuplicateGO);
-            Object.DestroyImmediate(null);
             Selection.activeGameObject = shape.gameObject;
         }
     }
