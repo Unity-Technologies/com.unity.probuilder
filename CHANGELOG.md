@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added Point-to-point Cut tool.
 - Added a selection preview when using the Select Path tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
+- Added Analytics for Actions and Menu Shortcuts
 
 ### Bug Fixes
 - [case: 1304442] Update package description for SRPs : warning to users to add samples projects.
