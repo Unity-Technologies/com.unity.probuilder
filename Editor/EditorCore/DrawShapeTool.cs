@@ -390,8 +390,6 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            EditorGUILayout.HelpBox(L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings."), MessageType.Info);
-
             DrawShapeGUI();
 
 #if !UNITY_2021_1_OR_NEWER

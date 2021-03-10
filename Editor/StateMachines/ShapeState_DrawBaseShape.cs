@@ -7,9 +7,7 @@ namespace UnityEditor.ProBuilder
     internal class ShapeState_DrawBaseShape : ShapeState
     {
         bool m_IsDragging = false;
-
-        Quaternion m_currentShapeRotation = Quaternion.identity;
-
+        
         protected override void InitState()
         {
             m_IsDragging = false;

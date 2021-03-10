@@ -12,8 +12,8 @@ namespace UnityEditor.ProBuilder
     {
         [UserSetting]
         public static Pref<bool> s_ResetUserPrefs = new Pref<bool>("ShapeComponent.ResetSettings", true);
-
         static Dictionary<string, Shape> s_Prefs = new Dictionary<string, Shape>();
+        static readonly string k_Tooltip = L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings.");
 
         static Dictionary<string, Shape> prefs
         {
@@ -76,7 +76,7 @@ namespace UnityEditor.ProBuilder
                 if(s_ShapeTypesGUILists == null)
                 {
                     s_ShapeTypesGUILists = new List<GUIContent[]>();
-                    string[] shapeTypeNames = availableShapeTypes.Select(x => ((ShapeAttribute)System.Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name).ToArray();
+                    string[] shapeTypeNames = availableShapeTypes.Select(x => ((ShapeAttribute) Attribute.GetCustomAttribute(x, typeof(ShapeAttribute))).name).ToArray();
                     GUIContent[] shapeTypesGUI = null;
 
                     int i;
@@ -91,9 +91,9 @@ namespace UnityEditor.ProBuilder
                         var name = shapeTypeNames[i];
                         var texture = IconUtility.GetIcon("Tools/ShapeTool/" + name);
                         if(texture != null)
-                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(texture, name);
+                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(texture, k_Tooltip);
                         else
-                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(name, name);
+                            shapeTypesGUI[i % s_MaxContentPerGroup] = new GUIContent(name, k_Tooltip);
                     }
 
                     if(shapeTypesGUI != null) s_ShapeTypesGUILists.Add(shapeTypesGUI);
