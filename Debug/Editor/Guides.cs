@@ -32,7 +32,10 @@ namespace ProBuilder.Debug.Editor
 
     static class Guides
     {
+        [UserSetting("World Space", "Origin Axes", "Shows 3 axis guides from the scene view origin.")]
         static Pref<bool> s_SceneOrigin = new Pref<bool>("Guides.s_SceneOrigin", false);
+
+        [UserSetting("Selection", "Transform Pivot", "Draw a gizmo at the origin of each selected transform.")]
         static Pref<bool> s_SelectionPivot = new Pref<bool>("Guides.s_SelectionPivot", false);
 
         static Vector3  zero = Vector3.zero,

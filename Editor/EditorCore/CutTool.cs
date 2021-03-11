@@ -409,9 +409,13 @@ namespace UnityEditor.ProBuilder
             {
                 case KeyCode.Backspace:
                 {
-                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
-                    m_CutPath.RemoveAt(m_CutPath.Count-1);
-                    m_Dirty = true;
+                    if (m_CutPath.Count > 0)
+                    {
+                        UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
+                        m_CutPath.RemoveAt(m_CutPath.Count - 1);
+                        m_Dirty = true;
+                    }
+
                     evt.Use();
                     break;
                 }
