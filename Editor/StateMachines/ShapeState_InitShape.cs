@@ -98,10 +98,10 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            if(GUIUtility.hotControl == 0 && evt.shift && !(evt.control || evt.command))
-                tool.DuplicatePreview(m_HitPosition);
-            else if(tool.m_DuplicateGO != null)
-                Object.DestroyImmediate(tool.m_DuplicateGO);
+            if (!Math.IsNumber(m_HitPosition))
+                return this;
+
+            tool.DoDuplicateShapePreviewHandle(m_HitPosition);
 
             // Repaint to visualize the placement preview dot
             if (evt.type == EventType.MouseMove && HandleUtility.nearestControl == tool.controlID)
@@ -117,13 +117,9 @@ namespace UnityEditor.ProBuilder
                             HandleUtility.GetHandleSize(m_HitPosition) * 0.05f, EventType.Repaint);
                     }
                 }
-
-                if(GUIUtility.hotControl == 0 && evt.shift && !(evt.control || evt.command))
-                    tool.DrawBoundingBox(false);
             }
 
             return this;
         }
-
     }
 }
