@@ -291,7 +291,7 @@ namespace UnityEditor.ProBuilder
                         shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
 
                         EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-                        shape.Rebuild(m_Bounds, m_PlaneRotation);
+                        shape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
                         ProBuilderEditor.Refresh(false);
                     }
 
@@ -363,7 +363,7 @@ namespace UnityEditor.ProBuilder
                 m_IsShapeInit = true;
             }
 
-            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
+            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();

@@ -5,21 +5,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
     /// </summary>
     public static class MeshTransform
     {
-        internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotType, Vector3? pivotPosition = null)
+        /// <summary>
+        /// Set the pivot point for a mesh to either the center, or a corner point of the bounding box.
+        /// </summary>
+        /// <param name="mesh">The <see cref="ProBuilderMesh"/> to adjust vertices for a new pivot point.</param>
+        /// <param name="pivotLocation">The new pivot point is either the center of the mesh bounding box, or
+        /// the bounds center - extents.</param>
+        public static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
-            if(mesh.vertexCount == 0)
-                return;
-
-            switch (pivotType)
-            {
-                case PivotLocation.Center:
-                    mesh.CenterPivot(null);
-                    break;
-
-                case PivotLocation.FirstCorner:
-                    mesh.SetPivot(pivotPosition == null ? Vector3.zero : (Vector3)pivotPosition);
-                    break;
-            }
+            var bounds = mesh.GetBounds();
+            var pivot = pivotLocation == PivotLocation.Center ? bounds.center : bounds.center - bounds.extents;
+            SetPivot(mesh, mesh.transform.TransformPoint(pivot));
         }
 
         /// <summary>
@@ -70,8 +66,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
             if (mesh == null)
                 throw new System.ArgumentNullException("mesh");
 
-            Vector3 offset = mesh.transform.position - worldPosition;
-            mesh.transform.position = worldPosition;
+            var transform = mesh.transform;
+            Vector3 offset = transform.position - worldPosition;
+            transform.position = worldPosition;
+
             mesh.ToMesh();
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, offset);
             mesh.Refresh();

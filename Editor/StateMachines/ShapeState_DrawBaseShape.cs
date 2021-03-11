@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder
     internal class ShapeState_DrawBaseShape : ShapeState
     {
         bool m_IsDragging = false;
-        
+
         protected override void InitState()
         {
             m_IsDragging = false;
@@ -86,7 +86,6 @@ namespace UnityEditor.ProBuilder
             deltaPoint = tool.GetPoint(deltaPoint, Event.current.control);
             tool.m_BB_OppositeCorner = tool.m_PlaneRotation * deltaPoint + tool.m_BB_Origin;
             tool.m_BB_HeightCorner = tool.m_BB_OppositeCorner;
-
             tool.RebuildShape();
         }
 
@@ -98,7 +97,7 @@ namespace UnityEditor.ProBuilder
             DrawShapeTool.ApplyPrefsSettings(shape);
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
+            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation, tool.m_BB_Origin);
 
             //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
