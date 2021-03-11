@@ -43,12 +43,12 @@ namespace UnityEditor.ProBuilder.Actions
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Detach Face Settings", EditorStyles.boldLabel);
-
-            EditorGUILayout.HelpBox("Detach Faces can separate the selection into either a new GameObject or a submesh.", MessageType.Info);
-
+            
             EditorGUI.BeginChangeCheck();
 
-            m_DetachSetting.value = (DetachSetting)EditorGUILayout.EnumPopup("Detach To", m_DetachSetting);
+            m_DetachSetting.value = EditorGUILayout.Toggle("Separate GameObject", m_DetachSetting.value == DetachSetting.GameObject)
+                ? DetachSetting.GameObject
+                : DetachSetting.Submesh;
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();
