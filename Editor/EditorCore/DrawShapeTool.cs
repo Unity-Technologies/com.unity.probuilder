@@ -461,6 +461,7 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+                        Selection.activeObject = null;
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
                         SetBounds(currentShapeInOverlay.size);
 
