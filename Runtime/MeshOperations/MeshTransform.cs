@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The <see cref="ProBuilderMesh"/> to adjust vertices for a new pivot point.</param>
         /// <param name="pivotLocation">The new pivot point is either the center of the mesh bounding box, or
         /// the bounds center - extents.</param>
-        public static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotLocation)
+        internal static void SetPivot(this ProBuilderMesh mesh, PivotLocation pivotLocation)
         {
             var bounds = mesh.GetBounds();
             var pivot = pivotLocation == PivotLocation.Center ? bounds.center : bounds.center - bounds.extents;

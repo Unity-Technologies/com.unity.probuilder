@@ -9,7 +9,7 @@ namespace ProBuilder.Debug.Editor
     {
         const string k_PreferencesPath = "Preferences/Scene Guides";
         static Settings s_Settings;
-        public static Settings settings => s_Settings ??= new Settings("com.unity.scene-guides");
+        public static Settings settings => s_Settings ?? (s_Settings = new Settings("com.unity.scene-guides"));
 
         [SettingsProvider]
         static SettingsProvider CreateSettingsProvider()
@@ -89,11 +89,19 @@ namespace ProBuilder.Debug.Editor
         {
             Handles.color = color;
             Handles.zTest = CompareFunction.LessEqual;
+#if UNITY_2021_1_OR_NEWER
             Handles.DrawLine(from, to, thickness);
+#else
+            Handles.DrawLine(from, to);
+#endif
 
             Handles.color = color * occludedTint;
             Handles.zTest = CompareFunction.Greater;
+#if UNITY_2021_1_OR_NEWER
             Handles.DrawLine(from, to, thickness);
+#else
+            Handles.DrawLine(from, to);
+#endif
         }
     }
 }
