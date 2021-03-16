@@ -53,7 +53,7 @@ public class StripProBuilderScriptsTest
     {
         var go = new GameObject();
         var shape = go.AddComponent<ProBuilderShape>();
-        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
+        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity, Vector3.zero);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
         Assume.That(go.GetComponent<ProBuilderShape>() != null);
@@ -71,7 +71,7 @@ public class StripProBuilderScriptsTest
     {
         var go = new GameObject();
         var shape = go.AddComponent<ProBuilderShape>();
-        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
+        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity, Vector3.zero);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
         Assume.That(go.GetComponent<ProBuilderShape>() != null);
@@ -97,7 +97,7 @@ public class StripProBuilderScriptsTest
     {
         var go = new GameObject("Parent GO");
         var shape = go.AddComponent<ProBuilderShape>();
-        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity);
+        shape.Rebuild(new Bounds(Vector3.zero, Vector3.one), Quaternion.identity, Vector3.zero);
 
         Assume.That(go.GetComponent<ProBuilderMesh>() != null);
         Assume.That(go.GetComponent<ProBuilderShape>() != null);

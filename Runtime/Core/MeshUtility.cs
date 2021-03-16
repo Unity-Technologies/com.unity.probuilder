@@ -662,5 +662,11 @@ namespace UnityEngine.ProBuilder
 #endif
         }
 
+        internal static Bounds GetBounds(this ProBuilderMesh mesh)
+        {
+            if (mesh.mesh != null)
+                return mesh.mesh.bounds;
+            return Math.GetBounds(mesh.positionsInternal);
+        }
     }
 }

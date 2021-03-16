@@ -639,11 +639,16 @@ namespace UnityEngine.ProBuilder
             for (int i = 0; i < k_CubeTriangles.Length; i++)
                 points[i] = Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], size);
 
-            ProBuilderMesh pb = ProBuilderMesh.CreateInstanceWithPoints(points);
-            pb.gameObject.name = "Cube";
-            pb.SetPivot(pivotType);
+            ProBuilderMesh mesh = ProBuilderMesh.CreateInstanceWithPoints(points);
+            mesh.gameObject.name = "Cube";
 
-            return pb;
+            if(pivotType == PivotLocation.Center)
+                foreach (var face in mesh.facesInternal)
+                    face.uv = new AutoUnwrapSettings(face.uv) { offset = new Vector2(-.5f, -.5f) };
+
+            mesh.SetPivot(pivotType);
+
+            return mesh;
         }
 
         /// <summary>

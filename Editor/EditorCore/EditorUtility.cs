@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
 
         [UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
-        static Pref<PivotLocation> s_NewShapesPivotAtCenter = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.Center);
+        static Pref<PivotLocation> s_NewShapesPivotAtCenter = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstCorner);
 
         [UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
         static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
