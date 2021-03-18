@@ -20,12 +20,13 @@ namespace UnityEditor.ProBuilder
             tool.m_ProBuilderShape.pivotGlobalPosition = tool.m_BB_Origin;
             tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
 
-            //Finish initializing object and collider once it's completed
-            EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
-
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes,tool.m_ProBuilderShape.shape.GetType());
-
             DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
+
+            // make sure that the whole shape creation process is a single undo group
+            var group = Undo.GetCurrentGroup() - 1;
+            Selection.activeObject = tool.m_ProBuilderShape.gameObject;
+            Undo.CollapseUndoOperations(group);
 
             return NextState();
         }

@@ -633,7 +633,7 @@ namespace UnityEngine.ProBuilder
             return sb.ToString();
         }
 
-        internal static bool IsUsedInParticuleSystem(ProBuilderMesh pbmesh)
+        internal static bool IsUsedInParticleSystem(ProBuilderMesh pbmesh)
         {
 #if USING_PARTICLE_SYSTEM
             ParticleSystem pSys;
@@ -650,7 +650,7 @@ namespace UnityEngine.ProBuilder
             return false;
         }
 
-        internal static void RestoreParticuleSystem(ProBuilderMesh pbmesh)
+        internal static void RestoreParticleSystem(ProBuilderMesh pbmesh)
         {
 #if USING_PARTICLE_SYSTEM
             ParticleSystem pSys;
