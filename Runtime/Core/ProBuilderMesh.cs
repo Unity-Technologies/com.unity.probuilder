@@ -647,7 +647,7 @@ namespace UnityEngine.ProBuilder
 
             set
             {
-                if (value == null)
+                if (value == null || value.Count() == 0)
                     m_Colors = null;
                 else if (value.Count() != vertexCount)
                     throw new ArgumentOutOfRangeException("value", "Array length must match vertex count.");

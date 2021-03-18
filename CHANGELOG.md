@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1322032] Fixing wrong ProBuilderMesh colors on domain reload when null.
 - [case: 1317148] Fixing edge picking problem with some Unity versions. 
 - [case: 1312537] Fixing script stripping on disabled objects when building.
 - [case: 1311258] Fixing material reverting when subdividing edge.
