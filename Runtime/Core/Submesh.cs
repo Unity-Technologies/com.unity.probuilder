@@ -113,6 +113,7 @@ namespace UnityEngine.ProBuilder
             List<int>[] quads = wantsQuads ? new List<int>[submeshCount] : null;
             List<int>[] tris = new List<int>[submeshCount];
             int maxSubmeshIndex = submeshCount - 1;
+            int maxSubmeshIndexUsed = -1;
 
             for (int i = 0; i < submeshCount; i++)
             {
@@ -128,13 +129,14 @@ namespace UnityEngine.ProBuilder
                     continue;
 
                 int submeshIndex = Math.Clamp(face.submeshIndex, 0, maxSubmeshIndex);
-
+                maxSubmeshIndexUsed = UnityEngine.Mathf.Max(submeshIndex,maxSubmeshIndexUsed);
                 if (wantsQuads && face.IsQuad())
                     quads[submeshIndex].AddRange(face.ToQuad());
                 else
                     tris[submeshIndex].AddRange(face.indexesInternal);
             }
 
+            submeshCount = maxSubmeshIndexUsed + 1;
             var submeshes = new Submesh[submeshCount];
 
             switch (preferredTopology)
@@ -186,8 +188,6 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
-            //Removing submeshes that does not contain vertices
-            submeshes = submeshes.Where(submesh => submesh.m_Indexes.Length != 0).ToArray();
             return submeshes;
         }
 
