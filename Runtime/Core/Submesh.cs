@@ -186,6 +186,8 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
+            //Removing submeshes that does not contain vertices
+            submeshes = submeshes.Where(submesh => submesh.m_Indexes.Length != 0).ToArray();
             return submeshes;
         }
 
