@@ -73,18 +73,12 @@ namespace UnityEngine.ProBuilder.Shapes
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds = mesh.mesh.bounds;
-            Vector3 boxSize = bounds.size;
-            boxSize.x = boxSize.y = boxSize.z = Mathf.Max(boxSize.x, Mathf.Max(boxSize.y, boxSize.z));
-            bounds.size = boxSize;
             return bounds;
         }
 
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            var radius = System.Math.Min(System.Math.Min(Mathf.Abs(size.x), Mathf.Abs(size.y)), Mathf.Abs(size.z));
-            //avoid to create a degenerated sphere with a radius set to 0
-            radius = radius < 0.001f ? 0.001f : radius;
-
+            var radius = .5f;
             // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 
             Vector3[] v = new Vector3[k_IcosphereTriangles.Length];
@@ -110,7 +104,7 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 f[i / 3] = new Face(new int[3] { i, i + 1, i + 2 });
                 f[i / 3].smoothingGroup = m_Smooth ? 1 : 0;
-                f[i / 3].manualUV = true;
+                f[i / 3].manualUV = false;
 
                 // Get the bottom most vertex of the whole shape. We'll use it as a pivot point.
                 for (int j = 0; j < f[i / 3].indexes.Count; ++j)
@@ -124,6 +118,26 @@ namespace UnityEngine.ProBuilder.Shapes
                     }
                 }
             }
+
+            for (int i = 0; i < f.Length; i++)
+            {
+                var nrm = Math.Normal(v[f[i].indexesInternal[0]], v[f[i].indexesInternal[1]], v[f[i].indexesInternal[2]]);
+                var axis = Projection.VectorToProjectionAxis(nrm);
+
+                if (axis == ProjectionAxis.X)
+                    f[i].textureGroup = 2;
+                else if (axis == ProjectionAxis.Y)
+                    f[i].textureGroup = 3;
+                else if (axis == ProjectionAxis.Z)
+                    f[i].textureGroup = 4;
+                else if (axis == ProjectionAxis.XNegative)
+                    f[i].textureGroup = 5;
+                else if (axis == ProjectionAxis.YNegative)
+                    f[i].textureGroup = 6;
+                else if (axis == ProjectionAxis.ZNegative)
+                    f[i].textureGroup = 7;
+            }
+
             mesh.unwrapParameters = new UnwrapParameters()
             {
                 packMargin = 30f

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Bug Fixes
+
+- [case: 1322150] Fixing torus and sphere UV generation when creating New Shape.
+
 ### Changes
 
 - Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
