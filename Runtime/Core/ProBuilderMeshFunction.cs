@@ -324,7 +324,7 @@ namespace UnityEngine.ProBuilder
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
-            mesh.subMeshCount = materialCount;
+            mesh.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < mesh.subMeshCount; i++)
             {
