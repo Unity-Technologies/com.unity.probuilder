@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }
-        protected override bool hasFileMenuEntry { get { return false; } }
+        protected override bool hasFileMenuEntry { get { return true; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
