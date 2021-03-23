@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1323666] Preventing to assign an empty mesh as MeshCollider.
 - [case: 1320936] Fixing 'ProBuilderize' action creating empty submeshes.
 
 ### Changes

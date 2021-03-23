@@ -425,7 +425,6 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
-
                 collider.sharedMesh = (mesh != null && mesh.vertexCount > 0) ? mesh : null;
             }
         }
