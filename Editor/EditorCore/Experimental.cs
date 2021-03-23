@@ -8,6 +8,9 @@ namespace UnityEditor.ProBuilder
         const string k_ExperimentalFeaturesEnabled = "PROBUILDER_EXPERIMENTAL_FEATURES";
 
         [UserSetting]
+        static Pref<bool> s_experimentalFeatureEnabled = new Pref<bool>("experimental.enabled", false, SettingsScope.Project);
+
+        [UserSetting]
         static Pref<bool> s_MeshesAreAssets = new Pref<bool>("experimental.meshesAreAssets", false, SettingsScope.Project);
 
         internal static bool meshesAreAssets
@@ -17,31 +20,25 @@ namespace UnityEditor.ProBuilder
 
         internal static bool experimentalFeaturesEnabled
         {
-#if PROBUILDER_EXPERIMENTAL_FEATURES
-            get { return true; }
-#else
-            get { return false; }
-#endif
+            get { return s_experimentalFeatureEnabled.value; }
         }
 
         [UserSettingBlock("Experimental")]
         static void ExperimentalFeaturesSettings(string searchContext)
         {
-            var enabled = experimentalFeaturesEnabled;
-
             EditorGUI.BeginChangeCheck();
 
-            enabled = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", enabled, searchContext);
+            s_experimentalFeatureEnabled.value = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", s_experimentalFeatureEnabled, searchContext);
 
             if (EditorGUI.EndChangeCheck())
             {
-                if(enabled)
+                if(s_experimentalFeatureEnabled.value)
                     ScriptingSymbolManager.AddScriptingDefine(k_ExperimentalFeaturesEnabled);
                 else
                     ScriptingSymbolManager.RemoveScriptingDefine(k_ExperimentalFeaturesEnabled);
             }
 
-            if(enabled)
+            if(s_experimentalFeatureEnabled.value)
             {
                 using (new SettingsGUILayout.IndentedGroup())
                 {
