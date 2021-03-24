@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1322032] Fixing wrong ProBuilderMesh colors on domain reload when null.
 - [case: 1322150] Fixing torus and sphere UV generation when creating New Shape.
 - [case: 1320936] Fixing 'ProBuilderize' action creating empty submeshes.
 
