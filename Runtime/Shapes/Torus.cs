@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -118,6 +119,8 @@ namespace UnityEngine.ProBuilder.Shapes
 
             mesh.TranslateVerticesInWorldSpace(mesh.mesh.triangles, mesh.transform.TransformDirection(-mesh.mesh.bounds.center));
             mesh.Refresh();
+
+            UVEditing.ProjectFacesBox(mesh, mesh.facesInternal);
 
             return UpdateBounds(mesh, size, rotation, new Bounds());
         }
