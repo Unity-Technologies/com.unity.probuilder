@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Property `Experimental Feature` can now be reset with the rest of ProBuilder preferences.
 - Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
 
 ## [5.0.0-pre.12] - 2021-03-05
