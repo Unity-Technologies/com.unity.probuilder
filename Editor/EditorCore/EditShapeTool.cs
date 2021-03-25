@@ -82,8 +82,7 @@ namespace UnityEditor.ProBuilder
                 if(s_IconContent == null)
                     s_IconContent = new GUIContent()
                     {
-                        //image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
-                        image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
+                        image = IconUtility.GetIcon("Tools/EditShape"),
                         text = "Edit Shape",
                         tooltip = "Edit Shape"
                     };
