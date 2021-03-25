@@ -22,10 +22,59 @@ namespace UnityEditor.ProBuilder
         IMGUIContainer m_ShapeField;
 
         SerializedProperty m_ShapeProperty;
+        SerializedProperty ShapeProperty
+        {
+            get
+            {
+                if(m_ShapeProperty == null)
+                    m_ShapeProperty = serializedObject.FindProperty("m_Shape");
+                return m_ShapeProperty;
+            }
+        }
+
         SerializedProperty m_ShapePivotProperty;
+        SerializedProperty ShapePivotProperty
+        {
+            get
+            {
+                if(m_ShapePivotProperty == null)
+                    m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
+                return m_ShapePivotProperty;
+            }
+        }
+
         SerializedProperty m_ShapeSizeXProperty;
+        SerializedProperty ShapeSizeXProperty
+        {
+            get
+            {
+                if(m_ShapeSizeXProperty == null)
+                    m_ShapeSizeXProperty = serializedObject.FindProperty("m_Size.x");
+                return m_ShapeSizeXProperty;
+            }
+        }
+
         SerializedProperty m_ShapeSizeYProperty;
+        SerializedProperty ShapeSizeYProperty
+        {
+            get
+            {
+                if(m_ShapeSizeYProperty == null)
+                    m_ShapeSizeYProperty = serializedObject.FindProperty("m_Size.y");
+                return m_ShapeSizeYProperty;
+            }
+        }
+
         SerializedProperty m_ShapeSizeZProperty;
+        SerializedProperty ShapeSizeZProperty
+        {
+            get
+            {
+                if(m_ShapeSizeZProperty == null)
+                    m_ShapeSizeZProperty = serializedObject.FindProperty("m_Size.z");
+                return m_ShapeSizeZProperty;
+            }
+        }
 
         int m_ActiveShapeIndex = 0;
 
@@ -61,11 +110,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_ShapeProperty = serializedObject.FindProperty("m_Shape");
-            m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
-            m_ShapeSizeXProperty = serializedObject.FindProperty("m_Size.x");
-            m_ShapeSizeYProperty = serializedObject.FindProperty("m_Size.y");
-            m_ShapeSizeZProperty = serializedObject.FindProperty("m_Size.z");
         }
 
         public override void OnInspectorGUI()
@@ -167,19 +211,19 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if(tool)
-                    EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
+                    EditorGUILayout.PropertyField(ShapePivotProperty, k_ShapePivotLabel);
 
                 var labelWidth = EditorGUIUtility.labelWidth;
                 var fieldWidth = EditorGUIUtility.fieldWidth;
                 EditorGUIUtility.labelWidth = 30;
                 EditorGUIUtility.fieldWidth = 30;
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(m_ShapeSizeXProperty, k_ShapeSizeXLabel);
+                EditorGUILayout.PropertyField(ShapeSizeXProperty, k_ShapeSizeXLabel);
                 var is2D = HasMultipleShapeTypes ||
                            ( m_CurrentShapeType != typeof(Plane) && m_CurrentShapeType != typeof(Sprite) );
                 using (new EditorGUI.DisabledScope(!is2D))
-                    EditorGUILayout.PropertyField(m_ShapeSizeYProperty, k_ShapeSizeYLabel);
-                EditorGUILayout.PropertyField(m_ShapeSizeZProperty, k_ShapeSizeZLabel);
+                    EditorGUILayout.PropertyField(ShapeSizeYProperty, k_ShapeSizeYLabel);
+                EditorGUILayout.PropertyField(ShapeSizeZProperty, k_ShapeSizeZLabel);
                 EditorGUILayout.EndHorizontal();
                 EditorGUIUtility.labelWidth = labelWidth;
                 EditorGUIUtility.fieldWidth = fieldWidth;
@@ -188,7 +232,7 @@ namespace UnityEditor.ProBuilder
             }
 
             if(!HasMultipleShapeTypes)
-                EditorGUILayout.PropertyField(m_ShapeProperty, new GUIContent("Shape Properties"), true);
+                EditorGUILayout.PropertyField(ShapeProperty, new GUIContent("Shape Properties"), true);
 
             if (serializedObject.ApplyModifiedProperties())
             {
