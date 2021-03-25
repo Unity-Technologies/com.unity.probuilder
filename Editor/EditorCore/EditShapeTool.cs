@@ -99,8 +99,8 @@ namespace UnityEditor.ProBuilder
 
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanging += ActiveToolChanging;
-#endif
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+#endif
 
         }
 
@@ -108,8 +108,8 @@ namespace UnityEditor.ProBuilder
         {
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanging -= ActiveToolChanging;
-#endif
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+#endif
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
         }
@@ -131,13 +131,21 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             base.OnActivated();
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
         }
 
         public override void OnWillBeDeactivated()
         {
             base.OnWillBeDeactivated();
-            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.delayCall += () => ResetToLastSelectMode();
+        }
+
+        public void ResetToLastSelectMode()
+        {
+            if(ProBuilderToolManager.activeTool != Tool.Custom)
+                ProBuilderEditor.ResetToLastSelectMode();
         }
 #endif
 

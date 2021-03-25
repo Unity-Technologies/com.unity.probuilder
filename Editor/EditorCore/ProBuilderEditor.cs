@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder
 
         EditorToolbar m_Toolbar;
         ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
-        static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
+        internal static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
 
