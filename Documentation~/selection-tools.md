@@ -1,6 +1,6 @@
 # Selection actions
 
-This portion of the ProBuilder toolbar provides access to selection modifiers and actions.
+This part of the ProBuilder toolbar provides access to selection modifiers and actions.
 
 ![Selection buttons on the ProBuilder toolbar](images/tool_selection.png)
 

@@ -6,7 +6,7 @@ Use this sub-menu to access several helper scripts that repair problems with Pro
 
 ## Rebuild All ProBuilder Objects
 
-Rebuilds Mesh representations from stored ProBuilder data for each GameObject in the Scene. If you have a lot of GameObjects in a Scene, this can take a while.
+Rebuilds Mesh representations from stored ProBuilder data for each GameObject in the scene. If you have a lot of GameObjects in a scene, this can take a while.
 
 ## Rebuild Shared Indexes Cache
 
@@ -18,4 +18,4 @@ Deletes triangles on a Mesh that are either taking up no space, or are duplicate
 
 ## Check for Broken ProBuilder References
 
-Checks for and repairs any missing or broken ProBuilder references in the Scene.
+Checks for and repairs any missing or broken ProBuilder references in the scene.

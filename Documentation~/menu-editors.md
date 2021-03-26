@@ -6,7 +6,7 @@ This sub-menu provides access to tools and editor windows.
 
 ## New Bezier Shape
 
-Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a Mesh.
+Use the **Bezier Shape** tool to define a Bezier curve around which ProBuilder extrudes a Mesh.
 
 > **Warning:** This tool is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Use with caution.
 

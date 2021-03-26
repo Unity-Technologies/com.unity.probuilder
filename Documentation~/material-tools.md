@@ -42,7 +42,7 @@ The **Quick Material** section allows you to specify a Material to apply with ei
 
 To set a quick Material, set a reference to a Material Asset you want to use as the quick Material. You can drag in the Asset from the Project view or use the object picker next to the reference property.
 
-If there's a face on a GameObject in the Scene that is already using the Material you want to set as quick, select that face and click the **Match Selection** button.
+If there's a face on a GameObject in the scene that is already using the Material you want to set as quick, select that face and click the **Match Selection** button.
 
 <a name="qapply"></a>
 

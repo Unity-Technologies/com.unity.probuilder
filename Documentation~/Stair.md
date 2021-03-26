@@ -14,8 +14,8 @@ You can customize the shape of your stairs with these shape-specific properties:
 | __Steps Height__ | Set the fixed height of each step on the stairs. The default value is 0.2. <br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |
 | __Homogeneous Steps__ | Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |
 | __Steps Count__ | Set the fixed number of steps that the stairs always has. The default value is 10. Valid values range from 1 to 256.<br /><br />This property is only available when the **Steps Generation** method is set to **Count**. |
-| __Sides__ | Enable this option to draw polygons on the sides of the stairs. This is enabled by default. You can disable this option if the sides of your stairs are not visible to the camera (for example, if your stairs are built into a wall). |
-| __Circumference__ | Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360. |
+| __Sides__ | Enable this option to draw polygons on the sides of the stairs. This is enabled by default. You can disable this option if the sides of your stairs are not visible to the Camera (for example, if your stairs are built into a wall). |
+| __Circumference__ | Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Remember that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from 0 to 360. |
 
 -->
 
@@ -61,9 +61,10 @@ You can customize the shape of your stairs with these shape-specific properties:
 </tr>
 <tr>
 <td colspan="2"><strong>Circumference</strong></td>
-<td>Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Keep in mind that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from -360 (full turn to the left) to 360 (full turn to the right).</td>
+<td>Set the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs in a complete circle. Remember that you might need to increase the number of stairs to compensate as you increase this value. The default value is 0. Valid values range from -360 (full turn to the left) to 360 (full turn to the right).</td>
 </tr>
 </tbody>
 </table>
+
 
 

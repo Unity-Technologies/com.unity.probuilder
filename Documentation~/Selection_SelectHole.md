@@ -1,6 +1,6 @@
 # ![Select Hole icon](images/icons/Selection_SelectHole.png) Select Holes
 
-The __Select Holes__ action selects all elements along the selected open vertex or edge. A *hole* is like a removed face. This action is a useful shortcut for selecting all the edges around a missing face.
+The __Select Holes__ action selects all elements along the selected open vertex or edge. A hole is like a removed face. This action is a useful shortcut for selecting all the edges around a missing face.
 
 If you have no elements selected, this action automatically selects all holes in the selected object.
 

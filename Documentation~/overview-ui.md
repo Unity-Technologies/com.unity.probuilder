@@ -32,7 +32,7 @@ ProBuilder provides several ways to interact with its tools and actions:
 
 ![Dimensions Overlay](images/show-scene-info.png)
 
-**Scene Information** displays information about the Meshes in the Scene, and which elements are selected.
+**Scene Information** displays information about the Meshes in the scene, and which elements are selected.
 
 To toggle this on or off, use the **Show Scene Info** setting in the [Preferences](preferences.md#info_overlay).
 

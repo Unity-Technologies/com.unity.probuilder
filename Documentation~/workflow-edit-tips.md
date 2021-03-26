@@ -1,6 +1,6 @@
 # Modeling tips for beginners
 
-To successfully create digital models, you need to find a balance between visual quality and resource requirements. Always bear these two statements in mind:
+To successfully create digital models, you need to find a balance between visual quality and resource requirements. Always remember these two statements:
 
 - The less geometry you use in your Mesh, the faster your application runs. This is because every vertex, edge, or face requires computing resources.
 - The more geometry you use in your Mesh, the more detailed and organic your GameObjects look. This is because more geometry means smaller polygons, which gives you more control over the shape.
@@ -21,7 +21,7 @@ Finally, when you are satisfied with the look and shape of your Mesh, you can tr
 
 # Ideal geometry
 
-When you create buildings and other architectural structures, you can use Unity's grid snapping to help you stick to right angles and perfect lines. It also makes you less likely to accidentally move vertices past an adjacent vertex, which would create realistically impossible geometry.
+When you create buildings and other architectural structures, you can use Unity's grid snapping to help you stick to right angles and perfect lines. It also makes you less likely to accidentally move vertices past an adjacent vertex, which would create impossible geometry.
 
 To make it easier to combine pieces of your buildings together later on, only use only 90-degree and 45-degree angles when building, and avoid unusual or unrealistic angles. For example, if you build the shell of a house as one Mesh and a staircase as a second Mesh, it is easier to fit the two together if they are aligned perfectly.
 
@@ -46,7 +46,7 @@ If you can avoid vertices at T-junctions, that makes your geometry a lot cleaner
 
 ![Example of overly complex vertex geometry](images/Example_T-Junction.png)
 
-Notice the edge that splits only the top into two faces and does not continue into the front (the purple face). ProBuilder created the vertices at either end of this edge during a [Connect Edges](Edge_Connect.md) action. 
+Note the edge that splits only the top into two faces and does not continue into the front (the purple face). ProBuilder created the vertices at either end of this edge during a [Connect Edges](Edge_Connect.md) action. 
 
 To avoid this complexity, the [Insert Edge Loop](Edge_InsertLoop.md) action creates edges all the way around the object, so that there are no T-junctions.
 

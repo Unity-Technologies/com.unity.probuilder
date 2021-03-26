@@ -20,7 +20,7 @@ Select the [format you want to export to](workflow-exporting.md#formats) from th
 * [Asset-specific options](#Asset)
 * [Prefab-specific options](#Prefab)
 
-The one option that applies to all file format types is the __Include Children__ property, which you can enable to include not only selected Meshes, but also the children of selected objects in the exported Model.
+The only option that applies to all file format types is the __Include Children__ property, which you can enable to include not only selected Meshes, but also the child objects of selected objects in the exported Model.
 
 <a name="Asset"></a>
 

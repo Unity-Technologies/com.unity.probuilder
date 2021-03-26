@@ -80,15 +80,15 @@ The offset value represents an offset from the **Anchor** position along the U o
 
 Enter exact rotation values here in degrees (0-360), or drag the slider to adjust.
 
-Don't forget that what you are rotating is the UV face, not the image. As you rotate the UV face to the right in the UV Viewer, the image projected on the Mesh face in the Scene view actually rotates to the left.
+Don't forget that you are rotating the UV face, not the image. As you rotate the UV face to the right in the UV Viewer, the image projected on the Mesh face in the Scene view rotates to the left.
 
 ### Tiling
 
 There are three ways to change the size of a UV face in the UV Editor:
 
 * Enter exact scale values in the **X** and **Y** properties for each axis. These values represent the size of the UV face relative to the Texture. For example, when you enter a value of 0.5 in **Y**, this halves the height of the UV face on the image, whereas a value of 2 in **X** doubles the width.
-* Click the appropriate preset button to set how many times you want the Texture image to appear across the UV face. For example, the **.5** preset only displays half the image: in the viewer, the UV face appears twice as large against the image, but in the Scene view, you can only see half of the image on the Mesh face. Conversely, using the **4** preset results in the image tiling four times across the Mesh face in the Scene view, so the UV face in the Viewer appears to be a quarter the size of the image.
-* Click and drag on the scale gizmo to scale the UV face directly in the UV Viewer.
+* Select the appropriate preset button to set how many times you want the Texture image to appear across the UV face. For example, the **.5** preset only displays half the image: in the viewer, the UV face appears twice as large against the image, but in the Scene view, you can only see half of the image on the Mesh face. Conversely, using the **4** preset results in the image tiling four times across the Mesh face in the Scene view, so the UV face in the Viewer appears to be a quarter the size of the image.
+* Select and drag on the scale gizmo to scale the UV face directly in the UV Viewer.
 
 In all three cases, ProBuilder updates the **X** and **Y** **Tiling** values to reflect any changes.
 
@@ -137,3 +137,4 @@ Click the **Group Selected Faces** button to create a new Texture Group from the
 ### Select Texture Group
 
 Click the **Select Texture Group** button to select all faces in the the group.
+

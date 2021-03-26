@@ -1,5 +1,5 @@
 # Cone
-A cone is a shape which tapers from a circular (or roughly circular) base to a point. You can adjust the smoothness.
+A cone is a shape that tapers from a circular (or roughly circular) base to a point. You can adjust the smoothness.
 
 ![Cone shapes](images/shape-tool_cone.png) 
 

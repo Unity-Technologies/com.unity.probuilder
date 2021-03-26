@@ -52,11 +52,11 @@ Some actions (such as [Extrude](Face_Extrude.md), [Collapse](Vert_Collapse.md), 
 * In **Icon Mode**, the gear ![Options Icon](images/icons/Options.png) indicator appears next to an action button if there are options available. To open the **Options** window, **Alt+Click** anywhere on the button.
 * In **Text Mode**, the `+` icon appears on the right side of an action button if there are options available. To open the **Options** window, click on the button's `+` icon.
 
-> ***Caution:*** When you change one of these options, those changes become the default settings for that action in the Scene until you change them again.
+> **Caution:** When you change one of these options, those changes become the default settings for that action in the scene until you change them again.
 
 ![Options for Select Material tool](images/pb_options.png)
 
-For example, the [Select by Material](Selection_SelectByMaterial.md) action allows you to specify whether ProBuilder limits the new selection to match only faces on the currently selected object or faces on any object in the Scene. 
+For example, the [Select by Material](Selection_SelectByMaterial.md) action allows you to specify whether ProBuilder limits the new selection to match only faces on the currently selected object or faces on any object in the scene. 
 
 > **Note:** The documentation for each action includes information about any options.
 

@@ -1,6 +1,6 @@
 # ![UV Editor icon](images/icons/Panel_UVEditor.png) UV Editor window
 
-Use this window to manage texture mapping on the selected Mesh.
+Use the UV Editor window to manage texture mapping on the selected Mesh.
 
 To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **UV Editor** button ( ![UV Editor icon](images/icons/Panel_UVEditor.png) ).
 

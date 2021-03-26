@@ -4,7 +4,7 @@
 
 
 
-**(A)** This first group of buttons contains shortcuts to the standard Unity manipulation tools. These have exactly the same effect as the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
+**(A)** This first group of buttons contains shortcuts to the standard Unity manipulation tools. These have the same effect as the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
 
 **(B)** The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When you use [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
 

@@ -1,9 +1,9 @@
 # About the ProBuilder Scripting API
 
-ProBuilder provides a Scripting API for C# which you can use to extend the ProBuilder tools and windows. It includes these namespaces:
+ProBuilder provides a Scripting API for C#, which you can use to extend the ProBuilder tools and windows. It includes these namespaces:
 
 - [UnityEditor.ProBuilder](../api/UnityEditor.ProBuilder.html) provides classes and enums for Unity editor integration. Use them to extend ProBuilder menus, windows, toolbars, and Mesh operations that are only available through the ProBuilder windows and tools.
-- [UnityEngine.ProBuilder](../api/UnityEngine.ProBuilder.html) provides classes, structs, and enums for compiling meshes. Use them to access a lot of core ProBuilder functionality, such as creating Meshes, dealing with events, and some math functions.
+- [UnityEngine.ProBuilder](../api/UnityEngine.ProBuilder.html) provides classes, structs, and enums for compiling Meshes. Use them to access a lot of core ProBuilder functionality, such as creating Meshes, dealing with events, and some math functions.
 - [UnityEngine.ProBuilder.MeshOperations](../api/UnityEngine.ProBuilder.MeshOperations.html) provides classes for Mesh editing. Use them to manipulate ProBuilder Meshes, including topology and I/0 operations. 
 
 All Mesh creation and editing functionality is restricted to the `UnityEngine.ProBuilder` and
@@ -52,9 +52,9 @@ ProBuilderMesh quad = ProBuilderMesh.Create(
 
 ## Modify a Mesh
 
-Modifying a ProBuilder Mesh is a bit different from modifying a Unity Mesh: instead of working with [MeshFilter.sharedMesh](https://docs.unity3d.com/ScriptReference/MeshFilter-sharedMesh.html) you work with the ProBuilder representation of the Mesh: [ProBuilderMesh](../api/UnityEngine.ProBuilder.ProBuilderMesh.html).
+Modifying a ProBuilder Mesh is different from modifying a Unity Mesh: instead of working with [MeshFilter.sharedMesh](https://docs.unity3d.com/ScriptReference/MeshFilter-sharedMesh.html) you work with the ProBuilder representation of the Mesh: [ProBuilderMesh](../api/UnityEngine.ProBuilder.ProBuilderMesh.html).
 
-The basics are the same: Set vertex positions, modify triangles (faces in ProBuilder), then rebuild the mesh. For example, to move the vertices up on that quad from the previous example:
+The basics are the same: set vertex positions, modify triangles (faces in ProBuilder), then rebuild the mesh. For example, to move the vertices up on that quad from the previous example:
 
 ```c#
 // Move vertex positions up

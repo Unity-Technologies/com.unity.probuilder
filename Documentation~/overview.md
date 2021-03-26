@@ -16,7 +16,7 @@ The most common way to build a ProBuilder Mesh is to [create it](workflow-create
 
 ## Applying Materials and Vertex Colors
 
-You can apply any Material to ProBuilder Meshes using the [Material Palette](material-tools.md), either on selected faces in [Element mode](edit-mode-toolbar.md) or across the entire object. 
+You can apply any Material to ProBuilder Meshes using the [Material Palette](material-tools.md), either on selected faces in [Element mode](edit-mode-toolbar.md) or across the entire GameObject. 
 
 You can also apply [Vertex Colors](workflow-vertexcolors.md) to your Mesh while you are still building the geometry. This can help easily identify parts of complex Meshes, such as the floor, or provide a little color while you are greyboxing.
 
