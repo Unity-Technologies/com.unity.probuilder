@@ -1,6 +1,6 @@
 # Repair
 
-Use this sub-menu to access several helper scripts that repair problems with ProBuilder Meshes in the Scene.
+Use this sub-menu to access several helper scripts that repair problems with ProBuilder Meshes in the scene.
 
 ![Tools > ProBuilder > Repair menu](images/menu-repair.png)
 
@@ -16,6 +16,6 @@ Discards all shared vertex position data and rebuilds based on proximity.
 
 Deletes triangles on a Mesh that are either taking up no space, or are duplicates.
 
-## Convert to Package Manager
+## Check for Broken ProBuilder References
 
-Use this script if you are upgrading an older ProBuilder project to this version. <!-- See [Upgrading from older versions of ProBuilder](installing.md) for more information. -->
+Checks for and repairs any missing or broken ProBuilder references in the Scene.

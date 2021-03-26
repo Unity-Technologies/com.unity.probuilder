@@ -1,6 +1,6 @@
-﻿# Actions
+# Actions
 
-Use this sub-menu to access editor and component windows.
+Use this sub-menu to access helper functions for stripping out ProBuilder scripts.
 
 ![Tools > ProBuilder > Actions menu](images/menu-actions.png)
 

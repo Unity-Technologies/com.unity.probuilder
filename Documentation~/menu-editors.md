@@ -1,26 +1,26 @@
 # Editors
 
-This sub-menu provides access to editor and component windows.
+This sub-menu provides access to tools and editor windows.
 
 ![Tools > ProBuilder > Editors menu](images/menu-editors.png)
 
 ## New Bezier Shape
 
-Use the **Bezier Shape** component to define a bezier curve around which ProBuilder extrudes a Mesh.
+Use the **Bezier Shape** tool to define a bezier curve around which ProBuilder extrudes a Mesh.
 
-> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Use these with caution.
+> **Warning:** This tool is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Use with caution.
 
-For more information, see the [Bezier Shape](bezier.md) component documentation.
+For more information, see the [Bezier Shape tool](bezier.md) documentation.
 
 ## New Poly Shape
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
+Use the **Poly Shape** tool to create custom ProBuilder Mesh shapes.
 
-For more information, see the [Shape Tool](shape-tool.md) window documentation.
+For more information, see the [Poly Shape tool](shape-tool.md) documentation.
 
 ## Open Lightmap UV Editor
 
-Use the **Lightmap UV Editor** window to access the settings for generating light map UVs. 
+Use the **Lightmap UV Editor** window to access the settings for generating light map UVs.
 
 For more information, see the [Lightmap UV Editor](lightmap-uv.md) window documentation.
 
@@ -30,11 +30,11 @@ Use the **Material Editor** window to apply materials to objects or faces.
 
 For more information, see the [Material Editor](material-tools.md) window documentation.
 
-## Open Shape Editor Menu Item
+## New Shape
 
-Use the **Shape Tool** window to create new ProBuilder Mesh shapes, such as cylinders, arches, and stairs.
+Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
 
-For more information, see the [Shape Tool](shape-tool.md) window documentation.
+For more information, see the [Shape tool](shape-tool.md) documentation.
 
 ## Open Smoothing Editor
 
@@ -52,7 +52,7 @@ For more information, see the [UV Editor](uv-editor.md) window documentation.
 
 Use the **Vertex Colors** window to apply or paint vertex colors onto Meshes.
 
-For more information, see the [Vertex Colors](material-tools.md) window documentation.
+For more information, see the [Vertex Colors](vertex-colors.md) window documentation.
 
 ## Open Vertex Position Editor
 

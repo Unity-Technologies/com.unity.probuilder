@@ -133,9 +133,8 @@ namespace UnityEditor.ProBuilder
             {
                 if (m_CutPath.Count < 3)
                     return false;
-                else
-                    return Math.Approx3(m_CutPath[0].position,
-                        m_CutPath[m_CutPath.Count - 1].position);
+
+                return Math.Approx3(m_CutPath[0].position, m_CutPath[m_CutPath.Count - 1].position);
             }
         }
 
@@ -409,9 +408,13 @@ namespace UnityEditor.ProBuilder
             {
                 case KeyCode.Backspace:
                 {
-                    UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
-                    m_CutPath.RemoveAt(m_CutPath.Count-1);
-                    m_Dirty = true;
+                    if (m_CutPath.Count > 0)
+                    {
+                        UndoUtility.RecordObject(m_Mesh, "Delete Selected Points");
+                        m_CutPath.RemoveAt(m_CutPath.Count - 1);
+                        m_Dirty = true;
+                    }
+
                     evt.Use();
                     break;
                 }
@@ -513,9 +516,7 @@ namespace UnityEditor.ProBuilder
                      && evtType == EventType.MouseDown
                      && HandleUtility.nearestControl == m_ControlId)
             {
-                int polyCount = m_CutPath.Count;
-                if (!m_CurrentPosition.Equals(Vector3.positiveInfinity)
-                    && (polyCount == 0 || m_SelectedIndex != polyCount - 1))
+                if(CanAppendCurrentPointToPath())
                 {
                     AddCurrentPositionToPath();
                     evt.Use();
@@ -530,6 +531,26 @@ namespace UnityEditor.ProBuilder
             {
                 ProBuilderEditor.instance.HandleMouseEvent(SceneView.lastActiveSceneView, m_ControlId);
             }
+        }
+
+        bool CanAppendCurrentPointToPath()
+        {
+            int polyCount = m_CutPath.Count;
+
+            if (!Math.IsNumber(m_CurrentPosition))
+                return false;
+
+            if (!(polyCount == 0 || m_SelectedIndex != polyCount - 1))
+                return false;
+
+            // duplicate points are not permitted, except the special case where placing a final point on the starting
+            // point finishes the cut operation.
+            for(int i = 1; i < polyCount; i++)
+                if (Math.Approx3(m_CutPath[i].position, m_CurrentPosition))
+                    return false;
+
+            // when the existing vertex count is less than 3, don't allow the special duplicate first vertex position
+            return polyCount < 2 || !(polyCount < 3 && Math.Approx3(m_CutPath[0].position, m_CurrentPosition));
         }
 
         internal void AddCurrentPositionToPath(bool optimize = true)

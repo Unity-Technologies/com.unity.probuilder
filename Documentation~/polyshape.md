@@ -1,22 +1,33 @@
-# ![Poly Shape Tool icon](images/icons/NewPolyShape.png) Poly Shape component
+# ![Poly Shape Tool icon](images/icons/NewPolyShape.png) Poly Shape tool
 
-After you initially [create a Poly Shape](workflow-create-polyshape.md), you can still modify the shape as long as you are in Poly Shape editing mode. You can toggle the Poly Shape editing mode on and off with the **Edit(ing) Poly Shape** button.
+Use the Poly Shape tool to [create a custom polygonal shape](workflow-create-polyshape.md). When you activate the Poly Shape tool to create a new shape, the **Poly Shape Tool** panel appears in the bottom of the Scene view. After you initially [create a Poly Shape](workflow-create-polyshape.md), the Poly Shape is still active, but in editing mode:
 
+![The Poly Shape tool in editing mode](images/Experimental_PolyShapeInspector.png) 
 
+**(A)** You can toggle the ![](images/icons/tlbx-icon-polyshape.png) Edit Poly Shape button on the **Tools** panel to toggle the Poly Shape editing mode on and off.
 
-![Toggle editing mode on and off](images/Experimental_PolyShapeInspector.png)
+**(B)** You can modify the **Extrusion** (height of the Mesh) and the **Flip Normals** properties on the **Poly Shape** component.
 
+**(C)** The **Poly Shape Tool** panel lets you the modify the **Extrusion** and the **Flip Normals** properties too. The **Quit Editing** button exits the Poly Shape editing mode.
 
+While the Poly Shape editing mode is active, you can also modify the base shape by adding, deleting, or moving any of the points that define the Poly Shape.
 
-> **Note:** You can modify Mesh elements on the Poly Shape Mesh with the standard ProBuilder editing tools. However, each time you re-enter Poly Shape editing mode, you lose any element changes.
+>  **Note**: If you are in editing mode immediately after creating a new Poly Shape Mesh, you can also click **New Poly Shape** (![Poly Shape Icon](images/icons/NewPolyShape.png)) on the ProBuilder toolbar to exit the Poly Shape tool.
+
 
 
 
 ## Editing a Poly Shape
 
-When you are in Poly Shape editing mode, the **Poly Shape** component in the Inspector displays the **Editing Poly Shape** button. If you are not in Poly Shape editing mode, the **Edit Poly Shape** button appears instead.
+If you exited the Poly Shape tool, you can re-activate it to modify the **Extrusion** and the **Flip Normals** properties. To re-activate the Poly Shape editing mode: 
 
-To enter the Poly Shape editing mode, click the **Edit Poly Shape** button. To exit out of the Poly Shape editing mode, click the button (**Editing Poly Shape**) again.
+1. Select the Poly Shape you want to modify. The **Tools** panel displays the ![](images/icons/tlbx-icon-polyshape.png) Edit Poly Shape button and the **Poly Shape** component appears in the Inspector with the **Edit Poly Shape** button.
+
+	![The Tools panel in the Scene view (A) and the Poly Shape component in the Inspector](images/Experimental_PolyShapeInspector-edit.png)
+
+2. Click either button to activate the Poly Shape editing mode.
+
+> **Note:** You can modify Mesh elements on the Poly Shape Mesh with the standard ProBuilder editing tools. However, each time you re-enter Poly Shape editing mode, you lose any element changes.
 
 To modify the shape in Poly Shape editing mode, perform the following tasks in the Scene view:
 

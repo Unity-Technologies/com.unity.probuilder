@@ -1,9 +1,14 @@
 # Experimental
 
-This sub-menu provides access to experimental tools.
+This sub-menu provides access to experimental features.
 
 ![Tools > ProBuilder > Experimental menu](images/menu-experimental.png)
 
-Experimental tools are tools or functions that aren’t quite ready for public use, but are included for users to try out early, and report issues/feedback.
+> **Note**: This sub-menu is only available when you enable the [experimental features preference](preferences.md#experimental).
 
-For more information, see the [Boolean](boolean.md) tool documentation.
+Experimental features aren’t quite ready for public use, but are included for users to try out early, and report issues/feedback. 
+
+## Boolean (CSG) Tool
+
+The [Boolean](boolean.md) feature is the only option available on this sub-menu. It lets you create new Meshes from intersection, union, and subtraction boolean operations.
+

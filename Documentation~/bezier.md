@@ -1,26 +1,28 @@
-# ![Bezier Shape Icon](images/icons/NewBezierSpline.png) Bezier Shape component
+# Bezier Shape component
 
 > **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
 
-After you [create a Bezier Shape](workflow-create-bezier.md), you can still modify the shape as long as you are in Bezier Shape editing mode. To toggle the Bezier Shape editing mode on and off, use the **Edit(ing) Bezier Shape** button.
+Use the Bezier Shape tool to [create a more organic shape](workflow-create-bezier.md) by defining a spline along which ProBuilder extrudes a 3-dimensional Mesh. When you activate the Bezier Shape tool to create a new shape, the **Bezier Shape** component provides properties that help you customize the new shape. After you activate the tool, the Bezier Shape is ready for editing:
 
-![Bezier Shape component](images/Experimental_BezierInspector.png)
+![Click the **Editng Bezier Shape** button on the Bezier Shape component to exit the editing mode.](images/Experimental_BezierInspector.png)
 
-![A](images/LetterCircle_A.png) [Curve property values](#curve)
+**(A)** [Curve property values](#curve)
 
-![B](images/LetterCircle_B.png) [Tangent modes](#tangent)
+**(B)** [Tangent modes](#tangent)
 
-![C](images/LetterCircle_C.png) [Shape property values](#shape)
+**(C)** [Shape property values](#shape)
 
 
 
-> **Note:** You can modify Mesh elements on the Bezier Shape Mesh with the standard ProBuilder editing tools. However, each time you re-enter Bezier Shape editing mode, you lose any element changes.
+> **Note:** You can modify Mesh elements on the Bezier Shape Mesh with the standard ProBuilder editing tools and actions. However, each time you re-enter Bezier Shape editing mode, you lose any element changes.
 
 
 
 ## Editing a Bezier Shape
 
-When you are in Bezier Shape editing mode, the **Bezier Shape** component in the Inspector displays the **Editing Bezier Shape** button. If you are not in Bezier Shape editing mode, the **Edit Bezier Shape** button appears instead.
+When you are in Bezier Shape editing mode, the **Bezier Shape** component in the Inspector displays the **Editing Bezier Shape** button. If you are not in Bezier Shape editing mode, the **Edit Bezier Shape** button appears instead:
+
+![Click the **Edit Bezier Shape** button on the Bezier Shape component to activate the editing mode.](images/Experimental_BezierInspector-edit.png)
 
 To enter the Bezier Shape editing mode, click the **Edit Bezier Shape** button.  To exit out of the Bezier Shape editing mode, click the button (**Editing Bezier Shape**) again.
 

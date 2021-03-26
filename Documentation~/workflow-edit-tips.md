@@ -9,13 +9,19 @@ One strategy you can use to find a good balance is to start with major modificat
 
 After you have finished the rough modeling on your Mesh, you can begin to refine it by [subdividing faces](Face_Subdivide.md) as needed. During this phase, you may decide that it is more important to achieve the correct shape quickly than to keep perfect uniformity.
 
-Finally, when you are satisfied with the look and shape of your Mesh, you can try to remove unnecessary geometry where possible, to simplify the Mesh. You can [merge faces](Face_Merge.md) to reduce the number of edges Unity has to process, and [collapse](Vert_Collapse.md) or [weld](Vert_Weld.md) extra vertices. You can also [remove any faces](Face_Delete.md) that are hidden behind Meshes or simply beyond the reach of the Camera.
+Finally, when you are satisfied with the look and shape of your Mesh, you can try to remove unnecessary geometry where possible, to simplify the Mesh. You can also [remove any faces](Face_Delete.md) that are hidden behind Meshes or simply beyond the reach of the Camera. You can [merge faces](Face_Merge.md) to reduce the number of edges Unity has to process, and [collapse](Vert_Collapse.md) or [weld](Vert_Weld.md) extra vertices. 
+
+**Note**: Make sure when you merge faces that the remaining geometry is still well-formed. For instance, if you use the [Cut](cut-tool.md) tool to create a sub-face in the middle of an existing face, don't remove the edges that connect the new sub-face to the original face's edges because this could result in degenerated faces and broken geometry. 
+
+![After you cut a face, extra edges secure the new face's integrity. Removing those images makes the new face unstable](images/cut-tool-nomerge.png)
+
+
 
 
 
 # Ideal geometry
 
-When you create buildings and other architectural structures, you can use a tool like [ProGrids](https://docs.unity3d.com/Packages/com.unity.progrids@latest) to help you stick to right angles and perfect lines. It also makes you less likely to accidentally move vertices past an adjacent vertex, which would create realistically impossible geometry.
+When you create buildings and other architectural structures, you can use Unity's grid snapping to help you stick to right angles and perfect lines. It also makes you less likely to accidentally move vertices past an adjacent vertex, which would create realistically impossible geometry.
 
 To make it easier to combine pieces of your buildings together later on, only use only 90-degree and 45-degree angles when building, and avoid unusual or unrealistic angles. For example, if you build the shell of a house as one Mesh and a staircase as a second Mesh, it is easier to fit the two together if they are aligned perfectly.
 

@@ -16,9 +16,9 @@ The Mesh stores the texture mapping data as *UVs*. These are basically 2D fold-o
 
 > **Note:** For more in-depth information on these concepts and the relationship between rendering and GameObjects in Unity, see [Materials, Shaders &amp; Textures](https://docs.unity3d.com/Manual/Shaders.html) in the Unity User Manual.
 
-The [Smoothing Groups tool](workflow-edit-smoothing.md) smooths the seams on portions of your Meshes and leaves others sharper. This can be very useful when creating organic Meshes, such as terrain objects.
+The [Smooth Group editor](workflow-edit-smoothing.md) lets you smooth the seams on portions of your Meshes and leaves others sharper. This can be very useful when creating organic Meshes, such as terrain objects.
 
-For [Materials containing Textures](workflow-materials.md#texmat), you can use [ProBuilder's texture mapping tools](workflow-texture-mapping.md) to fine-tune the appearance. For example, if you apply a brick Material to a wall, you can adjust the offset, rotation, and tiling of the object's UVs. 
+For [Materials containing Textures](workflow-materials.md#texmat), you can use ProBuilder's [texture mapping](workflow-texture-mapping.md) to fine-tune the appearance. For example, if you apply a brick Material to a wall, you can adjust the offset, rotation, and tiling of the object's UVs. 
 
 ![Before and after adjusting the Texture mapping in the UV Editor](images/UVEditor_Example-BeforeAfter.png)
 

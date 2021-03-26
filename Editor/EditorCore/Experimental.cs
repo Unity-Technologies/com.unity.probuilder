@@ -31,6 +31,7 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
+            EditorGUILayout.HelpBox("Enabling Experimental Features will cause Unity to recompile scripts.", MessageType.Warning);
             enabled = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", enabled, searchContext);
 
             if (EditorGUI.EndChangeCheck())
