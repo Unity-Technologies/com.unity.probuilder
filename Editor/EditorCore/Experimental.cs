@@ -20,15 +20,31 @@ namespace UnityEditor.ProBuilder
 
         internal static bool experimentalFeaturesEnabled
         {
-            get { return s_experimentalFeatureEnabled.value; }
+#if PROBUILDER_EXPERIMENTAL_FEATURES
+            get { return true; }
+#else
+            get { return false; }
+#endif
+        }
+
+        public static void AfterSettingsSaved()
+        {
+#if PROBUILDER_EXPERIMENTAL_FEATURES
+            //if experimental features is enabled and that user prefs have been reset,
+            //update Scripting define symbols
+            if(!s_experimentalFeatureEnabled.value)
+                ScriptingSymbolManager.RemoveScriptingDefine(k_ExperimentalFeaturesEnabled);
+#endif
         }
 
         [UserSettingBlock("Experimental")]
         static void ExperimentalFeaturesSettings(string searchContext)
         {
+            var enabled = experimentalFeaturesEnabled;
+
             EditorGUI.BeginChangeCheck();
 
-            s_experimentalFeatureEnabled.value = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", s_experimentalFeatureEnabled, searchContext);
+            s_experimentalFeatureEnabled.value = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", enabled, searchContext);
 
             if (EditorGUI.EndChangeCheck())
             {
