@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return true; }
+            get { return ProBuilderEditor.instance != null; }
         }
 
         static bool CanCreateNewPolyShape()
