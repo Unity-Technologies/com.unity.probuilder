@@ -1,11 +1,11 @@
 # Arch
-The basic arch shape is  a curved symmetrical shape (see **A** in the image below). You can customize the basic arch shape to create tunnels, pipes, roofs, and many other objects.
+The basic arch shape is a curved symmetrical shape (see **A** in the image below). You can customize the basic arch shape to create tunnels, pipes, roofs, and many other objects.
 
 ![Arch shapes](images/shape-tool_arch.png)
 
-**(A)** Roof: Arch with 2 sides and increased depth
+**(A)** Roof: arch with two sides and increased depth
 
-**(B)** Wheel: Arch with increased number of sides, thickness and degrees (and no end cap)
+**(B)** Wheel: arch with increased number of sides, thickness and degrees (and no end cap)
 
 **(C)** Basic arch shape (default values)
 

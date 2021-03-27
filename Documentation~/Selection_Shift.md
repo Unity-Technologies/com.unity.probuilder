@@ -11,7 +11,7 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 | :----------------------------------------------------------- | --------------------- | ------------------------------------------------------------ |
 | ![SHIFT Modifier Add](images/icons/Selection_ShiftAdd.png)   | **Shift: Add**        | __Shift+Click__ adds the selected elements to the current selection.                                 |
 | ![SHIFT Modifier Subtract](images/icons/Selection_ShiftSubtract.png) | **Shift: Subtract**   | __Shift+Click__ removes the selected elements from the current selection.                          |
-| ![SHIFT Modifier Difference](images/icons/Selection_ShiftDifference.png) | **Shift: Difference** | __Shift+Click__ toggles the selection - so it adds unselected elements, and removes selected elements. |
+| ![SHIFT Modifier Difference](images/icons/Selection_ShiftDifference.png) | **Shift: Difference** | __Shift+Click__ toggles the selection: it adds unselected elements and removes selected elements. |
 
 This action is available in the [vertex, edge, and face modes](modes.md).
 

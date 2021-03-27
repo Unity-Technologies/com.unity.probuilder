@@ -12,3 +12,4 @@ In this example:
 * **Left panel**: The pivot point of the door is at its bottom-left corner.
 * **Middle panel**: Two edges are selected on the opposite side, so the __Set Pivot__ action changes the pivot to the center of those top edges.
 * **Right panel**: The pivot point is now at the top right, even when in Object editing mode.
+

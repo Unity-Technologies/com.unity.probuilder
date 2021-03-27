@@ -13,7 +13,8 @@ This section covers the following issues:
 
 ## Faces not rendering (black)
 
-If you are editing Mesh elements and suddenly notice that some of your faces have turned black, there are two common causes: * There is a problem with auto-lightmapping.
+If you are editing Mesh elements and suddenly notice that some of your faces have turned black, there are two common causes: 
+* There is a problem with auto-lightmapping.
 * You have two edges or two vertices in a single Mesh, and they are sharing the same space.
 
 ![Unrendered face](images/faq_black.png)
@@ -67,7 +68,7 @@ To build the UV2 channel:
 
 ## Missing FbxPrefab or assembly reference error
 
-You may see one or more of these errors if you have imported the **FBX Exporter** package, then later removed it:
+You might see one or more of these errors if you have imported the **FBX Exporter** package, then later removed it:
 
 ```
 <project-folder>/Addons/Fbx.cs(66,81): error CS0246: The type or namespace name `FbxNode' could not be found. Are you missing an assembly reference?

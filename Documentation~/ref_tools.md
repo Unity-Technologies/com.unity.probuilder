@@ -1,6 +1,6 @@
 # Tools reference
 
-Tools provide a modal environment where you can perform complex tasks, such as creating new Meshes or defining precise cuts on an existing Mesh. While a tool is active, you can't perform a different task without exiting the tool mode. For example, if you click on a different object in the Scene view while using the [Cut](cut-tool.md) tool, the tool exits without performing the cut.
+Tools provide a modal environment where you can perform complex tasks, such as creating new Meshes or defining precise cuts on an existing Mesh. While a tool is active, you can't perform a different task without exiting the tool mode. For example, in the Scene view, if you click on a different object while using the [Cut](cut-tool.md) tool, the tool exits without performing the cut.
 
 Mesh creation tools add a specific scripting component to the GameObject which creates the initial Mesh. ProBuilder uses this component to manage any changes you make to its initial definition. For example, after you use the [Shape](shape-tool.md) tool to create a pipe-shaped Mesh, you can re-edit that Mesh to change the pipe primitive to an arch primitive, although you lose any refinements, such as extrusions or face merges and splits.
 
