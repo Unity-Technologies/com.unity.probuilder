@@ -27,7 +27,7 @@ namespace UnityEditor.ProBuilder
             // Hide nodraw faces if present.
             foreach (var pb in pbMeshes)
             {
-                if (pb.GetComponent<MeshRenderer>() == null)
+                if (pb.GetComponent<MeshRenderer>() == null || UnityEditor.EditorUtility.IsPersistent(pb))
                     continue;
 
                 if (pb.GetComponent<MeshRenderer>().sharedMaterials.Any(x => x != null && x.name.Contains("NoDraw")))
@@ -55,6 +55,9 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in pbMeshes)
             {
+                if (UnityEditor.EditorUtility.IsPersistent(mesh))
+                    continue;
+
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
 
                 if (mesh.mesh == null)
@@ -82,6 +85,7 @@ namespace UnityEditor.ProBuilder
                     continue;
 
                 StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(gameObject, mesh, true);
+
             }
         }
 
