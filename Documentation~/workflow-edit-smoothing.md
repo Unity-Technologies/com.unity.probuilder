@@ -1,8 +1,8 @@
 # Smoothing hard edges on Meshes
 
-You can define **Smoothing Groups** to create a smooth and rounded look on part or all of your Mesh. If you include only a portion of your Mesh, the rest has more of a sharp and hard-cornered look.
+You can define **Smoothing Groups** to create a smooth and rounded look on part or all of your Mesh. If you include only a portion of your Mesh, the rest of the Mesh has more of a sharp and hard-cornered look.
 
-Smoothing does not subdivide the Mesh: it controls whether vertices are split for hard edges. This often works well for simpler Meshes, so it's great for anything that is isn't simple, chunky geometry. For example, you can use this on cylinders or more organic shapes, on curved walls, or on Mesh terrain chunks.
+Smoothing does not subdivide the Mesh: it controls whether vertices are split for hard edges. This often works well for simpler Meshes, so it's great for anything that is isn't simple geometry. For example, you can use this on cylinders or more organic shapes, on curved walls, or on Mesh terrain chunks.
 
 ![Smoothing Groups Example](images/Smoothing_Editor.png)
 
@@ -55,6 +55,5 @@ To clear selected face smoothing groups:
 
 ## Selecting faces in the groups
 
-To select all faces matching the current smoothing group index:
+To select all faces matching the current smoothing group index, click the ![select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) Select Faces button on the [Smooth Group Editor](smoothing-groups.md) window.
 
-* Click the ![select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) Select Faces button on the [Smooth Group Editor](smoothing-groups.md) window.

@@ -10,5 +10,5 @@ Use the __Set Pivot__ action to move the pivot point of this Mesh to the average
 
 In this example:
 * **Left panel**: The pivot point of the log is at the end corner of the cylinder.
-* **Middle panel**: The vertices on the end are selected, so the Set Pivot action changes the pivot to the center of those end vertices.
+* **Middle panel**: The vertices on the end are selected, so the **Set Pivot** action changes the pivot to the center of those end vertices.
 * **Right panel**: The pivot point is now in the center of the cylinder end, even when in Object editing mode.

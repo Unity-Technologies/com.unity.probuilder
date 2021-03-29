@@ -16,7 +16,7 @@ Exports the selected object(s) as `.obj` files (Wavefront OBJ format). This is a
 
 ## Export Ply
 
-Exports the selected object(s) as `.ply` files (Stanford PLY, or Polygon File Format). This format is generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials.
+Exports the selected object(s) as `.ply` files (Stanford PLY, or Polygon File Format). This format is generally supported and very extensible. It supports quads and vertex colors, but not multiple materials.
 
 ## Export Stl Ascii
 

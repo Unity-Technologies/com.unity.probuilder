@@ -2,7 +2,7 @@
 
 The __Conform Normals__ action sets all normals on the selected face(s) to the same relative direction.  
 
-ProBuilder uses the direction that most of the *selected* faces on the object are already facing.
+ProBuilder uses the direction that most of the selected faces on the object are already facing.
 
 ![Change the normals on the selected face](images/Face_ConformNormals.png) 
 

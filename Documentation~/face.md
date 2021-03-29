@@ -4,7 +4,7 @@ This section of the ProBuilder toolbar provides access to ProBuilder editing act
 
 ![Face mode action buttons on the ProBuilder toolbar](images/tool_faces.png)
 
-> ***Note:*** Some actions also have extra options or custom settings available. These action buttons have a special indicator in the top right corner. The documentation for each action includes information about these options.
+> **Note:** Some actions also have extra options or custom settings available. These action buttons have a special indicator in the top right corner. The documentation for each action includes information about these options.
 
 ## ![Subdivide Face icon](images/icons/Face_Subdivide.png) Subdivide Faces
 

@@ -14,7 +14,7 @@ To access this panel, either click the **Convert to Manual** button from the [Ac
 
 To switch back to the **Actions** panel in **Auto UV Mode** and convert all selected faces to [Auto UVs](auto-uvs-actions.md), click the **Convert to Auto** button.
 
-> **Tip:** Before you start to manipulate UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, delete the face pressed up aganst the wall. It is a waste of resources to render faces that aren't visible.
+> **Tip:** Before you start to manipulate UVs manually, make sure you delete any faces that you don't need. For example, if you have a box that is sitting against the wall and doesn't move, delete the face pressed up against the wall. It is a waste of resources to render faces that aren't visible.
 
 
 

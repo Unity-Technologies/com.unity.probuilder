@@ -2,7 +2,7 @@
 
 If you want to use a ProBuilder Mesh in another program, such as a 3D modeling application, you can use the **Export** action to save it to one of the supported formats. For example, you might be using a ProBuilder Mesh as a placeholder while greyboxing, but eventually want to create or enhance a complex Mesh.
 
-You can also export your ProBuilder Mesh to the Unity `.asset` format and re-import it to use as a Prefab or spawn it in the Scene. 
+You can also export your ProBuilder Mesh to the Unity `.asset` format and re-import it to use as a Prefab or spawn it in the scene. 
 
 > **Caution:** When you export a ProBuilder Mesh to file, remember that if you want to re-import and use ProBuilder tools and actions on it, you need to [ProBuilderize](Object_ProBuilderize.md) first.
 

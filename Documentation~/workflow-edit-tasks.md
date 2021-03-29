@@ -20,7 +20,7 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
 - **Cutting**: This is similar to [subdividing faces](Face_Subdivide.md) except that you control the shape of the new face, instead of letting ProBuilder split the face evenly. You click on the face to define the location of the edges and vertices using the modal [Cut](cut-tool.md) tool.
 
-- **Boolean operations**: Some geometry is hard to create just by moving faces, edges, and vertices. The experimental [Boolean](boolean.md) feature allows you to quickly combine two Meshes together to create a new Mesh. The final Mesh is either the addition of the two, the difference between the two, or only the common geometry between them, depending on the mode.
+- **Boolean operations**: Some geometry is hard to create by moving faces, edges, and vertices. The experimental [Boolean](boolean.md) feature allows you to quickly combine two Meshes together to create a new Mesh. The final Mesh is either the addition of the two, the difference between the two, or only the common geometry between them, depending on the mode.
 
 ## Object-specific tasks
 
@@ -32,7 +32,7 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
 - **Make a hole** (for a window or door): There are many methods you can use to do this, but some work better depending on what you are working on. For example, in an even and rectangular wall, such as on the first floor of a house, you could use this strategy:
 
-  - Select the wall's two faces (back and front), then **Shift**+**Scale** to create an [inset](Face_Inset.md) horizontally, and **Scale** vertically to make it an even border.
+  - Select the two faces of the wall (back and front), then **Shift**+**Scale** to create an [inset](Face_Inset.md) horizontally, and **Scale** vertically to make it an even border.
   - Press **Backspace** to delete the insets.
 
   On the other hand, if you are working on an uneven or multi-sided wall, such as a castle or church wall, this strategy is preferable:
