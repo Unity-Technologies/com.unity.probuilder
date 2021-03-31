@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 using UnityEditor.EditorTools;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
@@ -96,21 +95,37 @@ namespace UnityEditor.ProBuilder
             for(int i = 0; i < s_ArrowsLines.Length; i++)
                 s_ArrowsLines[i] = new Vector3[3];
 
+            m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
+            EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
+
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanging += ActiveToolChanging;
-#endif
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-
+#endif
         }
 
         void OnDisable()
         {
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanging -= ActiveToolChanging;
-#endif
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+#endif
+            EditorApplication.playModeStateChanged -= PlaymodeStateChanged ;
+
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
+        }
+
+        void PlaymodeStateChanged(PlayModeStateChange stateChange)
+        {
+            if(stateChange == PlayModeStateChange.ExitingEditMode
+               || stateChange == PlayModeStateChange.ExitingPlayMode)
+                return;
+
+            if(m_ShapeEditor != null)
+                DestroyImmediate(m_ShapeEditor);
+
+            m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
         }
 
 #if !UNITY_2020_2_OR_NEWER
@@ -130,13 +145,21 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             base.OnActivated();
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
         }
 
         public override void OnWillBeDeactivated()
         {
             base.OnWillBeDeactivated();
-            EditorApplication.delayCall += () => ProBuilderEditor.ResetToLastSelectMode();
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.delayCall += () => ResetToLastSelectMode();
+        }
+
+        public void ResetToLastSelectMode()
+        {
+            if(ProBuilderToolManager.activeTool != Tool.Custom)
+                ProBuilderEditor.ResetToLastSelectMode();
         }
 #endif
 
@@ -177,8 +200,6 @@ namespace UnityEditor.ProBuilder
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
-            Editor.CreateCachedEditor(targets.ToArray(), typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
-
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
