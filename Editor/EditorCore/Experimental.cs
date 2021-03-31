@@ -27,13 +27,23 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
+        static Experimental()
+        {
+            if(s_experimentalFeatureEnabled.value != experimentalFeaturesEnabled)
+            {
+                s_experimentalFeatureEnabled.value = experimentalFeaturesEnabled;
+                ProBuilderSettings.Save();
+            }
+        }
+
         public static void AfterSettingsSaved()
         {
 #if PROBUILDER_EXPERIMENTAL_FEATURES
-            //if experimental features is enabled and that user prefs have been reset,
-            //update Scripting define symbols
             if(!s_experimentalFeatureEnabled.value)
                 ScriptingSymbolManager.RemoveScriptingDefine(k_ExperimentalFeaturesEnabled);
+#else
+            if(s_experimentalFeatureEnabled.value)
+                ScriptingSymbolManager.AddScriptingDefine(k_ExperimentalFeaturesEnabled);
 #endif
         }
 
@@ -42,17 +52,7 @@ namespace UnityEditor.ProBuilder
         {
             var enabled = experimentalFeaturesEnabled;
 
-            EditorGUI.BeginChangeCheck();
-
             s_experimentalFeatureEnabled.value = SettingsGUILayout.SearchableToggle("Experimental Features Enabled", enabled, searchContext);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                if(s_experimentalFeatureEnabled.value)
-                    ScriptingSymbolManager.AddScriptingDefine(k_ExperimentalFeaturesEnabled);
-                else
-                    ScriptingSymbolManager.RemoveScriptingDefine(k_ExperimentalFeaturesEnabled);
-            }
 
             if(s_experimentalFeatureEnabled.value)
             {
