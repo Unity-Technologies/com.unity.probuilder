@@ -19,6 +19,7 @@ namespace UnityEditor.ProBuilder
             {
                 if(ProBuilderEditor.instance != null)
                     ProBuilderEditor.ReloadSettings();
+                Experimental.AfterSettingsSaved();
             };
 
             return provider;
