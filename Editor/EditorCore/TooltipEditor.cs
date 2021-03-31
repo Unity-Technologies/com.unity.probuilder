@@ -62,8 +62,13 @@ namespace UnityEditor.ProBuilder
 
         public static void Hide()
         {
-            if (s_Instance != null)
-                s_Instance.Close();
+            var all = Resources.FindObjectsOfTypeAll<TooltipEditor>();
+
+            for (int i = 0, c = all.Length; i < c; i++)
+            {
+                if (s_Instance != null)
+                    s_Instance.Close();
+            }
         }
 
         public static void Show(Rect rect, TooltipContent content)

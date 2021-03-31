@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 ### Bug Fixes
 
+- [case: 1324399] Fixing errors when building with prefabs in scene.
+- [case: 1323666] Preventing to assign an empty mesh as MeshCollider.
+- [case: 1322032] Fixing wrong ProBuilderMesh colors on domain reload when null.
 - [case: 1322150] Fixing torus and sphere UV generation when creating New Shape.
 - [case: 1320936] Fixing 'ProBuilderize' action creating empty submeshes.
 
@@ -17,36 +19,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Property `Experimental Feature` can now be reset with the rest of ProBuilder preferences.
 - Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
 
-## [5.0.0-pre.12] - 2021-03-05
+## [5.0.2] - 2021-03-11
 
 ### Bug Fixes
 
-- [case: 1317773] Fixing undo after shape creation.
-- Fixed shape creation requiring two undos to remove new shape.
-- Fixed shape preview flickering when executing shortcut to redo.
-- Fixed new shapes instantiating with generic "Shape" name instead of the primitive name.
+- Fixed `Draw Shape` tool showing incorrect UVs when setting shape bounding box.
+- Fixed `Draw Shape` tool not clearing selection when changing the active shape type.
+- Fixed `Cut Tool` error when pressing `Backspace` with no vertices placed.
+- Fixed `Cut Tool` error when finishing a cut segment with less than 3 vertices.
+- Fixed `Draw Shape` tool truncating shape property fields in the Scene View Overlay.
 
-## [5.0.0-pre.11] - 2021-02-25
+### Changes
+
+- Moved contents of warning box in `Draw Shape` tool to tooltips.
+- Updated manual documentation.
+
+## [5.0.1] - 2021-03-09
 
 ### Bug Fixes
 
-- [case: 1317148] Fixing edge picking problem with some Unity versions.
-- [case: 1312537] Fixing script stripping on disabled objects when building.
-- [case: 1311258] Fixing material reverting when subdividing edge.
-- [case: 1315335] Fixing the wording of the detach faces to be less confusing.
-- Added Particle System and IMGUI modules as a dependency.
+- Disable unstable test on Linux.
 
-## [5.0.0-pre.10] - 2021-01-22
+## [5.0.0] - 2021-03-08
 
 ### Features
 
-- Redesigned shape creation workflow: Shapes are now interactively drawn in the Scene View, and remain configurable after the point of creation via the `ShapeComponent` Inspector.
-- Added Point-to-point Cut tool.
-- Added a selection preview when using the Select Path tool.
+- Redesigned shape creation workflow. Shapes are now interactively drawn in the Scene View, and remain configurable after the point of creation via the `ShapeComponent` Inspector. Default shapes can still be created through the `GameObject/ProBuilder` menu.
+- Added `Point to Point Cut` tool.
+- Added a selection preview when using the `Select Path` tool.
 - Added `Selection X Ray` option to highlight occluded element selections with a muted color. Default shortcut is `Alt + Shift + X` (modifiable in Shortcut Manager).
 - Added Analytics for Actions and Menu Shortcuts
 
 ### Bug Fixes
+
 - [case: 1304442] Update package description for SRPs : warning to users to add samples projects.
 - [case: 1300329] Fixing Undo completely reverting all actions.
 - [case: 1299638] Fixed missing dependency on com.unity.modules.physics.
@@ -85,6 +90,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1286045] Fixed selection cleaning problem after scene restart.
 - [case: 1266769] Fixed tooltip window not rendering correctly on Linux.
 - [case: 1281658] Fixed warning when modifying a PBMesh with particule effect using PBMesh as shape emitter.
+- [case: 1317148] Fixed edge selection returning incorrect results with some Unity versions.
+- [case: 1312537] Fixed script stripping on disabled objects when building.
+- [case: 1311258] Fixed material reverting when subdividing edge.
+- [case: 1317773] Fixed undo after shape creation.
 
 ### Changes
 
@@ -96,6 +105,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed unused HDRP shader variants.
 - `MergeElements.Merge` moved to public API.
 - Upgraded `PolyShape` tool to EditorTool and correct some features in it.
+- Updated documentation for ProBuilder 5.0.0.
+- Add `GameObject/ProBuilder` menu to create primitives with default dimensions.
+- Added `com.unity.modules.physics` and `com.unity.modules.imgui` modules as dependencies.
 
 ### Internal
 

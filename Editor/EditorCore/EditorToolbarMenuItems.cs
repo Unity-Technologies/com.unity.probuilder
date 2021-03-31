@@ -53,6 +53,24 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
+		[MenuItem(k_MenuPrefix + "Editors/New Shape Toggle %#k", true, PreferenceKeys.menuEditor + 1)]
+		static bool MenuVerify_NewShapeToggle()
+		{
+			var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
+			return instance != null && instance.enabled;
+		}
+
+		[MenuItem(k_MenuPrefix + "Editors/New Shape Toggle %#k", false, PreferenceKeys.menuEditor + 1)]
+		static void MenuPerform_NewShapeToggle()
+		{
+			var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
+			if(instance != null && instance.enabled)
+			{
+				EditorUtility.ShowNotification(instance.PerformAction().notification);
+				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+			}
+		}
+
 		[MenuItem(k_MenuPrefix + "Editors/Open Lightmap UV Editor", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_OpenLightmapUVEditor()
 		{
@@ -323,7 +341,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [⌫]", true, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", true, PreferenceKeys.menuGeometry + 3)]
 		static bool MenuVerify_DeleteFaces()
 		{
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
@@ -331,7 +349,7 @@ namespace UnityEditor.ProBuilder
 		}
 
 		[Shortcut(k_ShortcutPrefix + "Geometry/Delete Faces", typeof(UnityEditor.SceneView), (KeyCode) 8, (ShortcutModifiers) 0)]
-		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [⌫]", false, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Delete Faces [backspace]", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_DeleteFaces()
 		{
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();

@@ -3,23 +3,20 @@ A cylinder is a shape with long straight sides and two circular (or roughly circ
 
 ![Cylinder shapes](images/shape-tool_cylinder.png)
 
-![A](images/LetterCircle_A.png) Default cylinder shape
+**(A)** Cylinder without a smoothing group
 
-![B](images/LetterCircle_B.png) Cylinder without the smoothing
+**(B)** Cylinder with a high sides count
 
-![C](images/LetterCircle_C.png) Cylinder with a height of 3 and 16 sides
+**(C)** Cylinder with a lot of height cuts
 
-![D](images/LetterCircle_D.png) Cylinder with a radius of 4 and 10 subdivisions
+**(D)** Default cylinder shape
 
-You can customize the shape of a cylinder with these shape properties:
-
-![Cylinder shape properties](images/shape-tool_cylinder-props.png)
+You can customize the shape of a cylinder with these shape-specific properties:
 
 
 | **Property:** | **Description:** |
 |:-- |:-- |
-| __Radius__ | Set the radius (width) of the cylinder in meters. The default value is 0.5. The minimum value is 0.01. |
-| __Number of Sides__ | Set the number of sides for the cylinder. The more sides you use (relative to the size of the __Radius__), the smoother the sides of the cylinder become. The default value is 8. Valid values range from 4 to 48. |
-| __Height__ | Set the height of the cylinder in meters. The default value is 1. |
-| __Height Segments__ | Set the number of divisions to use for the height of the cylinder. For example, a value of 3 produces 4 faces on every side of the cylinder. The default value is 0. Valid values range from 0 to 48. |
-| __Smooth__ | Enable this option to smooth the edges of the polygons. This is enabled by default. |
+| __Sides Count__ | Set the number of sides for the cylinder. The more sides you use, the smoother the sides of the cylinder become. The default value is 6. Valid values range from 4 to 64. |
+| __Height Cuts__ | Set the number of divisions to use for the height of the cylinder. For example, a value of 3 produces 4 faces on every side of the cylinder. The default value is 0. |
+| __Smooth__ | Enable this option to smooth the edges of the polygons. This property is enabled by default. |
+

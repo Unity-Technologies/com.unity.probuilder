@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder.Shapes
         public Vector3 pivotGlobalPosition
         {
             get => mesh.transform.TransformPoint(m_PivotPosition);
-            set => m_PivotPosition = mesh.transform.InverseTransformPoint(value);
+            set => pivotLocalPosition = mesh.transform.InverseTransformPoint(value);
         }
 
         public Vector3 size
@@ -131,11 +131,13 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
         }
 
-        internal void Rebuild(Bounds bounds, Quaternion rotation)
+        internal void Rebuild(Bounds bounds, Quaternion rotation, Vector3 cornerPivot)
         {
+            var trs = transform;
+            trs.position = bounds.center;
+            trs.rotation = rotation;
             size = bounds.size;
-            transform.position = bounds.center;
-            transform.rotation = rotation;
+            pivotGlobalPosition = pivotLocation == PivotLocation.Center ? bounds.center : cornerPivot;
             Rebuild();
         }
 
@@ -217,7 +219,7 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
                 var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
-                mesh.SetPivot(m_PivotLocation, pivotWorldPos);
+                mesh.SetPivot(pivotWorldPos);
                 m_ShapeBox.center = mesh.transform.InverseTransformPoint(bbCenter);
                 m_PivotPosition = mesh.transform.InverseTransformPoint(pivotWorldPos);
                 m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);

@@ -4,15 +4,15 @@ The **Smooth Group Editor** window allows you to [add and remove smoothing group
 
 ![Smoothing Groups Example](images/Smoothing_Editor_props.png)
 
-![A](images/LetterCircle_A.png) The [toggle buttons](#toggle) control the visibility of some areas of the window.
+**(A)** The [toggle buttons](#toggle) control the visibility of some areas of the window.
 
-![B](images/LetterCircle_B.png) The [Normals control](#normals) is a visual aid that allows you to change the length of the normals displayed on the Mesh in the Scene view.
+**(B)** The [Normals control](#normals) is a visual aid that allows you to change the length of the normals displayed on the Mesh in the Scene view.
 
-![C](images/LetterCircle_C.png) The help button opens up a [quick reference panel](#quickref) for using this window.
+**(C)** The help button opens up a [quick reference panel](#quickref) for using this window.
 
-![D](images/LetterCircle_D.png) The [overlay controls panel](#overlay) allows you to customize how ProBuilder previews the smoothing group changes on the Mesh in the Scene view. 
+**(D)** The [overlay controls panel](#overlay) allows you to customize how ProBuilder previews the smoothing group changes on the Mesh in the Scene view.
 
-![E](images/LetterCircle_E.png) The [main button panel](#main-panel) allows you to define up to 23 sets of smoothing groups. 
+**(E)** The [main button panel](#main-panel) allows you to define up to 23 sets of smoothing groups.
 
 > **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**).
 
@@ -50,7 +50,7 @@ The following hints about using the smoothing panels appear when you click the h
 
 ![Quick reference panel panel panel panel](images/Smoothing_Editor_props-pnlQuickref.png)
 
-To access the online documentation for Smoothing Groups, click the **Open Documentation** button at the bottom of the panel.
+To access the online documentation for Smoothing Groups, at the bottom of the panel, click the **Open Documentation** button. 
 
 
 
@@ -77,7 +77,7 @@ The overlay controls panel allows you to customize how ProBuilder previews the s
 
 ## Main button panel
 
-The main button panel allows you to define up to 23 sets of smoothing groups. 
+The main button panel allows you to define up to 23 sets of smoothing groups.
 
 ![Main button panel](images/Smoothing_Editor_props-pnlMain.png)
 
@@ -85,12 +85,12 @@ The main button panel allows you to define up to 23 sets of smoothing groups.
 
 These buttons in the top right corner help you manage smoothing groups:
 
-* Click the ![Select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) __Select Smoothing Group__ button to extend the face selection to all faces in the currently selected smoothing group. For best results, click a single face in the group to start and then click this button. The tool doesn't shrink the current selection, so start with as small a selection as possible.
+* Click the ![Select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) __Select Smoothing Group__ button to extend the face selection to all faces in the currently selected smoothing group. For best results, click a single face in the group to start and then click this button. ProBuilder doesn't shrink the current selection, so start with as small a selection as possible.
 * Click the ![Break smooth groups](images/icons/Face_BreakSmoothing.png) __Clear Smoothing Group__ button to remove all faces from the currently selected smoothing group.
 
 ### Preview colors
 
-This panel is always visible, but the color under each button only appears in [Preview mode](#toggle). 
+This panel is always visible, but the color under each button only appears in [Preview mode](#toggle).
 
 Whether or not you are in Preview mode, the button background changes color according to what faces and smoothing group you've selected:
 
@@ -100,4 +100,3 @@ Whether or not you are in Preview mode, the button background changes color acco
 | ![Gray-blue button background](images/Smoothing_Editor_props-btnGray.png) | None of the selected faces are in the selected Smoothing Group. |
 | ![Blue button background](images/Smoothing_Editor_props-btnBlue.png) | All of the faces in the currently selected Smoothing Group are currently selected. |
 | ![Yellow button background](images/Smoothing_Editor_props-btnYellow.png) | The current selection includes faces that are in the currently selected Smoothing Group, but it also includes faces that are not in any Smoothing Group. |
-

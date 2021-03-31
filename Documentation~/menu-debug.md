@@ -6,9 +6,9 @@ Use this sub-menu to access the **Log Preferences** window.
 
 Use the **Log Preferences** window to customize how ProBuilder logs messages. The darker color indicates that the setting is enabled (ON); the lighter color indicates that the setting is disabled (OFF).
 
-![A](images/LetterCircle_A.png) [Log Output](#output) defines where ProBuilder writes messages to.
+**(A)** [Log Output](#output) defines where ProBuilder writes messages to.
 
-![B](images/LetterCircle_B.png) [Chatty-ness](#chattyness) defines which kind of messages ProBuilder logs.
+**(B)** [Chatty-ness](#chattyness) defines which kind of messages ProBuilder logs.
 
 <a name="output"></a>
 
