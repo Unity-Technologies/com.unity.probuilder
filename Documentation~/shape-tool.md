@@ -21,7 +21,7 @@ Use the Shape tool to [create new ProBuilder Meshes](workflow-create-predefined.
 <a name="ShapeProperties"></a>
 ## Choosing the shape and size  
 
-The properties under the **Shape Properties** section let you choose a shape primitive and define the parameters of the bounding box in which ProBuilder will draw the shape.
+The properties under the **Shape Properties** section let you choose a shape primitive and define the parameters of the bounding box in which ProBuilder draws the shape.
 
 
 | **Property:**        | **Description:** |
@@ -44,7 +44,7 @@ The following sections contain information about each shape primitive, including
 |--|--|
 | ![Arch icon](images/icons/tool-arch.png) [Arch](Arch.md) shape primitive<br />![Cone icon](images/icons/tool-cone.png) [Cone](Cone.md) shape primitive<br />![Cube icon](images/icons/tool-cube.png) [Cube](Cube.md) shape primitive<br />![Cylinder icon](images/icons/tool-cylinder.png) [Cylinder](Cylinder.md) shape primitive<br />![Door icon](images/icons/tool-door.png) [Door](Door.md) shape primitive<br />![Pipe icon](images/icons/tool-pipe.png) [Pipe](Pipe.md) shape primitive | ![Plane icon](images/icons/tool-plane.png) [Plane](Plane.md) shape primitive<br />![Prism icon](images/icons/tool-prism.png) [Prism](Prism.md) shape primitive<br />![Sphere icon](images/icons/tool-sphere.png) [Sphere](Sphere.md) shape primitive<br />![Sprite icon](images/icons/tool-sprite.png) [Sprite](Sprite.md) shape primitive<br />![Stairs icon](images/icons/tool-stairs.png) [Stairs](Stair.md) shape primitive<br />![Torus icon](images/icons/tool-torus.png) [Torus](Torus.md) shape primitive |
 
-ProBuilder Meshes are similar to other GameObjects in Unity in terms of how they interact with other GameObjects and respond to Physics in the Scene. However, you can use [ProBuilder editing features](workflow-edit.md) to customize and deform the Mesh topology after you create them. 
+ProBuilder Meshes are similar to other GameObjects in Unity in terms of how they interact with other GameObjects and respond to Physics in the scene. However, you can use [ProBuilder editing features](workflow-edit.md) to customize and deform the Mesh topology after you create them. 
 
 
 

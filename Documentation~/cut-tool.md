@@ -1,6 +1,6 @@
 # ![Cut Tool icon](images/icons/Cut_Tool.png) Cut tool
 
-Use the Cut tool to easily subdivide Mesh faces with precision. To cut out a shape on a Mesh, you activate the Cut tool which lets you define the cutout shape with points. The cutout shape becomes a new face on the Mesh.
+Use the Cut tool to subdivide Mesh faces with precision. To cut out a shape on a Mesh, you activate the Cut tool, which lets you define the cutout shape with points. The cutout shape becomes a new face on the Mesh.
 
 To create a new face on an existing Mesh face:
 
@@ -21,7 +21,7 @@ To create a new face on an existing Mesh face:
   > **Tip**: ProBuilder displays red edges as a visual warning if your points make an invalid edge or face. When this happens, undo adding each point until all the edges become blue again.
 
 	As soon as you return to the first point and click it again (such as the fourth point in the triangle example), the cut is complete and the new face appears selected in the Scene view. Now you can either exit the tool or start another cut.
-
+	
 	**Note**: If nothing happened when you returned to the first point and clicked it again or clicked the **Complete** button, it is probably because the points you defined do not create a valid edge or face. For example, if the tool detected only one point, that does not make a valid edge. You can define more points, undo the previous points, or click the **Cancel** button to cancel the operation and start again.
 
 6. To start another cut, click the **Start** button. The **Cut Settings** panel displays a **Complete** button and a **Cancel** button again.

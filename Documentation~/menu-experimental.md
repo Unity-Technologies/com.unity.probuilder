@@ -6,7 +6,7 @@ This sub-menu provides access to experimental features.
 
 > **Note**: This sub-menu is only available when you enable the [experimental features preference](preferences.md#experimental).
 
-Experimental features aren’t quite ready for public use, but are included for users to try out early, and report issues/feedback. 
+Experimental features aren’t ready for public use, but are included for users to try out early, and report issues/feedback. 
 
 ## Boolean (CSG) Tool
 

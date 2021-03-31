@@ -6,7 +6,7 @@ The experimental Boolean features provides an interface for creating new Meshes 
 
 ![Boolean (Experimental) window](images/Experimental_BooleanWindow.png)
 
-Each type of operation takes two ProBuilder Mesh objects as the *left* and *right* inputs. ProBuilder combines the two input Meshes to create a new Mesh shape based on the operation you select.
+Each type of operation takes two ProBuilder Mesh objects as the left and right inputs. ProBuilder combines the two input Meshes to create a new Mesh shape based on the operation you select.
 
 You can only access this feature from the menu, because it is experimental:
 
@@ -41,6 +41,6 @@ The new Mesh matches both of the original Meshes but as a single Mesh.
 
 ### Subtraction
 
-The new Mesh is like a Union of the two original Meshes, minus the shape where the two shapes occupy the same space.
+The new Mesh is like a union of the two original Meshes, minus the shape where the two shapes occupy the same space.
 
 ![Boolean Subtraction of a Cube and a Cylinder](images/boolean_subtraction.png)

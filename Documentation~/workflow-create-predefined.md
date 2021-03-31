@@ -24,7 +24,7 @@ To create a Mesh from a predefined shape:
 
   ![Preview of the stairs inside the bounding box](images/Example_ShapeToolsWithCurvedStair2.png)
 
-5. While the Shape tool is active, you can't use the transform tools, but you can use the camera to orbit around the new shape and zoom in and out.
+5. While the Shape tool is active, you can't use the transform tools, but you can use the Camera to orbit around the new shape and zoom in and out.
 
 6. In the Scene view, click and hold the left mouse button to draw the base of the bounding box (along the x-axis and the z-axis) and then release the mouse button to validate the base. Move the mouse up (or down) the y-axis to draw the height, and then click to finalize the new Mesh.
 

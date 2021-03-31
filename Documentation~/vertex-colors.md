@@ -16,4 +16,4 @@ To open this window, click the **Vertex Colors** button ( ![Vertex Color Editor 
 
 **(D)** Use the [standard Unity Color Picker](https://docs.unity3d.com/Manual/EditingValueProperties.html) to pick a custom color for the palette.
 
-**(E)** Use the eyedropper to match a custom color exactly for the palette.
+**(E)** Use the eyedropper to match a custom color for the palette.

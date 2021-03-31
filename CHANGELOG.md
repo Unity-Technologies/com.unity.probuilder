@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Moved contents of warning box in `Draw Shape` tool to tooltips.
+- Updated manual documentation.
 
 ## [5.0.1] - 2021-03-09
 

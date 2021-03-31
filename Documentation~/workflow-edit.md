@@ -1,10 +1,10 @@
 # Editing Meshes
 
-ProBuilder provides these ways to edit ProBuilder Meshes:
+ProBuilder provides the following ways to edit ProBuilder Meshes:
 
-- You can [modify the elements](#edit) of any ProBuilder Mesh to change its shape. As you move or extrude faces, edges, or vertices, you are distorting and deforming the Mesh itself. 
+- You can [modify the elements](#edit) of any ProBuilder Mesh to change its shape. When you move or extrude faces, edges, or vertices, you are distorting and deforming the Mesh itself. 
 
-  Other than basic transformations, ProBuilder also lets you fill holes, split vertices, collapse edges, and many more actions. You can use these actions to build up an existing shape or combine it with other shapes, including merging or detaching Meshes.
+  ProBuilder also lets you fill holes, split vertices, collapse edges, and many more actions, other than basic transformations. You can use these actions to build up an existing shape or combine it with other shapes, including merging or detaching Meshes.
 
   ProBuilder provides a modal [Cut tool](cut-tool.md) that lets you draw a custom sub-face onto an existing Mesh face.
 
@@ -18,7 +18,7 @@ ProBuilder provides these ways to edit ProBuilder Meshes:
 
   - For Bezier Shapes, you can [edit the underlying bezier curve](bezier.md); you can delete and move existing points, add new ones, close the loop, and smooth it.
   
-  	> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
+  	> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Use with caution.
 
 
 
@@ -29,7 +29,7 @@ ProBuilder provides these ways to edit ProBuilder Meshes:
 
 To edit objects and elements, you need to:
 
-1. Decide which actions can help you achieve the end results. There might be multiple solutions that can all produce the effect you want. This can be a very challenging stage, particularly for new users who don't know what kind of tools and actions ProBuilder provides.
+1. Decide which actions can help you achieve the end results. There might be multiple solutions that can all produce the effect you want. This can be a challenging stage, particularly for new users who don't know what kind of tools and actions ProBuilder provides.
 2. Select the element(s) that you want to modify. Often, the editing tool or action impacts which elements you need to select and how you need to select them.
 3. Depending on which action you are using, set any options to help customize the outcome or change the default settings. If an action offers options, an indicator appears on the button in the [ProBuilder toolbar](toolbar.md):
 	* **Alt/Opt+Click** the gear ![Options Icon](images/icons/Options.png) indicator that appears in the top right of the button in **Icon** mode.

@@ -5,7 +5,7 @@ The __Invert Selection__ action selects the inverse of the current selection: al
 ![Invert Selection Example](images/InvertSelection_Example.png)
 
 In this example:
-* **Left image**: All tiles except the corners are selected.
+* **Left image**: all tiles except the corners are selected.
 * **Right image**: the __Invert Selection__ action changes the selection so that only the corners are selected.
 
 This action is available in the [vertex, edge, and face modes](modes.md).

@@ -50,7 +50,7 @@ The following hints about using the smoothing panels appear when you click the h
 
 ![Quick reference panel panel panel panel](images/Smoothing_Editor_props-pnlQuickref.png)
 
-To access the online documentation for Smoothing Groups, click the **Open Documentation** button at the bottom of the panel.
+To access the online documentation for Smoothing Groups, at the bottom of the panel, click the **Open Documentation** button. 
 
 
 
