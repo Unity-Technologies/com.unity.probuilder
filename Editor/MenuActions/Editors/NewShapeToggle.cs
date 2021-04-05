@@ -18,7 +18,6 @@ namespace UnityEditor.ProBuilder.Actions
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }
-        protected override bool hasFileMenuEntry { get { return false; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
@@ -27,8 +26,9 @@ namespace UnityEditor.ProBuilder.Actions
                 keyCommandSuper, keyCommandShift, 'K'
             );
 
-        public override bool enabled {
-            get { return true; }
+        public override bool enabled
+        {
+            get { return ProBuilderEditor.instance != null; }
         }
 
         protected override ActionResult PerformActionImplementation()

@@ -1,16 +1,16 @@
-# ![Material Tools Icon](images/icons/Panel_Materials.png) Material Editor window
+# ![Material Editor icon](images/icons/Panel_Materials.png) Material Editor window
 
-Use the **Material Editor** window to apply Materials to objects or faces.
+Use the **Material Editor** to apply Materials to objects or faces.
 
 ![The Material Editor window](images/material-tools.png)
 
-![A](images/LetterCircle_A.png) Use the [Quick Material](#quick) section to set up a Material to apply with a button or a hotkey.
+**(A)** Use the [Quick Material](#quick) section to set up a Material to apply with a button or a shortcut.
 
-![B](images/LetterCircle_B.png) Use the [Material Palette](#palette) section to designate several Materials to use with buttons or hotkeys. You can also save and load new Palettes, and add more slots to use for Materials.
+**(B)** Use the [Material Palette](#palette) section to designate several Materials to use with buttons or shortcuts. You can also save and load new Palettes, and add more slots to use for Materials.
 
-To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **Material Editor** button ( ![Material Tools icon](images/icons/Panel_Materials.png) ).
+To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **Material Editor** button ( ![Material Editor icon](images/icons/Panel_Materials.png) ).
 
-> **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Material Editor**).
+> **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Material Editor**).
 
 For an overview of working with Materials and texture mapping, see [Materials, Shaders, Textures, and UVs](workflow-texture-mapping.md).
 
@@ -20,19 +20,19 @@ For an overview of working with Materials and texture mapping, see [Materials, S
 
 ## Quick Material
 
-The **Quick Material** section allows you to specify a Material to apply with either the hotkey combination or the **Apply** button. 
+The **Quick Material** section allows you to specify a Material to apply with either the shortcut combination or the **Apply** button.
 
 ![Quick Material section](images/material-tools-quick.png)
 
-![Item A](images/LetterCircle_A.png) You can [set a reference to the Material](#qset) to use as the *quick* Material. 
+**(A)** You can [set a reference to the Material](#qset) to use as the "quick" Material.
 
-![Item B](images/LetterCircle_B.png) ProBuilder shows a preview when you set a quick Material.
+**(B)** ProBuilder shows a preview when you set a quick Material.
 
 > **Note:** If you are working in Windows, this preview might not appear.
 
-![Item C](images/LetterCircle_C.png) With a quick Material defined, any time you click **Apply**, ProBuilder [applies the quick Material](#qapply) to the selected faces. Alternatively, you can hold down **Ctrl/Cmd+Shift** and click on a face to apply the quick Material to the clicked face.
+**(C)** With a quick Material defined, any time you click **Apply**, ProBuilder [applies the quick Material](#qapply) to the selected faces. Alternatively, you can hold down **Ctrl/Cmd+Shift** and click on a face to apply the quick Material to the clicked face.
 
-![Item D](images/LetterCircle_D.png) Click **Match Selection** to change the quick Material to match the Material that is already on the selected face.
+**(D)** Click **Match Selection** to change the quick Material to match the Material that is already on the selected face.
 
 
 
@@ -40,9 +40,9 @@ The **Quick Material** section allows you to specify a Material to apply with ei
 
 ### Setting a quick Material
 
-To set a quick Material, set a reference to a Material Asset you want to use as the quick Material. You can drag in the Asset from the Project view or use the object picker next to the reference property. 
+To set a quick Material, set a reference to a Material Asset you want to use as the quick Material. You can drag in the Asset from the Project view or use the object picker next to the reference property.
 
-If there's a face on a GameObject in the Scene that is already using the Material you want to set as quick, select that face and click the **Match Selection** button. 
+If there's a face on a GameObject in the scene that is already using the Material you want to set as quick, select that face and click the **Match Selection** button.
 
 <a name="qapply"></a>
 
@@ -51,7 +51,7 @@ If there's a face on a GameObject in the Scene that is already using the Materia
 To apply the quick Material:
 
 1. Select the object or face(s) you want to apply the quick Material to.
-2. Click the **Apply** button or use the **Ctrl/Cmd+Shift+Click** hotkey combination.
+2. Click the **Apply** button or use the **Ctrl/Cmd+Shift+Click** shortcut combination.
 
 
 
@@ -59,33 +59,33 @@ To apply the quick Material:
 
 ## Material Palette
 
-A Material Palette is a convenient way to keep several Materials ready to apply, either with the Material Editor or with hotkey combinations. 
+A Material Palette is a convenient way to keep several Materials ready to apply, either with the Material Editor or with shortcut combinations.
 
 You can set up to 10 different Materials on the Palette, or expand the slots in your Palette if you need more.
 
-You can also save your Palette as a custom Palette and load it in other Scenes or sessions to use it again. 
+You can also save your Palette as a custom Palette and load it in other Scenes or sessions to use it again.
 
 ![Material Palette section](images/material-tools-palette.png)
 
-![Item A](images/LetterCircle_A.png) Create a new Material Palette or select a saved Palette to load from the Palette drop-down menu. 
+**(A)** Create a new Material Palette or select a saved Palette to load from the Palette drop-down menu.
 
-![Item B](images/LetterCircle_B.png) Set a reference to the Material Palette you want to load.
+**(B)** Set a reference to the Material Palette you want to load.
 
-![Item C](images/LetterCircle_C.png) Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the hotkey displayed on the button (**Alt/Opt+#**).
+**(C)** Use one of the buttons to apply the associated Material to the selected face(s). Alternatively, you can use the shortcut displayed on the button (**Alt/Opt+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset &lt;number&gt;**).
 
-![Item D](images/LetterCircle_D.png) Set a reference to the Material you want to use in this slot of the Material Palette.
+**(D)** Set a reference to the Material you want to use in this slot of the Material Palette.
 
-![Item E](images/LetterCircle_E.png) To delete an extra slot, click the red square on the right edge of the button.
+**(E)** To delete an extra slot, click the red square on the right edge of the button.
 
-![Item F](images/LetterCircle_F.png) Click **Add** to add a new slot to the Material Palette. 
+**(F)** Click **Add** to add a new slot to the Material Palette.
 
 
 
 <a name="set"></a>
 
-### Defining Materials on a Palette 
+### Defining Materials on a Palette
 
-To set Materials on your Palette, set a reference to a Material Asset you want to use in a specific Material slot. You can drag in the Asset from the Project view or use the object picker next to the reference property. 
+To set Materials on your Palette, set a reference to a Material Asset you want to use in a specific Material slot. You can drag in the Asset from the Project view or use the object picker next to the reference property.
 
 <a name="apply"></a>
 
@@ -94,11 +94,11 @@ To set Materials on your Palette, set a reference to a Material Asset you want t
 To apply a specific Material from the Palette:
 
 1. Select the object or face(s) you want to apply the Material to.
-2. Click the button to the left of the Material you want to apply. For example, if you want to apply the Material in the third slot, click the button that displays **Alt + 3**. 
+2. Click the button to the left of the Material you want to apply. For example, if you want to apply the Material in the third slot, click the button that displays **Alt + 3**.
 
-> **Tip:** You can find the number of the Material preset on each slot's button. Then you can use that number to apply its Material directly using either of these methods: 
+> **Tip:** You can find the number of the Material preset on each slot's button. Then you can use that number to apply its Material directly using either of these methods:
 >
-> * Use the **Alt/Opt+#** hotkey. 
+> * Use the **Alt/Opt+#** shortcut.
 > * Select the Material preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Materials** > **Apply Material Preset #**).
 
 
@@ -115,7 +115,7 @@ By default, the Material Palette provides 10 slots (numbered 1 to 0) for your Ma
 
 2. Pick your new Material to use in the new slot.
 
-> **Note:** You can't set up new hotkeys for the new slots but you can click their buttons in the Material Editor to apply them.
+> **Note:** You can't set up new shortcuts for the new slots but you can click their buttons in the Material Editor to apply them.
 
 
 
@@ -150,5 +150,3 @@ All Material Palette Asset files in the current Project appear as menu items in 
 To load a saved Material Palette from file:
 
 * Select the saved palette by name from the **Material Palette** drop-down menu.
-
-

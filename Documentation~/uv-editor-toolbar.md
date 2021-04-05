@@ -4,13 +4,13 @@
 
 
 
-![A](images/LetterCircle_A.png) This first group of buttons contains shortcuts to the standard Unity manipulation modes. These have exactly the same effect as the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
+**(A)** This first group of buttons contains shortcuts to the standard Unity manipulation tools. These have the same effect as the [main Unity toolbar buttons](https://docs.unity3d.com/Manual/PositioningGameObjects.html).
 
-![Item B](images/LetterCircle_B.png) The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When you use [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
+**(B)** The second button group contains shortcuts to ProBuilder's [Element Edit modes](edit-mode-toolbar.md). When you use [Manual UV Editing](manual-uvs-actions.md), this allows you to select and manipulate UVs by Vertex, Edge, or Face.  
 
 > **Note:** When you use [Auto UVs](auto-uvs-actions.md), you can only edit UVs by face. If you edit an Edge or Vertex, ProBuilder converts the selected UVs to [Manual UVs](manual-uvs-actions.md).
 
-![C](images/LetterCircle_C.png) The third group of buttons contain buttons to perform the following actions: 
+**(C)** The third group of buttons contain buttons to perform the following actions: 
 
 * ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) __Scope controls__: Control how Unity's standard [transform tools](#Scope) behave.
 * ![In-Scene ON](images/icons/ProBuilderGUI_UV_ShowTexture_On.png) __Texture preview__: Toggle whether the UV Viewer displays the face's [Texture](#Texture).

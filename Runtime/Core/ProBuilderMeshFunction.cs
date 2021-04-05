@@ -324,7 +324,7 @@ namespace UnityEngine.ProBuilder
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
 
-            mesh.subMeshCount = materialCount;
+            mesh.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < mesh.subMeshCount; i++)
             {
@@ -425,8 +425,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, collider, "m_Mesh");
 #endif
-
-                collider.sharedMesh = mesh;
+                collider.sharedMesh = (mesh != null && mesh.vertexCount > 0) ? mesh : null;
             }
         }
 

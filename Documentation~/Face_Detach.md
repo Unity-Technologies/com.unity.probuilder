@@ -1,6 +1,8 @@
 # ![Detach Face icon](images/icons/Face_Detach.png) Detach Faces
 
-The __Detach Faces__ tool detaches the selected face(s) from the rest of the Mesh. 
+The __Detach Faces__ action detaches the selected face(s) from the rest of the Mesh. 
+
+> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Detach Faces**). 
 
 ![Remove extruded Mesh from top of cube after detaching](images/DetachFace_Example.png)
 

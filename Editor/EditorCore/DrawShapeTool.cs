@@ -4,6 +4,7 @@ using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
@@ -238,22 +239,32 @@ namespace UnityEditor.ProBuilder
             m_BB_HeightCorner = m_BB_Origin + size;
         }
 
-        internal void DuplicatePreview(Vector3 position)
+        internal void DoDuplicateShapePreviewHandle(Vector3 position)
         {
-            if(position.Equals(Vector3.positiveInfinity) || !Event.current.isMouse)
+            var evt = Event.current;
+
+            if(evt.type != EventType.Repaint)
                 return;
+
+            bool previewShortcutActive = evt.shift && !(evt.control || evt.command);
+
+            if (HandleUtility.nearestControl != m_ControlID || !previewShortcutActive)
+            {
+                DestroyImmediate(m_DuplicateGO);
+                return;
+            }
 
             var pivotLocation = (PivotLocation)s_LastPivotLocation.value;
             var size = currentShapeInOverlay.size;
 
             m_Bounds.size = size;
-
             Vector3 cornerPosition;
-            switch(pivotLocation)
+
+            switch (pivotLocation)
             {
                 case PivotLocation.FirstCorner:
                     cornerPosition = GetPoint(position);
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
                     m_Bounds.center = cornerPosition + m_PlaneRotation * size / 2f;
 
                     m_BB_Origin = cornerPosition;
@@ -266,8 +277,8 @@ namespace UnityEditor.ProBuilder
                     position = GetPoint(position);
                     cornerPosition = position - size / 2f;
                     cornerPosition.y = position.y;
-                    m_Bounds.center = cornerPosition + new Vector3(size.x/2f,0, size.z/2f) + (size.y / 2f) * m_Plane.normal;
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+                    m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
+                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
 
                     m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
                     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
@@ -275,23 +286,28 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
-            ProBuilderShape proBuilderShape;
-
-            if(m_DuplicateGO == null)
+            if (m_DuplicateGO == null)
             {
                 var instantiated = ShapeFactory.Instantiate(activeShapeType, ((PivotLocation)s_LastPivotLocation.value));
-                proBuilderShape = instantiated.GetComponent<ProBuilderShape>();
-                m_DuplicateGO = proBuilderShape.gameObject;
+                var shape = instantiated.GetComponent<ProBuilderShape>();
+                m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
-                ApplyPrefsSettings(proBuilderShape);
-                proBuilderShape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
-            }
-            else
-                proBuilderShape = m_DuplicateGO.GetComponent<ProBuilderShape>();
+                ApplyPrefsSettings(shape);
+                shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
 
-            EditorShapeUtility.CopyLastParams(proBuilderShape.shape, proBuilderShape.shape.GetType());
-            proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
-            ProBuilderEditor.Refresh(false);
+                EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
+                shape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+                ProBuilderEditor.Refresh(false);
+            }
+
+            var pivot = GetPoint(position);
+            if (pivotLocation == PivotLocation.Center)
+                pivot += m_Plane.normal * size.y * .5f;
+
+            m_DuplicateGO.transform.position = pivot;
+            m_DuplicateGO.transform.rotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+
+            DrawBoundingBox(false);
         }
 
         void RecalculateBounds()
@@ -343,7 +359,7 @@ namespace UnityEditor.ProBuilder
                 m_IsShapeInit = true;
             }
 
-            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
+            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();
@@ -390,8 +406,6 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            EditorGUILayout.HelpBox(L10n.Tr("Click and drag to place and scale the shape, or SHIFT+click once to duplicate last size settings."), MessageType.Info);
-
             DrawShapeGUI();
 
 #if !UNITY_2021_1_OR_NEWER
@@ -463,6 +477,7 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
+                        Selection.activeObject = null;
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
                         SetBounds(currentShapeInOverlay.size);
 
