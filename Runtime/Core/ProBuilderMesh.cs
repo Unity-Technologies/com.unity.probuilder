@@ -43,6 +43,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public const uint maxVertexCount = ushort.MaxValue;
 
+        // MeshFormatVersion is used to deprecate and upgrade serialized data.
         [SerializeField]
         int m_MeshFormatVersion;
 
@@ -175,12 +176,24 @@ namespace UnityEngine.ProBuilder
         /// Used to check if 2 versions of the ProBuilderMesh are the same or not.
         /// </value>
         [SerializeField]
-        uint m_VersionID = 0;
+        ushort m_VersionIndex = 0;
+        internal ushort versionIndex => m_VersionIndex;
 
-        internal uint versionID
+        internal struct NonVersionedEditScope : IDisposable
         {
-            get => m_VersionID;
-            set => m_VersionID = value;
+            ProBuilderMesh m_Mesh;
+            ushort m_VersionIndex;
+
+            public NonVersionedEditScope(ProBuilderMesh mesh)
+            {
+                m_Mesh = mesh;
+                m_VersionIndex = mesh.versionIndex;
+            }
+
+            public void Dispose()
+            {
+                m_Mesh.m_VersionIndex = m_VersionIndex;
+            }
         }
 
         /// <value>
@@ -599,6 +612,8 @@ namespace UnityEngine.ProBuilder
                     umesh.SetUVs(2, uv3);
                 if (first.HasArrays(MeshArrays.Texture3))
                     umesh.SetUVs(3, uv4);
+
+                IncrementVersionIndex();
             }
         }
 

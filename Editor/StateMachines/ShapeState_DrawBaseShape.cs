@@ -40,10 +40,7 @@ namespace UnityEditor.ProBuilder
                             m_IsDragging = true;
 
                             if(tool.m_DuplicateGO != null)
-                                GameObject.DestroyImmediate(tool.m_DuplicateGO);
-
-                            if(Selection.activeGameObject != null)
-                                MeshSelection.SetSelection((GameObject)null);
+                                Object.DestroyImmediate(tool.m_DuplicateGO);
 
                             Drag(evt.mousePosition);
                         }
@@ -98,11 +95,9 @@ namespace UnityEditor.ProBuilder
         public void CreateLastShape()
         {
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ProBuilderShape>();
-            shape.gameObject.name = shape.gameObject.name + "-Copy";
+            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
             DrawShapeTool.ApplyPrefsSettings(shape);
-
-            UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, "Create Shape Copy");
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
@@ -112,11 +107,8 @@ namespace UnityEditor.ProBuilder
 
             tool.m_ProBuilderShape = null;
             tool.m_LastShapeCreated = shape;
-
-            if(tool.m_DuplicateGO != null)
-                GameObject.DestroyImmediate(tool.m_DuplicateGO);
-
-            MeshSelection.SetSelection(shape.gameObject);
+            Object.DestroyImmediate(tool.m_DuplicateGO);
+            Selection.activeGameObject = shape.gameObject;
         }
     }
 }

@@ -20,9 +20,8 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a shape with default parameters.
         /// </summary>
-        /// <param name="shape">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
         public static ProBuilderMesh Instantiate<T>(PivotLocation pivotType = PivotLocation.Center) where T : Shape, new()
         {
             return Instantiate(typeof(T));
@@ -31,9 +30,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a shape with default parameters.
         /// </summary>
-        /// <param name="shape">The ShapeType to create.</param>
+        /// <param name="shapeType">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
         public static ProBuilderMesh Instantiate(Type shapeType, PivotLocation pivotType = PivotLocation.Center)
         {
             if (shapeType == null)
@@ -60,9 +59,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a shape with default parameters.
         /// </summary>
-        /// <param name="shapePrimitive">The ShapeType to create.</param>
+        /// <param name="shape">The ShapeType to create.</param>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitve shape.</returns>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
         public static ProBuilderMesh Instantiate(Shape shape, PivotLocation pivotType = PivotLocation.Center)
         {
             if (shape == null)

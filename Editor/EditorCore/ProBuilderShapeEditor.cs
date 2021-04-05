@@ -33,9 +33,9 @@ namespace UnityEditor.ProBuilder
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
-        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("X (Length)");
-        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Y (Height)");
-        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Z (Width)");
+        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("X");
+        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Y");
+        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Z");
 
         const string k_dialogTitle = "Shape reset";
         const string k_dialogText = "The current shape has been edited, you will loose all modifications.";
@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
             if(target == null || serializedObject == null)
                 return;
 
-            serializedObject.Update ();
+            serializedObject.Update();
 
             var foldoutEnabled = tool == null ? s_foldoutEnabled : DrawShapeTool.s_SettingsEnabled.value;
             foldoutEnabled = EditorGUILayout.Foldout(foldoutEnabled, m_ShapePropertyLabel, true);
@@ -158,7 +158,8 @@ namespace UnityEditor.ProBuilder
                         {
                             if(tool != null)
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
-                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(proBuilderShape.GetComponents(typeof(Component)),"Change Shape");
+
+                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
                             proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
                             ProBuilderEditor.Refresh();
                         }
@@ -168,10 +169,20 @@ namespace UnityEditor.ProBuilder
                 if(tool)
                     EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
 
+                var labelWidth = EditorGUIUtility.labelWidth;
+                var fieldWidth = EditorGUIUtility.fieldWidth;
+                EditorGUIUtility.labelWidth = 30;
+                EditorGUIUtility.fieldWidth = 30;
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.PropertyField(m_ShapeSizeXProperty, k_ShapeSizeXLabel);
-                if(HasMultipleShapeTypes || (m_CurrentShapeType != typeof(Plane) &&  m_CurrentShapeType != typeof(Sprite)))
+                var is2D = HasMultipleShapeTypes ||
+                           ( m_CurrentShapeType != typeof(Plane) && m_CurrentShapeType != typeof(Sprite) );
+                using (new EditorGUI.DisabledScope(!is2D))
                     EditorGUILayout.PropertyField(m_ShapeSizeYProperty, k_ShapeSizeYLabel);
                 EditorGUILayout.PropertyField(m_ShapeSizeZProperty, k_ShapeSizeZLabel);
+                EditorGUILayout.EndHorizontal();
+                EditorGUIUtility.labelWidth = labelWidth;
+                EditorGUIUtility.fieldWidth = fieldWidth;
 
                 EditorGUI.indentLevel--;
             }
