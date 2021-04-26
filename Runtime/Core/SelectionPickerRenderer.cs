@@ -561,6 +561,8 @@ namespace UnityEngine.ProBuilder
 
                 go.AddComponent<MeshFilter>().sharedMesh = m;
                 go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
+                go.hideFlags = HideFlags.HideAndDontSave;
+                go.transform.SetParent(pb.transform.parent, false);
 
                 pickerObjects[i] = go;
             }
@@ -591,6 +593,9 @@ namespace UnityEngine.ProBuilder
                 go.name = pb.name + "  (Vertex Billboards)";
                 go.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
                 go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.vertexPickerMaterial;
+                go.hideFlags = HideFlags.HideAndDontSave;
+                go.transform.SetParent(pb.transform.parent, false);
+
                 pickerObjects[i] = go;
             }
 
@@ -606,6 +611,9 @@ namespace UnityEngine.ProBuilder
                     go.name = pb.name + "  (Depth Mask)";
                     go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
                     go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
+                    go.hideFlags = HideFlags.HideAndDontSave;
+                    go.transform.SetParent(pb.transform.parent, false);
+
                     depthObjects[i] = go;
                 }
             }
@@ -636,6 +644,9 @@ namespace UnityEngine.ProBuilder
                 go.name = pb.name + "  (Edge Billboards)";
                 go.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
                 go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.edgePickerMaterial;
+                go.hideFlags = HideFlags.HideAndDontSave;
+                go.transform.SetParent(pb.transform.parent, false);
+
                 pickerObjects[i] = go;
             }
 
@@ -651,6 +662,9 @@ namespace UnityEngine.ProBuilder
                     go.name = pb.name + "  (Depth Mask)";
                     go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
                     go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
+                    go.hideFlags = HideFlags.HideAndDontSave;
+                    go.transform.SetParent(pb.transform.parent, false);
+                    
                     depthObjects[i] = go;
                 }
             }
