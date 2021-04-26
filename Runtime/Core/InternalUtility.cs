@@ -39,7 +39,7 @@ namespace UnityEngine.ProBuilder
         public static GameObject EmptyGameObjectWithTransform(Transform t)
         {
             GameObject go                   = new GameObject();
-            go.transform.position           = t.position;
+            go.transform.localPosition      = t.localPosition;
             go.transform.localRotation      = t.localRotation;
             go.transform.localScale         = t.localScale;
 
