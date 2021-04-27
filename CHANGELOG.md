@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [5.0.3] - 2021-04-01
+## [Unreleased]
 
 ### Bug Fixes
 
 - [case: 1324374] Fixed incorrect vertex/edge/face rect selection when mesh's parent is rotated and/or scaled.
+
+## [5.0.3] - 2021-04-01
+
+### Bug Fixes
+
 - [case: 1324399] Fixing errors when building with prefabs in scene.
 - [case: 1323666] Preventing to assign an empty mesh as MeshCollider.
 - [case: 1322032] Fixing wrong ProBuilderMesh colors on domain reload when null.
