@@ -540,9 +540,6 @@ namespace UnityEngine.ProBuilder
             {
                 var pb = selection[i];
 
-                GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
-                go.name = pb.name + " (Face Depth Test)";
-
                 Mesh m = new Mesh();
                 m.vertices = pb.positionsInternal;
                 m.triangles = pb.facesInternal.SelectMany(x => x.indexesInternal).ToArray();
@@ -559,10 +556,8 @@ namespace UnityEngine.ProBuilder
 
                 m.colors32 = colors;
 
-                go.AddComponent<MeshFilter>().sharedMesh = m;
-                go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
-                go.hideFlags = HideFlags.HideAndDontSave;
-                go.transform.SetParent(pb.transform.parent, false);
+                GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Face Depth Test)", pb.transform, m,
+                    BuiltinMaterials.facePickerMaterial, true);
 
                 pickerObjects[i] = go;
             }
@@ -589,12 +584,10 @@ namespace UnityEngine.ProBuilder
             {
                 // build vertex billboards
                 var pb = selection[i];
-                GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
-                go.name = pb.name + "  (Vertex Billboards)";
-                go.AddComponent<MeshFilter>().sharedMesh = BuildVertexMesh(pb, map, ref index);
-                go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.vertexPickerMaterial;
-                go.hideFlags = HideFlags.HideAndDontSave;
-                go.transform.SetParent(pb.transform.parent, false);
+
+                var mesh = BuildVertexMesh(pb, map, ref index);
+                GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Vertex Billboards)", pb.transform, mesh,
+                    BuiltinMaterials.vertexPickerMaterial, true);
 
                 pickerObjects[i] = go;
             }
@@ -607,12 +600,9 @@ namespace UnityEngine.ProBuilder
                 for (int i = 0; i < selectionCount; i++)
                 {
                     var pb = selection[i];
-                    GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
-                    go.name = pb.name + "  (Depth Mask)";
-                    go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
-                    go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
-                    go.hideFlags = HideFlags.HideAndDontSave;
-                    go.transform.SetParent(pb.transform.parent, false);
+
+                    GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Depth Mask)", pb.transform, pb.mesh,
+                        BuiltinMaterials.facePickerMaterial, true);
 
                     depthObjects[i] = go;
                 }
@@ -640,12 +630,10 @@ namespace UnityEngine.ProBuilder
             {
                 // build edge billboards
                 var pb = selection[i];
-                GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
-                go.name = pb.name + "  (Edge Billboards)";
-                go.AddComponent<MeshFilter>().sharedMesh = BuildEdgeMesh(pb, map, ref index);
-                go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.edgePickerMaterial;
-                go.hideFlags = HideFlags.HideAndDontSave;
-                go.transform.SetParent(pb.transform.parent, false);
+
+                var mesh = BuildEdgeMesh(pb, map, ref index);
+                GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Edge Billboards)", pb.transform, mesh,
+                    BuiltinMaterials.edgePickerMaterial, true);
 
                 pickerObjects[i] = go;
             }
@@ -657,14 +645,11 @@ namespace UnityEngine.ProBuilder
                 for (int i = 0; i < selectionCount; i++)
                 {
                     var pb = selection[i];
+
                     // copy the select gameobject just for z-write
-                    GameObject go = InternalUtility.EmptyGameObjectWithTransform(pb.transform);
-                    go.name = pb.name + "  (Depth Mask)";
-                    go.AddComponent<MeshFilter>().sharedMesh = pb.mesh;
-                    go.AddComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.facePickerMaterial;
-                    go.hideFlags = HideFlags.HideAndDontSave;
-                    go.transform.SetParent(pb.transform.parent, false);
-                    
+                    GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Depth Mask)", pb.transform, pb.mesh,
+                        BuiltinMaterials.facePickerMaterial, true);
+
                     depthObjects[i] = go;
                 }
             }

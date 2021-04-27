@@ -50,6 +50,20 @@ namespace UnityEngine.ProBuilder
             return go;
         }
 
+        public static GameObject MeshGameObjectWithTransform(string name, Transform t, Mesh mesh, Material mat, bool inheritParent)
+        {
+            GameObject go = InternalUtility.EmptyGameObjectWithTransform(t);
+            go.name = name;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = mat;
+            go.hideFlags = HideFlags.HideAndDontSave;
+
+            if (inheritParent)
+                go.transform.SetParent(t.parent, false);
+
+            return go;
+        }
+
         public static T NextEnumValue<T>(this T current) where T : IConvertible
         {
             Assert.IsTrue(current is Enum);
