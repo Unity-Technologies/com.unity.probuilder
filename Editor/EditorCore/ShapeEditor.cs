@@ -1,6 +1,10 @@
 using System.Linq;
 using System.Reflection;
+#if UNITY_2021_2_OR_NEWER
+using UnityEditor.SceneManagement;
+#else
 using UnityEditor.Experimental.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PMath = UnityEngine.ProBuilder.Math;
