@@ -12,14 +12,7 @@ namespace UnityEditor.ProBuilder
     {
         static HierarchyListener()
         {
-            // The inspector icon for ProBuilderMesh is set in the component metadata. However, this also serves as the
-            // scene view gizmo icon, which we do not want. To avoid drawing an icon for every mesh in the Scene View,
-            // we simply tell the AnnotationManager to not render the icon. This _does_ put ProBuilderMesh in the
-            // "Recently Changed" list, but only when it is modified the first time.
-            // The alternative method of setting an icon is to place it in a folder named "Editor Default Resources/Icons",
-            // however that requires that the resources directory be in "Assets", which we do not want to do.
-            EditorUtility.SetGizmoIconEnabled(typeof(ProBuilderMesh), false);
-
+            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
             // When a prefab is updated, this is raised.  For some reason it's
             // called twice?
  #if UNITY_2018_1_OR_NEWER
@@ -31,6 +24,17 @@ namespace UnityEditor.ProBuilder
             // prefabInstanceUpdated is not called when dragging out of Project view,
             // or when creating a prefab or reverting.  OnHierarchyChange captures those.
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
+        }
+
+        static void OnAfterAssemblyReload()
+        {
+            // The inspector icon for ProBuilderMesh is set in the component metadata. However, this also serves as the
+            // scene view gizmo icon, which we do not want. To avoid drawing an icon for every mesh in the Scene View,
+            // we simply tell the AnnotationManager to not render the icon. This _does_ put ProBuilderMesh in the
+            // "Recently Changed" list, but only when it is modified the first time.
+            // The alternative method of setting an icon is to place it in a folder named "Editor Default Resources/Icons",
+            // however that requires that the resources directory be in "Assets", which we do not want to do.
+            EditorApplication.delayCall += () => EditorUtility.SetGizmoIconEnabled(typeof(ProBuilderMesh), false);
         }
 
         static void PrefabInstanceUpdated(GameObject go)
