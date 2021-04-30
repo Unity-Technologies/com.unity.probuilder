@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1332226] Fixed issue where some Gizmos menu items would be missing in projects that have ProBuilder package installed.
 - [case: 1324374] Fixed incorrect vertex/edge/face rect selection when mesh's parent is rotated and/or scaled.
 
 ## [5.0.3] - 2021-04-01
