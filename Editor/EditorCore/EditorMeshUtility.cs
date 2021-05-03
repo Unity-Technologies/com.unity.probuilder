@@ -236,11 +236,13 @@ namespace UnityEditor.ProBuilder
 
         static void CleanupSubmeshesAndMaterials(ProBuilderMesh mesh)
         {
+            // Initially deem all submeshes as empty
             List<int> emptySubMeshIndices = new List<int>();
             var submeshCount = MaterialUtility.GetMaterialCount(mesh.renderer);
             for (int i = 0; i < submeshCount; i++)
                 emptySubMeshIndices.Add(i);
 
+            // Keep only the indices that aren't referenced by any of the faces
             foreach (var face in mesh.faces)
             {
                 if (emptySubMeshIndices.Contains(face.submeshIndex))
@@ -253,6 +255,7 @@ namespace UnityEditor.ProBuilder
 
             if (emptySubMeshIndices.Count > 0)
             {
+                // Lower the referenced submeshIndices based on how many empty submeshes there are
                 foreach (var face in mesh.faces)
                 {
                     foreach (var emptySubmeshIndex in emptySubMeshIndices)

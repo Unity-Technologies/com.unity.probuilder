@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [case: 1332226] Fixed issue where some Gizmos menu items would be missing in projects that have ProBuilder package installed.
 - [case: 1324374] Fixed incorrect vertex/edge/face rect selection when mesh's parent is rotated and/or scaled.
+- [case: 1331901] Fixed issue where empty submesh materials would not be automatically removed from the renderer.
+
+### Changes
+
+- Added preference `Auto Remove Material` that's enabled by default and controls whether materials for empty submeshes should be removed automatically.
 
 ## [5.0.3] - 2021-04-01
 
