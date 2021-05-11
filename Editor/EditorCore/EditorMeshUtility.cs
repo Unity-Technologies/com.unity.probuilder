@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
+using UnityEngine.Profiling;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
@@ -235,15 +236,16 @@ namespace UnityEditor.ProBuilder
         }
 
         static void CleanupSubmeshesAndMaterials(ProBuilderMesh mesh)
-        {
+        { 
+            Profiler.BeginSample("CleanupSubmeshesAndMaterials");
             // Initially deem all submeshes as empty
-            List<int> emptySubMeshIndices = new List<int>();
+            HashSet<int> emptySubMeshIndices = new HashSet<int>();
             var submeshCount = MaterialUtility.GetMaterialCount(mesh.renderer);
             for (int i = 0; i < submeshCount; i++)
                 emptySubMeshIndices.Add(i);
 
             // Keep only the indices that aren't referenced by any of the faces
-            foreach (var face in mesh.faces)
+            foreach (var face in mesh.facesInternal)
             {
                 if (emptySubMeshIndices.Contains(face.submeshIndex))
                 {
@@ -252,16 +254,16 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
             }
-
+            
             if (emptySubMeshIndices.Count > 0)
             {
                 // Lower the referenced submeshIndices based on how many empty submeshes there are
-                foreach (var face in mesh.faces)
+                foreach (var face in mesh.facesInternal)
                 {
                     foreach (var emptySubmeshIndex in emptySubMeshIndices)
                     {
                         if (face.submeshIndex >= emptySubmeshIndex)
-                            face.submeshIndex--;
+                            --face.submeshIndex;
                         else
                             break;
                     }
@@ -271,13 +273,14 @@ namespace UnityEditor.ProBuilder
                 var submeshes = Submesh.GetSubmeshes(mesh.faces, submeshCount - emptySubMeshIndices.Count,
                     umesh.GetTopology(0));
 
-                umesh.subMeshCount = submeshes.Length;
+                umesh.subMeshCount = submeshes.Length; 
                 for (int i = 0; i < umesh.subMeshCount; i++)
                     umesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
 
                 UndoUtility.RecordObject(mesh.renderer, Undo.GetCurrentGroupName());
                 MaterialUtility.RemoveSharedMaterials(mesh.renderer, emptySubMeshIndices);
             }
+            Profiler.EndSample();
         }
 
         /// <summary>
