@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Reflection;
 using System.Linq;
 using UnityEditor.ProBuilder;
+using UnityEditor.ProBuilder.Actions;
 
 namespace UnityEngine.ProBuilder.Addons.FBX
 {
@@ -40,13 +41,6 @@ namespace UnityEngine.ProBuilder.Addons.FBX
                 }
             }
         }
-        
-        static readonly Type[] k_ProBuilderTypes = new Type[]
-        {
-            typeof(BezierShape),
-            typeof(PolyShape),
-            typeof(Entity)
-        };
 
         static FbxOptions m_FbxOptions = new FbxOptions() {
             quads = true
@@ -71,12 +65,12 @@ namespace UnityEngine.ProBuilder.Addons.FBX
             var getMeshForComponent = FbxExporterAssembly.GetTypes()
                .Where(t => t.BaseType == typeof(MulticastDelegate) && t.Name.StartsWith("GetMeshForComponent"))
                .First(t => t.ContainsGenericParameters);
-            
+
             getMeshForComponent = getMeshForComponent.MakeGenericType(typeof(ProBuilderMesh));
             var meshDelegate = Delegate.CreateDelegate(getMeshForComponent, typeof(Fbx).GetMethod("GetMeshForComponent", BindingFlags.NonPublic | BindingFlags.Static));
 
             registerMeshCallback.Invoke(null, new object[] { meshDelegate, true });
-            
+
             m_FbxOptions.quads = ProBuilderSettings.Get<bool>("Export::m_FbxQuads", SettingsScope.User, true);
         }
 
@@ -93,16 +87,16 @@ namespace UnityEngine.ProBuilder.Addons.FBX
 
             Object.DestroyImmediate(mesh);
 
-            // probuilder can't handle mesh assets that may be externally reloaded, just strip pb stuff for now.
-            foreach (var type in k_ProBuilderTypes)
-            {
-                var component = pmesh.GetComponent(type);
-                if (component != null)
-                    Object.DestroyImmediate(component);
-            }
+            var exporterType = exporter.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                .First(x => x.Name == "get_ExportOptions").Invoke(exporter, null).GetType();
 
-            pmesh.preserveMeshAssetOnDestroy = true;
-            Object.DestroyImmediate(pmesh);
+            var prefabExporterType = FbxExporterAssembly.GetType("UnityEditor.Formats.Fbx.Exporter.ConvertToPrefabSettingsSerialize");
+
+            if(exporterType == prefabExporterType)
+            {
+                // probuilder can't handle mesh assets that may be externally reloaded, just strip pb stuff for now.
+                StripProBuilderScripts.DoStrip(pmesh);
+            }
 
             return true;
         }
