@@ -87,7 +87,7 @@ mesh.Optimize();
 
 ## Third Party Licenses<a name="third-party-licenses"></a>
 
-[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/com.unity.probuilder/Third%20Party%20Notices.md)
+[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/Third%20Party%20Notices.md)
 
 ## Contributing
 
