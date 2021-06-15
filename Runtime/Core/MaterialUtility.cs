@@ -25,30 +25,25 @@ namespace UnityEngine.ProBuilder
             return s_MaterialArray[Math.Clamp(index, 0, count - 1)];
         }
 
-        /// <summary>
-        /// Given a sorted collection of material indices, removes renderer's shared materials
-        /// </summary>
-        /// <param name="renderer">Target renderer</param>
-        /// <param name="materialIndices">Sorted collection of material indices</param>
-        internal static void RemoveSharedMaterials(Renderer renderer, ICollection<int> materialIndices)
+        internal static void RemoveMaterialsAndTrimExcess(Renderer renderer, List<int> indicesToRemove, int submeshCount)
         {
+            indicesToRemove.Sort();
             s_MaterialArray.Clear();
             renderer.GetSharedMaterials(s_MaterialArray);
+            int startLength = s_MaterialArray.Count;
 
-            var materialsRemoved = 0;
-            foreach (var materialIndex in materialIndices)
+            for (int i = indicesToRemove.Count - 1; i >= 0; --i)
             {
-                var adjustedIndex = materialIndex - materialsRemoved;
-
-                if (adjustedIndex >= 0 && adjustedIndex < s_MaterialArray.Count)
-                {
-                    s_MaterialArray.RemoveAt(adjustedIndex);
-                    materialsRemoved++;
-                }
+                int indexToRemove = indicesToRemove[i];
+                if (indexToRemove < s_MaterialArray.Count)
+                    s_MaterialArray.RemoveAt(indexToRemove);
             }
 
-            if (materialsRemoved > 0)
-                renderer.sharedMaterials = s_MaterialArray.ToArray();
+            if (submeshCount < s_MaterialArray.Count)
+                s_MaterialArray.RemoveRange(submeshCount, s_MaterialArray.Count - submeshCount);
+
+            if (startLength != s_MaterialArray.Count)
+                renderer.materials = s_MaterialArray.ToArray();
         }
     }
 }

@@ -86,10 +86,15 @@ namespace UnityEngine.ProBuilder
 
         internal static int GetSubmeshCount(ProBuilderMesh mesh)
         {
+            return GetSubmeshCount(mesh.facesInternal);
+        }
+
+        internal static int GetSubmeshCount(IEnumerable<Face> faces)
+        {
             int count = 0;
-            foreach (var face in mesh.facesInternal)
-                count = Mathf.Max(count, face.submeshIndex);
-            return count + 1;
+            foreach (var face in faces)
+                count = Mathf.Max(count, face.submeshIndex + 1);
+            return count;
         }
 
         /// <summary>
@@ -189,6 +194,53 @@ namespace UnityEngine.ProBuilder
             }
 
             return submeshes;
+        }
+
+        internal static void RemoveSubmeshes(IEnumerable<Face> faces, List<int> indicesToRemove)
+        {
+            if (faces == null)
+                throw new ArgumentNullException(nameof(faces));
+
+            if (indicesToRemove == null)
+                throw new ArgumentNullException(nameof(indicesToRemove));
+            
+            foreach (var face in faces)
+            {
+                int submeshIndex = face.submeshIndex;
+                foreach (var index in indicesToRemove)
+                {
+                    if (face.submeshIndex >= index)
+                        --submeshIndex;
+                    else
+                        break;
+                }
+                face.submeshIndex = submeshIndex;
+            }
+        }
+
+        internal static void GetEmptySubmeshes(ICollection<Face> faces, List<int> emptySubmeshes)
+        {
+            if (faces == null)
+                throw new ArgumentNullException(nameof(faces));
+
+            if (emptySubmeshes == null)
+                throw new ArgumentNullException(nameof(emptySubmeshes));
+
+            //Calculate the count of submeshes if no empty was present
+            int currentMaxIndex = GetSubmeshCount(faces) - 1;
+
+            emptySubmeshes.Clear();
+            emptySubmeshes.Capacity = Mathf.Max(emptySubmeshes.Capacity, currentMaxIndex + 1);
+            for (int i = 0; i <= currentMaxIndex; ++i)
+                emptySubmeshes.Add(i);
+
+            //Remove indices that are used to obtain only the empty ones 
+            foreach (var face in faces)
+            {
+                emptySubmeshes.Remove(face.submeshIndex);
+                if (emptySubmeshes.Count == 0)
+                    break;
+            }
         }
 
         internal static void MapFaceMaterialsToSubmeshIndex(ProBuilderMesh mesh)

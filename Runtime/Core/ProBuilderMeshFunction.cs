@@ -16,6 +16,7 @@ namespace UnityEngine.ProBuilder
 #endif
     {
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
+        static List<int> s_IndicesBuffer = new List<int>();
 
 #if UNITY_EDITOR
         public void OnBeforeSerialize() {}
@@ -319,6 +320,12 @@ namespace UnityEngine.ProBuilder
             }
 
             m_MeshFormatVersion = k_MeshFormatVersion;
+
+            // Clean up empty submeshes and materials (TODO only if option is enable)
+            s_IndicesBuffer.Clear();
+            Submesh.GetEmptySubmeshes(faces, s_IndicesBuffer);
+            Submesh.RemoveSubmeshes(faces, s_IndicesBuffer);
+            MaterialUtility.RemoveMaterialsAndTrimExcess(renderer, s_IndicesBuffer, Submesh.GetSubmeshCount(faces));
 
             int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
