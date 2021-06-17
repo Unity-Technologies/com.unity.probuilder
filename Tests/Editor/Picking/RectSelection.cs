@@ -117,6 +117,41 @@ class RectSelection
     }
 
     [Test]
+    public void PickVertices_RotatedParent_DepthTestOn()
+    {
+        // Create a parent container with -90 degree rotation around Z
+        var parent = new GameObject("Parent");
+        parent.transform.position = new Vector3(0f, 0f, 0f);
+        parent.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+
+        // Create a Cube such that when parented to the container has (6f, 0f, 0f) world position
+        var cube = ShapeFactory.Instantiate<UnityEngine.ProBuilder.Shapes.Cube>();
+        cube.transform.position = new Vector3(0f, 6f, 0f);
+        cube.transform.SetParent(parent.transform, false);
+
+        // Create a camera and point it to (6f, 0f, 0) looking directly at one of the Cube's faces
+        camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
+        camera.transform.position = new Vector3(6f, 0, -6f);
+        camera.transform.forward = Vector3.forward;
+
+        selectables = new ProBuilderMesh[]
+        {
+            cube
+        };
+
+        // Attempt full screen rect selection - this should select the 4 vertices of the quad that the camera's facing
+        var vertices = TestVertexPick(new PickerOptions() { depthTest = true });
+        var selection = vertices.FirstOrDefault();
+        Assert.IsNotNull(selection);
+        HashSet<int> selectedElements = selection.Value;
+        Assert.That(selectedElements.Count, Is.EqualTo(4));
+
+        UObject.DestroyImmediate(cube.gameObject);
+        UObject.DestroyImmediate(parent);
+        UObject.DestroyImmediate(camera.gameObject);
+    }
+
+    [Test]
     public void PickVertices_DepthTestOn()
     {
         Setup();

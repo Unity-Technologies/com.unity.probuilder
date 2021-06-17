@@ -39,13 +39,27 @@ namespace UnityEngine.ProBuilder
         public static GameObject EmptyGameObjectWithTransform(Transform t)
         {
             GameObject go                   = new GameObject();
-            go.transform.position           = t.position;
+            go.transform.localPosition      = t.localPosition;
             go.transform.localRotation      = t.localRotation;
             go.transform.localScale         = t.localScale;
 
             #if UNITY_EDITOR
             StageUtility.PlaceGameObjectInCurrentStage(go);
             #endif
+
+            return go;
+        }
+
+        public static GameObject MeshGameObjectWithTransform(string name, Transform t, Mesh mesh, Material mat, bool inheritParent)
+        {
+            GameObject go = InternalUtility.EmptyGameObjectWithTransform(t);
+            go.name = name;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = mat;
+            go.hideFlags = HideFlags.HideAndDontSave;
+
+            if (inheritParent)
+                go.transform.SetParent(t.parent, false);
 
             return go;
         }
