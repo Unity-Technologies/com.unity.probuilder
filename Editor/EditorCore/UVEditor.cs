@@ -526,6 +526,10 @@ namespace UnityEditor.ProBuilder
             Repaint();
         }
 
+		public static event System.Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
+		public static event System.Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
+		public static event System.Action<IEnumerable<ProBuilderMesh>> selectionUpdated;
+
         /**
          * Automatically select textureGroup buddies, and copy origins of all UVs.
          * Also resets the mesh to PB data, removing vertices appended by
@@ -533,6 +537,8 @@ namespace UnityEditor.ProBuilder
          */
         internal void OnBeginUVModification()
         {
+			if (beforeMeshModification != null) beforeMeshModification(selection);
+
             Lightmapping.PushGIWorkflowMode();
 
             modifyingUVs = true;
@@ -583,6 +589,8 @@ namespace UnityEditor.ProBuilder
          */
         internal void OnFinishUVModification()
         {
+			if (afterMeshModification != null) afterMeshModification(selection);
+
             Lightmapping.PopGIWorkflowMode();
 
             modifyingUVs = false;
@@ -1224,6 +1232,8 @@ namespace UnityEditor.ProBuilder
                     OnBeginUVModification();
                 }
 
+				if (selectionUpdated != null) selectionUpdated(selection);
+
                 needsRepaint = true;
 
                 Vector2 newUVPosition = t_handlePosition;
@@ -1331,6 +1341,8 @@ namespace UnityEditor.ProBuilder
                     uvOrigin = handlePosition; // have to set this one special
                     handlePosition_origin = handlePosition;
                 }
+
+				if (selectionUpdated != null) selectionUpdated(selection);
 
                 handlePosition.x += delta.x;
                 handlePosition.y += delta.y;

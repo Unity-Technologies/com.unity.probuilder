@@ -280,6 +280,10 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
 
+			UVEditor.beforeMeshModification += BeforeMeshModification;
+			UVEditor.afterMeshModification += AfterMeshModification;
+			UVEditor.selectionUpdated += SelectionUpdated;
+
             LoadSettings();
             InitGUI();
             EditorApplication.delayCall += () => UpdateSelection();
@@ -290,6 +294,10 @@ namespace UnityEditor.ProBuilder
         {
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
+
+			UVEditor.beforeMeshModification -= BeforeMeshModification;
+			UVEditor.afterMeshModification -= AfterMeshModification;
+			UVEditor.selectionUpdated -= SelectionUpdated;
 
             ClearElementSelection();
 
@@ -335,6 +343,12 @@ namespace UnityEditor.ProBuilder
             if(afterMeshModification != null)
                 afterMeshModification(meshes);
         }
+
+		void SelectionUpdated(IEnumerable<ProBuilderMesh> meshes)
+		{
+			if(selectionUpdated != null)
+				selectionUpdated(meshes);
+		}
 
         internal static void ReloadSettings()
         {
