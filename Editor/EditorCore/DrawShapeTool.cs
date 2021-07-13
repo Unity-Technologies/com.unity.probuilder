@@ -369,7 +369,10 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+            // todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window(k_ShapeTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
+#pragma warning restore 618
 
             var evt = Event.current;
 
