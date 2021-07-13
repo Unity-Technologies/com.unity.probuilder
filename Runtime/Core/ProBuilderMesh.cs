@@ -907,6 +907,11 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="preserveMeshAssetOnDestroy"/>
         public static event Action<ProBuilderMesh> meshWillBeDestroyed;
 
+        /// <summary>
+        /// Mesh was rebuilt from Awake call.
+        /// </summary>
+        internal static event Action<ProBuilderMesh> meshWasInitialized;
+
         /// <value>
         /// Invoked from ProBuilderMesh.OnDestroy before any cleanup is performed.
         /// </value>
