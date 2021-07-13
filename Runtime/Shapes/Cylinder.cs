@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Cylinder")]
     public class Cylinder : Shape
     {
-        [Range(4,64)]
+        [Range(3, 64)]
         [SerializeField]
         int m_AxisDivisions = 6;
 
@@ -50,9 +50,6 @@ namespace UnityEngine.ProBuilder.Shapes
             var meshSize = Math.Abs(size);
             var radius = Mathf.Min(meshSize.x, meshSize.z) * .5f;
             var height = meshSize.y;
-
-            if (m_AxisDivisions % 2 != 0)
-                m_AxisDivisions++;
 
             float stepAngle = 360f / m_AxisDivisions;
             float heightStep = height / (m_HeightCuts + 1);
