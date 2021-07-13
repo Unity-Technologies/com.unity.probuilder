@@ -200,11 +200,19 @@ namespace UnityEditor.ProBuilder
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
+
+#if UNITY_2021_2_OR_NEWER
+            GUILayout.BeginVertical(GUILayout.MinWidth(DrawShapeTool.k_MinOverlayWidth));
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+            GUILayout.EndVertical();
+#else
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             }
+#endif
         }
 
         /// <summary>

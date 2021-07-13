@@ -16,6 +16,8 @@ namespace UnityEditor.ProBuilder
 {
     class DrawShapeTool : EditorTool
     {
+        internal const int k_MinOverlayWidth = 250;
+
         ShapeState m_CurrentState;
 
         internal ProBuilderShape m_LastShapeCreated = null;
@@ -425,11 +427,20 @@ namespace UnityEditor.ProBuilder
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
-            using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
+            // 21.2 introduces Scene View Overlays. There's no need for additional styling, but we do need to force
+            // the width to accomodate for IMGUI not laying out nicely.
+#if UNITY_2021_2_OR_NEWER
+            GUILayout.BeginVertical(GUILayout.MinWidth(k_MinOverlayWidth));
+            ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
+            ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
+            GUILayout.EndVertical();
+#else
+            using (new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).m_ShapePropertyLabel.text = foldoutName;
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
+                ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
+                ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
             }
+#endif
         }
 
         void ResetPrefs()
