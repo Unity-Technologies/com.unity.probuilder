@@ -226,7 +226,7 @@ namespace UnityEngine.ProBuilder
             missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
-            // at it has a cost to check.
+            // and it has a cost to check.
             if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && mesh != null)
             {
 #if UNITY_2019_3_OR_NEWER

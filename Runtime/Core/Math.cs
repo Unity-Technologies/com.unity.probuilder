@@ -1267,5 +1267,29 @@ namespace UnityEngine.ProBuilder
                 return min * Mathf.Sign(value);
             return value;
         }
+
+        internal static Vector2 MakeNonZero(Vector2 value)
+        {
+            value.x = MakeNonZero(value.x);
+            value.y = MakeNonZero(value.y);
+            return value;
+        }
+
+        internal static Vector3 MakeNonZero(Vector3 value)
+        {
+            value.x = MakeNonZero(value.x);
+            value.y = MakeNonZero(value.y);
+            value.z = MakeNonZero(value.z);
+            return value;
+        }
+
+        internal static Vector4 MakeNonZero(Vector4 value)
+        {
+            value.x = MakeNonZero(value.x);
+            value.y = MakeNonZero(value.y);
+            value.z = MakeNonZero(value.z);
+            value.w = MakeNonZero(value.w);
+            return value;
+        }
     }
 }

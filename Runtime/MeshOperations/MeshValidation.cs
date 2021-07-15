@@ -371,7 +371,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The mesh to test.</param>
         /// <param name="removedVertices">If fixes were made, this will be set to the number of vertices removed during that process.</param>
         /// <returns>Returns true if no problems were found, false if topology issues were discovered and fixed.</returns>
-        internal static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
+        public static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
         {
             removedVertices = 0;
 
@@ -396,7 +396,110 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
             }
 
+            EnsureValidAttributes(mesh);
+
             return true;
+        }
+
+        enum AttributeValidationStrategy
+        {
+            Resize,
+            Nullify
+        }
+
+        static void EnsureRealNumbers(IList<Vector2> attribute)
+        {
+            for (int i = 0, c = attribute.Count; i < c; i++)
+            {
+                if (!Math.IsNumber(attribute[i]))
+                    attribute[i] = Math.MakeNonZero(attribute[i]);
+            }
+        }
+
+        static void EnsureRealNumbers(IList<Vector3> attribute)
+        {
+            for (int i = 0, c = attribute.Count; i < c; i++)
+            {
+                if (!Math.IsNumber(attribute[i]))
+                    attribute[i] = Math.MakeNonZero(attribute[i]);
+            }
+        }
+
+        static void EnsureRealNumbers(IList<Vector4> attribute)
+        {
+            for (int i = 0, c = attribute.Count; i < c; i++)
+            {
+                if (!Math.IsNumber(attribute[i]))
+                    attribute[i] = Math.MakeNonZero(attribute[i]);
+            }
+        }
+
+        static void EnsureArraySize<T>(ref T[] attribute,
+            int expectedVertexCount,
+            AttributeValidationStrategy strategy = AttributeValidationStrategy.Nullify,
+            T fill = default)
+        {
+            if (attribute == null || attribute.Length == expectedVertexCount)
+                return;
+            if (strategy == AttributeValidationStrategy.Nullify)
+            {
+                attribute = null;
+                return;
+            }
+
+            int previous = attribute.Length;
+            Array.Resize(ref attribute, expectedVertexCount);
+            for (int i = previous - 1; i < expectedVertexCount; i++)
+                attribute[i] = fill;
+        }
+
+        static void EnsureListSize<T>(ref List<T> attribute,
+            int expectedVertexCount,
+            AttributeValidationStrategy strategy = AttributeValidationStrategy.Nullify,
+            T fill = default)
+        {
+            if (attribute == null || attribute.Count == expectedVertexCount)
+                return;
+
+            if (strategy == AttributeValidationStrategy.Nullify)
+            {
+                attribute = null;
+                return;
+            }
+
+            var prev = attribute.Count;
+            var copy = new List<T>(expectedVertexCount);
+            for (int i = 0, c = Mathf.Min(prev, expectedVertexCount); i < c; i++)
+                copy.Add(attribute[i]);
+            for (int i = copy.Count - 1; i < expectedVertexCount; i++)
+                copy.Add(fill);
+            attribute = copy;
+        }
+
+        static void EnsureValidAttributes(ProBuilderMesh mesh)
+        {
+            var vertexCount = mesh.vertexCount;
+            var normals = mesh.normalsInternal;
+            var colors = mesh.colorsInternal;
+            var tangents = mesh.tangentsInternal;
+            var uv0 = mesh.texturesInternal;
+            var uv2 = mesh.textures2Internal;
+            var uv3 = mesh.textures3Internal;
+
+            EnsureArraySize(ref normals, vertexCount);
+            EnsureArraySize(ref colors, vertexCount);
+            EnsureArraySize(ref tangents, vertexCount);
+            EnsureArraySize(ref normals, vertexCount);
+            EnsureArraySize(ref uv0, vertexCount);
+            EnsureListSize(ref uv2, vertexCount);
+            EnsureListSize(ref uv3, vertexCount);
+
+            EnsureRealNumbers(normals);
+            EnsureRealNumbers(tangents);
+            EnsureRealNumbers(normals);
+            EnsureRealNumbers(uv0);
+            EnsureRealNumbers(uv2);
+            EnsureRealNumbers(uv3);
         }
 	}
 }
