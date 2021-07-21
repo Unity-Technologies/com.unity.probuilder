@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
-using UnityEngine.UIElements;
-using Plane = UnityEngine.ProBuilder.Shapes.Plane;
-using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else

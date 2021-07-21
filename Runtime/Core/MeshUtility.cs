@@ -236,6 +236,20 @@ namespace UnityEngine.ProBuilder
             return res != null && res.Count == vertexCount ? res : default(T);
         }
 
+        static void PrintAttribute<T>(StringBuilder sb, string title, IEnumerable<T> attrib, string fmt)
+        {
+            sb.AppendLine($"  - {title}");
+            if (attrib != null && attrib.Any())
+            {
+                foreach (var value in attrib)
+                    sb.AppendLine(string.Format($"    {fmt}", value));
+            }
+            else
+            {
+                sb.AppendLine("\tnull");
+            }
+        }
+
         /// <summary>
         /// Print a detailed string summary of the mesh attributes.
         /// </summary>
@@ -246,25 +260,12 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-            sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
-
-            sb.AppendLine(string.Format("     {0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
-                    "Positions",
-                    "Normals",
-                    "Colors",
-                    "Tangents",
-                    "UV0",
-                    "UV2",
-                    "UV3",
-                    "UV4"));
+            StringBuilder sb = new StringBuilder();
 
             Vector3[] positions = mesh.vertices;
             Vector3[] normals = mesh.normals;
             Color[] colors = mesh.colors;
             Vector4[] tangents = mesh.tangents;
-
             List<Vector4> uv0 = new List<Vector4>();
             Vector2[] uv2 = mesh.uv2;
             List<Vector4> uv3 = new List<Vector4>();
@@ -274,38 +275,19 @@ namespace UnityEngine.ProBuilder
             mesh.GetUVs(2, uv3);
             mesh.GetUVs(3, uv4);
 
-            if (positions != null && positions.Count() != mesh.vertexCount)
-                positions = null;
-            if (normals != null && normals.Count() != mesh.vertexCount)
-                normals = null;
-            if (colors != null && colors.Count() != mesh.vertexCount)
-                colors = null;
-            if (tangents != null && tangents.Count() != mesh.vertexCount)
-                tangents = null;
-            if (uv0.Count() != mesh.vertexCount)
-                uv0 = null;
-            if (uv2.Count() != mesh.vertexCount)
-                uv2 = null;
-            if (uv3.Count() != mesh.vertexCount)
-                uv3 = null;
-            if (uv4.Count() != mesh.vertexCount)
-                uv4 = null;
+            sb.AppendLine($"# Sanity Check");
+            sb.AppendLine(MeshUtility.SanityCheck(mesh));
 
-            sb.AppendLine("# Attributes");
+            sb.AppendLine($"# Attributes ({mesh.vertexCount})");
 
-            for (int i = 0, c = mesh.vertexCount; i < c; i++)
-            {
-                sb.AppendLine(string.Format("\t{8,-5}{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
-                        positions == null   ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
-                        normals == null     ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", normals[i].x, normals[i].y, normals[i].z),
-                        colors == null      ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
-                        tangents == null    ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
-                        uv0 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
-                        uv2 == null         ? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
-                        uv3 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
-                        uv4 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
-                        i));
-            }
+            PrintAttribute(sb, $"positions ({positions.Length})", positions, "pos: {0:F2}");
+            PrintAttribute(sb, $"normals ({normals.Length})", normals, "nrm: {0:F2}");
+            PrintAttribute(sb, $"colors ({colors.Length})", colors, "col: {0:F2}");
+            PrintAttribute(sb, $"tangents ({tangents.Length})", tangents, "tan: {0:F2}");
+            PrintAttribute(sb, $"uv0 ({uv0.Count})", uv0, "uv0: {0:F2}");
+            PrintAttribute(sb, $"uv2 ({uv2.Length})", uv2, "uv2: {0:F2}");
+            PrintAttribute(sb, $"uv3 ({uv3.Count})", uv3, "uv3: {0:F2}");
+            PrintAttribute(sb, $"uv4 ({uv4.Count})", uv4, "uv4: {0:F2}");
 
             sb.AppendLine("# Topology");
 

@@ -289,7 +289,10 @@ namespace UnityEditor.ProBuilder
         /// <param name="window">current window calling the tool : SceneView</param>
         public override void OnToolGUI( EditorWindow window )
         {
+        // todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
+#pragma warning restore 618
 
             var currentEvent = Event.current;
             if (currentEvent.type == EventType.KeyDown)

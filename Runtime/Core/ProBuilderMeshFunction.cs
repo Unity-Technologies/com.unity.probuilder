@@ -67,8 +67,11 @@ namespace UnityEngine.ProBuilder
                && faceCount > 0
                && meshSyncState == MeshSyncState.Null)
             {
-                using(new NonVersionedEditScope(this))
+                using (new NonVersionedEditScope(this))
+                {
                     Rebuild();
+                    meshWasInitialized?.Invoke(this);
+                }
             }
         }
 

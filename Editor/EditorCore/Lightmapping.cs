@@ -179,7 +179,10 @@ namespace UnityEditor.ProBuilder
             int count = missingUv2.Count();
 
             if (count > 0)
-                Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2. Use the Lightmap + options to find missing UV2s.\n(You can turn off this warning in Preferences/ProBuilder).", count, count == 1 ? "mesh" : "meshes");
+                Log.Warning("{0} ProBuilder {1} included in lightmap bake with missing UV2. " +
+                    "Use \"Tools > ProBuilder > Editors > Open Lightmap UV Editor\" to find and generate missing UVs." +
+                    "\nYou can turn off this warning in Preferences/ProBuilder.",
+                    count, count == 1 ? "mesh" : "meshes");
         }
 
         /// <summary>

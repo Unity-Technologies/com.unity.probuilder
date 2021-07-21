@@ -171,7 +171,10 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+// todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
+#pragma warning restore 618
 
             if(Event.current.type == EventType.MouseMove)
             {
@@ -200,11 +203,19 @@ namespace UnityEditor.ProBuilder
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
+
+#if UNITY_2021_2_OR_NEWER
+            GUILayout.BeginVertical(GUILayout.MinWidth(DrawShapeTool.k_MinOverlayWidth));
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+            GUILayout.EndVertical();
+#else
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             }
+#endif
         }
 
         /// <summary>

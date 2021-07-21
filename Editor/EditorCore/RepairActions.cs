@@ -129,7 +129,7 @@ namespace UnityEditor.ProBuilder
             UnityEditor.EditorUtility.DisplayDialog("Rebuild Shared Index Cache", "Successfully rebuilt " + targets.Length + " shared index caches", "Okay");
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Remove Degenerate Triangles", false, PreferenceKeys.menuRepair)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Repair/Fix Meshes in Selection", false, PreferenceKeys.menuRepair)]
         public static void MenuRemoveDegenerateTriangles()
         {
             int count = 0;
@@ -146,6 +146,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            Debug.Log("Removed " + count + " vertices \nbelonging to degenerate triangles.");
             EditorUtility.ShowNotification("Removed " + count + " vertices \nbelonging to degenerate triangles.");
         }
     }

@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
             if(results == null)
                 throw new ArgumentNullException("results");
 
-            var nrm = direction;
+            var nrm = Math.EnsureUnitVector(direction);
             var axis = VectorToProjectionAxis(nrm);
             var prj = GetTangentToAxis(axis);
             var len = indexes == null ? positions.Count : indexes.Count;
@@ -125,7 +125,7 @@ namespace UnityEngine.ProBuilder
 
         internal static void PlanarProject(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {
-            var nrm = Math.Normal(mesh, face);
+            var nrm = Math.EnsureUnitVector(Math.Normal(mesh, face));
             var trs = (Transform)null;
             var worldSpace = face.uv.useWorldSpace;
 
@@ -258,7 +258,7 @@ namespace UnityEngine.ProBuilder
                     return -Vector3.forward;
 
                 default:
-                    return Vector3.zero;
+                    return Vector3.forward;
             }
         }
 

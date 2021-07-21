@@ -5,7 +5,7 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Cylinder")]
     public class Cylinder : Shape
     {
-        [Range(4,64)]
+        [Range(3, 64)]
         [SerializeField]
         int m_AxisDivisions = 6;
 
@@ -28,46 +28,28 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
-            var upLocalAxis = rotation * Vector3.up;
-            upLocalAxis = Math.Abs(upLocalAxis);
-
-            bounds = mesh.mesh.bounds;
-            Vector3 boxSize = bounds.size;
-            var maxAxis = Mathf.Max(Mathf.Max(
-                    (1f - upLocalAxis.x)*boxSize.x,
-                    (1f - upLocalAxis.y)*boxSize.y),
-                (1f - upLocalAxis.z)*boxSize.z);
-            boxSize.x = Mathf.Lerp(maxAxis, boxSize.x, upLocalAxis.x);
-            boxSize.y = Mathf.Lerp(maxAxis, boxSize.y, upLocalAxis.y);
-            boxSize.z = Mathf.Lerp(maxAxis, boxSize.z, upLocalAxis.z);
-            bounds.size = boxSize;
-
+            bounds.size = size;
             return bounds;
         }
 
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            var meshSize = Math.Abs(size);
-            var radius = Mathf.Min(meshSize.x, meshSize.z) * .5f;
-            var height = meshSize.y;
+            var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
+            var rightDir = Vector3.Scale(rotation * Vector3.right, size) ;
+            var forwardDir = Vector3.Scale(rotation * Vector3.forward, size) ;
 
-            if (m_AxisDivisions % 2 != 0)
-                m_AxisDivisions++;
+            var height = upDir.magnitude;
+            var xRadius = rightDir.magnitude / 2f;
+            var zRadius = forwardDir.magnitude / 2f;
 
-            float stepAngle = 360f / m_AxisDivisions;
             float heightStep = height / (m_HeightCuts + 1);
-
-            Vector3[] circle = new Vector3[m_AxisDivisions];
+            Vector2[] circle = new Vector2[m_AxisDivisions];
 
             // get a circle
             for (int i = 0; i < m_AxisDivisions; i++)
             {
-                float angle0 = stepAngle * i * Mathf.Deg2Rad;
-
-                float x = Mathf.Cos(angle0) * radius;
-                float z = Mathf.Sin(angle0) * radius;
-
-                circle[i] = new Vector3(x, 0f, z);
+                float angle = i * 360f / m_AxisDivisions;
+                circle[i] = Math.PointInEllipseCircumference(xRadius, zRadius, angle, Vector2.zero, out _);
             }
 
             // add two because end caps
@@ -85,18 +67,18 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 for (int n = 0; n < m_AxisDivisions; n++)
                 {
-                    vertices[it + 0] = new Vector3(circle[n + 0].x, Y, circle[n + 0].z);
-                    vertices[it + 1] = new Vector3(circle[n + 0].x, Y2, circle[n + 0].z);
+                    vertices[it + 0] = new Vector3(circle[n + 0].x, Y, circle[n + 0].y);
+                    vertices[it + 1] = new Vector3(circle[n + 0].x, Y2, circle[n + 0].y);
 
                     if (n != m_AxisDivisions - 1)
                     {
-                        vertices[it + 2] = new Vector3(circle[n + 1].x, Y, circle[n + 1].z);
-                        vertices[it + 3] = new Vector3(circle[n + 1].x, Y2, circle[n + 1].z);
+                        vertices[it + 2] = new Vector3(circle[n + 1].x, Y, circle[n + 1].y);
+                        vertices[it + 3] = new Vector3(circle[n + 1].x, Y2, circle[n + 1].y);
                     }
                     else
                     {
-                        vertices[it + 2] = new Vector3(circle[0].x, Y, circle[0].z);
-                        vertices[it + 3] = new Vector3(circle[0].x, Y2, circle[0].z);
+                        vertices[it + 2] = new Vector3(circle[0].x, Y, circle[0].y);
+                        vertices[it + 3] = new Vector3(circle[0].x, Y2, circle[0].y);
                     }
 
                     it += 4;
@@ -134,14 +116,14 @@ namespace UnityEngine.ProBuilder.Shapes
             {
                 // bottom faces
                 var bottomCapHeight = -height * .5f;
-                vertices[ind + 0] = new Vector3(circle[n].x, bottomCapHeight, circle[n].z);
+                vertices[ind + 0] = new Vector3(circle[n].x, bottomCapHeight, circle[n].y);
 
                 vertices[ind + 1] = new Vector3(0f, bottomCapHeight, 0f);
 
                 if (n != m_AxisDivisions - 1)
-                    vertices[ind + 2] = new Vector3(circle[n + 1].x, bottomCapHeight, circle[n + 1].z);
+                    vertices[ind + 2] = new Vector3(circle[n + 1].x, bottomCapHeight, circle[n + 1].y);
                 else
-                    vertices[ind + 2] = new Vector3(circle[000].x, bottomCapHeight, circle[000].z);
+                    vertices[ind + 2] = new Vector3(circle[000].x, bottomCapHeight, circle[000].y);
 
                 faces[f_ind + n] = new Face(new int[3] { ind + 2, ind + 1, ind + 0 });
 
@@ -149,12 +131,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
                 // top faces
                 var topCapHeight = height * .5f;
-                vertices[ind + 0] = new Vector3(circle[n].x, topCapHeight, circle[n].z);
+                vertices[ind + 0] = new Vector3(circle[n].x, topCapHeight, circle[n].y);
                 vertices[ind + 1] = new Vector3(0f, topCapHeight, 0f);
                 if (n != m_AxisDivisions - 1)
-                    vertices[ind + 2] = new Vector3(circle[n + 1].x, topCapHeight, circle[n + 1].z);
+                    vertices[ind + 2] = new Vector3(circle[n + 1].x, topCapHeight, circle[n + 1].y);
                 else
-                    vertices[ind + 2] = new Vector3(circle[000].x, topCapHeight, circle[000].z);
+                    vertices[ind + 2] = new Vector3(circle[000].x, topCapHeight, circle[000].y);
 
                 faces[f_ind + (n + m_AxisDivisions)] = new Face(new int[3] { ind + 0, ind + 1, ind + 2 });
 

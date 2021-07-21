@@ -1336,8 +1336,7 @@ namespace UnityEngine.ProBuilder
             pb.gameObject.name = "Arch";
             pb.SetPivot(pivotType);
 
-            int removedVertexCount;
-            MeshValidation.EnsureMeshIsValid(pb, out removedVertexCount);
+            MeshValidation.EnsureMeshIsValid(pb, out _);
 
             return pb;
         }
