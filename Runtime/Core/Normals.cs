@@ -86,7 +86,7 @@ namespace UnityEngine.ProBuilder
             for (long a = 0; a < vc; ++a)
             {
                 Vector3 n = normals[a];
-                Vector3 t = Math.MakeNonZero(tan1[a]);
+                Vector3 t = Math.EnsureUnitVector(tan1[a]);
 
                 Vector3.OrthoNormalize(ref n, ref t);
 
@@ -238,8 +238,7 @@ namespace UnityEngine.ProBuilder
                     normals[index].x = s_SmoothAvg[group].x / s_SmoothAvgCount[group];
                     normals[index].y = s_SmoothAvg[group].y / s_SmoothAvgCount[group];
                     normals[index].z = s_SmoothAvg[group].z / s_SmoothAvgCount[group];
-                    Math.MakeNonZero(normals[index]);
-                    normals[index].Normalize();
+                    normals[index] = Math.EnsureUnitVector(normals[index]);
                 }
             }
         }

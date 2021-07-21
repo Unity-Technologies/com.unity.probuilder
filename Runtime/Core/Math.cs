@@ -1268,28 +1268,31 @@ namespace UnityEngine.ProBuilder
             return value;
         }
 
-        internal static Vector2 MakeNonZero(Vector2 value)
+        // Ensure that a vector does not contain NaN or INF values. This should only be used in repair functions to clean
+        // up imported or otherwise broken geometry. Mesh operations should not by default produce NaN or INF values.
+        internal static Vector4 FixNaN(Vector4 value)
         {
-            value.x = MakeNonZero(value.x);
-            value.y = MakeNonZero(value.y);
+            value.x = IsNumber(value.x) ? value.x : 0f;
+            value.y = IsNumber(value.y) ? value.y : 0f;
+            value.z = IsNumber(value.z) ? value.z : 0f;
+            value.w = IsNumber(value.w) ? value.w : 0f;
             return value;
         }
 
-        internal static Vector3 MakeNonZero(Vector3 value)
+        internal static Vector2 EnsureUnitVector(Vector2 value)
         {
-            value.x = MakeNonZero(value.x);
-            value.y = MakeNonZero(value.y);
-            value.z = MakeNonZero(value.z);
-            return value;
+            return Mathf.Abs(value.sqrMagnitude) < float.Epsilon ? Vector2.right : value.normalized;
+        }
+        
+        internal static Vector3 EnsureUnitVector(Vector3 value)
+        {
+            return Mathf.Abs(value.sqrMagnitude) < float.Epsilon ? Vector3.up : value.normalized;
         }
 
-        internal static Vector4 MakeNonZero(Vector4 value)
+        internal static Vector4 EnsureUnitVector(Vector4 value)
         {
-            value.x = MakeNonZero(value.x);
-            value.y = MakeNonZero(value.y);
-            value.z = MakeNonZero(value.z);
-            value.w = MakeNonZero(value.w);
-            return value;
+            var dir = EnsureUnitVector((Vector3)value);
+            return new Vector4(dir.x, dir.y, dir.z, MakeNonZero(value.w, 1f));
         }
     }
 }

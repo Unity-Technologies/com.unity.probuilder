@@ -409,29 +409,20 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
         static void EnsureRealNumbers(IList<Vector2> attribute)
         {
-            for (int i = 0, c = attribute.Count; i < c; i++)
-            {
-                if (!Math.IsNumber(attribute[i]))
-                    attribute[i] = Math.MakeNonZero(attribute[i]);
-            }
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++) 
+                attribute[i] = Math.FixNaN(attribute[i]);
         }
 
         static void EnsureRealNumbers(IList<Vector3> attribute)
         {
-            for (int i = 0, c = attribute.Count; i < c; i++)
-            {
-                if (!Math.IsNumber(attribute[i]))
-                    attribute[i] = Math.MakeNonZero(attribute[i]);
-            }
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++)
+                attribute[i] = Math.FixNaN(attribute[i]);
         }
 
         static void EnsureRealNumbers(IList<Vector4> attribute)
         {
-            for (int i = 0, c = attribute.Count; i < c; i++)
-            {
-                if (!Math.IsNumber(attribute[i]))
-                    attribute[i] = Math.MakeNonZero(attribute[i]);
-            }
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++)
+                attribute[i] = Math.FixNaN(attribute[i]);
         }
 
         static void EnsureArraySize<T>(ref T[] attribute,
