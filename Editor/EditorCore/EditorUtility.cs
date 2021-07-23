@@ -3,13 +3,18 @@
 using UnityEngine;
 using System.Linq;
 using System;
-using UnityEditor.Experimental.SceneManagement;
+
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
 using UnityEditorInternal;
+#if UNITY_2021_1_OR_NEWER
 using UnityEngine.SceneManagement;
+#else
+using UnityEngine.SceneManagement;
+using UnityEditor.Experimental.SceneManagement;
+#endif
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
 #endif
