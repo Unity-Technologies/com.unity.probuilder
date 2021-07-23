@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - Fixed exception when using vertex snapping in Unity 2019.4 and newer.
+- Fixed API Updater warning when opening in Unity 2021 and newer.
 
 ## [4.5.2] - 2021-06-08
 
