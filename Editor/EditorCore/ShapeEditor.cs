@@ -7,6 +7,7 @@ using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 #if UNITY_2021_1_OR_NEWER
 using UnityEngine.SceneManagement;
+using UnityEditor.SceneManagement;
 #else
 using UnityEngine.SceneManagement;
 using UnityEditor.Experimental.SceneManagement;
