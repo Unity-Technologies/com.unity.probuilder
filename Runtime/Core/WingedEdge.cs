@@ -5,6 +5,8 @@ using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
+    /// <inheritdoc cref="IEquatable" />
+    /// <inheritdoc cref="IEnumerable" />
     /// <summary>
     /// A winged-edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
     /// </summary>
@@ -21,8 +23,6 @@ namespace UnityEngine.ProBuilder
     /// .    |             |
     /// ```
     /// </example>
-    /// <inheritdoc cref="IEquatable{T}" />
-    /// <inheritdoc cref="IEnumerable{T}" />
     public sealed class WingedEdge : IEquatable<WingedEdge>
     {
         static readonly Dictionary<Edge, WingedEdge> k_OppositeEdgeDictionary = new Dictionary<Edge, WingedEdge>();
@@ -338,7 +338,7 @@ namespace UnityEngine.ProBuilder
 
             List<WingedEdge> winged = new List<WingedEdge>();
             k_OppositeEdgeDictionary.Clear();
-            
+
             foreach (Face f in faces)
             {
                 List<Edge> edges = SortEdgesByAdjacency(f);

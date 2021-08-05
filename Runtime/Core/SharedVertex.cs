@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="ICollection"/>
     /// <summary>
     /// Defines associations between vertex positions that are coincident. The indexes stored in this collection correspond to the ProBuilderMesh.positions array.
     /// <br />

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IEnumerator"/>
     /// <summary>
     /// Enumerator for WingedEdge.
     /// Enumerates by walking the WingedEdge.next property.
