@@ -84,17 +84,17 @@ namespace UnityEngine.ProBuilder
             return string.Format("{0}, {1}, {2}", m_SubmeshIndex, m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
         }
 
-        internal static int GetSubmeshCount(ProBuilderMesh mesh)
-        {
-            return GetSubmeshCount(mesh.facesInternal);
-        }
-
-        internal static int GetSubmeshCount(IEnumerable<Face> faces)
+        internal static int GetSubmeshCount(IList<Face> faces)
         {
             int count = 0;
             foreach (var face in faces)
                 count = Mathf.Max(count, face.submeshIndex + 1);
             return count;
+        }
+
+        internal static int GetSubmeshCount(ProBuilderMesh mesh)
+        {
+            return GetSubmeshCount(mesh.facesInternal);
         }
 
         /// <summary>
@@ -218,29 +218,18 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        internal static void GetEmptySubmeshes(ICollection<Face> faces, List<int> emptySubmeshes)
+        internal static void GetEmptySubmeshes(Mesh umesh, List<int> emptySubMeshes)
         {
-            if (faces == null)
-                throw new ArgumentNullException(nameof(faces));
+            if (umesh == null)
+                throw new ArgumentNullException(nameof(umesh));
 
-            if (emptySubmeshes == null)
-                throw new ArgumentNullException(nameof(emptySubmeshes));
-
-            //Calculate the count of submeshes if no empty was present
-            int currentMaxIndex = GetSubmeshCount(faces) - 1;
-
-            emptySubmeshes.Clear();
-            emptySubmeshes.Capacity = Mathf.Max(emptySubmeshes.Capacity, currentMaxIndex + 1);
-            for (int i = 0; i <= currentMaxIndex; ++i)
-                emptySubmeshes.Add(i);
-
-            //Remove indices that are used to obtain only the empty ones 
-            foreach (var face in faces)
-            {
-                emptySubmeshes.Remove(face.submeshIndex);
-                if (emptySubmeshes.Count == 0)
-                    break;
-            }
+            if (emptySubMeshes == null)
+                throw new ArgumentNullException(nameof(emptySubMeshes));
+            
+            emptySubMeshes.Clear();
+            for (int i = 0, count = umesh.subMeshCount; i < count; ++i)
+                if (umesh.GetSubMesh(i).vertexCount == 0)
+                    emptySubMeshes.Add(i);
         }
 
         internal static void MapFaceMaterialsToSubmeshIndex(ProBuilderMesh mesh)

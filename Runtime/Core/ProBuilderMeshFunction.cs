@@ -321,12 +321,6 @@ namespace UnityEngine.ProBuilder
 
             m_MeshFormatVersion = k_MeshFormatVersion;
 
-            // Clean up empty submeshes and materials (TODO only if option is enable)
-            s_IndicesBuffer.Clear();
-            Submesh.GetEmptySubmeshes(faces, s_IndicesBuffer);
-            Submesh.RemoveSubmeshes(faces, s_IndicesBuffer);
-            MaterialUtility.RemoveMaterialsAndTrimExcess(renderer, s_IndicesBuffer, Submesh.GetSubmeshCount(faces));
-
             int materialCount = MaterialUtility.GetMaterialCount(renderer);
 
             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
@@ -23,6 +24,14 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Mesh Settings", "Auto Remove Materials", "Automatically remove materials that are no longer used.")]
         static Pref<bool> s_AutoManageMaterials = new Pref<bool>("editor.autoManageMaterials", true, SettingsScope.Project);
+
+        internal static bool autoManageMaterials
+        {
+            get => s_AutoManageMaterials.value;
+            set => s_AutoManageMaterials.value = value;
+        }
+
+        static readonly List<int> s_IndicesBuffer = new List<int>();
 
         /// <value>
         /// This callback is raised after a ProBuilderMesh has been successfully optimized.
@@ -46,8 +55,8 @@ namespace UnityEditor.ProBuilder
             if (umesh == null || umesh.vertexCount < 1)
                 return;
 
-            //if (s_AutoManageMaterials)
-            //    CleanupSubmeshesAndMaterials(mesh);
+            if (s_AutoManageMaterials)
+                CleanupSubmeshesAndMaterials(mesh);
 
             bool skipMeshProcessing = false;
 
@@ -116,6 +125,17 @@ namespace UnityEditor.ProBuilder
                 TryCacheMesh(mesh);
 
             UnityEditor.EditorUtility.SetDirty(mesh);
+        }
+
+        static void CleanupSubmeshesAndMaterials(ProBuilderMesh mesh)
+        {
+            s_IndicesBuffer.Clear();
+            Submesh.GetEmptySubmeshes(mesh.mesh, s_IndicesBuffer);
+            if (s_IndicesBuffer.Count > 0)
+            {
+                Submesh.RemoveSubmeshes(mesh.facesInternal, s_IndicesBuffer);
+                MaterialUtility.RemoveMaterialsAndTrimExcess(mesh.renderer, s_IndicesBuffer, Submesh.GetSubmeshCount(mesh));
+            }
         }
 
         internal static void TryCacheMesh(ProBuilderMesh pb)
