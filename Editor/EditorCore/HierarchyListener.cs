@@ -13,6 +13,7 @@ namespace UnityEditor.ProBuilder
         static HierarchyListener()
         {
             AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
+
             // When a prefab is updated, this is raised.  For some reason it's
             // called twice?
             EditorApplication.hierarchyChanged += HierarchyWindowChanged;
@@ -20,6 +21,13 @@ namespace UnityEditor.ProBuilder
             // prefabInstanceUpdated is not called when dragging out of Project view,
             // or when creating a prefab or reverting.  OnHierarchyChange captures those.
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
+
+            ProBuilderMesh.meshWasInitialized += OnMeshInitialized;
+        }
+
+        static void OnMeshInitialized(ProBuilderMesh mesh)
+        {
+            mesh.Optimize();
         }
 
         static void OnAfterAssemblyReload()
