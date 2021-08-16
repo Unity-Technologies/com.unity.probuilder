@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1348463] Fixed issue where instantiating a prefab would not build UV2s.
 - [case: 1348434] Added more detailed instructions in the missing UV2 warning log.
 - Fix some styling issues with Overlays in 21.2
+- [case: 1350635] Fixed crash when using CSG operations.
 
 ### Changes
 
