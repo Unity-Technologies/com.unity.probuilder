@@ -89,24 +89,24 @@ namespace UnityEngine.ProBuilder.Csg
             if (list.Count < 1)
                 return;
             
-            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}Node.Build()");
-            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  input ({list.Count})\t\t\tfirst {list[0]}");
+            file?.WriteLine($"{CSG.buildRecurseCounter}{indent}Node.Build()");
+            file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  input ({list.Count})\t\t\tfirst {list[0]}");
             // file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}{string.Join(", ", list.Select(x=>x.ToString()))}");
 
-            Boolean.buildRecurseCounter++;
+            CSG.buildRecurseCounter++;
 
             bool newNode = plane == null || !plane.Valid(); 
 
             if (newNode)
             {
-                file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  this.plane = new Plane()");
+                file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  this.plane = new Plane()");
 
                 this.plane = new Plane();
                 this.plane.normal = list[0].plane.normal;
                 this.plane.w = list[0].plane.w;
             }
             else
-                file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  this.plane {plane.ToString()}");
+                file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  this.plane {plane.ToString()}");
 
             if (polygons == null)
                 polygons = new List<Polygon>();
@@ -117,7 +117,7 @@ namespace UnityEngine.ProBuilder.Csg
             for (int i = 0; i < list.Count; i++)
                 plane.SplitPolygon(list[i], polygons, polygons, listFront, listBack);
             
-            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  after split: polygons({polygons.Count}) front({listFront.Count}) back({listBack.Count})");
+            file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  after split: polygons({polygons.Count}) front({listFront.Count}) back({listBack.Count})");
 
             if (listFront.Count > 0)
             {
@@ -128,12 +128,12 @@ namespace UnityEngine.ProBuilder.Csg
                 // or back list will be filled and built into a new node recursively.
                 if (eq && newNode)
                 {
-                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_front({listFront.Count}) RECURSE \t\t\t   {listFront[0]}");
+                    file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  split list_front({listFront.Count}) RECURSE \t\t\t   {listFront[0]}");
                     polygons.AddRange(listFront);
                 }
                 else
                 {
-                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_front({listFront.Count})");
+                    file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  split list_front({listFront.Count})");
                     (front ??= new Node()).Build(listFront, file, indent + "    ");
                 }
             }
@@ -144,12 +144,12 @@ namespace UnityEngine.ProBuilder.Csg
 
                 if (eq && newNode)
                 {
-                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_back({listBack.Count})  RECURSE \t\t\t   {listBack[0]}");
+                    file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  split list_back({listBack.Count})  RECURSE \t\t\t   {listBack[0]}");
                     polygons.AddRange(listBack);
                 }
                 else
                 {
-                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_back({listBack.Count})");
+                    file?.WriteLine($"{CSG.buildRecurseCounter}{indent}  split list_back({listBack.Count})");
 
                     // file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}{string.Join(", ", list_back.Select(x=>x.ToString()))}");
                     // Assert.IsFalse(polygons.Count < 1 && list.SequenceEqual(list_back), k_RecursiveSplitError);

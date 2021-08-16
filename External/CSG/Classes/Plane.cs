@@ -61,7 +61,7 @@ namespace UnityEngine.ProBuilder.Csg
             for (int i = 0; i < polygon.vertices.Count; i++)
             {
                 float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
-                EPolygonType type = (t < -Boolean.epsilon) ? EPolygonType.Back : ((t > Boolean.epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
+                EPolygonType type = (t < -CSG.epsilon) ? EPolygonType.Back : ((t > CSG.epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
                 polygonType |= type;
                 types.Add(type);
             }

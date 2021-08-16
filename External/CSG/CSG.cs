@@ -15,6 +15,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Unity.ProBuilder.Editor.Tests")]
 
 namespace UnityEngine.ProBuilder.Csg
 {
@@ -22,10 +25,16 @@ namespace UnityEngine.ProBuilder.Csg
     /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union
     /// operations. The GameObjects passed to these functions will not be modified.
     /// </summary>
-    static class Boolean
+    static class CSG
     {
-        // Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-        const float k_DefaultEpsilon = 0.000001f;
+        public enum BooleanOp
+        {
+            Intersection,
+            Union,
+            Subtraction
+        }
+
+        const float k_DefaultEpsilon = 0.00001f;
         static float s_Epsilon = k_DefaultEpsilon;
         internal static int buildRecurseCounter;
 
@@ -36,6 +45,25 @@ namespace UnityEngine.ProBuilder.Csg
         {
             get => s_Epsilon;
             set => s_Epsilon = value;
+        }
+
+        /// <summary>
+        /// Performs a boolean operation on two GameObjects.
+        /// </summary>
+        /// <returns>A new mesh.</returns>
+        public static Model Perform(BooleanOp op, GameObject lhs, GameObject rhs)
+        {
+            switch (op)
+            {
+                case BooleanOp.Intersection:
+                    return Intersect(lhs, rhs);
+                case BooleanOp.Union:
+                    return Union(lhs, rhs);
+                case BooleanOp.Subtraction:
+                    return Subtract(lhs, rhs);
+                default:
+                    return null;
+            }
         }
 
         /// <summary>
