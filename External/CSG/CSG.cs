@@ -19,13 +19,24 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder.Csg
 {
     /// <summary>
-    /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union operations.
-    /// The GameObjects passed to these functions will not be modified.
+    /// Base class for CSG operations. Contains GameObject level methods for Subtraction, Intersection, and Union
+    /// operations. The GameObjects passed to these functions will not be modified.
     /// </summary>
     static class Boolean
     {
         // Tolerance used by `splitPolygon()` to decide if a point is on the plane.
-        internal const float k_Epsilon = 0.00001f;
+        const float k_DefaultEpsilon = 0.000001f;
+        static float s_Epsilon = k_DefaultEpsilon;
+        internal static int buildRecurseCounter;
+
+        /// <summary>
+        /// Tolerance used by <see cref="Plane.SplitPolygon"/> determine whether planes are coincident.
+        /// </summary>
+        public static float epsilon
+        {
+            get => s_Epsilon;
+            set => s_Epsilon = value;
+        }
 
         /// <summary>
         /// Returns a new mesh by merging @lhs with @rhs.
@@ -37,15 +48,15 @@ namespace UnityEngine.ProBuilder.Csg
         {
             Model csg_model_a = new Model(lhs);
             Model csg_model_b = new Model(rhs);
-
+        
             Node a = new Node(csg_model_a.ToPolygons());
             Node b = new Node(csg_model_b.ToPolygons());
-
+        
             List<Polygon> polygons = Node.Union(a, b).AllPolygons();
-
+        
             return new Model(polygons);
         }
-
+        
         /// <summary>
         /// Returns a new mesh by subtracting @lhs with @rhs.
         /// </summary>
@@ -56,12 +67,12 @@ namespace UnityEngine.ProBuilder.Csg
         {
             Model csg_model_a = new Model(lhs);
             Model csg_model_b = new Model(rhs);
-
+        
             Node a = new Node(csg_model_a.ToPolygons());
             Node b = new Node(csg_model_b.ToPolygons());
-
+        
             List<Polygon> polygons = Node.Subtract(a, b).AllPolygons();
-
+        
             return new Model(polygons);
         }
 
@@ -76,8 +87,8 @@ namespace UnityEngine.ProBuilder.Csg
             Model csg_model_a = new Model(lhs);
             Model csg_model_b = new Model(rhs);
 
-            Node a = new Node(csg_model_a.ToPolygons());
-            Node b = new Node(csg_model_b.ToPolygons());
+            Node a = new Node(csg_model_a.ToPolygons(), null);
+            Node b = new Node(csg_model_b.ToPolygons(), null);
 
             List<Polygon> polygons = Node.Intersect(a, b).AllPolygons();
 

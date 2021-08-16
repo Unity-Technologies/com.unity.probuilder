@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder.Csg
 {
@@ -7,23 +9,20 @@ namespace UnityEngine.ProBuilder.Csg
     {
         public List<Polygon> polygons;
 
-        public Node front;  /// Reference to front node.
-        public Node back;   /// Reference to front node.
+        public Node front;
+        public Node back;
 
         public Plane plane;
 
         public Node()
         {
-            this.front = null;
-            this.back = null;
+            front = null;
+            back = null;
         }
 
-        public Node(List<Polygon> list)
+        public Node(List<Polygon> list, StreamWriter file = null)
         {
-            Build(list);
-
-            // this.front = null;
-            // this.back = null;
+            Build(list, file, "");
         }
 
         public Node(List<Polygon> list, Plane plane, Node front, Node back)
@@ -85,49 +84,81 @@ namespace UnityEngine.ProBuilder.Csg
         // new polygons are filtered down to the bottom of the tree and become new
         // nodes there. Each set of polygons is partitioned using the first polygon
         // (no heuristic is used to pick a good split).
-        public void Build(List<Polygon> list)
+        public void Build(List<Polygon> list, StreamWriter file = null, string indent = "")
         {
             if (list.Count < 1)
                 return;
+            
+            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}Node.Build()");
+            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  input ({list.Count})\t\t\tfirst {list[0]}");
+            // file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}{string.Join(", ", list.Select(x=>x.ToString()))}");
 
-            if (this.plane == null || !this.plane.Valid())
+            Boolean.buildRecurseCounter++;
+
+            bool newNode = plane == null || !plane.Valid(); 
+
+            if (newNode)
             {
+                file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  this.plane = new Plane()");
+
                 this.plane = new Plane();
                 this.plane.normal = list[0].plane.normal;
                 this.plane.w = list[0].plane.w;
             }
+            else
+                file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  this.plane {plane.ToString()}");
 
-
-            if (this.polygons == null)
-                this.polygons = new List<Polygon>();
-
-            List<Polygon> list_front = new List<Polygon>();
-            List<Polygon> list_back = new List<Polygon>();
+            if (polygons == null)
+                polygons = new List<Polygon>();
+                
+            var listFront = new List<Polygon>();
+            var listBack = new List<Polygon>();
 
             for (int i = 0; i < list.Count; i++)
+                plane.SplitPolygon(list[i], polygons, polygons, listFront, listBack);
+            
+            file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  after split: polygons({polygons.Count}) front({listFront.Count}) back({listBack.Count})");
+
+            if (listFront.Count > 0)
             {
-                this.plane.SplitPolygon(list[i], this.polygons, this.polygons, list_front, list_back);
+                var eq = list.SequenceEqual(listFront);
+                
+                // SplitPolygon can fail to correctly identify coplanar planes when the epsilon value is too low.
+                // Acceptable epsilon values vary depending on the mesh and architecture. When this happens, the front
+                // or back list will be filled and built into a new node recursively.
+                if (eq && newNode)
+                {
+                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_front({listFront.Count}) RECURSE \t\t\t   {listFront[0]}");
+                    polygons.AddRange(listFront);
+                }
+                else
+                {
+                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_front({listFront.Count})");
+                    (front ??= new Node()).Build(listFront, file, indent + "    ");
+                }
             }
 
-            if (list_front.Count > 0)
+            if (listBack.Count > 0)
             {
-                if (this.front == null)
-                    this.front = new Node();
+                var eq = list.SequenceEqual(listBack);
 
-                this.front.Build(list_front);
-            }
+                if (eq && newNode)
+                {
+                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_back({listBack.Count})  RECURSE \t\t\t   {listBack[0]}");
+                    polygons.AddRange(listBack);
+                }
+                else
+                {
+                    file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}  split list_back({listBack.Count})");
 
-            if (list_back.Count > 0)
-            {
-                if (this.back == null)
-                    this.back = new Node();
-
-                this.back.Build(list_back);
+                    // file?.WriteLine($"{Boolean.buildRecurseCounter}{indent}{string.Join(", ", list_back.Select(x=>x.ToString()))}");
+                    // Assert.IsFalse(polygons.Count < 1 && list.SequenceEqual(list_back), k_RecursiveSplitError);
+                    (back ??= new Node()).Build(listBack, file, indent + "    ");
+                }
             }
         }
 
-        // Recursively remove all polygons in `polygons` that are inside this BSP
-        // tree.
+        // Recursively remove all polygons in `polygons` that are inside this BSP tree.
         public List<Polygon> ClipPolygons(List<Polygon> list)
         {
             if (!this.plane.Valid())
@@ -194,27 +225,27 @@ namespace UnityEngine.ProBuilder.Csg
         {
             Node a = a1.Clone();
             Node b = b1.Clone();
-
+        
             a.ClipTo(b);
             b.ClipTo(a);
             b.Invert();
             b.ClipTo(a);
             b.Invert();
-
+        
             a.Build(b.AllPolygons());
-
+        
             Node ret = new Node(a.AllPolygons());
-
+        
             return ret;
         }
-
+        
         // Return a new CSG solid representing space in this solid but not in the
         // solid `csg`. Neither this solid nor the solid `csg` are modified.
         public static Node Subtract(Node a1, Node b1)
         {
             Node a = a1.Clone();
             Node b = b1.Clone();
-
+        
             a.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
@@ -223,9 +254,9 @@ namespace UnityEngine.ProBuilder.Csg
             b.Invert();
             a.Build(b.AllPolygons());
             a.Invert();
-
+        
             Node ret = new Node(a.AllPolygons());
-
+        
             return ret;
         }
 
@@ -241,10 +272,16 @@ namespace UnityEngine.ProBuilder.Csg
             b.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
-            a.Build(b.AllPolygons());
+
+            File.Delete("Assets/CsgNodeBuild.log");
+            var file = new StreamWriter("Assets/CsgNodeBuild.log");
+           
+            a.Build(b.AllPolygons(), file, "");
             a.Invert();
 
-            Node ret = new Node(a.AllPolygons());
+            Node ret = new Node(a.AllPolygons(), file);
+            
+            file?.Close();
 
             return ret;
         }
