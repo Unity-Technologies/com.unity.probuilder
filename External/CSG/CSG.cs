@@ -36,7 +36,6 @@ namespace UnityEngine.ProBuilder.Csg
 
         const float k_DefaultEpsilon = 0.00001f;
         static float s_Epsilon = k_DefaultEpsilon;
-        internal static int buildRecurseCounter;
 
         /// <summary>
         /// Tolerance used by <see cref="Plane.SplitPolygon"/> determine whether planes are coincident.
@@ -115,8 +114,8 @@ namespace UnityEngine.ProBuilder.Csg
             Model csg_model_a = new Model(lhs);
             Model csg_model_b = new Model(rhs);
 
-            Node a = new Node(csg_model_a.ToPolygons(), null);
-            Node b = new Node(csg_model_b.ToPolygons(), null);
+            Node a = new Node(csg_model_a.ToPolygons());
+            Node b = new Node(csg_model_b.ToPolygons());
 
             List<Polygon> polygons = Node.Intersect(a, b).AllPolygons();
 
