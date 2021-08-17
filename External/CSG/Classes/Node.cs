@@ -117,7 +117,6 @@ namespace UnityEngine.ProBuilder.Csg
                     polygons.AddRange(listFront);
                 else
                     (front ?? (front = new Node())).Build(listFront);
-
             }
 
             if (listBack.Count > 0)
