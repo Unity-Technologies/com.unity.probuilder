@@ -116,7 +116,7 @@ namespace UnityEngine.ProBuilder.Csg
                 if (newNode && list.SequenceEqual(listFront))
                     polygons.AddRange(listFront);
                 else
-                    (front ??= new Node()).Build(listFront);
+                    (front ?? (front = new Node())).Build(listFront);
 
             }
 
@@ -125,7 +125,7 @@ namespace UnityEngine.ProBuilder.Csg
                 if (newNode && list.SequenceEqual(listBack))
                     polygons.AddRange(listBack);
                 else
-                    (back ??= new Node()).Build(listBack);
+                    (back ?? (back = new Node())).Build(listBack);
             }
         }
 
