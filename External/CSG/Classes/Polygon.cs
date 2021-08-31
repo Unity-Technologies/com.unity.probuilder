@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder.Csg
 
         public override string ToString()
         {
-            return "normal: " + plane.normal;
+            return $"[{vertices.Count}] {plane.normal}";
         }
     }
 }

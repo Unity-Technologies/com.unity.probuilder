@@ -33,6 +33,8 @@ namespace UnityEngine.ProBuilder.Csg
             w = Vector3.Dot(normal, a);
         }
 
+        public override string ToString() => $"{normal} {w}";
+
         public bool Valid()
         {
             return normal.magnitude > 0f;
@@ -59,7 +61,7 @@ namespace UnityEngine.ProBuilder.Csg
             for (int i = 0; i < polygon.vertices.Count; i++)
             {
                 float t = Vector3.Dot(this.normal, polygon.vertices[i].position) - this.w;
-                EPolygonType type = (t < -Boolean.k_Epsilon) ? EPolygonType.Back : ((t > Boolean.k_Epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
+                EPolygonType type = (t < -CSG.epsilon) ? EPolygonType.Back : ((t > CSG.epsilon) ? EPolygonType.Front : EPolygonType.Coplanar);
                 polygonType |= type;
                 types.Add(type);
             }
