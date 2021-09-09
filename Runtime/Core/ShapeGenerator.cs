@@ -1344,9 +1344,6 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Create a new icosphere shape.
         /// </summary>
-        /// <remarks>
-        /// This method does not build UVs, so after generating BoxProject for UVs.
-        /// </remarks>
         /// <param name="pivotType">Where the shape's pivot will be.</param>
         /// <param name="radius">The radius of the sphere.</param>
         /// <param name="subdivisions">How many subdivisions to perform.</param>
