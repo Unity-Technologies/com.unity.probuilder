@@ -156,7 +156,11 @@ namespace UnityEditor.ProBuilder
         internal static bool IsPrefabInstance(GameObject go)
         {
             var status = PrefabUtility.GetPrefabInstanceStatus(go);
-            return status == PrefabInstanceStatus.Connected;
+            #if UNITY_2022_1_OR_NEWER
+                return status == PrefabInstanceStatus.Connected;
+            #else
+                return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
+            #endif
         }
 
         /**
