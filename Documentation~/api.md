@@ -76,4 +76,4 @@ EditorMeshUtility.Optimize(quad, true);
 MeshUtility.CollapseSharedVertices(quad);
 ```
 
-Note that you should never directly modify the `MeshFilter.sharedMesh`. ProBuilder controls updating the Unity Mesh with [ProBuilderMesh::ToMesh](xref:UnityEngine.ProBuilder.ProBuilderMesh(ToMesh)) and [ProBuilderMesh::Refresh](xref:UnityEngine.ProBuilder.ProBuilderMesh(Refresh)) functions.
+Note that you should never directly modify the `MeshFilter.sharedMesh`. ProBuilder controls updating the Unity Mesh with [ProBuilderMesh::ToMesh](xref:UnityEngine.ProBuilder.ProBuilderMesh.ToMesh(UnityEngine.MeshTopology)) and [ProBuilderMesh::Refresh](xref:UnityEngine.ProBuilder.ProBuilderMesh.Refresh(UnityEngine.ProBuilder.RefreshMask)) functions.
