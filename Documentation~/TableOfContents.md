@@ -135,3 +135,4 @@
 		* [Bezier Shape component](bezier)
 	* [Boolean operations](boolean)
 * [Scripting API overview](api)
+* [Glossary](gloss)
