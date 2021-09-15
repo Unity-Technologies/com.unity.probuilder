@@ -19,10 +19,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Center the mesh pivot at the average of a set of vertices.
+        /// Centers the mesh pivot at the average of a set of vertex positions.
+        ///
+        /// This is the equivalent of the [Center Pivot](../manual/CenterPivot.html) action.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
-        /// <param name="indexes">The indexes of the positions to average to find the new pivot.</param>
+        /// <param name="indexes">The array of indices representing the positions to average in order to find the new pivot.</param>
         public static void CenterPivot(this ProBuilderMesh mesh, int[] indexes)
         {
             if (mesh == null)
@@ -57,7 +59,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Set the pivot point of a mesh in world space. The Transform component position property is set to worldPosition, while the mesh geometry does not move.
+        /// Sets the pivot point of a mesh in world space. The Transform component position property is set to worldPosition,
+        /// while the mesh geometry does not move.
+        ///
+        /// This is the equivalent of the [Set Pivot (Vertices)](../manual/Vert_SetPivot.html) action.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="worldPosition">The new pivot position in world space.</param>
@@ -76,7 +81,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Scale vertices and set transform.localScale to Vector3.one.
+        /// Scales vertices and sets `transform.localScale` to `Vector3.one`.
+        ///
+        /// This is the equivalent of the [Freeze Transform](../manual/Freeze_Transform.html) action.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         public static void FreezeScaleTransform(this ProBuilderMesh mesh)

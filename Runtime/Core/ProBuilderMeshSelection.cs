@@ -24,34 +24,39 @@ namespace UnityEngine.ProBuilder
         HashSet<int> m_SelectedSharedVertices = new HashSet<int>();
         List<int> m_SelectedCoincidentVertices = new List<int>();
 
-        /// <value>
-        /// If false mesh elements will not be selectable. This is used by @"UnityEditor.ProBuilder.ProBuilderEditor".
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether elements can be selected.
+        /// Used by <see cref="UnityEditor.ProBuilder.ProBuilderEditor" />.
+        /// </summary>
+        /// <returns>False if mesh elements are not selectable. </returns>
         public bool selectable
         {
             get { return m_IsSelectable; }
             set { m_IsSelectable = value; }
         }
 
-        /// <value>
-        /// Get the number of faces that are currently selected on this object.
-        /// </value>
+        /// <summary>
+        /// Gets the number of faces that are currently selected on this object.
+        /// </summary>
+        /// <returns>Number of selected faces. </returns>
         public int selectedFaceCount
         {
             get { return m_SelectedFaces.Length; }
         }
 
-        /// <value>
-        /// Get the number of selected vertex indexes.
-        /// </value>
+        /// <summary>
+        /// Gets the number of selected vertex indices.
+        /// </summary>
+        /// <returns>Number of selected vertices. </returns>
         public int selectedVertexCount
         {
             get { return m_SelectedVertices.Length; }
         }
 
-        /// <value>
-        /// Get the number of selected edges.
-        /// </value>
+        /// <summary>
+        /// Gets the number of selected edges.
+        /// </summary>
+        /// <returns>Number of selected edges. </returns>
         public int selectedEdgeCount
         {
             get { return m_SelectedEdges.Length; }
@@ -85,7 +90,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// All selected vertices and their coincident neighbors.
+        /// Gets all selected vertices and their coincident neighbors.
         /// </summary>
         internal IEnumerable<int> selectedCoincidentVertices
         {
@@ -131,8 +136,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a copy of the selected face array.
+        /// Returns a copy of the array of selected faces.
         /// </summary>
+        /// <returns>Array of currently selected faces. </returns>
         public Face[] GetSelectedFaces()
         {
             int len = m_SelectedFaces.Length;
@@ -142,25 +148,28 @@ namespace UnityEngine.ProBuilder
             return selected;
         }
 
-        /// <value>
-        /// A collection of the currently selected faces by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.faces" array.
-        /// </value>
+        /// <summary>
+        /// Gets a collection of the currently selected faces by their index in the <see cref="ProBuilderMesh.faces" /> array.
+        /// </summary>
+        /// <returns>Array of indices representing the currently selected faces. </returns>
         public ReadOnlyCollection<int> selectedFaceIndexes
         {
             get { return new ReadOnlyCollection<int>(m_SelectedFaces); }
         }
 
-        /// <value>
-        /// A collection of the currently selected vertices by their index in the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array.
-        /// </value>
+        /// <summary>
+        /// Gets a collection of the currently selected vertices by their index in the <see cref="ProBuilderMesh.positions" /> array.
+        /// </summary>
+        /// <returns>Array of indices representing the currently selected vertices. </returns>
         public ReadOnlyCollection<int> selectedVertices
         {
             get { return new ReadOnlyCollection<int>(m_SelectedVertices); }
         }
 
-        /// <value>
-        /// A collection of the currently selected edges.
-        /// </value>
+        /// <summary>
+        /// Gets a collection of the currently selected edges.
+        /// </summary>
+        /// <returns>Collection of <see cref="Edge" /> objects representing the currently selected edges. </returns>
         public ReadOnlyCollection<Edge> selectedEdges
         {
             get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
@@ -218,9 +227,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the face selection for this mesh. Also sets the vertex and edge selection to match.
+        /// Sets the face selection for this mesh. Also sets the vertex and edge selection to match.
         /// </summary>
-        /// <param name="selected">The new face selection.</param>
+        /// <param name="selected">A set of faces to select.</param>
         public void SetSelectedFaces(IEnumerable<Face> selected)
         {
             SetSelectedFaces(selected != null ? selected.Select(x => Array.IndexOf(facesInternal, x)) : null);
@@ -246,9 +255,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the edge selection for this mesh. Also sets the face and vertex selection to match.
+        /// Sets the edge selection for this mesh. Also sets the face and vertex selection to match.
         /// </summary>
-        /// <param name="edges">The new edge selection.</param>
+        /// <param name="edges">A set of edges to select.</param>
         public void SetSelectedEdges(IEnumerable<Edge> edges)
         {
             if (edges == null)
@@ -269,9 +278,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Sets the selected vertices array. Clears SelectedFaces and SelectedEdges arrays.
+        /// Sets the selected vertices array. Clears the selected faces and selected edges arrays.
         /// </summary>
-        /// <param name="vertices">The new vertex selection.</param>
+        /// <param name="vertices">The new vertices to select.</param>
         public void SetSelectedVertices(IEnumerable<int> vertices)
         {
             m_SelectedFaces = new int[0];
@@ -285,16 +294,17 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Removes face at index in SelectedFaces array, and updates the SelectedTriangles and SelectedEdges arrays to match.
+        /// Removes the specified face from the selection. Also updates the SelectedTriangles and SelectedEdges arrays to match.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">The index from the selected faces array that corresponds to the face to remove from the selection.</param>
         internal void RemoveFromFaceSelectionAtIndex(int index)
         {
             SetSelectedFaces(m_SelectedFaces.RemoveAt(index));
         }
 
         /// <summary>
-        /// Clears selected face, edge, and vertex arrays. You do not need to call this when setting an individual array, as the setter methods will handle updating the associated caches.
+        /// Clears the arrays of selected faces, edges, and vertices. You don't need to call this when setting
+        /// an individual array, as the setter methods handle updating the associated caches.
         /// </summary>
         public void ClearSelection()
         {

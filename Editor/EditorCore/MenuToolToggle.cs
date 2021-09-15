@@ -16,13 +16,22 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public abstract class MenuToolToggle: MenuAction
     {
+        /// <summary>
+        /// Holds a reference to the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// </summary>
         protected EditorTool m_Tool;
 
+        /// <summary>
+        /// Gets a reference to the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// </summary>
         public EditorTool Tool
         {
             get => m_Tool;
         }
 
+        /// <summary>
+        /// Creates a new button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// </summary>
         protected MenuToolToggle()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;

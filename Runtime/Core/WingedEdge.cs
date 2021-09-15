@@ -5,10 +5,14 @@ using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
-    /// <inheritdoc cref="IEquatable" />
-    /// <inheritdoc cref="IEnumerable" />
+    // <inheritdoc cref="IEquatable" /> (can't inherit from base classes that aren't in the same package)
+    // <inheritdoc cref="IEnumerable" />
     /// <summary>
-    /// A winged-edge data structure holds references to an edge, the previous and next edge in it's triangle, it's connected face, and the opposite edge (common).
+    /// Represents a boundary edge where three faces meet. It holds references to:
+    /// - The <see cref="Face" /> connected to this edge
+    /// - An <see cref="EdgeLookup" /> for finding coincident vertices on this edge
+    /// - The previous and next winged edges in its triangle
+    /// - The common ([coincident](../manual/gloss.html#coincident)) winged edge, called the 'opposite' edge
     /// </summary>
     /// <example>
     /// ```
@@ -27,35 +31,35 @@ namespace UnityEngine.ProBuilder
     {
         static readonly Dictionary<Edge, WingedEdge> k_OppositeEdgeDictionary = new Dictionary<Edge, WingedEdge>();
 
-        /// <value>
-        /// The local and shared edge that this edge belongs to.
-        /// </value>
+        /// <summary>
+        /// Gets the local and shared edge that this edge belongs to.
+        /// </summary>
         public EdgeLookup edge { get; private set; }
 
-        /// <value>
-        /// The connected face that this wing belongs to.
-        /// </value>
+        /// <summary>
+        /// Gets the connected face that this wing belongs to.
+        /// </summary>
         public Face face { get; private set; }
 
-        /// <value>
-        /// The WingedEdge that is connected to the edge.y vertex.
-        /// </value>
+        /// <summary>
+        /// Gets the WingedEdge that is connected to the `edge.y` vertex.
+        /// </summary>
         public WingedEdge next { get; private set; }
 
-        /// <value>
-        /// The WingedEdge that is connected to the edge.x vertex.
-        /// </value>
+        /// <summary>
+        /// Gets the WingedEdge that is connected to the `edge.x` vertex.
+        /// </summary>
         public WingedEdge previous { get; private set; }
 
-        /// <value>
-        /// The WingedEdge that is on the opposite side of this edge.
-        /// </value>
+        /// <summary>
+        /// Gets the WingedEdge that is on the "opposite" side of this edge.
+        /// </summary>
         public WingedEdge opposite { get; private set; }
 
         WingedEdge() {}
 
         /// <summary>
-        /// Equality comparision tests for local edge equality, disregarding other values.
+        /// Tests to see whether the specified Edge is equal to the local edge, disregarding other values.
         /// </summary>
         /// <param name="other">The WingedEdge to compare against.</param>
         /// <returns>True if the local edges are equal, false if not.</returns>
@@ -65,7 +69,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Equality comparision tests for local edge equality, disregarding other values.
+        /// Tests to see whether the specified object is equal to the local edge, disregarding other values.
         /// </summary>
         /// <param name="obj">The WingedEdge to compare against.</param>
         /// <returns>True if the local edges are equal, false if not.</returns>
@@ -83,7 +87,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a hash code for this edge.
+        /// Returns the hash code for this edge.
         /// </summary>
         /// <returns>WingedEdge comparison only considers the local edge. As such, this returns the local edge hashcode.</returns>
         public override int GetHashCode()
@@ -92,9 +96,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// How many edges are in this sequence.
+        /// Returns the number of edges connected in this sequence.
         /// </summary>
-        /// <returns>The number of WingedEdges that are connected by walking the @"UnityEngine.ProBuilder.WingedEdge.next" property.</returns>
+        /// <returns>The number of WingedEdges found with the <see cref="next">WingedEdge.next</see> property.</returns>
         public int Count()
         {
             WingedEdge current = this;
@@ -110,7 +114,18 @@ namespace UnityEngine.ProBuilder
             return count;
         }
 
-        /// <returns>A string representation of the properties contained within this object.</returns>
+        /// <summary>
+        /// Returns a string representation of the winged edge.
+        /// </summary>
+        /// <returns>String formatted as follows:
+        ///
+        /// `Common: [common]`
+        ///
+        /// `Local: [local]`
+        ///
+        /// `Opposite: [opposite]`
+        ///
+        /// `Face: [face]`</returns>
         public override string ToString()
         {
             return string.Format("Common: {0}\nLocal: {1}\nOpposite: {2}\nFace: {3}",
@@ -205,10 +220,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Return the @"UnityEngine.ProBuilder.WingedEdge.previous" or @"UnityEngine.ProBuilder.WingedEdge.next" WingedEdge if it contains the passed common (shared) index.
+        /// Returns <see cref="previous">WingedEdge.previous</see> or
+        /// <see cref="next">WingedEdge.next</see> if it contains the specified common (shared) index.
         /// </summary>
         /// <param name="common">The common index to search next and previous for.</param>
-        /// <returns>The next or previous WingedEdge that contains common, or null if not found.</returns>
+        /// <returns>The next or previous WingedEdge that contains common; or null if not found.</returns>
         public WingedEdge GetAdjacentEdgeWithCommonIndex(int common)
         {
             if (next.edge.common.Contains(common))
@@ -220,11 +236,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Order a face's edges in sequence.
-        /// The first edge is used as a starting point.
+        /// Orders a face's edges in sequence, starting from the first edge.
         /// </summary>
         /// <param name="face">The source face.</param>
-        /// <returns>A new set of edges where each edge y value matches the next edge x.</returns>
+        /// <returns>A new set of edges where each edge's Y value matches the next edge's X value.</returns>
         public static List<Edge> SortEdgesByAdjacency(Face face)
         {
             if (face == null || face.edgesInternal == null)
@@ -235,7 +250,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Sort edges list by adjacency, such that each edge's common y value matches the next edge's common x.
+        /// Sorts the specified list of edges by adjacency, such that each edge's common Y value matches the next edge's common X value.
         /// </summary>
         /// <param name="edges">The edges to sort in-place.</param>
         public static void SortEdgesByAdjacency(List<Edge> edges)
@@ -260,10 +275,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a dictionary of common indexes and all WingedEdge values touching the index.
+        /// Returns a dictionary of common indices and all WingedEdge values that touch each common index.
         /// </summary>
-        /// <param name="wings">The wings to search for spokes.</param>
-        /// <returns>A dictionary where each key is a common index with a list of each winged edge touching it.</returns>
+        /// <param name="wings">The list of WingedEdges to search.</param>
+        /// <returns>A dictionary where each key is a common index mapped to a list of each winged edge that touches it.</returns>
         public static Dictionary<int, List<WingedEdge>> GetSpokes(List<WingedEdge> wings)
         {
             if (wings == null)
@@ -309,11 +324,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a new list of WingedEdge values for a ProBuilder mesh.
+        /// Creates a new list of WingedEdge values from all faces on the specified ProBuilder mesh.
         /// </summary>
-        /// <param name="mesh">The mesh from which faces will read.</param>
-        /// <param name="oneWingPerFace">Optionally restrict the list to only include one WingedEdge per-face.</param>
-        /// <returns>A new list of WingedEdge values gathered from @"UnityEngine.ProBuilder.ProBuilderMesh.faces".</returns>
+        /// <param name="mesh">The mesh containing the faces to analyze.</param>
+        /// <param name="oneWingPerFace">Set this parameter to true to restrict the list to include only one WingedEdge per face. The default value is false.</param>
+        /// <returns>A new list of WingedEdge values gathered from the <see cref="ProBuilderMesh.faces">ProBuilderMesh.faces</see>.</returns>
         public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, bool oneWingPerFace = false)
         {
             if (mesh == null)
@@ -323,12 +338,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a new list of WingedEdge values for a ProBuilder mesh.
+        /// Creates a new list of WingedEdge values from a specific set of faces on the specified ProBuilder mesh.
         /// </summary>
-        /// <param name="mesh">Target ProBuilderMesh.</param>
-        /// <param name="faces">Which faces to include in the WingedEdge list.</param>
-        /// <param name="oneWingPerFace">If `oneWingPerFace` is true the returned list will contain a single winged edge per-face (but still point to all edges).</param>
-        /// <returns>A new list of WingedEdge values gathered from faces.</returns>
+        /// <param name="mesh">The mesh containing the faces to analyze.</param>
+        /// <param name="faces">The collection of faces to include in the WingedEdge list.</param>
+        /// <param name="oneWingPerFace">Set this parameter to true to restrict the list to include only one WingedEdge per face. The default value is false.</param>
+        /// <returns>A new list of WingedEdge values gathered from the specified faces.</returns>
         public static List<WingedEdge> GetWingedEdges(ProBuilderMesh mesh, IEnumerable<Face> faces, bool oneWingPerFace = false)
         {
             if (mesh == null)

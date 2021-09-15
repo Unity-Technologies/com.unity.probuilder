@@ -12,12 +12,12 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Base class from which any action that is represented in the ProBuilder toolbar inherits.
+    /// Base class for any action that appears on the ProBuilder toolbar.
     /// </summary>
     public abstract class MenuAction
     {
         /// <summary>
-        /// A flag indicating the state of a menu action. This determines whether the menu item is visible, and if visible, enabled.
+        /// Determines whether the menu item is visible, and if visible, whether it is enabled.
         /// </summary>
         [System.Flags]
         public enum MenuActionState
@@ -40,38 +40,38 @@ namespace UnityEditor.ProBuilder
             VisibleAndEnabled = 0x3
         };
 
-        /// <value>
+        /// <summary>
         /// Path to the ProBuilder menu category.
-        /// </value>
+        /// </summary>
         /// <remarks>
         /// Use this where you wish to add a top level menu item.
         /// </remarks>
         internal const string probuilderMenuPath = "Tools/ProBuilder/";
 
-        /// <value>
+        /// <summary>
         /// The unicode character for the control key symbol on Windows, or command key on macOS.
-        /// </value>
+        /// </summary>
         internal const char keyCommandSuper = PreferenceKeys.CMD_SUPER;
 
-        /// <value>
+        /// <summary>
         /// The unicode character for the shift key symbol.
-        /// </value>
+        /// </summary>
         internal const char keyCommandShift = PreferenceKeys.CMD_SHIFT;
 
-        /// <value>
+        /// <summary>
         /// The unicode character for the option key symbol on macOS.
-        /// </value>
+        /// </summary>
         /// <seealso cref="keyCommandAlt"/>
         internal const char keyCommandOption = PreferenceKeys.CMD_OPTION;
 
-        /// <value>
+        /// <summary>
         /// The unicode character for the alt key symbol on Windows.
-        /// </value>
+        /// </summary>
         internal const char keyCommandAlt = PreferenceKeys.CMD_ALT;
 
-        /// <value>
+        /// <summary>
         /// The unicode character for the delete key symbol.
-        /// </value>
+        /// </summary>
         internal const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
         static readonly GUIContent AltButtonContent = new GUIContent("+", "");
@@ -80,8 +80,14 @@ namespace UnityEditor.ProBuilder
 
         Vector2 m_LastCalculatedSize = Vector2.zero;
 
+        /// <summary>
+        /// Invoked when the user selects an action to perform from the toolbar.
+        /// </summary>
         public static Action<MenuAction> onPerformAction;
 
+        /// <summary>
+        /// Creates a new button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// </summary>
         protected MenuAction()
         {
             iconMode = ProBuilderEditor.s_IsIconGui;
@@ -130,7 +136,8 @@ namespace UnityEditor.ProBuilder
         Texture2D m_DesaturatedIcon = null;
 
         /// <summary>
-        /// By default this function will look for an image named `${icon}_disabled`. If your disabled icon is somewhere else override this function.
+        /// Gets the icon to use when the action button on the toolbar is disabled. By default, this function looks for an image named
+        /// `${icon}_disabled`. Override this function if your disabled icon does not follow that naming convention or location.
         /// </summary>
         protected virtual Texture2D disabledIcon
         {
@@ -153,49 +160,51 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        /// <value>
-        /// What category this action belongs in.
-        /// </value>
+        /// <summary>
+        /// Gets the category assigned to this action.
+        /// </summary>
         public abstract ToolbarGroup group { get; }
 
-        /// <value>
-        /// Optional value influences where in the toolbar this menu item will be placed.
+        /// <summary>
+        /// Gets the value to optionally influence where this menu item appears in the toolbar.
+        /// The default value is -1 (no preference).
+        /// </summary>
         /// <remarks>
         /// 0 is first, 1 is second, -1 is no preference.
         /// </remarks>
-        /// </value>
         public virtual int toolbarPriority { get { return -1; } }
 
-        /// <value>
-        /// The icon to be displayed for this action.
-        /// </value>
+        /// <summary>
+        /// Gets the icon to display on the toolbar for this action.
+        /// </summary>
         /// <remarks>
-        /// Not used when toolbar is in text mode.
+        /// This property is not used when the [Toolbar display mode](../manual/toolbar.html#toolbar-display-modes) is set to text.
         /// </remarks>
         public abstract Texture2D icon { get; }
 
-        /// <value>
-        /// The contents to display for this menu action's tooltip.
-        /// </value>
+        /// <summary>
+        /// Gets the contents of the tooltip to display for this menu action.
+        /// </summary>
         public abstract TooltipContent tooltip { get; }
 
-        /// <value>
-        /// Optional override for the action title displayed in the toolbar button.
-        /// </value>
+        /// <summary>
+        /// Gets the override title for this action to display on the toolbar button.
+        /// </summary>
         /// <remarks>
-        /// If unimplemented the tooltip title is used.
+        /// If you don't implement this property, toolbar button displays the tooltip title.
         /// </remarks>
         public virtual string menuTitle { get { return tooltip.title; } }
 
-        /// <value>
-        /// True if this class should have an entry built into the hardware menu. This is not implemented for custom actions.
-        /// </value>
+        /// <summary>
+        /// Gets whether this class should have an entry built into the hardware menu. This is not implemented for custom actions.
+        /// </summary>
         protected virtual bool hasFileMenuEntry { get { return true; } }
 
         /// <summary>
-        /// Is the current mode and selection valid for this action?
+        /// Gets a flag that indicates both the visibility and enabled state of an action
+        /// to determine whether the current mode and selection is valid for it.
         /// </summary>
-        /// <value>A flag indicating both the visibility and enabled state for an action.</value>
+        /// <returns>.</returns>
         public MenuActionState menuActionState
         {
             get
@@ -209,7 +218,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// In which SelectMode states is this action applicable. Drives the `virtual bool hidden { get; }` property unless overridden.
+        /// Gets the SelectMode states where this action applies. This drives the <see cref="hidden"/> property unless you override it.
         /// </summary>
         public virtual SelectMode validSelectModes
         {
@@ -217,10 +226,11 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// A check for whether or not the action is valid given the current selection.
+        /// Gets whether or not the action is valid given the current selection.
+        ///
+        /// True if this action is valid with the current selection and mode.
         /// </summary>
         /// <seealso cref="hidden"/>
-        /// <value>True if this action is valid with current selection and mode.</value>
         public virtual bool enabled
         {
             get
@@ -235,29 +245,31 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Is this action visible in the ProBuilder toolbar?
+        /// Gets whether this action is visible in the ProBuilder toolbar.
+        ///
+        /// True if this action appear in the toolbar with the current mode and settings; false otherwise.
         /// </summary>
         /// <remarks>This returns false by default.</remarks>
         /// <seealso cref="enabled"/>
-        /// <value>True if this action should be shown in the toolbar with the current mode and settings, false otherwise.</value>
         public virtual bool hidden
         {
             get { return !ProBuilderEditor.selectMode.ContainsFlag(validSelectModes); }
         }
 
         /// <summary>
-        /// Get a flag indicating the visibility and enabled state of an extra options menu modifier for this action.
+        /// Gets a flag that indicates whether your action implements extra options. If it does, you must also
+        /// implement <see cref="OnSettingsGUI"/> so that an options appears for this action button.
         /// </summary>
-        /// <value>A flag specifying whether an options icon should be displayed for this action button. If your action implements some etra options, you must also implement OnSettingsGUI.</value>
         protected virtual MenuActionState optionsMenuState
         {
             get { return MenuActionState.Hidden; }
         }
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do.
-        /// Implementation should be coded in PerformActionImplementation.
-        /// Perform action should be called to trigger the onPerformAction event.
+        /// Performs the action for this menu item.
+        ///
+        /// Use <see cref="PerformActionImplementation"/> to implement the action.
+        /// Calling this method triggers the <see cref="onPerformAction"/> event.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public ActionResult PerformAction()
@@ -268,21 +280,26 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. This method should never been call directly
-        /// but though PerformAction.
+        /// Performs the action for this menu item. Use this method to implement the action and then
+        /// use PerformAction to call it.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         protected abstract ActionResult PerformActionImplementation();
 
+        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerformAction(), the implementation of the action should inherits from PerformActionImplementation(). (UnityUpgradable) -> PerformAction()";
         /// <summary>
         /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
-        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerformAction(), the implementation of the action should inherits from PerformActionImplementation(). (UnityUpgradable) -> PerformAction()";
         [Obsolete(obsoleteDoActionMsg, false)]
         public ActionResult DoAction() => PerformAction();
 
 
+        /// <summary>
+        /// Performs the action for this menu item when in Text mode.
+        ///
+        /// You are responsible for implementing Undo.
+        /// </summary>
         protected virtual void DoAlternateAction()
         {
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
@@ -303,6 +320,10 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         protected virtual void OnSettingsDisable() {}
 
+        /// <summary>
+        /// Gets or sets whether the [Toolbar display mode](../manual/toolbar.html#toolbar-display-modes)
+        /// is set to Icon mode (true) or Text mode (false).
+        /// </summary>
         protected bool iconMode { get; set; }
 
         /// <summary>
@@ -389,6 +410,13 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Draws the menu item for this action in Text mode.
+        ///
+        /// You are responsible for implementing Undo.
+        /// </summary>
+        /// <param name="options">Optional array of layout options for this menu item.</param>
+        /// <returns>True if successful; false otherwise.</returns>
         protected bool DoAltButton(params GUILayoutOption[] options)
         {
             return GUILayout.Button(AltButtonContent, MenuActionStyles.altButtonStyle, options);

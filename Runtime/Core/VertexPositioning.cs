@@ -7,14 +7,14 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A set of commonly used functions for modifying mesh positions.
+    /// Contains a set of commonly used functions for modifying mesh positions.
     /// </summary>
     public static class VertexPositioning
     {
         static List<int> s_CoincidentVertices = new List<int>();
 
         /// <summary>
-        /// Get a copy of a mesh positions array transformed into world coordinates.
+        /// Returns a copy of a mesh positions array transformed into world coordinates.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <returns>An array containing all vertex positions in world space.</returns>
@@ -34,12 +34,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Translate a set of vertices with a world space offset.
-        /// <br />
-        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// Translates a set of vertices with a world space offset.
+        ///
+        /// This applies the mesh positions to both the <see cref="ProBuilderMesh"/> and the <see cref="UnityEngine.Mesh"/>.
         /// </summary>
-        /// <param name="mesh">The mesh to be affected.</param>
-        /// <param name="indexes">A set of triangles pointing to the vertex positions that are to be affected.</param>
+        /// <param name="mesh">The mesh containing the vertices you want to translate.</param>
+        /// <param name="indexes">An array of triangles pointing to the vertex positions that you want to translate.</param>
         /// <param name="offset">The offset to apply in world coordinates.</param>
         public static void TranslateVerticesInWorldSpace(this ProBuilderMesh mesh, int[] indexes, Vector3 offset)
         {
@@ -102,13 +102,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Translate a set of vertices with an offset provided in local (model) coordinates.
-        /// <br />
-        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// Translates a set of vertices with an offset provided in local (model) coordinates.
+        ///
+        /// This applies the mesh positions to both the <see cref="ProBuilderMesh"/> and the <see cref="UnityEngine.Mesh"/>.
         /// </summary>
-        /// <param name="mesh">The mesh to be affected.</param>
-        /// <param name="indexes">A set of triangles pointing to the vertex positions that are to be affected.</param>
-        /// <param name="offset"></param>
+        /// <param name="mesh">The mesh containing the vertices that you want to translate.</param>
+        /// <param name="indexes">A set of triangles pointing to the vertex positions that you want to translate.</param>
+        /// <param name="offset">The offset to apply in local coordinates.</param>
         public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<int> indexes, Vector3 offset)
         {
             if (mesh == null)
@@ -118,13 +118,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Translate a set of vertices with an offset provided in local (model) coordinates.
-        /// <br />
-        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// Translates a set of edges with an offset provided in local (model) coordinates.
+        ///
+        /// This applies the mesh positions to both the <see cref="ProBuilderMesh"/> and the <see cref="UnityEngine.Mesh"/>.
         /// </summary>
-        /// <param name="mesh">The mesh to be affected.</param>
-        /// <param name="edges">A set of edges that are to be affected.</param>
-        /// <param name="offset"></param>
+        /// <param name="mesh">The mesh containing the edges that you want to translate.</param>
+        /// <param name="edges">The set of edges that you want to translate.</param>
+        /// <param name="offset">The offset to apply in local coordinates.</param>
         public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<Edge> edges, Vector3 offset)
         {
             if (mesh == null)
@@ -134,13 +134,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Translate a set of vertices with an offset provided in local (model) coordinates.
-        /// <br />
-        /// Unlike most other mesh operations, this function applies the mesh positions to both ProBuilderMesh and the UnityEngine.Mesh.
+        /// Translates a set of faces with an offset provided in local (model) coordinates.
+        ///
+        /// This applies the mesh positions to both the <see cref="ProBuilderMesh"/> and the <see cref="UnityEngine.Mesh"/>.
         /// </summary>
-        /// <param name="mesh">The mesh to be affected.</param>
-        /// <param name="faces">A set of faces that are to be affected.</param>
-        /// <param name="offset"></param>
+        /// <param name="mesh">The mesh containing the faces that you want to translate.</param>
+        /// <param name="faces">The set of faces that you want to translate.</param>
+        /// <param name="offset">The offset to apply in local coordinates.</param>
         public static void TranslateVertices(this ProBuilderMesh mesh, IEnumerable<Face> faces, Vector3 offset)
         {
             if (mesh == null)
@@ -161,12 +161,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Given a shared vertex index (index of the triangle in the sharedIndexes array), move all vertices to new position.
-        /// Position is in model space coordinates.
-        /// <br /><br />
-        /// Use @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" and IntArrayUtility.IndexOf to get a shared (or common) index.
+        /// Takes a <see cref="SharedVertex"/> index (index of the triangle in the <see cref="ProBuilderMesh.sharedVertices">sharedIndexes</see>
+        /// array), and changes its vertices to a new position in model space coordinates.
+        ///
+        /// Use <see cref="ProBuilderMesh.sharedVertices">sharedIndexes</see> and <see cref="UnityEditor.ArrayUtility.IndexOf"/> to get a shared (or common) index.
         /// </summary>
-        /// <param name="mesh">The target mesh.</param>
+        /// <param name="mesh">The mesh containing the vertices you want to modify.</param>
         /// <param name="sharedVertexHandle">The shared (or common) index to set the vertex position of.</param>
         /// <param name="position">The new position in model coordinates.</param>
         public static void SetSharedVertexPosition(this ProBuilderMesh mesh, int sharedVertexHandle, Vector3 position)

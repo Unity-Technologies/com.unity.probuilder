@@ -7,19 +7,22 @@ using UObject = UnityEngine.Object;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A collection of settings defining how mesh element picking behaves.
+    /// A collection of settings that define how mesh element picking behaves.
     /// </summary>
     public struct PickerOptions
     {
-        /// <value>
-        /// Should depth testing be performed when hit testing elements?
-        /// Enable to select only visible elements, disable to select all elements regardless of visibility.
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to perform depth testing when testing elements with raycasting.
+        /// </summary>
+        /// <returns>
+        /// True to select only visible elements; false to select all elements regardless of visibility.
+        /// </returns>
         public bool depthTest { get; set; }
 
-        /// <value>
-        /// Require elements to be completely encompassed by the rect selection (Complete) or only touched (Partial).
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to require elements to be completely encompassed by the `rect` selection
+        /// (RectSelectMode.Complete) or to allow elements only partially inside the `rect` selection (RectSelectMode.Partial).
+        /// </summary>
         /// <remarks>
         /// Does not apply to vertex picking.
         /// </remarks>
@@ -31,14 +34,20 @@ namespace UnityEngine.ProBuilder
             rectSelectMode = RectSelectMode.Partial,
         };
 
-        /// <value>
-        /// A set of options with default values.
-        /// </value>
+        /// <summary>
+        /// Represents a set of picking options with default values. By default, the <see cref="depthTest"/> property
+        /// is set to true and the <see cref="rectSelectMode" /> property is set to <see cref="RectSelectMode.Partial"/>.
+        /// </summary>
         public static PickerOptions Default
         {
             get { return k_Default; }
         }
 
+        /// <summary>
+        /// Evaluates whether the specified object is equivalent to this one.
+        /// </summary>
+        /// <param name="obj">The object to compare to this object.</param>
+        /// <returns>True if both objects are PickerOptions and their property values match; false otherwise.</returns>
         public override bool Equals(object obj)
         {
             if (!(obj is PickerOptions))
@@ -47,11 +56,20 @@ namespace UnityEngine.ProBuilder
             return Equals((PickerOptions)obj);
         }
 
+        /// <summary>
+        /// Evaluates whether the specified PickerOptions object contains the same settings as this one has.
+        /// </summary>
+        /// <param name="other">The PickerOptions object to compare to this object.</param>
+        /// <returns>True if the <see cref="depthTest"/> and <see cref="rectSelectMode" /> property values match; false otherwise.</returns>
         public bool Equals(PickerOptions other)
         {
             return depthTest == other.depthTest && rectSelectMode == other.rectSelectMode;
         }
 
+        /// <summary>
+        /// Returns the hash code for this object.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             unchecked
@@ -60,11 +78,23 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Returns true if the two PickerOptions objects have matching values.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>True if the objects have matching values; false otherwise.</returns>
         public static bool operator==(PickerOptions a, PickerOptions b)
         {
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// Returns true if the values for the two PickerOptions objects don't match.
+        /// </summary>
+        /// <param name="a">The first object to compare.</param>
+        /// <param name="b">The second object to compare.</param>
+        /// <returns>True if the values for the two PickerOptions objects don't match; false otherwise.</returns>
         public static bool operator!=(PickerOptions a, PickerOptions b)
         {
             return !a.Equals(b);
@@ -72,7 +102,7 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Functions for picking elements in a view by rendering a picker texture and testing pixels.
+    /// Provides functions for picking elements in a view by rendering a picker texture and testing pixels.
     /// </summary>
     static partial class SelectionPickerRenderer
     {
@@ -220,15 +250,15 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Select vertex indexes contained within a rect.
+        /// Selects the vertex indexes contained within a rect (rectangular selection).
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="pickerRect"></param>
-        /// <param name="selection"></param>
-        /// <param name="doDepthTest"></param>
-        /// <param name="renderTextureWidth"></param>
-        /// <param name="renderTextureHeight"></param>
-        /// <returns>A dictionary of pb_Object selected vertex indexes.</returns>
+        /// <param name="camera">Use this camera to evaluate whether any vertices are inside the `rect`.</param>
+        /// <param name="pickerRect">Rect is in GUI space, where 0,0 is the top left of the screen, and `width = cam.pixelWidth / pointsPerPixel`.</param>
+        /// <param name="selection">The collection of objects to check for selectability. ProBuilder verifies whether these objects fall inside the `rect`.</param>
+        /// <param name="doDepthTest">True to include mesh elements that are hidden; false otherwise</param>
+        /// <param name="renderTextureWidth">Width of the texture. If not specified, ProBuilder uses auto sizing (matches the camera's texture width).</param>
+        /// <param name="renderTextureHeight">Height of the texture. If not specified, ProBuilder uses auto sizing (matches the camera's texture height).</param>
+        /// <returns>A dictionary of ProBuilderMesh objects and vertex indices that are in the selection `rect`. </returns>
         public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
             Camera camera,
             Rect pickerRect,
@@ -319,15 +349,15 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Select edges touching a rect.
+        /// Selects the <see cref="Edge" /> objects contained within a rect (rectangular selection).
         /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="pickerRect"></param>
-        /// <param name="selection"></param>
-        /// <param name="doDepthTest"></param>
-        /// <param name="renderTextureWidth"></param>
-        /// <param name="renderTextureHeight"></param>
-        /// <returns>A dictionary of pb_Object and selected edges.</returns>
+        /// <param name="camera">Use this camera to evaluate whether any edge object(s) are inside the `rect`.</param>
+        /// <param name="pickerRect">Rect is in GUI space, where 0,0 is the top left of the screen, and `width = cam.pixelWidth / pointsPerPixel`.</param>
+        /// <param name="selection">The collection of objects to check for selectability. ProBuilder verifies whether these objects fall inside the `rect`.</param>
+        /// <param name="doDepthTest">True to include mesh elements that are hidden; false otherwise</param>
+        /// <param name="renderTextureWidth">Width of the texture. If not specified, ProBuilder uses auto sizing (matches the camera's texture width).</param>
+        /// <param name="renderTextureHeight">Height of the texture. If not specified, ProBuilder uses auto sizing (matches the camera's texture height).</param>
+        /// <returns>A dictionary of ProBuilderMesh and Edge objects that are in the selection `rect`. </returns>
         public static Dictionary<ProBuilderMesh, HashSet<Edge>> PickEdgesInRect(
             Camera camera,
             Rect pickerRect,
@@ -778,10 +808,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Decode Color32.RGB values to a 32 bit unsigned int, using the RGB as the little bytes. Discards the hi byte (alpha)
+        /// Decodes Color32.RGB values to a 32-bit unsigned int, using the RGB as the little bytes. Discards the hi byte (alpha).
         /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
+        /// <param name="color">The color to decode.</param>
+        /// <returns>32-bit unsigned int containing the decoded RGB values.</returns>
         public static uint DecodeRGBA(Color32 color)
         {
             uint r = (uint)color.r;
@@ -795,10 +825,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Encode the low 24 bits of a UInt32 to RGB of Color32, using 255 for A.
+        /// Encodes the low 24 bits of a 32-bit unsigned int to Color32.RGB values, using 255 for the alpha.
         /// </summary>
         /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <returns>Color32 containing the encoded values.</returns>
         public static Color32 EncodeRGBA(uint hash)
         {
             // skip using BitConverter.GetBytes since this is super simple

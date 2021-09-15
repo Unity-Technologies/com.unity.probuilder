@@ -1,5 +1,8 @@
 namespace UnityEngine.ProBuilder
 {
+    /// <summary>
+    /// Defines the location of the pivot point on a ProBuilderMesh object.
+    /// </summary>
     public enum PivotPoint
     {
         /// <summary>

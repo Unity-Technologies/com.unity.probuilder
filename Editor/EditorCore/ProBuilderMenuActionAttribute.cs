@@ -3,8 +3,12 @@ using System;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Classes inheriting MenuAction and tagged with this attribute will be displayed in the ProBuilderEditor window.
-    /// See [ProBuilder API Examples](https://github.com/Unity-Technologies/ProBuilder-API-Examples) for sample code.
+    /// Apply this attribute to any class derived from MenuAction that you want to appear in the <see cref="ProBuilderEditor"/>
+    /// window.
+    ///
+    /// There are several working examples bundled with the ProBuilder package that demonstrate how to use the ProBuilder API to
+    /// add custom actions to the ProBuilder toolbar. To import them into your Unity project, click the **Import** button under the
+    /// **Samples** section on the [Package Manager window](https://docs.unity3d.com/Manual/upm-ui-details.html).
     /// </summary>
     /// <example>
     /// ```
@@ -19,8 +23,8 @@ namespace UnityEditor.ProBuilder
     ///     [ProBuilderMenuAction]
     ///     public class MyCustomProBuilderMenuAction : MenuAction
     ///     {
-    ///                 // @todo Write your plugin
-    ///         }
+    ///         // @todo Write your plugin
+    ///     }
     /// }
     /// ```
     /// </example>

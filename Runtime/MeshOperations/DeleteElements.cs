@@ -7,14 +7,14 @@ using System.Linq;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Functions for removing vertices and triangles from a mesh.
+    /// Provides functions for removing vertices and triangles from a mesh.
     /// </summary>
     public static class DeleteElements
     {
         /// <summary>
-        /// Deletes the vertices from the passed index array, and handles rebuilding the sharedIndexes array.
+        /// Deletes the vertices from the specified index array and rebuilds the <see cref="ProBuilderMesh.sharedVertices"/> array.
         /// </summary>
-        /// <remarks>This function does not retriangulate the mesh. Ie, you are responsible for ensuring that indexes
+        /// <remarks>This function does not retriangulate the mesh. This means that you are responsible for ensuring that the indexes
         /// deleted by this function are not referenced by any triangles.</remarks>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="distinctIndexes">A list of vertices to delete. Note that this must not contain duplicates.</param>
@@ -61,32 +61,38 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
         /// <summary>
         /// Removes a face from a mesh.
+        ///
+        /// This is the equivalent of the [Delete Faces](../manual/Face_Delete.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to remove.</param>
-        /// <returns>An array of vertex indexes that were deleted as a result of face deletion.</returns>
+        /// <returns>An array of vertex indices that ProBuilder deleted when it removed the specified face.</returns>
         public static int[] DeleteFace(this ProBuilderMesh mesh, Face face)
         {
             return DeleteFaces(mesh, new Face[] { face });
         }
 
         /// <summary>
-        /// Delete a collection of faces from a mesh.
+        /// Deletes a collection of faces from a mesh.
+        ///
+        /// This is the equivalent of the [Delete Faces](../manual/Face_Delete.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to remove.</param>
-        /// <returns>An array of vertex indexes that were deleted as a result of deletion.</returns>
+        /// <returns>An array of vertex indices that ProBuilder deleted when it removed the specified faces.</returns>
         public static int[] DeleteFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
             return DeleteFaces(mesh, faces.Select(x => System.Array.IndexOf(mesh.facesInternal, x)).ToList());
         }
 
         /// <summary>
-        /// Delete a collection of faces from a mesh.
+        /// Deletes a list of faces from a mesh.
+        ///
+        /// This is the equivalent of the [Delete Faces](../manual/Face_Delete.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="faceIndexes">The indexes of faces to remove (corresponding to the @"UnityEngine.ProBuilder.ProBuilderMesh.faces" collection.</param>
-        /// <returns>An array of vertex indexes that were deleted as a result of deletion.</returns>
+        /// <param name="faceIndexes">The indices of faces to remove (corresponding to the <see cref="ProBuilderMesh.faces"/> collection.</param>
+        /// <returns>An array of vertex indices that ProBuilder deleted when it removed the specified faces.</returns>
         public static int[] DeleteFaces(this ProBuilderMesh mesh, IList<int> faceIndexes)
         {
             if (mesh == null)
@@ -133,6 +139,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return array;
         }
 
+        /// <summary>Obsolete. Use `MeshValidation.RemoveDegenerateTriangles` instead.</summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <returns>The list of removed triangles</returns>
         [Obsolete("Use MeshValidation.RemoveDegenerateTriangles")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static int[] RemoveDegenerateTriangles(this ProBuilderMesh mesh)
@@ -142,6 +151,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
             return removed.ToArray();
         }
 
+        /// <summary>Obsolete. Use `MeshValidation.RemoveUnusedVertices` instead.</summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <returns>The list of removed vertices</returns>
         [Obsolete("Use MeshValidation.RemoveUnusedVertices")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static int[] RemoveUnusedVertices(this ProBuilderMesh mesh)

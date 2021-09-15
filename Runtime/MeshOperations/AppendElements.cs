@@ -8,19 +8,21 @@ using System;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Functions for appending elements to meshes.
+    /// Contains functions for appending elements to meshes.
     /// </summary>
     public static class AppendElements
     {
         /// <summary>
-        /// Append a new face to the ProBuilderMesh.
+        /// Appends a new face to the ProBuilderMesh.
         /// </summary>
         /// <param name="mesh">The mesh target.</param>
         /// <param name="positions">The new vertex positions to add.</param>
-        /// <param name="colors">The new colors to add (must match positions length).</param>
-        /// <param name="uvs">The new uvs to add (must match positions length).</param>
-        /// <param name="face">A face with the new triangle indexes. The indexes should be 0 indexed.</param>
-        /// <param name="common"></param>
+        /// <param name="colors">An array of new colors to add (the length of this array must match positions length).</param>
+        /// <param name="uv0s">An array of new UV0s to add (the length of this array must match positions length).</param>
+        /// <param name="uv2s">An array of new UV2s to add (the length of this array must match positions length).</param>
+        /// <param name="uv3s">An array of new UV3s to add (the length of this array must match positions length).</param>
+        /// <param name="face">The face with the new triangle indices. The indices should be 0 indexed.</param>
+        /// <param name="common">An array of the vertex indices that are shared.</param>
         /// <returns>The new face as referenced on the mesh.</returns>
         internal static Face AppendFace(
 			this ProBuilderMesh mesh,
@@ -123,15 +125,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Append a group of new faces to the mesh. Significantly faster than calling AppendFace multiple times.
+        /// Appends a group of new faces to the ProBuilderMesh.
         /// </summary>
         /// <param name="mesh">The source mesh to append new faces to.</param>
-        /// <param name="positions">An array of position arrays, where indexes correspond to the appendedFaces parameter.</param>
-        /// <param name="colors">An array of colors arrays, where indexes correspond to the appendedFaces parameter.</param>
-        /// <param name="uvs">An array of uvs arrays, where indexes correspond to the appendedFaces parameter.</param>
-        /// <param name="faces">An array of faces arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
-        /// <param name="shared">An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" array. If this value is provided, it must contain entries for each vertex position. Ex, if there are 4 vertices in this face, there must be shared index entries for { 0, 1, 2, 3 }.</param>
-        /// <returns>An array of the new faces that where successfully appended to the mesh.</returns>
+        /// <param name="positions">An array of position arrays, where the indices correspond to the `faces` parameter.</param>
+        /// <param name="colors">An array of colors arrays, where the indices correspond to the `faces` parameter.</param>
+        /// <param name="uvs">An array of UVs arrays, where the indices correspond to the `faces` parameter.</param>
+        /// <param name="faces">An array of Face arrays, which contain the triangle winding information for each new face. Face index values are 0 indexed.</param>
+        /// <param name="shared">
+        /// An optional mapping of each new vertex's common index. Common index refers to a triangle's index in the <see cref="ProBuilderMesh.sharedVertices"/> array.
+        /// If you provide this value, include entries for each vertex position. For example, if there are four vertices in this face, there must be shared index entries for `{ 0, 1, 2, 3 }`.
+        /// </param>
+        /// <returns>An array of the new faces that this method successfully appended to the mesh; null if it failed.</returns>
         public static Face[] AppendFaces(
             this ProBuilderMesh mesh,
             Vector3[][] positions,
@@ -197,12 +202,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Create a new face connecting existing vertices.
+        /// Creates a new face that connects existing vertices.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="indexes">The indexes of the vertices to join with the new polygon.</param>
-        /// <param name="unordered">Are the indexes in an ordered path (false), or not (true)? If indexes are not ordered this function will treat the polygon as a convex shape. Ordered paths will be triangulated allowing concave shapes.</param>
-        /// <returns>The new face created if the action was successfull, null if action failed.</returns>
+        /// <param name="indexes">The indices of the vertices to join with the new polygon.</param>
+        /// <param name="unordered">
+        /// False if the indices in an ordered path; true if not.
+        /// For unordered indices, this function treats the polygon as a convex shape.
+        /// ProBuilder allows concave shapes when triangulating ordered paths.
+        /// </param>
+        /// <returns>The new face that this action successfully created; null if action failed.</returns>
         public static Face CreatePolygon(this ProBuilderMesh mesh, IList<int> indexes, bool unordered)
         {
             if (mesh == null)
@@ -244,12 +253,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 
         /// <summary>
-        /// Create a new face connecting existing vertices.
+        /// Creates a new face by connecting existing vertices.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="indexes">The indexes of the vertices to join with the new polygon.</param>
-        /// <param name="holes">A list of index lists defining holes.</param>
-        /// <returns>The new face created if the action was successful, null if action failed.</returns>
+        /// <param name="holes">A list of indices defining holes.</param>
+        /// <returns>The new face that this action successfully created; null if action failed.</returns>
         public static Face CreatePolygonWithHole(this ProBuilderMesh mesh, IList<int> indexes, IList<IList<int>> holes)
         {
             if (mesh == null)
@@ -302,7 +311,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Create a poly shape from a set of points on a plane. The points must be ordered.
+        /// Creates a custom polygon shape from a set of points on a plane. The points must be ordered.
         /// </summary>
         /// <param name="poly">The <see cref="PolyShape"/> component to rebuild.</param>
         /// <returns>An action result indicating the status of the operation.</returns>
@@ -323,12 +332,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Rebuild a mesh from an ordered set of points.
+        /// Rebuilds a mesh from an ordered set of points.
         /// </summary>
-        /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
+        /// <param name="mesh">The target mesh. This method clears and repopulates the mesh values with the shape extruded from points.</param>
         /// <param name="points">A path of points to triangulate and extrude.</param>
         /// <param name="extrude">The distance to extrude.</param>
-        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
+        /// <param name="flipNormals">True to invert the faces when creating the <see cref="PolyShape"/>.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points,
             float extrude, bool flipNormals)
@@ -337,13 +346,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Rebuild a mesh from an ordered set of points.
+        /// Rebuilds a mesh from an ordered set of points.
         /// </summary>
-        /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
+        /// <param name="mesh">The target mesh. Clears and repopulates the mesh values with the shape extruded from points.</param>
         /// <param name="points">A path of points to triangulate and extrude.</param>
         /// <param name="extrude">The distance to extrude.</param>
-        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
-        /// <param name="cameraLookAt">This argument is now ignored.</param>
+        /// <param name="flipNormals">True to invert the faces when creating them.</param>
+        /// <param name="cameraLookAt">This argument is ignored.</param>
         /// <param name="holePoints">Holes in the polygon.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         [Obsolete("Face.CreateShapeFromPolygon is deprecated as it no longer relies on camera look at.")]
@@ -354,13 +363,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Rebuild a mesh from an ordered set of points.
+        /// Rebuilds a mesh from an ordered set of points.
         /// </summary>
-        /// <param name="mesh">The target mesh. The mesh values will be cleared and repopulated with the shape extruded from points.</param>
+        /// <param name="mesh">The target mesh. Clears and repopulates the mesh values with the shape extruded from points.</param>
         /// <param name="points">A path of points to triangulate and extrude.</param>
         /// <param name="extrude">The distance to extrude.</param>
-        /// <param name="flipNormals">If true the faces will be inverted at creation.</param>
-        /// <param name="holePoints">Holes in the polygon. If null this will be ignored.</param>
+        /// <param name="flipNormals">True to invert the faces when creating them.</param>
+        /// <param name="holePoints">Holes in the polygon. Specify null if you want this method to ignore this value.</param>
         /// <returns>An ActionResult with the status of the operation.</returns>
         public static ActionResult CreateShapeFromPolygon(this ProBuilderMesh mesh, IList<Vector3> points,
             float extrude, bool flipNormals, IList<IList<Vector3>> holePoints)
@@ -568,7 +577,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Duplicate and reverse the winding direction for each face.
+        /// Duplicates and reverses the winding direction for each face.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="faces">The faces to duplicate, reverse triangle winding order, and append to mesh.</param>
@@ -619,7 +628,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Insert a face between two edges.
+        /// Inserts a face between two edges.
+        ///
+        /// This is the equivalent of the [Bridge Edges](../manual/Edge_Bridge.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="a">First edge.</param>
@@ -803,18 +814,26 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         // backwards compatibility prevents us from just using insertOnEdge as an optional parameter
+        // <inheritdoc cref="AppendVerticesToFace"/>
+        /// <summary>
+        /// Adds a set of points to a face and re-triangulates. Points are added to the nearest edge.
+        /// </summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <param name="face">The face to append points to.</param>
+        /// <param name="points">Points to add to the face.</param>
+        /// <returns>The face created by appending the points.</returns>
         public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points)
         {
             return AppendVerticesToFace(mesh, face, points, true);
         }
 
         /// <summary>
-        /// Add a set of points to a face and re-triangulate. Points are added to the nearest edge.
+        /// Adds a set of points to a face and re-triangulates.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to append points to.</param>
-        /// <param name="points">Points to added to the face.</param>
-        /// <param name="insertOnEdge">True to force new points to edges.</param>
+        /// <param name="points">Points to add to the face.</param>
+        /// <param name="insertOnEdge">True to force new points to snap to edges.</param>
         /// <returns>The face created by appending the points.</returns>
         public static Face AppendVerticesToFace(this ProBuilderMesh mesh, Face face, Vector3[] points, bool insertOnEdge)
         {
@@ -960,7 +979,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Insert a number of new points to an edge. Points are evenly spaced out along the edge.
+        /// Inserts a number of new points on an edge. Points are evenly spaced out along the edge.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="edge">The edge to split with points.</param>
@@ -972,7 +991,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Insert a number of new points to each edge. Points are evenly spaced out along the edge.
+        /// Inserts a number of new points on each edge in the specified set of edges. Points are evenly spaced out along the edge.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="edges">The edges to split with points.</param>
@@ -1206,11 +1225,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Add a set of points to a face and retriangulate. Points are added to the nearest edge.
+        /// Adds a set of points to a face and retriangulates. Points are added to the nearest edge.
+        ///
+        /// This is the equivalent of the [Connect Vertices](../manual/Vert_Connect.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to append points to.</param>
-        /// <param name="point">Point to added to the face.</param>
+        /// <param name="point">Point to add to the face.</param>
         /// <returns>The face created by appending the points.</returns>
         public static Face[] InsertVertexInFace(this ProBuilderMesh mesh, Face face, Vector3 point)
         {
@@ -1326,12 +1347,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Insert a number of new points to each edge. Points are evenly spaced out along the edge.
+        /// Inserts a new point on an edge. Points are evenly spaced out along the edge.
+        ///
+        /// This is the equivalent of the [Subdivide Edges](../manual/Edge_Subdivide.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="originalEdge">The edge on which adding the point.</param>
+        /// <param name="originalEdge">The edge to add the point to.</param>
         /// <param name="point">The point to insert on the edge.</param>
-        /// <returns>The new edges created by the point insertion.</returns>//
+        /// <returns>The new Vertex created.</returns>//
         public static Vertex InsertVertexOnEdge(this ProBuilderMesh mesh, Edge originalEdge, Vector3 point)
         {
             if (mesh == null)
@@ -1478,12 +1501,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Add a point to a face.
+        /// Adds a point to a face.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="point">Point to added to the face.</param>
-        /// <param name="normal">The inserted point normal.</param>
-        /// <returns>The face created by appending the points.</returns>
+        /// <param name="point">Point to add to the face.</param>
+        /// <param name="normal">The inserted point's normal.</param>
+        /// <returns>The new inserted Vertex.</returns>
         public static Vertex InsertVertexInMesh(this ProBuilderMesh mesh, Vector3 point, Vector3 normal)
         {
             if (mesh == null)
