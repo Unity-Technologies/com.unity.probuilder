@@ -51,7 +51,7 @@ Most polygons are "triangulated", or divided into faces with three edges. Howeve
 
 ### Winding order
 
-The order in which you define your polygon's vertices (clockwise vs. counter-clockwise). A clockwise winding order is sometimes called "right-handed" and a counter-clockwise winding order is sometimes called "left-handed".
+Winding order determines how a polygon's vertices are rendered (clockwise vs. counter-clockwise). A clockwise winding order is sometimes called "right-handed" and a counter-clockwise winding order is sometimes called "left-handed". In left-handed coordinate systems like Unity, where the y-axis is "up", counter-clockwise winding is front-facing. For right-handed systems, the rendering order is opposite . 
 
 <a name="winged-edge"></a>
 

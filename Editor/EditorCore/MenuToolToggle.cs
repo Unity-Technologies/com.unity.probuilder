@@ -14,15 +14,18 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Base class from which any action that is represented in the ProBuilder toolbar inherits.
     /// </summary>
+    /// <remarks>
+    /// A MenuToolToggle is a special action that creates an <see cref="UnityEditor.EditorTools.EditorTool"/> instance and sets it as the active tool.
+    /// </remarks>
     public abstract class MenuToolToggle: MenuAction
     {
         /// <summary>
-        /// Holds a reference to the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// Holds a reference to the <see cref="UnityEditor.EditorTools.EditorTool"/> instance created by the action.
         /// </summary>
         protected EditorTool m_Tool;
 
         /// <summary>
-        /// Gets a reference to the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// Gets a reference to the <see cref="UnityEditor.EditorTools.EditorTool"/> instance created by the action.
         /// </summary>
         public EditorTool Tool
         {
