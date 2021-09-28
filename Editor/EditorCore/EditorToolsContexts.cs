@@ -4,6 +4,8 @@ using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
 using UnityEditor.Toolbars;
 using UnityEngine;
+using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder
 {
@@ -47,21 +49,28 @@ namespace UnityEditor.ProBuilder
     [EditorToolbarElement("Selection Settings Toolbar", typeof(SceneView))]
     class SelectionSettingsToolbar : OverlayToolbar
     {
+        List<EditorToolbarToggle> m_SelectModeToggles;
         SelectionSettingsToolbar()
         {
-            var object_Graphic_off = IconUtility.GetIcon("Modes/Mode_Object");
-            var face_Graphic_off = IconUtility.GetIcon("Modes/Mode_Face");
-            var vertex_Graphic_off = IconUtility.GetIcon("Modes/Mode_Vertex");
-            var edge_Graphic_off = IconUtility.GetIcon("Modes/Mode_Edge");
-
             name = "ProBuilder Selection Settings";
 
-            Add(new EditorToolbarToggle("Object Selection", object_Graphic_off, object_Graphic_off));
-            Add(new EditorToolbarToggle("Vertex Selection", vertex_Graphic_off, vertex_Graphic_off));
-            Add(new EditorToolbarToggle("Edge Selection", edge_Graphic_off, edge_Graphic_off));
-            Add(new EditorToolbarToggle("Face Selection", face_Graphic_off, face_Graphic_off));
+            m_SelectModeToggles = new List<EditorToolbarToggle>();
+
+            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Object, "Object Selection", "Modes/Mode_Object"));
+            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Vertex, "Vertex Selection", "Modes/Mode_Vertex"));
+            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Edge, "Edge Selection", "Modes/Mode_Edge"));
+            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Face, "Face Selection", "Modes/Mode_Face"));
 
             SetupChildrenAsButtonStrip();
+        }
+
+        EditorToolbarToggle AddSelectModeToggle(SelectMode mode, string name, string iconName)
+        {
+            var icon = IconUtility.GetIcon(iconName);
+            var toggle = new SelectModeToggle(mode, name, IconUtility.GetIcon(iconName));
+            Add(toggle);
+
+            return toggle;
         }
     }
 
