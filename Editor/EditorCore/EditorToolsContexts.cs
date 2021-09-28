@@ -1,12 +1,16 @@
 using System;
 using UnityEditor.EditorTools;
+using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
 #if UNITY_2020_2_OR_NEWER
-    class PositionToolContext : EditorToolContext
+    [EditorToolContext("ProBuilder"), Icon(k_IconPath)]
+    class ProBuilderToolContext : EditorToolContext
     {
-        PositionToolContext() { }
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Object.png";
+
+        ProBuilderToolContext() { }
 
         protected override Type GetEditorToolType(Tool tool)
         {

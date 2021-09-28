@@ -4,6 +4,9 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 using UnityEngine.ProBuilder;
+#if ENABLE_DRIVEN_PROPERTIES
+using SerializationUtility = UnityEngine.ProBuilder.SerializationUtility;
+#endif
 
 static class ReflectedMethodsExist
 {

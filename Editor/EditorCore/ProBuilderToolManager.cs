@@ -118,8 +118,8 @@ namespace UnityEditor.ProBuilder
             selectMode = mode;
 
 #if TOOL_CONTEXTS_ENABLED
-            if (selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
-                ToolManager.SetActiveContext<PositionToolContext>();
+            if (selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(ProBuilderToolContext))
+                ToolManager.SetActiveContext<ProBuilderToolContext>();
             else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
             else if (!selectMode.IsMeshElementMode())
