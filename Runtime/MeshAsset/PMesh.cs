@@ -20,6 +20,21 @@ public class PMesh : ScriptableObject
     public int version => m_Version;
     public Mesh unityMesh => m_UnityMesh;
     public static event Action<Mesh> meshWasModified;
+
+    #if UNITY_EDITOR
+    [InitializeOnLoadMethod]
+    static void UndoRedoPerformed()
+    {
+        Undo.undoRedoPerformed += () =>
+        {
+            foreach (var filter in Selection.GetFiltered<PMeshFilter>(SelectionMode.Deep))
+            {
+                if(filter.mesh != null)
+                    filter.mesh.Upload();
+            }
+        };
+    }
+    #endif
     
     new void SetDirty()
     {
@@ -50,7 +65,7 @@ public class PMesh : ScriptableObject
         }
     }
 
-    void Upload()
+    public void Upload()
     {
         if (m_UnityMesh == null)
         {

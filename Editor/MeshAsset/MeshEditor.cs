@@ -14,6 +14,9 @@ public class MeshEditor
 
         var temp = GameObject.CreatePrimitive(PrimitiveType.Cube);
         var cube = temp.GetComponent<MeshFilter>().sharedMesh;
+        var renderer = filter.GetComponent<MeshRenderer>();
+        
+        renderer.sharedMaterials = new[] { temp.GetComponent<MeshRenderer>().sharedMaterial };
         filter.mesh.positions = cube.vertices;
         filter.mesh.indices = cube.triangles;
         Object.DestroyImmediate(temp);
@@ -33,25 +36,22 @@ public class MeshEditor
                 return;
 
             if (GUILayout.Button("expand"))
-            {
-                var mesh = filter.mesh;
-                var vertices = mesh.positions;
-                for (int i = 0, c = vertices.Length; i < c; i++)
-                    vertices[i] = vertices[i] * 1.5f;
-                mesh.positions = vertices;
-                filter.SyncMeshFilter();
-            }
+                ScaleMesh(filter, 1.5f);
             
             if (GUILayout.Button("contract"))
-            {
-                var mesh = filter.mesh;
-                var vertices = mesh.positions;
-                for (int i = 0, c = vertices.Length; i < c; i++)
-                    vertices[i] = vertices[i] * .5f;
-                mesh.positions = vertices;
-                filter.SyncMeshFilter();
-            }
+                ScaleMesh(filter, .5f);
         }
+    }
+
+    static void ScaleMesh(PMeshFilter filter, float scale)
+    {
+        Undo.RecordObject(filter.mesh, $"Scale Mesh {scale}");
+        var mesh = filter.mesh;
+        var vertices = mesh.positions;
+        for (int i = 0, c = vertices.Length; i < c; i++)
+            vertices[i] = vertices[i] * scale;
+        mesh.positions = vertices;
+        filter.SyncMeshFilter();
     }
 
     static T CreateSceneAsset<T>() where T : ScriptableObject
