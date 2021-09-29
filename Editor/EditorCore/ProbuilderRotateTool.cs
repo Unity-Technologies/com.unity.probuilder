@@ -3,6 +3,9 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    [CustomEditor(typeof(ProbuilderRotateTool))]
+    class ProbuilderRotateToolSettings : ProbuilderToolSettings { }
+
     class ProbuilderRotateTool : PositionTool
     {
         Quaternion m_Rotation;

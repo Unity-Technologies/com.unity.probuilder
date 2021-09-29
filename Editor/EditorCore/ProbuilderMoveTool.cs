@@ -1,8 +1,14 @@
+using UnityEditor.Overlays;
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder
 {
+    [CustomEditor(typeof(ProbuilderMoveTool))]
+    class ProbuilderMoveToolSettings : ProbuilderToolSettings { }
+
     class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
