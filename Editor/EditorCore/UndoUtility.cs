@@ -8,6 +8,8 @@ namespace UnityEditor.ProBuilder
     [InitializeOnLoad]
     static class UndoUtility
     {
+        static List<Object> s_UndoBuffer = new List<Object>();
+        
         static UndoUtility()
         {
             Undo.undoRedoPerformed += UndoRedoPerformed;
@@ -46,107 +48,46 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh();
         }
 
-        /**
-         * Since Undo calls can potentially hang the main thread, store states when the diff
-         * will large.
-         */
-        public static void RecordSelection(ProBuilderMesh pb, string msg)
-        {
-            if (pb.vertexCount > 256)
-                RegisterCompleteObjectUndo(pb, msg);
-            else
-                Undo.RecordObject(pb, msg);
-        }
+        public static void RecordSelection(string msg) => RecordSelection(MeshSelection.topInternal, msg);
 
-        internal static void RecordSelection(string message)
-        {
-            RecordSelection(MeshSelection.topInternal.ToArray(), message);
-        }
+        public static void RecordSelection<T>(T obj, string msg) where T : Object
+            => RecordSelection(new[] { obj }, msg);
+        
+        public static void RecordSelection<T>(IEnumerable<T> objs, string msg) where T : Object 
+            => RecordObjects(objs, msg);
 
-        internal static void RecordMeshAndTransformSelection(string message)
-        {
-            var count = MeshSelection.selectedObjectCount;
-            var res = new Object[count * 2];
-            var selection = MeshSelection.topInternal;
+        public static void RecordObject(Object obj, string msg) 
+            => RecordObjects(new[] { obj }, msg);
 
-            for (int i = 0, c = count; i < c; i++)
+        static Object[] CollectUndoTargets<T>(IEnumerable<T> objs) where T : Object
+        {
+            foreach (var obj in objs)
             {
-                res[i] = selection[i];
-                res[i + c] = selection[i].transform;
+                if (obj is ProBuilderMesh mesh)
+                    s_UndoBuffer.Add(mesh.pmesh);
+                s_UndoBuffer.Add(obj);
             }
 
-            Undo.RegisterCompleteObjectUndo(res, message);
+            var arr = s_UndoBuffer.ToArray();
+            s_UndoBuffer.Clear();
+            return arr;
         }
 
-        /**
-         *  Tests if any pb_Object in the selection has more than 512 vertices, and if so records the entire object
-         *      instead of diffing the serialized object (which is very slow for large arrays).
-         */
-        public static void RecordSelection(ProBuilderMesh[] pb, string msg)
-        {
-            if (pb == null || pb.Length < 1)
-                return;
-
-            if (pb.Any(x => { return x.vertexCount > 256; }))
-                RegisterCompleteObjectUndo(pb, msg);
-            else
-                Undo.RecordObjects(pb, msg);
-        }
-
-        /**
-         * Record an object for Undo.
-         */
-        public static void RecordObject(Object obj, string msg)
-        {
-            if (obj is ProBuilderMesh && ((ProBuilderMesh)obj).vertexCount > 256)
-            {
-#if PB_DEBUG
-                Debug.LogWarning("RecordObject()  ->  " + ((pb_Object)obj).vertexCount);
-#endif
-                RegisterCompleteObjectUndo(obj as ProBuilderMesh, msg);
-            }
-            else
-            {
-                Undo.RecordObject(obj, msg);
-            }
-        }
-
-        /**
-         * Record objects for Undo.
-         */
+        // Convenience method handles registering ProBuilderMesh + PMesh object
+        // todo Rename this to something more indicative of function
         public static void RecordObjects(IEnumerable<Object> objs, string msg)
         {
-            if (objs == null)
-                return;
-
-            Object[] obj = objs.Where(x => !(x is ProBuilderMesh)).ToArray();
-            ProBuilderMesh[] pb = objs.Where(x => x is ProBuilderMesh).Cast<ProBuilderMesh>().ToArray();
-
-            if (obj.Any())
-                Undo.RecordObjects(obj, msg);
-
-            RecordSelection(pb, msg);
+            Undo.RecordObjects(CollectUndoTargets(objs), msg);
         }
 
-        /**
-         * Undo.RegisterCompleteObjectUndo
-         */
-        public static void RegisterCompleteObjectUndo(Object objs, string msg)
+        public static void RegisterCompleteObjectUndo(Object obj, string msg)
+            => RegisterCompleteObjectUndo(new[] { obj }, msg);
+        
+        public static void RegisterCompleteObjectUndo(IEnumerable<Object> objs, string msg)
         {
-            Undo.RegisterCompleteObjectUndo(objs, msg);
+            Undo.RegisterCompleteObjectUndo(CollectUndoTargets(objs), msg);
         }
 
-        /**
-         * Undo.RegisterCompleteObjectUndo
-         */
-        public static void RegisterCompleteObjectUndo(Object[] objs, string msg)
-        {
-            Undo.RegisterCompleteObjectUndo(objs, msg);
-        }
-
-        /**
-         * Record object prior to deletion.
-         */
         public static void DestroyImmediate(Object obj)
         {
             Undo.DestroyObjectImmediate(obj);

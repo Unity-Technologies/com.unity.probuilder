@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            UndoUtility.RecordSelection("Select Faces with Smoothing Group");
+            UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Faces with Smoothing Group");
 
             HashSet<int> selectedSmoothGroups = new HashSet<int>(MeshSelection.topInternal.SelectMany(x => x.selectedFacesInternal.Select(y => y.smoothingGroup)));
 

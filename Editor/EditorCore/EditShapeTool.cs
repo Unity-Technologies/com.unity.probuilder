@@ -96,6 +96,7 @@ namespace UnityEditor.ProBuilder
                 s_ArrowsLines[i] = new Vector3[3];
 
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
+            Debug.Log($"created shape editor {m_ShapeEditor.GetInstanceID()}");
             EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
 
 #if !UNITY_2020_2_OR_NEWER
@@ -111,9 +112,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 #endif
             EditorApplication.playModeStateChanged -= PlaymodeStateChanged ;
-
-            if(m_ShapeEditor != null)
-                DestroyImmediate(m_ShapeEditor);
+            DestroyImmediate(m_ShapeEditor);
         }
 
         void PlaymodeStateChanged(PlayModeStateChange stateChange)
@@ -122,10 +121,9 @@ namespace UnityEditor.ProBuilder
                || stateChange == PlayModeStateChange.ExitingPlayMode)
                 return;
 
-            if(m_ShapeEditor != null)
-                DestroyImmediate(m_ShapeEditor);
-
+            DestroyImmediate(m_ShapeEditor);
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
+            Debug.Log($"created shape editor {m_ShapeEditor.GetInstanceID()}");
         }
 
 #if !UNITY_2020_2_OR_NEWER

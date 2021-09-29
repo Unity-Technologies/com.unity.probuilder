@@ -29,7 +29,6 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         Mesh m_UnityMesh;
 
-        
         [NonSerialized]
         ushort m_CompileVersion;
         

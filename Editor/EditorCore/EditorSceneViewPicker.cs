@@ -269,7 +269,7 @@ namespace UnityEditor.ProBuilder
                 rectSelectMode = scenePickerPreferences.rectSelectMode
             };
 
-            UndoUtility.RecordSelection("Drag Select");
+            UndoUtility.RecordSelection(MeshSelection.topInternal, "Drag Select");
             bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
 
             if (!isAppendModifier)

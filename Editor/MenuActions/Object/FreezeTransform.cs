@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (MeshSelection.selectedObjectCount < 1)
                 return ActionResult.NoSelection;
 
-            UndoUtility.RecordMeshAndTransformSelection("Freeze Transforms");
+            UndoUtility.RecordComponents<ProBuilderMesh, Transform>(MeshSelection.topInternal, "Freeze Transforms");
 
             var selection = MeshSelection.topInternal;
             Vector3[][] positions = new Vector3[selection.Count][];

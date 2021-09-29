@@ -95,9 +95,9 @@ namespace UnityEngine.ProBuilder
         // [FormerlySerializedAs("_uv4")]
         // List<Vector4> m_Textures3;
 
-        [SerializeField]
-        [FormerlySerializedAs("_tangents")]
-        Vector4[] m_Tangents;
+        // [SerializeField]
+        // [FormerlySerializedAs("_tangents")]
+        // Vector4[] m_Tangents;
 
         // [NonSerialized]
         // Vector3[] m_Normals;
@@ -226,7 +226,7 @@ namespace UnityEngine.ProBuilder
             missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (pmesh.textures2 == null || pmesh.textures2.Count != vc);
             missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (pmesh.textures3 == null || pmesh.textures3.Count != vc);
             missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (pmesh.colors == null || pmesh.colors.Count != vc);
-            missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
+            missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (pmesh.tangents == null || pmesh.tangents.Count != vc);
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
             // and it has a cost to check.
@@ -284,11 +284,8 @@ namespace UnityEngine.ProBuilder
 
         internal void InvalidateFaces()
         {
-            if (faces == null)
-            {
-                faces = new Face[0];
+            if (m_Mesh == null || m_Mesh.faces == null)
                 return;
-            }
 
             foreach (var face in faces)
                 face.InvalidateCache();
@@ -591,11 +588,10 @@ namespace UnityEngine.ProBuilder
             colors = color;
             // todo
             // normals = normal;
-            m_Tangents = tangent;
+            // m_Tangents = tangent;
             m_Mesh.textures0 = uv0;
-            // todo
-            m_Mesh.textures2 = uv3.Select(x=>(Vector2)x).ToArray();
-            m_Mesh.textures3 = uv4.Select(x=>(Vector2)x).ToArray();
+            m_Mesh.textures2 = uv3?.Select(x=>(Vector2)x).ToArray();
+            m_Mesh.textures3 = uv4?.Select(x=>(Vector2)x).ToArray();
 
             if (applyMesh)
             {
@@ -687,28 +683,14 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="GetTangents"/>
         public IList<Vector4> tangents
         {
-            get
-            {
-                return m_Tangents == null || m_Tangents.Length != vertexCount
-                    ? null
-                    : new ReadOnlyCollection<Vector4>(m_Tangents);
-            }
-
-            set
-            {
-                if (value == null)
-                    m_Tangents = null;
-                else if (value.Count() != vertexCount)
-                    throw new ArgumentOutOfRangeException("value", "Tangent array length must match vertex count");
-                else
-                    m_Tangents = value.ToArray();
-            }
+            get => pmesh.tangents;
+            set => pmesh.tangents = value;
         }
 
         internal Vector4[] tangentsInternal
         {
-            get { return m_Tangents; }
-            set { m_Tangents = value; }
+            get => pmesh.tangents as Vector4[];
+            set => pmesh.tangents = value;
         }
 
         /// <summary>
@@ -783,7 +765,7 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 2:
-                    if (m_Mesh.textures2 != null)
+                    if (m_Mesh.textures2 != null && m_Mesh.textures2.Count == vertexCount)
                     {
                         for (int i = 0; i < vertexCount; i++)
                             uvs.Add(m_Mesh.textures2[i]);
@@ -791,7 +773,7 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 3:
-                    if (m_Mesh.textures3 != null)
+                    if (m_Mesh.textures3 != null && m_Mesh.textures3.Count == vertexCount)
                     {
                         for (int i = 0; i < vertexCount; i++)
                             uvs.Add(m_Mesh.textures3[i]);

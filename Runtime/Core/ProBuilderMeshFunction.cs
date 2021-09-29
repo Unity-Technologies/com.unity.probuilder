@@ -123,10 +123,11 @@ namespace UnityEngine.ProBuilder
             // ideally we'd null everything here, but that would break a lot of existing code.
             faces = new Face[0];
             positions = new Vector3[0];
-            m_Mesh.textures0 = new Vector2[0];
-            m_Mesh.textures2 = null;
-            m_Mesh.textures3 = null;
-            m_Tangents = null;
+            pmesh.textures0 = null;
+            pmesh.textures2 = null;
+            pmesh.textures3 = null;
+            pmesh.tangents = null;
+
             m_SharedVertices = new SharedVertex[0];
             m_SharedTextures = new SharedVertex[0];
             InvalidateSharedVertexLookup();
@@ -147,7 +148,7 @@ namespace UnityEngine.ProBuilder
 #endif
 
             if (!renderer.isPartOfStaticBatch && filter.sharedMesh != mesh)
-                filter.sharedMesh = m_Mesh.unityMesh;
+                filter.sharedMesh = pmesh.unityMesh;
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)

@@ -553,7 +553,7 @@ namespace UnityEditor.ProBuilder
 
         internal static void SetSelection(GameObject go)
         {
-            UndoUtility.RecordSelection(topInternal.ToArray(), "Change Selection");
+            UndoUtility.RecordSelection("Change Selection");
             ClearElementAndObjectSelection();
             AddToSelection(go);
         }

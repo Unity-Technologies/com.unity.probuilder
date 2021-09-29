@@ -77,7 +77,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            UndoUtility.RecordSelection("Select Faces with Vertex Colors");
+            UndoUtility.RecordSelection(MeshSelection.topInternal, "Select Faces with Vertex Colors");
 
             HashSet<Color32> colors = new HashSet<Color32>();
 

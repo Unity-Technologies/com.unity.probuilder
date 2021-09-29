@@ -687,7 +687,7 @@ namespace UnityEditor.ProBuilder
             if (MeshSelection.selectedObjectCount < 1)
                 return;
 
-            UndoUtility.RecordSelection("Deselect All");
+            UndoUtility.RecordSelection(MeshSelection.topInternal, "Deselect All");
 
             switch (selectMode)
             {

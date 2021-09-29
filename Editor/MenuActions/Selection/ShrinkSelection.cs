@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder.Actions
             var selection = MeshSelection.topInternal;
             var selectionCount = MeshSelection.selectedObjectCount;
 
-            UndoUtility.RecordSelection("Shrink Selection");
+            UndoUtility.RecordSelection(MeshSelection.topInternal, "Shrink Selection");
 
             // find perimeter edges
             int rc = 0;
