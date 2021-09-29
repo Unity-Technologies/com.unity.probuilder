@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder
                     continue;
 
                 int submeshIndex = Math.Clamp(face.submeshIndex, 0, maxSubmeshIndex);
-                maxSubmeshIndexUsed = UnityEngine.Mathf.Max(submeshIndex,maxSubmeshIndexUsed);
+                maxSubmeshIndexUsed = Mathf.Max(submeshIndex, maxSubmeshIndexUsed);
                 if (wantsQuads && face.IsQuad())
                     quads[submeshIndex].AddRange(face.ToQuad());
                 else

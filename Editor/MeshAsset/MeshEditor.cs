@@ -1,10 +1,37 @@
-
+using System.IO;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Windows;
+using UnityEngine.ProBuilder;
 
 public class MeshEditor
 {
+    [InitializeOnLoadMethod]
+    static void UndoRedo()
+    {
+        Undo.undoRedoPerformed += () =>
+        {
+            foreach(var filter in Selection.GetFiltered<PMeshFilter>(SelectionMode.Deep))
+                filter.SyncMeshFilter();
+        };
+    }
+    
+    static T CreateSceneAsset<T>() where T : ScriptableObject
+    {
+        var asset = ScriptableObject.CreateInstance<T>();
+        if(!Directory.Exists("Assets/temp"))
+            Directory.CreateDirectory("Assets/temp");
+        AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath("Assets/temp/mesh.asset"));
+        return asset;
+    }
+
+    static Face[] ConvertTrisToFaces(int[] tris)
+    {
+        var faces = new Face[tris.Length / 3];
+        for (int i = 0, c = tris.Length - 2; i < c; i += 3)
+            faces[i/3] = new Face(new[] { tris[i], tris[i + 1], tris[i + 2] });
+        return faces;
+    }
+
     [MenuItem("GameObject/ProBuilder Mesh")]
     static void Init()
     {
@@ -18,9 +45,10 @@ public class MeshEditor
         
         renderer.sharedMaterials = new[] { temp.GetComponent<MeshRenderer>().sharedMaterial };
         filter.mesh.positions = cube.vertices;
-        filter.mesh.indices = cube.triangles;
+        filter.mesh.faces = ConvertTrisToFaces(cube.triangles);
+        filter.SyncMeshFilter();
+
         Object.DestroyImmediate(temp);
-        
         ObjectFactory.PlaceGameObject(gameObject);
     }
 
@@ -30,16 +58,24 @@ public class MeshEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            
             var filter = (target as PMeshFilter);
 
             if (filter == null)
                 return;
+
+            var mesh = filter.mesh;
+            EditorGUILayout.LabelField("m_Version", $"{mesh.version}");
+            EditorGUILayout.LabelField("m_CompiledVersion", $"{mesh.compiledVersion}");
 
             if (GUILayout.Button("expand"))
                 ScaleMesh(filter, 1.5f);
             
             if (GUILayout.Button("contract"))
                 ScaleMesh(filter, .5f);
+            
+            if (GUILayout.Button("rebuild / upload / compile"))
+                filter.SyncMeshFilter();
         }
     }
 
@@ -48,19 +84,10 @@ public class MeshEditor
         Undo.RecordObject(filter.mesh, $"Scale Mesh {scale}");
         var mesh = filter.mesh;
         var vertices = mesh.positions;
-        for (int i = 0, c = vertices.Length; i < c; i++)
+        for (int i = 0, c = vertices.Count; i < c; i++)
             vertices[i] = vertices[i] * scale;
         mesh.positions = vertices;
         filter.SyncMeshFilter();
-    }
-
-    static T CreateSceneAsset<T>() where T : ScriptableObject
-    {
-        var asset = ScriptableObject.CreateInstance<T>();
-        if(!Directory.Exists("Assets/temp"))
-            Directory.CreateDirectory("Assets/temp");
-        AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath("Assets/temp/mesh.asset"));
-        return asset;
     }
 }
 

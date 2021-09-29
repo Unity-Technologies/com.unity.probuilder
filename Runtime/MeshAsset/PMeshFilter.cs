@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class PMeshFilter : MonoBehaviour
