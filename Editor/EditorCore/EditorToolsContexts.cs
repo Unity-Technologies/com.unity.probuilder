@@ -41,33 +41,33 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                yield return "Selection Settings Toolbar";
+                yield return "Select Mode Toolbar";
             }
         }
     }
 
-    [EditorToolbarElement("Selection Settings Toolbar", typeof(SceneView))]
+    [EditorToolbarElement("Select Mode Toolbar", typeof(SceneView))]
     class SelectionSettingsToolbar : OverlayToolbar
     {
         List<EditorToolbarToggle> m_SelectModeToggles;
         SelectionSettingsToolbar()
         {
-            name = "ProBuilder Selection Settings";
+            name = "Select Mode Toolbar";
 
             m_SelectModeToggles = new List<EditorToolbarToggle>();
 
-            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Object, "Object Selection", "Modes/Mode_Object"));
-            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Vertex, "Vertex Selection", "Modes/Mode_Vertex"));
-            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Edge, "Edge Selection", "Modes/Mode_Edge"));
-            m_SelectModeToggles.Add(AddSelectModeToggle(SelectMode.Face, "Face Selection", "Modes/Mode_Face"));
+            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Object));
+            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Vertex));
+            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Edge));
+            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Face));
 
             SetupChildrenAsButtonStrip();
         }
 
-        EditorToolbarToggle AddSelectModeToggle(SelectMode mode, string name, string iconName)
+        EditorToolbarToggle CreateSelectModeToggle(SelectMode mode)
         {
-            var icon = IconUtility.GetIcon(iconName);
-            var toggle = new SelectModeToggle(mode, name, IconUtility.GetIcon(iconName));
+            var toggleContent = UI.EditorGUIUtility.GetSelectModeToggleContent(mode);
+            var toggle = new SelectModeToggle(mode, toggleContent.text, toggleContent.image as Texture2D);
             Add(toggle);
 
             return toggle;
