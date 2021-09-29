@@ -80,7 +80,9 @@ namespace UnityEditor.ProBuilder
 
         Vector2 m_LastCalculatedSize = Vector2.zero;
 
+        [Obsolete("MenuAction.onPerformAction is deprecated. Please use afterActionedPerformed instead.")]
         public static Action<MenuAction> onPerformAction;
+        public static Action<MenuAction> afterActionPerformed;
 
         protected MenuAction()
         {
@@ -259,14 +261,20 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Perform whatever action this menu item is supposed to do.
         /// Implementation should be coded in PerformActionImplementation.
-        /// Perform action should be called to trigger the onPerformAction event.
+        /// Perform action should be called to trigger the afterActionPerformed event.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public ActionResult PerformAction()
         {
             if(onPerformAction != null)
                 onPerformAction(this);
-            return PerformActionImplementation();
+
+            var actionResult = PerformActionImplementation();
+
+            if (afterActionPerformed != null)
+                afterActionPerformed(this);
+
+            return actionResult;
         }
 
         /// <summary>

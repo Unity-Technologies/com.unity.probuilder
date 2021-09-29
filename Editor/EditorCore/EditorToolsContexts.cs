@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
+using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -49,28 +50,43 @@ namespace UnityEditor.ProBuilder
     [EditorToolbarElement("Select Mode Toolbar", typeof(SceneView))]
     class SelectionSettingsToolbar : OverlayToolbar
     {
-        List<EditorToolbarToggle> m_SelectModeToggles;
         SelectionSettingsToolbar()
         {
             name = "Select Mode Toolbar";
 
-            m_SelectModeToggles = new List<EditorToolbarToggle>();
-
-            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Object));
-            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Vertex));
-            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Edge));
-            m_SelectModeToggles.Add(CreateSelectModeToggle(SelectMode.Face));
+            CreateSelectModeToggle(SelectMode.Object);
+            CreateSelectModeToggle(SelectMode.Vertex);
+            CreateSelectModeToggle(SelectMode.Edge);
+            CreateSelectModeToggle(SelectMode.Face);
 
             SetupChildrenAsButtonStrip();
         }
 
-        EditorToolbarToggle CreateSelectModeToggle(SelectMode mode)
+        void CreateSelectModeToggle(SelectMode mode)
         {
             var toggleContent = UI.EditorGUIUtility.GetSelectModeToggleContent(mode);
             var toggle = new SelectModeToggle(mode, toggleContent.text, toggleContent.image as Texture2D);
-            Add(toggle);
 
-            return toggle;
+            Add(toggle);
+        }
+    }
+
+    class ProbuilderToolSettings : Editor, ICreateHorizontalToolbar, ICreateVerticalToolbar
+    {
+        public override VisualElement CreateInspectorGUI() => CreateHorizontalToolbarContent();
+
+        public virtual OverlayToolbar CreateHorizontalToolbarContent()
+        {
+            var root = new OverlayToolbar();
+            root.Add(new DragRectModeDropdown());
+            return root;
+        }
+
+        public virtual OverlayToolbar CreateVerticalToolbarContent()
+        {
+            var root = new OverlayToolbar();
+            root.Add(new DragRectModeDropdown());
+            return root;
         }
     }
 

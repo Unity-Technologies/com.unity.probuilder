@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
+    [CustomEditor(typeof(ProbuilderScaleTool))]
+    class ProbuilderScaleToolSettings : ProbuilderToolSettings { }
+
     class ProbuilderScaleTool : PositionTool
     {
         Vector3 m_Scale;
