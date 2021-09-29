@@ -13,25 +13,29 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         Tool = 0,
         /// <summary>
-        /// This is an interface toggle or an element selection action.
+        /// This is an interface toggle.
         /// </summary>
-        Selection = 1,
+        Settings = 1,
+        /// <summary>
+        /// This is an element selection action.
+        /// </summary>
+        Selection = 2,
         /// <summary>
         /// This action affects objects (as opposed to mesh attributes like vertex or face).
         /// </summary>
-        Object = 2,
+        Object = 3,
         /// <summary>
         /// This action affects geometry elements (vertices, edges, faces).
         /// </summary>
-        Geometry = 3,
+        Geometry = 4,
         /// <summary>
         /// An action for creating or modifying @"UnityEngine.ProBuilder.EntityBehaviour" types.
         /// </summary>
-        Entity = 4,
+        Entity = 5,
         /// <summary>
         /// This action exports meshes.
         /// </summary>
-        Export = 5
+        Export = 6
     }
 
     static class ToolbarGroupUtility
@@ -45,7 +49,7 @@ namespace UnityEditor.ProBuilder
         {
             if (group == ToolbarGroup.Tool)
                 return ToolColor;
-            else if (group == ToolbarGroup.Selection)
+            else if (group == ToolbarGroup.Selection || group == ToolbarGroup.Settings)
                 return SelectionColor;
             else if (group == ToolbarGroup.Object || group == ToolbarGroup.Entity)
                 return ObjectColor;
