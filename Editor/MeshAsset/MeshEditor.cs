@@ -46,18 +46,19 @@ public class MeshEditor
     [MenuItem("GameObject/ProBuilder Mesh")]
     static void Init()
     {
-        var gameObject = ObjectFactory.CreateGameObject("ProBuilder Mesh", typeof(PMeshFilter));
-        var filter = gameObject.GetComponent<PMeshFilter>();
-        filter.mesh = CreateSceneAsset<PMesh>();
+        var gameObject = ObjectFactory.CreateGameObject("ProBuilder Mesh");
+        var filter = gameObject.AddComponent<ProBuilderMesh>();
+        filter.pmesh = CreateSceneAsset<PMesh>();
 
         var temp = GameObject.CreatePrimitive(PrimitiveType.Cube);
         var cube = temp.GetComponent<MeshFilter>().sharedMesh;
         var renderer = filter.GetComponent<MeshRenderer>();
         
         renderer.sharedMaterials = new[] { temp.GetComponent<MeshRenderer>().sharedMaterial };
-        filter.mesh.positions = cube.vertices;
-        filter.mesh.faces = ConvertTrisToFaces(cube.triangles);
-        filter.SyncMeshFilter();
+        filter.positions = cube.vertices;
+        filter.faces = ConvertTrisToFaces(cube.triangles);
+
+        filter.Rebuild();
 
         Object.DestroyImmediate(temp);
         ObjectFactory.PlaceGameObject(gameObject);

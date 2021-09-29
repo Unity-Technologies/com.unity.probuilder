@@ -63,16 +63,16 @@ namespace UnityEngine.ProBuilder
             //Ensure no element is selected at awake
             ClearSelection();
 
-            if(vertexCount > 0
-               && faceCount > 0
-               && meshSyncState == MeshSyncState.Null)
-            {
-                using (new NonVersionedEditScope(this))
-                {
-                    Rebuild();
-                    meshWasInitialized?.Invoke(this);
-                }
-            }
+            // if(vertexCount > 0
+            //    && faceCount > 0
+            //    && meshSyncState == MeshSyncState.Null)
+            // {
+            //     using (new NonVersionedEditScope(this))
+            //     {
+            //         Rebuild();
+            //         meshWasInitialized?.Invoke(this);
+            //     }
+            // }
         }
 
         void Reset()
@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
 #endif
 
-            if (!renderer.isPartOfStaticBatch && filter.sharedMesh != m_Mesh.unityMesh)
+            if (!renderer.isPartOfStaticBatch && filter.sharedMesh != mesh)
                 filter.sharedMesh = m_Mesh.unityMesh;
         }
 
@@ -269,7 +269,6 @@ namespace UnityEngine.ProBuilder
 
             Clear();
             positions = vertices.ToArray();
-            faces = faces;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Mesh.positions);
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
@@ -295,6 +294,10 @@ namespace UnityEngine.ProBuilder
             m_Mesh.Compile();
             EnsureMeshFilterIsAssigned();
             IncrementVersionIndex();
+            
+            // todo turd emoji
+            if (m_SharedVertices == null)
+                m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(positions);
 
 //             bool usedInParticleSystem = false;
 //

@@ -304,7 +304,7 @@ namespace UnityEngine.ProBuilder
 
         internal SharedVertex[] sharedVerticesInternal
         {
-            get { return m_SharedVertices; }
+            get => m_SharedVertices;
 
             set
             {
@@ -913,7 +913,13 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
 
-        internal Mesh mesh => m_Mesh.unityMesh;
+        internal Mesh mesh => m_Mesh == null ? null : m_Mesh.unityMesh;
+        
+        internal PMesh pmesh
+        {
+            get => m_Mesh;
+            set => m_Mesh = value;
+        }
 
         internal int id => gameObject.GetInstanceID();
 
