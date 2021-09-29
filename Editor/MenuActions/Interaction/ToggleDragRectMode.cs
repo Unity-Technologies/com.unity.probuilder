@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder.Actions
 
     sealed class DragRectModeDropdown : EditorToolbarDropdown
     {
-        readonly GUIContent m_Intersect;
+        readonly GUIContent m_Partial;
         readonly GUIContent m_Complete;
         readonly ToggleDragRectMode m_MenuAction;
 
@@ -80,7 +80,7 @@ namespace UnityEditor.ProBuilder.Actions
             m_MenuAction = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
             name = m_MenuAction.tooltip.title;
 
-            m_Intersect = EditorGUIUtility.TrTextContent("Intersect");
+            m_Partial = EditorGUIUtility.TrTextContent("Intersect");
             m_Complete = EditorGUIUtility.TrTextContent("Complete");
 
             RegisterCallback<AttachToPanelEvent>(AttachedToPanel);
@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder.Actions
         void OpenContextMenu()
         {
             var menu = new GenericMenu();
-            menu.AddItem(m_Intersect, ProBuilderEditor.rectSelectMode == RectSelectMode.Partial, () =>
+            menu.AddItem(m_Partial, ProBuilderEditor.rectSelectMode == RectSelectMode.Partial, () =>
             {
                 if (ProBuilderEditor.rectSelectMode != RectSelectMode.Partial) m_MenuAction.PerformAction();
             });
@@ -118,12 +118,12 @@ namespace UnityEditor.ProBuilder.Actions
 
         void AttachedToPanel(AttachToPanelEvent evt)
         {
-            MenuAction.onPerformAction += OnMenuActionPerformed;
+            MenuAction.afterActionPerformed += OnMenuActionPerformed;
         }
 
         void DetachedFromPanel(DetachFromPanelEvent evt)
         {
-            MenuAction.onPerformAction -= OnMenuActionPerformed;
+            MenuAction.afterActionPerformed -= OnMenuActionPerformed;
         }
 
         void OnMenuActionPerformed(MenuAction menuAction)
