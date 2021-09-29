@@ -138,7 +138,7 @@ namespace UnityEngine.ProBuilder
             int len = m_SelectedFaces.Length;
             var selected = new Face[len];
             for (var i = 0; i < len; i++)
-                selected[i] = m_Faces[m_SelectedFaces[i]];
+                selected[i] = faces[m_SelectedFaces[i]];
             return selected;
         }
 
@@ -169,7 +169,7 @@ namespace UnityEngine.ProBuilder
         internal Face[] selectedFacesInternal
         {
             get { return GetSelectedFaces(); }
-            set { m_SelectedFaces = value.Select(x => Array.IndexOf(m_Faces, x)).ToArray(); }
+            set { m_SelectedFaces = value.Select(x => faces.IndexOf(x)).ToArray(); }
         }
 
         internal int[] selectedFaceIndicesInternal
@@ -194,7 +194,7 @@ namespace UnityEngine.ProBuilder
         {
             if (selectedFaceCount < 1)
                 return null;
-            return m_Faces[selectedFaceIndicesInternal[selectedFaceCount - 1]];
+            return faces[selectedFaceIndicesInternal[selectedFaceCount - 1]];
         }
 
         internal Edge GetActiveEdge()

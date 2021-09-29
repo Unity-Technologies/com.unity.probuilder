@@ -482,8 +482,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             EnsureArraySize(ref tangents, vertexCount);
             EnsureArraySize(ref normals, vertexCount);
             EnsureArraySize(ref uv0, vertexCount);
-            EnsureListSize(ref uv2, vertexCount);
-            EnsureListSize(ref uv3, vertexCount);
+            EnsureArraySize(ref uv2, vertexCount);
+            EnsureArraySize(ref uv3, vertexCount);
 
             EnsureRealNumbers(normals);
             EnsureRealNumbers(tangents);

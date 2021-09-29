@@ -47,10 +47,13 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_MeshFormatVersion;
 
-        [SerializeField]
-        [FormerlySerializedAs("_quads")]
-        Face[] m_Faces;
+        // [SerializeField]
+        // [FormerlySerializedAs("_quads")]
+        // Face[] m_Faces;
 
+        [SerializeField]
+        PMesh m_Mesh;
+        
         [SerializeField]
         [FormerlySerializedAs("_sharedIndices")]
         [FormerlySerializedAs("m_SharedVertexes")]
@@ -76,32 +79,32 @@ namespace UnityEngine.ProBuilder
         [NonSerialized]
         Dictionary<int, int> m_SharedTextureLookup;
 
-        [SerializeField]
-        [FormerlySerializedAs("_vertices")]
-        Vector3[] m_Positions;
+        // [SerializeField]
+        // [FormerlySerializedAs("_vertices")]
+        // Vector3[] m_Positions;
 
-        [SerializeField]
-        [FormerlySerializedAs("_uv")]
-        Vector2[] m_Textures0;
-
-        [SerializeField]
-        [FormerlySerializedAs("_uv3")]
-        List<Vector4> m_Textures2;
-
-        [SerializeField]
-        [FormerlySerializedAs("_uv4")]
-        List<Vector4> m_Textures3;
+        // [SerializeField]
+        // [FormerlySerializedAs("_uv")]
+        // Vector2[] m_Textures0;
+        //
+        // [SerializeField]
+        // [FormerlySerializedAs("_uv3")]
+        // List<Vector4> m_Textures2;
+        //
+        // [SerializeField]
+        // [FormerlySerializedAs("_uv4")]
+        // List<Vector4> m_Textures3;
 
         [SerializeField]
         [FormerlySerializedAs("_tangents")]
         Vector4[] m_Tangents;
 
-        [NonSerialized]
-        Vector3[] m_Normals;
+        // [NonSerialized]
+        // Vector3[] m_Normals;
 
-        [SerializeField]
-        [FormerlySerializedAs("_colors")]
-        Color[] m_Colors;
+        // [SerializeField]
+        // [FormerlySerializedAs("_colors")]
+        // Color[] m_Colors;
 
         /// <value>
         /// If false, ProBuilder will automatically create and scale colliders.
@@ -131,8 +134,8 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal string assetGuid;
 
-        [SerializeField]
-        Mesh m_Mesh;
+        // [SerializeField]
+        // Mesh m_Mesh;
 
         [NonSerialized]
         MeshRenderer m_MeshRenderer;
@@ -217,12 +220,12 @@ namespace UnityEngine.ProBuilder
 
             int vc = vertexCount;
 
-            missing |= (channels & MeshArrays.Position) == MeshArrays.Position && m_Positions == null;
-            missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (m_Normals == null || m_Normals.Length != vc);
-            missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Textures0 == null || m_Textures0.Length != vc);
-            missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Textures2 == null || m_Textures2.Count != vc);
-            missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Textures3 == null || m_Textures3.Count != vc);
-            missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Colors == null || m_Colors.Length != vc);
+            missing |= (channels & MeshArrays.Position) == MeshArrays.Position && positions == null;
+            missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (normals == null || normals.Count != vc);
+            missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Mesh.textures0 == null || m_Mesh.textures0.Count != vc);
+            missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Mesh.textures2 == null || m_Mesh.textures2.Count != vc);
+            missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Mesh.textures3 == null || m_Mesh.textures3.Count != vc);
+            missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Mesh.colors == null || m_Mesh.colors.Count != vc);
             missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
@@ -242,8 +245,8 @@ namespace UnityEngine.ProBuilder
 
         internal Face[] facesInternal
         {
-            get { return m_Faces; }
-            set { m_Faces = value; }
+            get { return m_Mesh.faces as Face[]; }
+            set { m_Mesh.faces = value; }
         }
 
         /// <summary>
@@ -254,12 +257,12 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public IList<Face> faces
         {
-            get { return new ReadOnlyCollection<Face>(m_Faces); }
+            get => m_Mesh.faces;
             set
             {
                 if (value == null)
                     throw new ArgumentNullException("value");
-                m_Faces = value.ToArray();
+                m_Mesh.faces = value;
             }
         }
 
@@ -281,9 +284,9 @@ namespace UnityEngine.ProBuilder
 
         internal void InvalidateFaces()
         {
-            if (m_Faces == null)
+            if (faces == null)
             {
-                m_Faces = new Face[0];
+                faces = new Face[0];
                 return;
             }
 
@@ -406,8 +409,8 @@ namespace UnityEngine.ProBuilder
 
         internal Vector3[] positionsInternal
         {
-            get { return m_Positions; }
-            set { m_Positions = value; }
+            get => m_Mesh.positions as Vector3[];
+            set => m_Mesh.positions = value;
         }
 
         /// <value>
@@ -415,12 +418,12 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public IList<Vector3> positions
         {
-            get { return new ReadOnlyCollection<Vector3>(m_Positions); }
+            get => m_Mesh.positions;
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
-                m_Positions = value.ToArray();
+                    throw new ArgumentNullException(nameof(value));
+                m_Mesh.positions = value;
             }
         }
 
@@ -584,13 +587,15 @@ namespace UnityEngine.ProBuilder
 
             Vertex.GetArrays(vertices, out position, out color, out uv0, out normal, out tangent, out uv2, out uv3, out uv4);
 
-            m_Positions = position;
-            m_Colors = color;
-            m_Normals = normal;
+            positions = position;
+            colors = color;
+            // todo
+            // normals = normal;
             m_Tangents = tangent;
-            m_Textures0 = uv0;
-            m_Textures2 = uv3;
-            m_Textures3 = uv4;
+            m_Mesh.textures0 = uv0;
+            // todo
+            m_Mesh.textures2 = uv3.Select(x=>(Vector2)x).ToArray();
+            m_Mesh.textures3 = uv4.Select(x=>(Vector2)x).ToArray();
 
             if (applyMesh)
             {
@@ -624,13 +629,13 @@ namespace UnityEngine.ProBuilder
         /// <see cref="Normals.CalculateNormals"/>
         public IList<Vector3> normals
         {
-            get { return m_Normals != null ? new ReadOnlyCollection<Vector3>(m_Normals) : null; }
+            get => m_Mesh.normals;
         }
 
         internal Vector3[] normalsInternal
         {
-            get { return m_Normals; }
-            set { m_Normals = value; }
+            get => m_Mesh.normals as Vector3[];
+            set => m_Mesh.normals = value;
         }
 
         /// <value>
@@ -649,8 +654,8 @@ namespace UnityEngine.ProBuilder
 
         internal Color[] colorsInternal
         {
-            get { return m_Colors; }
-            set { m_Colors = value; }
+            get => m_Mesh.colors as Color[];
+            set => m_Mesh.colors = value;
         }
 
         /// <value>
@@ -658,17 +663,8 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public IList<Color> colors
         {
-            get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
-
-            set
-            {
-                if (value == null || value.Count() == 0)
-                    m_Colors = null;
-                else if (value.Count() != vertexCount)
-                    throw new ArgumentOutOfRangeException("value", "Array length must match vertex count.");
-                else
-                    m_Colors = value.ToArray();
-            }
+            get => m_Mesh.colors;
+            set => m_Mesh.colors = value;
         }
 
         /// <summary>
@@ -729,20 +725,20 @@ namespace UnityEngine.ProBuilder
 
         internal Vector2[] texturesInternal
         {
-            get { return m_Textures0; }
-            set { m_Textures0 = value; }
+            get => m_Mesh.textures0 as Vector2[];
+            set => m_Mesh.textures0 = value;
         }
 
-		internal List<Vector4> textures2Internal
+        internal Vector2[] textures2Internal
         {
-            get { return m_Textures2; }
-            set { m_Textures2 = value; }
+            get => m_Mesh.textures2 as Vector2[];
+            set => m_Mesh.textures2 = value;
         }
 
-		internal List<Vector4> textures3Internal
+        internal Vector2[] textures3Internal
         {
-            get { return m_Textures3; }
-            set { m_Textures3 = value; }
+            get => m_Mesh.textures3 as Vector2[];
+            set => m_Mesh.textures3 = value;
         }
 
         /// <value>
@@ -751,16 +747,8 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="GetUVs"/>
         public IList<Vector2> textures
         {
-            get { return m_Textures0 != null ? new ReadOnlyCollection<Vector2>(m_Textures0) : null; }
-            set
-            {
-                if (value == null)
-                    m_Textures0 = null;
-                else if (value.Count() != vertexCount)
-                    throw new ArgumentOutOfRangeException("value");
-                else
-                    m_Textures0 = value.ToArray();
-            }
+            get => m_Mesh.textures0;
+            set => m_Mesh.textures0 = value;
         }
 
         /// <summary>
@@ -782,7 +770,7 @@ namespace UnityEngine.ProBuilder
             {
                 case 0:
                     for (int i = 0; i < vertexCount; i++)
-                        uvs.Add((Vector4)m_Textures0[i]);
+                        uvs.Add(m_Mesh.textures0[i]);
                     break;
 
                 case 1:
@@ -795,13 +783,19 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 2:
-                    if (m_Textures2 != null)
-                        uvs.AddRange(m_Textures2);
+                    if (m_Mesh.textures2 != null)
+                    {
+                        for (int i = 0; i < vertexCount; i++)
+                            uvs.Add(m_Mesh.textures2[i]);
+                    }
                     break;
 
                 case 3:
-                    if (m_Textures3 != null)
-                        uvs.AddRange(m_Textures3);
+                    if (m_Mesh.textures3 != null)
+                    {
+                        for (int i = 0; i < vertexCount; i++)
+                            uvs.Add(m_Mesh.textures3[i]);
+                    }
                     break;
             }
         }
@@ -809,16 +803,16 @@ namespace UnityEngine.ProBuilder
         internal ReadOnlyCollection<Vector2> GetUVs(int channel)
         {
             if (channel == 0)
-                return new ReadOnlyCollection<Vector2>(m_Textures0);
+                return new ReadOnlyCollection<Vector2>(m_Mesh.textures0);
 
             if (channel == 1)
                 return new ReadOnlyCollection<Vector2>(mesh.uv2);
 
             if (channel == 2)
-                return m_Textures2 == null ? null : new ReadOnlyCollection<Vector2>(m_Textures2.Cast<Vector2>().ToList());
+                return new ReadOnlyCollection<Vector2>(m_Mesh.textures2);
 
             if (channel == 3)
-                return m_Textures3 == null ? null : new ReadOnlyCollection<Vector2>(m_Textures3.Cast<Vector2>().ToList());
+                return new ReadOnlyCollection<Vector2>(m_Mesh.textures3);
 
             return null;
         }
@@ -834,19 +828,20 @@ namespace UnityEngine.ProBuilder
             switch (channel)
             {
                 case 0:
-                    m_Textures0 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
+                    m_Mesh.textures0 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 1:
+                    // todo maybe we should do something less stupid with uv2s
                     mesh.uv2 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 2:
-                    m_Textures2 = uvs != null ? new List<Vector4>(uvs) : null;
+                    m_Mesh.textures2 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 3:
-                    m_Textures3 = uvs != null ? new List<Vector4>(uvs) : null;
+                    m_Mesh.textures3 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
             }
         }
@@ -854,18 +849,12 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// How many faces does this mesh have?
         /// </value>
-        public int faceCount
-        {
-            get { return m_Faces == null ? 0 : m_Faces.Length; }
-        }
+        public int faceCount => m_Mesh.faces.Count;
 
         /// <value>
         /// How many vertices are in the positions array.
         /// </value>
-        public int vertexCount
-        {
-            get { return m_Positions == null ? 0 : m_Positions.Length; }
-        }
+        public int vertexCount => m_Mesh.positions.Count;
 
         /// <value>
         /// How many edges compose this mesh.
@@ -884,18 +873,12 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// How many vertex indexes make up this mesh.
         /// </value>
-        public int indexCount
-        {
-            get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length); }
-        }
+        public int indexCount => faces.Sum(x => x.indexesInternal.Length);
 
         /// <value>
         /// How many triangles make up this mesh.
         /// </value>
-        public int triangleCount
-        {
-            get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length) / 3; }
-        }
+        public int triangleCount => faces.Sum(x => x.indexesInternal.Length) / 3;
 
         /// <summary>
         /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is
@@ -930,22 +913,9 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
 
-        internal Mesh mesh
-        {
-            get
-            {
-                if (m_Mesh == null && filter != null)
-                    m_Mesh = filter.sharedMesh;
-                return m_Mesh;
-            }
+        internal Mesh mesh => m_Mesh.unityMesh;
 
-            set { m_Mesh = value; }
-        }
-
-        internal int id
-        {
-            get { return gameObject.GetInstanceID(); }
-        }
+        internal int id => gameObject.GetInstanceID();
 
         /// <summary>
         /// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.

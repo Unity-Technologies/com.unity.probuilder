@@ -11,9 +11,6 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         ushort m_Version;
         
-        [NonSerialized]
-        ushort m_CompileVersion;
-
         [SerializeField]
         Vector3[] m_Positions;
 
@@ -28,6 +25,16 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField]
         Mesh m_UnityMesh;
+
+        
+        [NonSerialized]
+        ushort m_CompileVersion;
+        
+        [NonSerialized]
+        Vector3[] m_Normals;
+
+        [NonSerialized]
+        Vector4[] m_Tangents;
 
         public int vertexCount => m_Positions.Length;
 
@@ -47,7 +54,7 @@ namespace UnityEngine.ProBuilder
             get
             {
                 if(m_Version != m_CompileVersion)
-                    Upload();
+                    Compile();
                 return m_UnityMesh;
             }
         }
@@ -58,19 +65,19 @@ namespace UnityEngine.ProBuilder
             meshWasModified?.Invoke(this);
         }
 
-        public IList<Vector3> positions
-        {
-            get => m_Positions;
-            set { m_Positions = value.ToArray(); SetDirty(); }
-        }
+        public IList<Vector3> positions { get => m_Positions; set { m_Positions = value.ToArray(); SetDirty(); } }
+        public IList<Vector2> textures0 { get => m_Textures0; set { m_Textures0 = value.ToArray(); SetDirty(); } }
+        public IList<Vector2> textures1 { get => m_Textures1; set { m_Textures1 = value.ToArray(); SetDirty(); } }
+        public IList<Vector2> textures2 { get => m_Textures2; set { m_Textures2 = value.ToArray(); SetDirty(); } }
+        public IList<Vector2> textures3 { get => m_Textures3; set { m_Textures3 = value.ToArray(); SetDirty(); } }
+        public IList<Color> colors { get => m_Colors; set { m_Colors = value.ToArray(); SetDirty(); } }
+        public IList<Face> faces { get => m_Faces; set { m_Faces = value.ToArray(); SetDirty(); } }
 
-        public IList<Face> faces
-        {
-            get => m_Faces;
-            set { m_Faces = value.ToArray(); SetDirty(); }
-        }
+        // todo generated attributes shouldn't be settable
+        public IList<Vector3> normals { get => m_Normals; set { m_Normals = value.ToArray(); SetDirty(); } }
+        public IList<Vector4> tangents { get => m_Tangents; set { m_Tangents = value.ToArray(); SetDirty(); } }
 
-        public void Upload()
+        public void Compile()
         {
             if (m_UnityMesh == null)
             {

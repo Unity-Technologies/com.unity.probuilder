@@ -61,11 +61,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
 			var mt3 = mesh.HasArrays(MeshArrays.Texture3);
             var ft3 = uv3s != null;
 
+            // todo simplify this code - we're inconsistent about what gets copied with other methods
             Vector3[] newPositions = new Vector3[vertexCount + faceVertexCount];
             Color[] newColors = (mc || fc) ? new Color[vertexCount + faceVertexCount] : null;
             Vector2[] newTexture0s = (mt0 || ft0) ? new Vector2[vertexCount + faceVertexCount] : null;
-            List<Vector4> newTexture2s = (mt2 || ft2) ? new List<Vector4>() : null;
-            List<Vector4> newTexture3s = (mt3 || ft3) ? new List<Vector4>() : null;
+            List<Vector2> newTexture2s = (mt2 || ft2) ? new List<Vector2>() : null;
+            List<Vector2> newTexture3s = (mt3 || ft3) ? new List<Vector2>() : null;
 
             List<Face> faces = new List<Face>(mesh.facesInternal);
             Array.Copy(mesh.positionsInternal, 0, newPositions, 0, vertexCount);
@@ -89,14 +90,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
 			if (mt2 || ft2)
             {
-				newTexture2s.AddRange(mt2 ? mesh.textures2Internal : new Vector4[vertexCount].ToList());
-				newTexture2s.AddRange(ft2 ? uv2s : new Vector4[faceVertexCount]);
+				newTexture2s.AddRange(mt2 ? mesh.textures2Internal : new Vector2[vertexCount]);
+				newTexture2s.AddRange(ft2 ? uv2s.Select(x=>(Vector2)x) : new Vector2[faceVertexCount]);
             }
 
 			if (mt3 || ft3)
             {
-				newTexture3s.AddRange(mt3 ? mesh.textures3Internal : new Vector4[vertexCount].ToList());
-				newTexture3s.AddRange(ft3 ? uv3s : new Vector4[faceVertexCount]);
+				newTexture3s.AddRange(mt3 ? mesh.textures3Internal : new Vector2[vertexCount].ToList());
+				newTexture3s.AddRange(ft3 ? uv3s.Select(x=>(Vector2)x) : new Vector2[faceVertexCount]);
             }
 
             face.ShiftIndexesToZero();
@@ -111,13 +112,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 else
                     mesh.AddToSharedVertex(common[i], i + vertexCount);
             }
-
+            
+            // todo unnecessary casting/copying
             mesh.positions = newPositions;
             mesh.colors = newColors;
             mesh.textures = newTexture0s;
             mesh.faces = faces;
-			mesh.textures2Internal = newTexture2s;
-			mesh.textures3Internal = newTexture3s;
+			mesh.textures2Internal = newTexture2s.ToArray();
+			mesh.textures3Internal = newTexture3s.ToArray();
 
             return face;
         }

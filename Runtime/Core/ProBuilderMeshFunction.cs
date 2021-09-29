@@ -121,17 +121,17 @@ namespace UnityEngine.ProBuilder
         {
             // various editor tools expect faces & vertices to always be valid.
             // ideally we'd null everything here, but that would break a lot of existing code.
-            m_Faces = new Face[0];
-            m_Positions = new Vector3[0];
-            m_Textures0 = new Vector2[0];
-            m_Textures2 = null;
-            m_Textures3 = null;
+            faces = new Face[0];
+            positions = new Vector3[0];
+            m_Mesh.textures0 = new Vector2[0];
+            m_Mesh.textures2 = null;
+            m_Mesh.textures3 = null;
             m_Tangents = null;
             m_SharedVertices = new SharedVertex[0];
             m_SharedTextures = new SharedVertex[0];
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
-            m_Colors = null;
+            colors = null;
             m_MeshFormatVersion = k_MeshFormatVersion;
             IncrementVersionIndex();
             ClearSelection();
@@ -146,8 +146,8 @@ namespace UnityEngine.ProBuilder
             m_MeshFilter.hideFlags = k_MeshFilterHideFlags;
 #endif
 
-            if (!renderer.isPartOfStaticBatch && filter.sharedMesh != m_Mesh)
-                filter.sharedMesh = m_Mesh;
+            if (!renderer.isPartOfStaticBatch && filter.sharedMesh != m_Mesh.unityMesh)
+                filter.sharedMesh = m_Mesh.unityMesh;
         }
 
         internal static ProBuilderMesh CreateInstanceWithPoints(Vector3[] positions)
@@ -250,7 +250,7 @@ namespace UnityEngine.ProBuilder
 
             Clear();
             positions = points;
-            m_Faces = f;
+            faces = f;
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(points);
             InvalidateCaches();
             ToMesh();
@@ -268,9 +268,9 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("vertices");
 
             Clear();
-            m_Positions = vertices.ToArray();
-            m_Faces = faces.ToArray();
-            m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Positions);
+            positions = vertices.ToArray();
+            faces = faces;
+            m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Mesh.positions);
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
             ToMesh();
@@ -292,62 +292,66 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            bool usedInParticleSystem = false;
-
-            // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (mesh == null)
-            {
-#if ENABLE_DRIVEN_PROPERTIES
-                SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
-#endif
-                mesh = new Mesh();
-            }
-            else if (mesh.vertexCount != vertexCount)
-            {
-                usedInParticleSystem = MeshUtility.IsUsedInParticleSystem(this);
-                mesh.Clear();
-            }
-
-            mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            mesh.vertices = m_Positions;
-            mesh.uv2 = null;
-
-            if (m_MeshFormatVersion < k_MeshFormatVersion)
-            {
-                if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
-                    Submesh.MapFaceMaterialsToSubmeshIndex(this);
-                if (m_MeshFormatVersion < k_MeshFormatVersionAutoUVScaleOffset)
-                    UvUnwrapping.UpgradeAutoUVScaleOffset(this);
-                m_MeshFormatVersion = k_MeshFormatVersion;
-            }
-
-            m_MeshFormatVersion = k_MeshFormatVersion;
-
-            int materialCount = MaterialUtility.GetMaterialCount(renderer);
-
-            Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
-
-            mesh.subMeshCount = submeshes.Length;
-
-            for (int i = 0; i < mesh.subMeshCount; i++)
-            {
-#if DEVELOPER_MODE
-                if (i >= materialCount)
-                    Log.Warning("Submesh index " + i + " is out of bounds of the MeshRenderer materials array.");
-                if (submeshes[i] == null)
-                    throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
-#endif
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
-            }
-
-            mesh.name = string.Format("pb_Mesh{0}", id);
-
+            m_Mesh.Compile();
             EnsureMeshFilterIsAssigned();
-
-            if(usedInParticleSystem)
-                MeshUtility.RestoreParticleSystem(this);
-
             IncrementVersionIndex();
+
+//             bool usedInParticleSystem = false;
+//
+//             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
+//             if (mesh == null)
+//             {
+// #if ENABLE_DRIVEN_PROPERTIES
+//                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
+// #endif
+//                 mesh = new Mesh();
+//             }
+//             else if (mesh.vertexCount != vertexCount)
+//             {
+//                 usedInParticleSystem = MeshUtility.IsUsedInParticleSystem(this);
+//                 mesh.Clear();
+//             }
+//
+//             mesh.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
+//             mesh.vertices = m_Positions;
+//             mesh.uv2 = null;
+//
+//             if (m_MeshFormatVersion < k_MeshFormatVersion)
+//             {
+//                 if (m_MeshFormatVersion < k_MeshFormatVersionSubmeshMaterialRefactor)
+//                     Submesh.MapFaceMaterialsToSubmeshIndex(this);
+//                 if (m_MeshFormatVersion < k_MeshFormatVersionAutoUVScaleOffset)
+//                     UvUnwrapping.UpgradeAutoUVScaleOffset(this);
+//                 m_MeshFormatVersion = k_MeshFormatVersion;
+//             }
+//
+//             m_MeshFormatVersion = k_MeshFormatVersion;
+//
+//             int materialCount = MaterialUtility.GetMaterialCount(renderer);
+//
+//             Submesh[] submeshes = Submesh.GetSubmeshes(facesInternal, materialCount, preferredTopology);
+//
+//             mesh.subMeshCount = submeshes.Length;
+//
+//             for (int i = 0; i < mesh.subMeshCount; i++)
+//             {
+// #if DEVELOPER_MODE
+//                 if (i >= materialCount)
+//                     Log.Warning("Submesh index " + i + " is out of bounds of the MeshRenderer materials array.");
+//                 if (submeshes[i] == null)
+//                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
+// #endif
+//                 mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+//             }
+//
+//             mesh.name = string.Format("pb_Mesh{0}", id);
+//
+//             EnsureMeshFilterIsAssigned();
+//
+//             if(usedInParticleSystem)
+//                 MeshUtility.RestoreParticleSystem(this);
+//
+//             IncrementVersionIndex();
         }
 
         /// <summary>
@@ -355,10 +359,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal void MakeUnique()
         {
-            // set a new UnityEngine.Mesh instance
-            mesh = new Mesh();
-            ToMesh();
-            Refresh();
+            throw new NotImplementedException("MakeUnique");
         }
 
         /// <summary>
@@ -471,7 +472,7 @@ namespace UnityEngine.ProBuilder
             // correct the texture array.
             if (!HasArrays(MeshArrays.Texture0))
             {
-                m_Textures0 = new Vector2[vertexCount];
+                m_Mesh.textures0 = new Vector2[vertexCount];
                 foreach (Face f in facesInternal)
                     f.manualUV = false;
                 facesToRefresh = facesInternal;
@@ -492,12 +493,12 @@ namespace UnityEngine.ProBuilder
                     UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
             }
 
-            mesh.uv = m_Textures0;
+            mesh.SetUVs(0, m_Mesh.textures0 as Vector2[]);
 
             if (HasArrays(MeshArrays.Texture2))
-                mesh.SetUVs(2, m_Textures2);
+                mesh.SetUVs(2, m_Mesh.textures2 as Vector2[]);
             if (HasArrays(MeshArrays.Texture3))
-                mesh.SetUVs(3, m_Textures3);
+                mesh.SetUVs(3, m_Mesh.textures3 as Vector2[]);
 
             IncrementVersionIndex();
         }
@@ -518,8 +519,8 @@ namespace UnityEngine.ProBuilder
 
         void RefreshColors()
         {
-            Mesh m = filter.sharedMesh;
-            m.colors = m_Colors;
+            // todo remove "refresh" functions, handle this in PMesh
+            m_Mesh.unityMesh.SetColors(m_Mesh.colors as Color[]);
         }
 
         /// <summary>
@@ -533,10 +534,10 @@ namespace UnityEngine.ProBuilder
                 throw new ArgumentNullException("face");
 
             if (!HasArrays(MeshArrays.Color))
-                m_Colors = ArrayUtility.Fill(Color.white, vertexCount);
+                colors = ArrayUtility.Fill(Color.white, vertexCount);
 
             foreach (int i in face.distinctIndexes)
-                m_Colors[i] = color;
+                colors[i] = color;
         }
 
         /// <summary>
@@ -565,7 +566,7 @@ namespace UnityEngine.ProBuilder
                 // submeshIndex that we can replace with this value instead of creating a new entry.
                 var submeshIndexes = new bool[submeshCount];
 
-                foreach (var face in m_Faces)
+                foreach (var face in faces)
                     submeshIndexes[Math.Clamp(face.submeshIndex, 0, submeshCount - 1)] = true;
 
                 index = Array.IndexOf(submeshIndexes, false);
@@ -596,13 +597,15 @@ namespace UnityEngine.ProBuilder
         void RefreshNormals()
         {
             Normals.CalculateNormals(this);
-            mesh.normals = m_Normals;
+            // todo reconsider where vertex attributes are uploaded
+            m_Mesh.unityMesh.SetNormals(m_Mesh.normals as Vector3[]);
         }
 
         void RefreshTangents()
         {
             Normals.CalculateTangents(this);
-            mesh.tangents = m_Tangents;
+            // todo reconsider where vertex attributes are uploaded
+            m_Mesh.unityMesh.SetNormals(m_Mesh.normals as Vector3[]);
         }
 
         /// <summary>

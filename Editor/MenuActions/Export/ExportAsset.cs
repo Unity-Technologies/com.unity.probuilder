@@ -173,7 +173,8 @@ namespace UnityEditor.ProBuilder.Actions
             }
             else
             {
-                mesh.mesh = null;
+                // todo test ExportMesh
+                // mesh.mesh = null;
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
             }
 
@@ -253,7 +254,8 @@ namespace UnityEditor.ProBuilder.Actions
 
             if (!replaceOriginal)
             {
-                pb.mesh = null;
+                // todo Test ExportAsset
+                // pb.mesh = null;
                 EditorUtility.SynchronizeWithMeshFilter(pb);
                 Object.DestroyImmediate(go);
             }
