@@ -69,7 +69,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
     }
 
-    sealed class DragRectModeDropdown : EditorToolbarDropdown
+    class DragRectModeDropdown : EditorToolbarDropdown
     {
         readonly GUIContent m_Partial;
         readonly GUIContent m_Complete;
@@ -94,15 +94,22 @@ namespace UnityEditor.ProBuilder.Actions
         void OpenContextMenu()
         {
             var menu = new GenericMenu();
-            menu.AddItem(m_Partial, ProBuilderEditor.rectSelectMode == RectSelectMode.Partial, () =>
-            {
-                if (ProBuilderEditor.rectSelectMode != RectSelectMode.Partial) m_MenuAction.PerformAction();
-            });
-            menu.AddItem(m_Complete, ProBuilderEditor.rectSelectMode == RectSelectMode.Complete, () =>
-            {
-                if (ProBuilderEditor.rectSelectMode != RectSelectMode.Complete) m_MenuAction.PerformAction();
-            });
+            menu.AddItem(m_Partial, ProBuilderEditor.rectSelectMode == RectSelectMode.Partial,
+                () => SetRectSelectModeIfNeeded(RectSelectMode.Partial));
+
+            menu.AddItem(m_Complete, ProBuilderEditor.rectSelectMode == RectSelectMode.Complete,
+                () => SetRectSelectModeIfNeeded(RectSelectMode.Complete));
+
             menu.DropDown(worldBound);
+        }
+
+        void SetRectSelectModeIfNeeded(RectSelectMode rectSelectMode)
+        {
+            if (ProBuilderEditor.rectSelectMode != rectSelectMode)
+            {
+                ProBuilderEditor.rectSelectMode = rectSelectMode;
+                OnDropdownOptionChange();
+            }
         }
 
         void OnDropdownOptionChange()

@@ -1,5 +1,7 @@
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -79,6 +81,91 @@ namespace UnityEditor.ProBuilder.Actions
         public override bool enabled
         {
             get { return ProBuilderEditor.instance != null; }
+        }
+    }
+
+    [EditorToolbarElement("ProBuilder Tool Settings/Pivot Rotation")]
+    class PivotRotationDropdown : EditorToolbarDropdown
+    {
+        readonly GUIContent m_Local;
+        readonly GUIContent m_Global;
+        readonly GUIContent m_Normal;
+        readonly ToggleHandleOrientation m_MenuAction;
+
+        public PivotRotationDropdown()
+        {
+            m_MenuAction = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
+            name = "Pivot Rotation";
+
+            m_Global = EditorGUIUtility.TrTextContent("Global",
+                "Toggle Tool Handle Rotation\n\nTool handles are in global rotation.",
+                "ToolHandleGlobal");
+            m_Local = EditorGUIUtility.TrTextContent("Local",
+                "Toggle Tool Handle Rotation\n\nTool handles are in the active object's rotation.",
+                "ToolHandleLocal");
+            m_Normal = EditorGUIUtility.TrTextContent("Normal",
+                "The transform handle is aligned with the active element selection",
+                "ToolHandleLocal");
+
+            RegisterCallback<AttachToPanelEvent>(AttachedToPanel);
+            RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
+
+            clicked += OpenContextMenu;
+
+            OnDropdownOptionChange();
+        }
+
+        void OpenContextMenu()
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(m_Global, VertexManipulationTool.handleOrientation == HandleOrientation.World,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.World));
+
+            menu.AddItem(m_Local, VertexManipulationTool.handleOrientation == HandleOrientation.ActiveObject,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.ActiveObject));
+
+            menu.AddItem(m_Normal, VertexManipulationTool.handleOrientation == HandleOrientation.ActiveElement,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.ActiveElement));
+
+            menu.DropDown(worldBound);
+        }
+
+        void SetHandleOrientationIfNeeded(HandleOrientation handleOrientation)
+        {
+            if (VertexManipulationTool.handleOrientation != handleOrientation)
+            {
+                VertexManipulationTool.handleOrientation = handleOrientation;
+                OnDropdownOptionChange();
+            }
+        }
+
+        void OnDropdownOptionChange()
+        {
+            var content = Tools.pivotRotation == PivotRotation.Global ? m_Global : m_Local;
+            text = content.text;
+            tooltip = content.tooltip;
+            icon = content.image as Texture2D;
+
+            //Ensuring constant size of the text area
+            var textElement = this.Q<TextElement>(UnityEditor.Toolbars.EditorToolbar.elementLabelClassName);
+            if (textElement != null)
+                textElement.style.width = 40;
+        }
+
+        void AttachedToPanel(AttachToPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed += OnMenuActionPerformed;
+        }
+
+        void DetachedFromPanel(DetachFromPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed -= OnMenuActionPerformed;
+        }
+
+        void OnMenuActionPerformed(MenuAction menuAction)
+        {
+            if (menuAction == m_MenuAction)
+                OnDropdownOptionChange();
         }
     }
 }

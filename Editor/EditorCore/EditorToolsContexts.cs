@@ -48,9 +48,9 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorToolbarElement("Select Mode Toolbar", typeof(SceneView))]
-    class SelectionSettingsToolbar : OverlayToolbar
+    class SelectModeToolbar : OverlayToolbar
     {
-        SelectionSettingsToolbar()
+        SelectModeToolbar()
         {
             name = "Select Mode Toolbar";
 
@@ -71,22 +71,28 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    class ProbuilderToolSettings : Editor, ICreateHorizontalToolbar, ICreateVerticalToolbar
+    class ProbuilderToolSettings : Editor, ICreateToolbar
     {
-        public override VisualElement CreateInspectorGUI() => CreateHorizontalToolbarContent();
-
-        public virtual OverlayToolbar CreateHorizontalToolbarContent()
+        public IEnumerable<string> toolbarElements
         {
-            var root = new OverlayToolbar();
-            root.Add(new DragRectModeDropdown());
-            return root;
+            get
+            {
+                yield return "Tool Settings/Pivot Mode";
+                yield return "ProBuilder Tool Settings/Pivot Rotation";
+                yield return "ProBuilder Tool Settings/Selection";
+            }
         }
+    }
 
-        public virtual OverlayToolbar CreateVerticalToolbarContent()
+    [EditorToolbarElement("ProBuilder Tool Settings/Selection", typeof(SceneView))]
+    class SelectionSettingsToolbar : OverlayToolbar
+    {
+        SelectionSettingsToolbar()
         {
-            var root = new OverlayToolbar();
-            root.Add(new DragRectModeDropdown());
-            return root;
+            name = "Selection Settings Toolbar";
+
+            Add(new DragRectModeDropdown());
+            SetupChildrenAsButtonStrip();
         }
     }
 
