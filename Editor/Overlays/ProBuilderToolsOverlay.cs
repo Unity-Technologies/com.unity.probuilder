@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
@@ -6,6 +7,7 @@ using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.UIElements;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 
 [Overlay(typeof(SceneView), k_Id, k_Name, true)]
@@ -20,7 +22,8 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
                 "ProBuilder/MaterialEditor",
                 "ProBuilder/SmoothingEditor",
                 "ProBuilder/UVEditor",
-                "ProBuilder/VertexColor"
+                "ProBuilder/VertexColor",
+                "ProBuilder/ObjectActions"
             ) {}
 }
 
@@ -207,5 +210,48 @@ sealed class VertexColorElement : EditorToolbarButton
     static void OnClicked()
     {
         VertexColorPalette.MenuOpenWindow();
+    }
+}
+
+[EditorToolbarElement("ProBuilder/ObjectActions", typeof(SceneView))]
+sealed class ObjectActionDropDown : EditorToolbarDropdown
+{
+    static List<MenuAction> s_ObjectActions;
+
+    ObjectActionDropDown()
+    {
+        name = "Object Actions";
+        s_ObjectActions = EditorToolbarLoader.GetActions();
+        s_ObjectActions = s_ObjectActions.FindAll(x => x.group == ToolbarGroup.Object);
+        clicked += OpenObjectActionsDropdown;
+    }
+
+    void OpenObjectActionsDropdown()
+    {
+        GenericMenu menu = new GenericMenu();
+        for (var i = 0; i < s_ObjectActions.Count; i++)
+        {
+            if(s_ObjectActions[i].enabled)
+            {
+                int selected = i;
+                menu.AddItem(
+                    new GUIContent(s_ObjectActions[i].menuTitle),
+                    false,
+                    () =>
+                    {
+                        var action = s_ObjectActions[selected];
+                            if((action.optionsState & MenuAction.MenuActionState.VisibleAndEnabled) ==
+                                MenuAction.MenuActionState.VisibleAndEnabled)
+                                action.OpenSettingsWindow();
+                            else
+                                EditorUtility.ShowNotification(action.PerformAction().notification);
+                    });
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent(s_ObjectActions[i].menuTitle));
+            }
+        }
+        menu.DropDown(worldBound, true);
     }
 }

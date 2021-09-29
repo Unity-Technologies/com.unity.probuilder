@@ -42,6 +42,19 @@ namespace UnityEditor.ProBuilder
 
                 GUILayout.EndHorizontal();
             }
+            else
+            {
+                EditorGUILayout.HelpBox(L10n.Tr("There is NO mesh missing Lightmap UVs in the open scenes."), MessageType.Info);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+
+                if (GUILayout.Button("Exit"))
+                    Close();
+
+                GUILayout.EndHorizontal();
+
+            }
         }
 
         void MeshOptimized(ProBuilderMesh mesh, Mesh umesh)
