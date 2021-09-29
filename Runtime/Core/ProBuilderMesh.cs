@@ -897,7 +897,10 @@ namespace UnityEngine.ProBuilder
             get
             {
                 if (m_Mesh == null)
+                {
                     m_Mesh = AssetUtility.CreateSceneAsset<PMesh>();
+                    m_Mesh.name = name;
+                }
 
                 return m_Mesh;
             }

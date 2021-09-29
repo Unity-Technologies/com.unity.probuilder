@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -59,7 +60,7 @@ namespace UnityEditor.ProBuilder
         public static void RecordObject(Object obj, string msg) 
             => RecordObjects(new[] { obj }, msg);
 
-        static Object[] CollectUndoTargets<T>(IEnumerable<T> objs) where T : Object
+        static bool CollectUndoTargets<T>(IEnumerable<T> objs, out Object[] targets) where T : Object
         {
             foreach (var obj in objs)
             {
@@ -68,16 +69,17 @@ namespace UnityEditor.ProBuilder
                 s_UndoBuffer.Add(obj);
             }
 
-            var arr = s_UndoBuffer.ToArray();
+            targets = s_UndoBuffer.ToArray();
             s_UndoBuffer.Clear();
-            return arr;
+            return targets.Length > 0;
         }
 
         // Convenience method handles registering ProBuilderMesh + PMesh object
         // todo Rename this to something more indicative of function
         public static void RecordObjects(IEnumerable<Object> objs, string msg)
         {
-            Undo.RecordObjects(CollectUndoTargets(objs), msg);
+            if(CollectUndoTargets(objs, out var targets))
+                Undo.RecordObjects(targets, msg);
         }
 
         public static void RegisterCompleteObjectUndo(Object obj, string msg)
@@ -85,7 +87,8 @@ namespace UnityEditor.ProBuilder
         
         public static void RegisterCompleteObjectUndo(IEnumerable<Object> objs, string msg)
         {
-            Undo.RegisterCompleteObjectUndo(CollectUndoTargets(objs), msg);
+            if(CollectUndoTargets(objs, out var targets))
+                Undo.RegisterCompleteObjectUndo(targets, msg);
         }
 
         public static void DestroyImmediate(Object obj)
