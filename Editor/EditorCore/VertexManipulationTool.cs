@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
+using UnityEditor.Toolbars;
 using UnityEngine.ProBuilder.Shapes;
 
 #if DEBUG_HANDLES
@@ -14,7 +15,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEditor.ProBuilder
 {
-    abstract class VertexManipulationTool : EditorTool
+    abstract class VertexManipulationTool : EditorTool, IHasCustomMenu
     {
         const float k_DefaultSnapValue = .25f;
 
@@ -374,6 +375,36 @@ namespace UnityEditor.ProBuilder
             vertex = (bool)result ? (Vector3)s_FindNearestVertexArguments[2] : Vector3.zero;
             return (bool)result;
 #endif
+        }
+
+        public void AddItemsToMenu(GenericMenu menu)
+        {
+            var actions = EditorToolbarLoader.GetActions();
+            actions = actions.FindAll(x => x.group == ToolbarGroup.Selection);
+
+            foreach(var action in actions)
+            {
+                if(action.enabled)
+                {
+                    if(( action.optionsState & MenuAction.MenuActionState.VisibleAndEnabled ) ==
+                        MenuAction.MenuActionState.VisibleAndEnabled)
+                    {
+                        menu.AddItem(
+                            new GUIContent(action.menuTitle, action.icon, action.tooltip.shortcut),
+                            false,
+                            () => action.PerformAction(),
+                            (object o) => action.OpenSettingsWindow(),
+                            null
+                        );
+                    }
+                    else
+                        menu.AddItem(
+                            new GUIContent(action.menuTitle, action.icon, action.tooltip.shortcut),
+                            false,
+                            () => action.PerformAction()
+                            );
+                }
+            }
         }
     }
 }
