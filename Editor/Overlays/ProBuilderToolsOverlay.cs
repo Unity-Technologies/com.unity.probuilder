@@ -5,7 +5,6 @@ using UnityEditor.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 using MaterialEditor = UnityEditor.ProBuilder.MaterialEditor;
 
@@ -17,7 +16,7 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
 
     public ProBuilderToolsOverlay()
         : base(
-            "ProBuilder/PolyShape",
+            "ProBuilder/ShapeTool",
                 "ProBuilder/MaterialEditor",
                 "ProBuilder/SmoothingEditor",
                 "ProBuilder/UVEditor",
@@ -25,65 +24,115 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
             ) {}
 }
 
-[EditorToolbarElement("ProBuilder/PolyShape", typeof(SceneView))]
-sealed class PolyShapeElement : EditorToolbarToggle
+[EditorToolbarElement("ProBuilder/ShapeTool", typeof(SceneView))]
+sealed class ShapeToolElement : EditorToolbarToggle
 {
-     string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Tools/PolyShape/CreatePolyShape.png";
+    string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Tools/EditShape.png";
 
-     MenuToolToggle m_Action;
+    MenuToolToggle m_Action;
 
-     public PolyShapeElement()
-         : base()
-     {
-         m_Action = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
+    public ShapeToolElement()
+    {
+        m_Action = EditorToolbarLoader.GetInstance<NewShapeToggle>();
 
-         name = m_Action.menuTitle;
-         tooltip = m_Action.tooltip.summary;
-         icon = m_Action.icon;
+        name = m_Action.menuTitle;
+        tooltip = m_Action.tooltip.summary;
+        icon = m_Action.icon;
 
-         this.value = false;
+        value = false;
 
-         RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
-         RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
+        RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
+        RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
 
-         this.RegisterValueChangedCallback(OnToggleValueChanged);
-     }
+        this.RegisterValueChangedCallback(OnToggleValueChanged);
+    }
 
-     void OnAttachedToPanel(AttachToPanelEvent evt)
-     {
-         ToolManager.activeContextChanged += OnActiveToolChanging;
-     }
+    void OnAttachedToPanel(AttachToPanelEvent evt)
+    {
+        ToolManager.activeToolChanged += OnActiveToolChanged;
+    }
 
-     void OnDetachFromPanel(DetachFromPanelEvent evt)
-     {
-         ToolManager.activeContextChanged -= OnActiveToolChanging;
-     }
+    void OnDetachFromPanel(DetachFromPanelEvent evt)
+    {
+        ToolManager.activeToolChanged -= OnActiveToolChanged;
+    }
 
-     void OnActiveToolChanging()
-     {
-         // Debug.Log("ActiveToolChanging "+ToolManager.IsActiveTool(m_Action.Tool));
-         // if(this.value && !ToolManager.IsActiveTool(m_Action.Tool))
-         //    this.value = false;
-     }
+    void OnActiveToolChanged()
+    {
+        if(value && !ToolManager.IsActiveTool(m_Action.Tool))
+           value = false;
+    }
 
 
-     void OnToggleValueChanged(ChangeEvent<bool> toggleValue)
-     {
-         if(toggleValue.newValue)
-         {
-             m_Action.PerformAction();
-         }
-         else
-         {
-             //if(ToolManager.IsActiveTool(m_Action.Tool))
-             if(ToolManager.activeToolType == m_Action.Tool.GetType())
-             {
-                 Debug.Log("Tool is still active");
-                 m_Action.EndActivation();
-             }
-         }
-     }
+    void OnToggleValueChanged(ChangeEvent<bool> toggleValue)
+    {
+        if(toggleValue.newValue)
+            m_Action.PerformAction();
+        else if(ToolManager.IsActiveTool(m_Action.Tool))
+            m_Action.EndActivation();
+    }
 }
+
+
+// [EditorToolbarElement("ProBuilder/PolyShape", typeof(SceneView))]
+// sealed class PolyShapeElement : EditorToolbarToggle
+// {
+//      string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Tools/PolyShape/CreatePolyShape.png";
+//
+//      MenuToolToggle m_Action;
+//
+//      public PolyShapeElement()
+//          : base()
+//      {
+//          m_Action = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
+//
+//          name = m_Action.menuTitle;
+//          tooltip = m_Action.tooltip.summary;
+//          icon = m_Action.icon;
+//
+//          this.value = false;
+//
+//          RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
+//          RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
+//
+//          this.RegisterValueChangedCallback(OnToggleValueChanged);
+//      }
+//
+//      void OnAttachedToPanel(AttachToPanelEvent evt)
+//      {
+//          ToolManager.activeContextChanged += OnActiveToolChanging;
+//      }
+//
+//      void OnDetachFromPanel(DetachFromPanelEvent evt)
+//      {
+//          ToolManager.activeContextChanged -= OnActiveToolChanging;
+//      }
+//
+//      void OnActiveToolChanging()
+//      {
+//          // Debug.Log("ActiveToolChanging "+ToolManager.IsActiveTool(m_Action.Tool));
+//          // if(this.value && !ToolManager.IsActiveTool(m_Action.Tool))
+//          //    this.value = false;
+//      }
+//
+//
+//      void OnToggleValueChanged(ChangeEvent<bool> toggleValue)
+//      {
+//          if(toggleValue.newValue)
+//          {
+//              m_Action.PerformAction();
+//          }
+//          else
+//          {
+//              //if(ToolManager.IsActiveTool(m_Action.Tool))
+//              if(ToolManager.activeToolType == m_Action.Tool.GetType())
+//              {
+//                  Debug.Log("Tool is still active");
+//                  m_Action.EndActivation();
+//              }
+//          }
+//      }
+// }
 
 [EditorToolbarElement("ProBuilder/SmoothingEditor", typeof(SceneView))]
 sealed class SmoothingEditorElement : EditorToolbarButton
