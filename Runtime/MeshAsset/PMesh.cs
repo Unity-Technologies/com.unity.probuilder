@@ -32,7 +32,7 @@ namespace UnityEngine.ProBuilder
         public int vertexCount => m_Positions.Length;
 
         public ushort version => m_Version;
-        // todo remove
+        // todo remove compiledVersion, it's only used for debugging in the inspector
         public ushort compiledVersion => m_CompileVersion;
         public static event Action<PMesh> meshWasModified;
         public static event Action<PMesh> meshWasCompiled;
@@ -75,6 +75,7 @@ namespace UnityEngine.ProBuilder
             if (m_UnityMesh == null)
             {
                 m_UnityMesh = new Mesh();
+                m_UnityMesh.name = name;
                 AssetDatabase.AddObjectToAsset(m_UnityMesh, this);
             }
 

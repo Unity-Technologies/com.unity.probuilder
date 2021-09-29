@@ -353,6 +353,10 @@ namespace UnityEngine.ProBuilder
     public enum RefreshMask
     {
         /// <summary>
+        /// No additional attributes will be generated.
+        /// </summary>
+        None = 0x0,
+        /// <summary>
         /// Textures channel will be rebuilt.
         /// </summary>
         UV = 0x1,

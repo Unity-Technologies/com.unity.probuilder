@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 {
     static class PMeshCompiler
     {
-        public static bool Compile(PMesh src, Mesh dst)
+        public static bool Compile(PMesh src, Mesh dst, RefreshMask mask = RefreshMask.None)
         {
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
@@ -14,12 +14,11 @@ namespace UnityEngine.ProBuilder
             if (dst == null)
                 throw new ArgumentNullException(nameof(dst));
 
-// #if DEVELOPER_MODE
+            // todo DEVELOPER_MODE only asserts
             Assertions.Assert.IsNotNull(src.positions);
             Assertions.Assert.IsFalse(src.positions.Count < 3);
             Assertions.Assert.IsNotNull(src.faces);
             Assertions.Assert.IsFalse(src.faces.Count < 1);
-// #endif
 
             if (src.positions == null || src.positions.Count < 3 || src.faces?.Count < 1)
                 return false;
@@ -46,7 +45,22 @@ namespace UnityEngine.ProBuilder
                 dst.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
+            GenerateVertexAttribs(src, dst, mask);
+            
             return false;
+        }
+
+        /// <summary>
+        /// Recalculates mesh attributes: normals, collisions, UVs, tangents, and colors.
+        /// </summary>
+        /// <param name="src">Mesh to generate vertex attributes from.</param>
+        /// <param name="dst">UnityEngine.Mesh to apply generated attributes to.</param>
+        /// <param name="mask">
+        /// Optionally pass a mask to define what components are updated (UV and collisions are expensive to rebuild, and can usually be deferred til completion of task).
+        /// </param>
+        public static void GenerateVertexAttribs(PMesh src, Mesh dst, RefreshMask mask = RefreshMask.All)
+        {
+            // todo
         }
     }
 }

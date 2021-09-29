@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.SceneManagement;
 
 public class MeshEditor
 {
@@ -14,13 +15,23 @@ public class MeshEditor
                 filter.SyncMeshFilter();
         };
     }
+
+    static string GetActiveSceneAssetDirectory()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (!File.Exists(scene.path))
+            return "Assets/";
+        return $"{Path.GetDirectoryName(scene.path)}/{scene.name}";
+    }
     
     static T CreateSceneAsset<T>() where T : ScriptableObject
     {
+        
         var asset = ScriptableObject.CreateInstance<T>();
-        if(!Directory.Exists("Assets/temp"))
-            Directory.CreateDirectory("Assets/temp");
-        AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath("Assets/temp/mesh.asset"));
+        var dir = GetActiveSceneAssetDirectory();
+        if(!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath($"{dir}/mesh.asset"));
         return asset;
     }
 
