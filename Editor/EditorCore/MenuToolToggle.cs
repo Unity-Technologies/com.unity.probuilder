@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
             bool wasEnabled = GUI.enabled;
             bool buttonEnabled = (menuActionState & MenuActionState.Enabled) == MenuActionState.Enabled;
 
-            bool isActiveTool = m_Tool != null && ToolManager.IsActiveTool(m_Tool);
+            bool isActiveTool = m_Tool != null && ToolManager.activeToolType == m_Tool.GetType();
 
             GUI.enabled = buttonEnabled;
 

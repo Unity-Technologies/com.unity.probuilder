@@ -254,6 +254,8 @@ namespace UnityEditor.ProBuilder
             get { return MenuActionState.Hidden; }
         }
 
+        internal MenuActionState optionsState => optionsMenuState;
+
         /// <summary>
         /// Perform whatever action this menu item is supposed to do.
         /// Implementation should be coded in PerformActionImplementation.
@@ -286,6 +288,11 @@ namespace UnityEditor.ProBuilder
         protected virtual void DoAlternateAction()
         {
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
+        }
+
+        internal void OpenSettingsWindow()
+        {
+            DoAlternateAction();
         }
 
         /// <summary>
