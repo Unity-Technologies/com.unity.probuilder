@@ -222,10 +222,10 @@ namespace UnityEngine.ProBuilder
 
             missing |= (channels & MeshArrays.Position) == MeshArrays.Position && positions == null;
             missing |= (channels & MeshArrays.Normal) == MeshArrays.Normal && (normals == null || normals.Count != vc);
-            missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (m_Mesh.textures0 == null || m_Mesh.textures0.Count != vc);
-            missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (m_Mesh.textures2 == null || m_Mesh.textures2.Count != vc);
-            missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (m_Mesh.textures3 == null || m_Mesh.textures3.Count != vc);
-            missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (m_Mesh.colors == null || m_Mesh.colors.Count != vc);
+            missing |= (channels & MeshArrays.Texture0) == MeshArrays.Texture0 && (pmesh.textures0 == null || pmesh.textures0.Count != vc);
+            missing |= (channels & MeshArrays.Texture2) == MeshArrays.Texture2 && (pmesh.textures2 == null || pmesh.textures2.Count != vc);
+            missing |= (channels & MeshArrays.Texture3) == MeshArrays.Texture3 && (pmesh.textures3 == null || pmesh.textures3.Count != vc);
+            missing |= (channels & MeshArrays.Color) == MeshArrays.Color && (pmesh.colors == null || pmesh.colors.Count != vc);
             missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
@@ -235,7 +235,7 @@ namespace UnityEngine.ProBuilder
 #if UNITY_2019_3_OR_NEWER
                 missing |= !mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
 #else
-                var m_Textures1 = m_Mesh.uv2;
+                var m_Textures1 = pmesh.uv2;
                 missing |= (m_Textures1 == null || m_Textures1.Length < 3);
 #endif
             }
@@ -245,8 +245,8 @@ namespace UnityEngine.ProBuilder
 
         internal Face[] facesInternal
         {
-            get { return m_Mesh.faces as Face[]; }
-            set { m_Mesh.faces = value; }
+            get { return pmesh.faces as Face[]; }
+            set { pmesh.faces = value; }
         }
 
         /// <summary>
@@ -257,12 +257,12 @@ namespace UnityEngine.ProBuilder
         /// </value>
         public IList<Face> faces
         {
-            get => m_Mesh.faces;
+            get => pmesh.faces;
             set
             {
                 if (value == null)
                     throw new ArgumentNullException("value");
-                m_Mesh.faces = value;
+                pmesh.faces = value;
             }
         }
 
@@ -828,7 +828,7 @@ namespace UnityEngine.ProBuilder
             switch (channel)
             {
                 case 0:
-                    m_Mesh.textures0 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
+                    pmesh.textures0 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 1:
@@ -837,11 +837,11 @@ namespace UnityEngine.ProBuilder
                     break;
 
                 case 2:
-                    m_Mesh.textures2 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
+                    pmesh.textures2 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
 
                 case 3:
-                    m_Mesh.textures3 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
+                    pmesh.textures3 = uvs != null ? uvs.Select(x => (Vector2)x).ToArray() : null;
                     break;
             }
         }
@@ -849,12 +849,12 @@ namespace UnityEngine.ProBuilder
         /// <value>
         /// How many faces does this mesh have?
         /// </value>
-        public int faceCount => m_Mesh.faces.Count;
+        public int faceCount => pmesh.faceCount;
 
         /// <value>
         /// How many vertices are in the positions array.
         /// </value>
-        public int vertexCount => m_Mesh.positions.Count;
+        public int vertexCount => pmesh.vertexCount;
 
         /// <value>
         /// How many edges compose this mesh.
@@ -917,7 +917,13 @@ namespace UnityEngine.ProBuilder
         
         internal PMesh pmesh
         {
-            get => m_Mesh;
+            get
+            {
+                if (m_Mesh == null)
+                    m_Mesh = AssetUtility.CreateSceneAsset<PMesh>();
+
+                return m_Mesh;
+            }
             set => m_Mesh = value;
         }
 

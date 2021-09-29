@@ -269,6 +269,7 @@ namespace UnityEngine.ProBuilder
 
             Clear();
             positions = vertices.ToArray();
+            this.faces = faces.ToArray();
             m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(m_Mesh.positions);
             InvalidateSharedVertexLookup();
             InvalidateSharedTextureLookup();
@@ -291,7 +292,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            m_Mesh.Compile();
+            pmesh.Compile();
             EnsureMeshFilterIsAssigned();
             IncrementVersionIndex();
             
