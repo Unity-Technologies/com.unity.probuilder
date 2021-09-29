@@ -124,6 +124,14 @@ namespace UnityEditor.ProBuilder
                 ToolManager.SetActiveContext<TextureToolContext>();
             else if (!selectMode.IsMeshElementMode())
                 ToolManager.SetActiveContext<GameObjectToolContext>();
+
+            if(selectMode.IsPositionMode())
+            {
+                if(ProBuilderEditor.activeTool != null)
+                {
+                    ProBuilderEditor.activeTool.name = "ProBuilder " + selectMode.ToString();
+                }
+            }
 #else
             var tool = activeTool;
 
