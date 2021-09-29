@@ -879,8 +879,6 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
-                selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
-
                 if (s_ShowSceneInfo)
                 {
                     Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
