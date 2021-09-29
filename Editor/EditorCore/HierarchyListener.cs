@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -21,13 +20,6 @@ namespace UnityEditor.ProBuilder
             // prefabInstanceUpdated is not called when dragging out of Project view,
             // or when creating a prefab or reverting.  OnHierarchyChange captures those.
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
-
-            ProBuilderMesh.meshWasInitialized += OnMeshInitialized;
-        }
-
-        static void OnMeshInitialized(ProBuilderMesh mesh)
-        {
-            mesh.Optimize();
         }
 
         static void OnAfterAssemblyReload()

@@ -139,8 +139,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            if(m_ShapeEditor != null)
-                DestroyImmediate(m_ShapeEditor);
+            DestroyImmediate(m_ShapeEditor);
             if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
                 ShapeState.ResetState();
         }

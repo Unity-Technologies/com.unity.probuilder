@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -48,6 +47,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh();
         }
 
+        // todo selection should be a separate object from ProBuilderMesh
         public static void RecordSelection(string msg) => RecordSelection(MeshSelection.topInternal, msg);
 
         public static void RecordSelection<T>(T obj, string msg) where T : Object

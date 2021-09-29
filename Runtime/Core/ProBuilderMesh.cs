@@ -864,18 +864,13 @@ namespace UnityEngine.ProBuilder
 
         /// <summary>
         /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is
-        /// found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
+        /// found with the parent GameObject. You may override this behaviour by subscribing to meshWillBeDestroyed.
         /// </summary>
         /// <value>
-        /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
+        /// If meshWillBeDestroyed has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
         /// </value>
         /// <seealso cref="preserveMeshAssetOnDestroy"/>
         public static event Action<ProBuilderMesh> meshWillBeDestroyed;
-
-        /// <summary>
-        /// Mesh was rebuilt from Awake call.
-        /// </summary>
-        internal static event Action<ProBuilderMesh> meshWasInitialized;
 
         /// <value>
         /// Invoked from ProBuilderMesh.OnDestroy before any cleanup is performed.

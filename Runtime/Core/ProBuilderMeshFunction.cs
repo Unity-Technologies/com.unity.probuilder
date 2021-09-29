@@ -2,10 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using UnityEngine.ProBuilder.Shapes;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace UnityEngine.ProBuilder
 {
@@ -60,19 +56,7 @@ namespace UnityEngine.ProBuilder
         {
             EnsureMeshFilterIsAssigned();
             EnsureMeshColliderIsAssigned();
-            //Ensure no element is selected at awake
             ClearSelection();
-
-            // if(vertexCount > 0
-            //    && faceCount > 0
-            //    && meshSyncState == MeshSyncState.Null)
-            // {
-            //     using (new NonVersionedEditScope(this))
-            //     {
-            //         Rebuild();
-            //         meshWasInitialized?.Invoke(this);
-            //     }
-            // }
         }
 
         void Reset()
@@ -88,12 +72,12 @@ namespace UnityEngine.ProBuilder
         void OnDestroy()
         {
             // Always re-enable the MeshFilter when the ProBuilderMesh component is removed
-            if (m_MeshFilter != null || this.TryGetComponent(out m_MeshFilter))
+            if (m_MeshFilter != null || TryGetComponent(out m_MeshFilter))
                 m_MeshFilter.hideFlags = HideFlags.None;
 
             if (componentWillBeDestroyed != null)
                 componentWillBeDestroyed(this);
-
+            
             // Time.frameCount is zero when loading scenes in the Editor. It's the only way I could figure to
             // differentiate between OnDestroy invoked from user delete & editor scene loading.
             if (!preserveMeshAssetOnDestroy &&
@@ -101,10 +85,7 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
-                if (meshWillBeDestroyed != null)
-                    meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+                meshWillBeDestroyed?.Invoke(this);
             }
         }
 
