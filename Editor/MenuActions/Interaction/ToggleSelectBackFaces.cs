@@ -82,6 +82,7 @@ The default value is <b>On</b>.
             RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
 
             OnSelectBackFacesChange();
+            OnSelectModeChanged(ProBuilderEditor.selectMode);
         }
 
         public override void SetValueWithoutNotify(bool newValue)

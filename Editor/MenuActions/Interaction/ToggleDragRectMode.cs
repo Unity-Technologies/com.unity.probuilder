@@ -90,6 +90,7 @@ namespace UnityEditor.ProBuilder.Actions
             clicked += OpenContextMenu;
 
             OnDropdownOptionChange();
+            OnSelectModeChanged(ProBuilderEditor.selectMode);
         }
 
         void OpenContextMenu()
