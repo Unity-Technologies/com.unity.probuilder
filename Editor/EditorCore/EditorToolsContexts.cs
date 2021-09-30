@@ -54,19 +54,18 @@ namespace UnityEditor.ProBuilder
         {
             name = "Select Mode Toolbar";
 
-            CreateSelectModeToggle(SelectMode.Object);
-            CreateSelectModeToggle(SelectMode.Vertex);
-            CreateSelectModeToggle(SelectMode.Edge);
-            CreateSelectModeToggle(SelectMode.Face);
+            CreateSelectModeToggle(SelectMode.Object, "Object Selection", "Modes/Mode_Object");
+            CreateSelectModeToggle(SelectMode.Vertex, "Vertex Selection", "Modes/Mode_Vertex");
+            CreateSelectModeToggle(SelectMode.Edge, "Edge Selection" , "Modes/Mode_Edge");
+            CreateSelectModeToggle(SelectMode.Face, "Face Selection", "Modes/Mode_Face");
 
             SetupChildrenAsButtonStrip();
         }
 
-        void CreateSelectModeToggle(SelectMode mode)
+        void CreateSelectModeToggle(SelectMode mode, string text, string iconName)
         {
-            var toggleContent = UI.EditorGUIUtility.GetSelectModeToggleContent(mode);
-            var toggle = new SelectModeToggle(mode, toggleContent.text, toggleContent.image as Texture2D);
-
+            var icon = IconUtility.GetIcon(iconName);
+            var toggle = new SelectModeToggle(mode, text, icon);
             Add(toggle);
         }
     }
