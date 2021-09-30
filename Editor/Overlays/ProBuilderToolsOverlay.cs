@@ -18,14 +18,25 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
 
     public ProBuilderToolsOverlay()
         : base(
-            "ProBuilder/ShapeTool",
-                "ProBuilder/PolyShape",
-                "ProBuilder/MaterialEditor",
-                "ProBuilder/SmoothingEditor",
-                "ProBuilder/UVEditor",
-                "ProBuilder/VertexColor",
-                "ProBuilder/ObjectActions"
-            ) {}
+                "ProBuilder/ShapeTool",
+                 "ProBuilder/PolyShape",
+                 "ProBuilder/MaterialEditor",
+                 "ProBuilder/SmoothingEditor",
+                 "ProBuilder/UVEditor",
+                 "ProBuilder/VertexColor",
+                 "ProBuilder/ObjectActions"
+            )
+    {
+        this.m_HasMenuEntry = false;
+        this.floating = true;
+        this.layout = Layout.VerticalToolbar;
+        ToolManager.activeContextChanged += OnActiveContextChanged;
+    }
+
+    void OnActiveContextChanged()
+    {
+        this.displayed = ToolManager.activeContextType == typeof(ProBuilderToolContext);
+    }
 }
 
 [EditorToolbarElement("ProBuilder/ShapeTool", typeof(SceneView))]
@@ -133,7 +144,7 @@ sealed class SmoothingEditorElement : EditorToolbarButton
 {
     static readonly string k_Name = L10n.Tr("Smoothing Groups");
     const string k_IconPath = "Toolbar/SelectBySmoothingGroup";
-    static readonly string k_Tooltip = L10n.Tr("Opens the Material Editor window.\n\nThe Material Editor window applies materials to selected faces or objects.");
+    static readonly string k_Tooltip = L10n.Tr("Opens the Smoothing Group Editor. Smoothing groups average the vertex normals with neighboring planes. This allows lighting to behave in a more realistic manner when dealing with edges that are intended to be smooth.");
 
     public SmoothingEditorElement()
         : base(k_Name, IconUtility.GetIcon(k_IconPath, EditorGUIUtility.isProSkin ? IconSkin.Pro : IconSkin.Light), OnClicked)
@@ -143,7 +154,7 @@ sealed class SmoothingEditorElement : EditorToolbarButton
 
     static void OnClicked()
     {
-        MaterialEditor.MenuOpenMaterialEditor();
+        SmoothGroupEditor.MenuOpenSmoothGroupEditor();
     }
 }
 
@@ -221,23 +232,30 @@ sealed class ObjectActionDropDown : EditorToolbarDropdown
 
     void OpenObjectActionsDropdown()
     {
+        var toolbargroup = ToolbarGroup.Tool;
         GenericMenu menu = new GenericMenu();
         for (var i = 0; i < s_ObjectActions.Count; i++)
         {
-            if(s_ObjectActions[i].enabled)
+            var action = s_ObjectActions[i];
+
+            Debug.Log(toolbargroup != action.group);
+            if(i>0 && toolbargroup != action.group)
+                menu.AddSeparator(string.Empty);
+
+            toolbargroup = action.group;
+
+            if(action.enabled)
             {
-                int selected = i;
                 menu.AddItem(
                     new GUIContent(s_ObjectActions[i].menuTitle),
                     false,
                     () =>
                     {
-                        var action = s_ObjectActions[selected];
-                            if((action.optionsState & MenuAction.MenuActionState.VisibleAndEnabled) ==
-                                MenuAction.MenuActionState.VisibleAndEnabled)
-                                action.OpenSettingsWindow();
-                            else
-                                EditorUtility.ShowNotification(action.PerformAction().notification);
+                        if((action.optionsState & MenuAction.MenuActionState.VisibleAndEnabled) ==
+                            MenuAction.MenuActionState.VisibleAndEnabled)
+                            action.OpenSettingsWindow();
+                        else
+                            EditorUtility.ShowNotification(action.PerformAction().notification);
                     });
             }
             else
