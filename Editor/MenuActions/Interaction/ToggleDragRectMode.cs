@@ -121,17 +121,34 @@ namespace UnityEditor.ProBuilder.Actions
         void AttachedToPanel(AttachToPanelEvent evt)
         {
             MenuAction.afterActionPerformed += OnMenuActionPerformed;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
         }
 
         void DetachedFromPanel(DetachFromPanelEvent evt)
         {
             MenuAction.afterActionPerformed -= OnMenuActionPerformed;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
         }
 
         void OnMenuActionPerformed(MenuAction menuAction)
         {
             if (menuAction == m_MenuAction)
                 OnDropdownOptionChange();
+        }
+
+        void OnSelectModeChanged(SelectMode mode)
+        {
+            switch (mode)
+            {
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                case SelectMode.Object:
+                    SetEnabled(false);
+                    break;
+                default:
+                    SetEnabled(true);
+                    break;
+            }
         }
     }
 }
