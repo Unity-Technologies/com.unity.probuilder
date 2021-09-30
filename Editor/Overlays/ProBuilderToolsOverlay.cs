@@ -212,8 +212,10 @@ sealed class ObjectActionDropDown : EditorToolbarDropdown
     ObjectActionDropDown()
     {
         name = "Object Actions";
+
         s_ObjectActions = EditorToolbarLoader.GetActions();
-        s_ObjectActions = s_ObjectActions.FindAll(x => x.group == ToolbarGroup.Object);
+        s_ObjectActions = s_ObjectActions.FindAll(x => x.group == ToolbarGroup.Object || x.group == ToolbarGroup.Entity);
+
         clicked += OpenObjectActionsDropdown;
     }
 

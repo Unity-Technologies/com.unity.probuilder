@@ -379,9 +379,17 @@ namespace UnityEditor.ProBuilder
 
         public void AddItemsToMenu(GenericMenu menu)
         {
-            var actions = EditorToolbarLoader.GetActions();
-            actions = actions.FindAll(x => x.group == ToolbarGroup.Selection);
+            var actions = EditorToolbarLoader.GetActions(true);
+            var selectionActions = actions.FindAll(x => x.group == ToolbarGroup.Selection);
+            var geoActions = actions.FindAll(x => x.group == ToolbarGroup.Geometry);
 
+            AddActionsToMenu(selectionActions, menu);
+            menu.AddSeparator("separator");
+            AddActionsToMenu(geoActions, menu);
+        }
+
+        void AddActionsToMenu(IList<MenuAction> actions, GenericMenu menu)
+        {
             foreach(var action in actions)
             {
                 if(action.enabled)
@@ -402,9 +410,10 @@ namespace UnityEditor.ProBuilder
                             new GUIContent(action.menuTitle, action.icon, action.tooltip.shortcut),
                             false,
                             () => action.PerformAction()
-                            );
+                        );
                 }
             }
         }
+
     }
 }
