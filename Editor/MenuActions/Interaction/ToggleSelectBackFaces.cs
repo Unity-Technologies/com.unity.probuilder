@@ -82,6 +82,7 @@ The default value is <b>On</b>.
             RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
 
             OnSelectBackFacesChange();
+            OnSelectModeChanged(ProBuilderEditor.selectMode);
         }
 
         public override void SetValueWithoutNotify(bool newValue)
@@ -98,17 +99,32 @@ The default value is <b>On</b>.
         void AttachedToPanel(AttachToPanelEvent evt)
         {
             MenuAction.afterActionPerformed += OnMenuActionPerformed;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
         }
 
         void DetachedFromPanel(DetachFromPanelEvent evt)
         {
             MenuAction.afterActionPerformed -= OnMenuActionPerformed;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
         }
 
         void OnMenuActionPerformed(MenuAction menuAction)
         {
             if (menuAction == m_MenuAction)
                 OnSelectBackFacesChange();
+        }
+
+        void OnSelectModeChanged(SelectMode mode)
+        {
+            switch (mode)
+            {
+                case SelectMode.Object:
+                    SetEnabled(false);
+                    break;
+                default:
+                    SetEnabled(true);
+                    break;
+            }
         }
     }
 }
