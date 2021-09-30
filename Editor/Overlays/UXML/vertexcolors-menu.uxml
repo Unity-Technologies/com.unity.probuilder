@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="vertexcolor-button" src="project://database/Packages/com.unity.probuilder/Editor/Overlays/UXML/vertexcolor-button.uxml?fileID=9197481963319205126&amp;guid=26ed63deab691b140a09948721175d98&amp;type=3#vertexcolor-button" />
+    <ui:VisualElement style="flex-direction: row; height: 20px;">
+        <ui:DropdownField index="0" choices="Default" style="flex-grow: 1;" />
+        <ui:Button text="Reset" display-tooltip-when-elided="true" name="Reset" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Line1" style="flex-direction: row; flex-grow: 1; max-height: 30px; min-height: 20px; min-width: 20px;">
+        <ui:Instance template="vertexcolor-button" name="ColorButton0" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton1" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton2" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton3" style="flex-grow: 1; flex-shrink: 0; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Line2" style="flex-direction: row; flex-grow: 1; max-height: 30px; min-height: 20px; min-width: 20px;">
+        <ui:Instance template="vertexcolor-button" name="ColorButton4" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton5" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton6" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton7" style="flex-grow: 1; flex-shrink: 0; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Line3" style="flex-direction: row; flex-grow: 1; max-height: 30px; min-height: 20px; min-width: 20px;">
+        <ui:Instance template="vertexcolor-button" name="ColorButton8" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton9" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton10" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton11" style="flex-grow: 1; flex-shrink: 0; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Line4" style="flex-direction: row; flex-grow: 1; max-height: 30px; min-height: 20px; min-width: 20px;">
+        <ui:Instance template="vertexcolor-button" name="ColorButton12" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton13" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton14" style="flex-grow: 1; flex-shrink: 0; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+        <ui:Instance template="vertexcolor-button" name="ColorButton15" style="flex-shrink: 0; flex-grow: 1; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px;" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1; flex-shrink: 0; height: 20px; max-height: 20px;">
+        <ui:Button text="Save" display-tooltip-when-elided="true" name="Save" style="flex-grow: 1;" />
+        <ui:Button text="Exit" display-tooltip-when-elided="true" name="Exit" style="flex-grow: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

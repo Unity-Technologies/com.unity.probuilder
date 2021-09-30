@@ -29,7 +29,7 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
     {
         this.m_HasMenuEntry = false;
         this.floating = true;
-        this.layout = Layout.VerticalToolbar;
+        this.layout = Layout.Panel;
         ToolManager.activeContextChanged += OnActiveContextChanged;
     }
 
@@ -211,7 +211,8 @@ sealed class VertexColorElement : EditorToolbarButton
 
     static void OnClicked()
     {
-        VertexColorPalette.MenuOpenWindow();
+        VertexColorsOverlay.instance.Show();
+        //VertexColorPalette.MenuOpenWindow();
     }
 }
 

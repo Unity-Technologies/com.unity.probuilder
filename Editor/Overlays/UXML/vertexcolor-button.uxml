@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Button display-tooltip-when-elided="true" name="ColorButton" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; min-width: 20px; min-height: 20px; flex-grow: 1;">
+        <ui:VisualElement name="ColorArea" style="background-color: rgb(17, 255, 0); flex-shrink: 0; width: 100%; height: 80%;" />
+        <ui:VisualElement name="AlphaArea" style="background-color: rgba(255, 255, 255, 255); flex-shrink: 0; width: 100%; height: 20%;" />
+    </ui:Button>
+</ui:UXML>

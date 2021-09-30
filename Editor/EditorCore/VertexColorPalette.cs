@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder
             GetWindow<VertexColorPalette>("Vertex Colors");
         }
 
-        static ColorPalette GetLastUsedColorPalette()
+        internal static ColorPalette GetLastUsedColorPalette()
         {
             // serialized copy?
             ColorPalette palette = s_Instance != null ? s_Instance.m_ColorPalette : null;
