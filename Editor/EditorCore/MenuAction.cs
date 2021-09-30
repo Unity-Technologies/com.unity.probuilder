@@ -3,6 +3,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -295,13 +296,19 @@ namespace UnityEditor.ProBuilder
 
         protected virtual void DoAlternateAction()
         {
-            MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
+            MenuOptionOverlay.Show(CreateSettingsPanelContent(), OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
+            //MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
 
         internal void OpenSettingsWindow()
         {
             DoAlternateAction();
         }
+
+        /// <summary>
+        /// Implement the extra UIToolkit GUI for your action in this method.
+        /// </summary>
+        protected virtual VisualElement CreateSettingsPanelContent() { return null; }
 
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.
