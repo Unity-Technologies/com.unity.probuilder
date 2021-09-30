@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder
                 bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
 #endif
 
-                var usedInParticuleSystem = UnityEngine.ProBuilder.MeshUtility.IsUsedInParticleSystem(mesh);
+                var usedInParticleSystem = UnityEngine.ProBuilder.MeshUtility.IsUsedInParticleSystem(mesh);
 
                 // if generating UV2, the process is to manually split the mesh into individual triangles,
                 // generate uv2, then re-assemble with vertex collapsing where possible.
@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder
                     UnityEngine.ProBuilder.MeshUtility.CollapseSharedVertices(umesh);
                 }
 
-                if(usedInParticuleSystem)
+                if(usedInParticleSystem)
                     UnityEngine.ProBuilder.MeshUtility.RestoreParticleSystem(mesh);
             }
 
@@ -107,7 +107,8 @@ namespace UnityEditor.ProBuilder
             if (Experimental.meshesAreAssets)
                 TryCacheMesh(mesh);
 
-            UnityEditor.EditorUtility.SetDirty(mesh);
+            AssetUtility.Save(mesh.pmesh);
+            AssetUtility.Save(mesh.pmesh.unityMesh);
         }
 
         internal static void TryCacheMesh(ProBuilderMesh pb)

@@ -42,11 +42,6 @@ namespace UnityEditor.ProBuilder
         bool m_AnyMissingLightmapUVs;
         bool m_ModifyingMesh;
 
-        ProBuilderEditor editor
-        {
-            get { return ProBuilderEditor.instance; }
-        }
-
         Renderer m_MeshRenderer = null;
 
         protected override void OnHeaderGUI()
@@ -104,7 +99,7 @@ namespace UnityEditor.ProBuilder
             GUI.enabled = false;
             var guiStateMixed = EditorGUI.showMixedValue;
             EditorGUI.showMixedValue = targets.Length > 1;
-            EditorGUILayout.ObjectField(Styles.sharedMesh, m_Mesh.mesh, typeof(Mesh), false);
+            EditorGUILayout.ObjectField(Styles.sharedMesh, m_Mesh.pmesh, typeof(PMesh), false);
             EditorGUI.showMixedValue = guiStateMixed;
             GUI.enabled = guiEnabled;
 
@@ -324,6 +319,20 @@ namespace UnityEditor.ProBuilder
         static void OpenProBuilder()
         {
             ProBuilderEditor.MenuOpenWindow();
+        }
+        
+        [MenuItem("CONTEXT/ProBuilderMesh/Recompile Mesh")]
+        static void MenuRebuild(MenuCommand command)
+        {
+            if (command.context is ProBuilderMesh mesh)
+                mesh.Rebuild();
+        }
+            
+        [MenuItem("CONTEXT/ProBuilderMesh/Upload Optional Vertex Attributes")]
+        static void MenuUpload(MenuCommand command)
+        {
+            if (command.context is ProBuilderMesh mesh)
+                mesh.Refresh();
         }
     }
 }

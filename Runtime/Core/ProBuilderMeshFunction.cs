@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
 
 #if UNITY_EDITOR
-        public void OnBeforeSerialize() {}
+        public void OnBeforeSerialize() { }
 
         public void OnAfterDeserialize()
         {
@@ -274,12 +274,15 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">Triangles and Quads are supported.</param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
-            pmesh.Compile();
+            // todo for backwards compatibility, ToMesh is always forcing a rebuild
+            // this is because many mesh actions use ToMesh as a way to sync edit and runtime mesh representations before
+            // making modifications.
+            pmesh.Compile(true);
             EnsureMeshFilterIsAssigned();
             IncrementVersionIndex();
             
             // todo turd emoji
-            if (m_SharedVertices == null)
+            if (m_SharedVertices == null && positions != null)
                 m_SharedVertices = SharedVertex.GetSharedVerticesWithPositions(positions);
 
 //             bool usedInParticleSystem = false;
@@ -388,22 +391,22 @@ namespace UnityEngine.ProBuilder
         {
             // Mesh
             if ((mask & RefreshMask.UV) > 0)
-                RefreshUV(facesInternal);
-
-            if ((mask & RefreshMask.Colors) > 0)
-                RefreshColors();
+                UvUnwrapping.Unwrap(this, faces);
 
             if ((mask & RefreshMask.Normals) > 0)
-                RefreshNormals();
+                Normals.CalculateNormals(this);
 
             if ((mask & RefreshMask.Tangents) > 0)
-                RefreshTangents();
+                Normals.CalculateTangents(this);
 
             if ((mask & RefreshMask.Collisions) > 0)
                 EnsureMeshColliderIsAssigned();
 
             if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
                 mesh.RecalculateBounds();
+
+            if ((mask & ~(RefreshMask.Collisions | RefreshMask.Bounds)) > 0)
+                pmesh.Upload();
 
             IncrementVersionIndex();
         }
@@ -432,12 +435,7 @@ namespace UnityEngine.ProBuilder
 
             return i;
         }
-
-        static bool IsValidTextureGroup(int group)
-        {
-            return group > 0;
-        }
-
+        
         /// <summary>
         /// Returns a new unused element group.
         /// Will be greater than or equal to i.
@@ -454,30 +452,7 @@ namespace UnityEngine.ProBuilder
 
         public void RefreshUV(IEnumerable<Face> facesToRefresh)
         {
-            // If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
-            // correct the texture array.
-            if (!HasArrays(MeshArrays.Texture0))
-            {
-                m_Mesh.textures0 = new Vector2[vertexCount];
-                foreach (Face f in facesInternal)
-                    f.manualUV = false;
-                facesToRefresh = facesInternal;
-            }
-
-            s_CachedHashSet.Clear();
-
-            foreach (var face in facesToRefresh)
-            {
-                if (face.manualUV || face.indexesInternal?.Length < 3)
-                    continue;
-
-                int textureGroup = face.textureGroup;
-
-                if (!IsValidTextureGroup(textureGroup))
-                    UvUnwrapping.Unwrap(this, face);
-                else if (s_CachedHashSet.Add(textureGroup))
-                    UvUnwrapping.ProjectTextureGroup(this, textureGroup, face.uv);
-            }
+            UvUnwrapping.Unwrap(this, facesToRefresh);
 
             mesh.SetUVs(0, m_Mesh.textures0 as Vector2[]);
 
@@ -491,7 +466,7 @@ namespace UnityEngine.ProBuilder
 
         internal void SetGroupUV(AutoUnwrapSettings settings, int group)
         {
-            if (!IsValidTextureGroup(group))
+            if (!UvUnwrapping.IsValidTextureGroup(group))
                 return;
 
             foreach (var face in facesInternal)
@@ -501,12 +476,6 @@ namespace UnityEngine.ProBuilder
 
                 face.uv = settings;
             }
-        }
-
-        void RefreshColors()
-        {
-            // todo remove "refresh" functions, handle this in PMesh
-            m_Mesh.unityMesh.SetColors(m_Mesh.colors as Color[]);
         }
 
         /// <summary>
@@ -578,20 +547,6 @@ namespace UnityEngine.ProBuilder
                 face.submeshIndex = index;
 
             IncrementVersionIndex();
-        }
-
-        void RefreshNormals()
-        {
-            Normals.CalculateNormals(this);
-            // todo reconsider where vertex attributes are uploaded
-            m_Mesh.unityMesh.SetNormals(m_Mesh.normals as Vector3[]);
-        }
-
-        void RefreshTangents()
-        {
-            Normals.CalculateTangents(this);
-            // todo reconsider where vertex attributes are uploaded
-            m_Mesh.unityMesh.SetNormals(m_Mesh.normals as Vector3[]);
         }
 
         /// <summary>

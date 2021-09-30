@@ -96,7 +96,6 @@ namespace UnityEditor.ProBuilder
                 s_ArrowsLines[i] = new Vector3[3];
 
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
-            Debug.Log($"created shape editor {m_ShapeEditor.GetInstanceID()}");
             EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
 
 #if !UNITY_2020_2_OR_NEWER

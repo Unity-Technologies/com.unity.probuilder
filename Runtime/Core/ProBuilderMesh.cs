@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using System;
 using System.Collections.ObjectModel;
+using UnityEditor;
 using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
@@ -282,7 +283,7 @@ namespace UnityEngine.ProBuilder
             m_CacheValid &= ~CacheValidState.SharedTexture;
         }
 
-        internal void InvalidateFaces()
+        void InvalidateFaces()
         {
             if (m_Mesh == null || m_Mesh.faces == null)
                 return;
@@ -894,16 +895,7 @@ namespace UnityEngine.ProBuilder
         
         internal PMesh pmesh
         {
-            get
-            {
-                if (m_Mesh == null)
-                {
-                    m_Mesh = AssetUtility.CreateSceneAsset<PMesh>();
-                    m_Mesh.name = name;
-                }
-
-                return m_Mesh;
-            }
+            get => m_Mesh == null ? m_Mesh = AssetUtility.CreateSceneAsset<PMesh>(name) : m_Mesh;
             set => m_Mesh = value;
         }
 

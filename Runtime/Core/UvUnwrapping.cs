@@ -7,6 +7,37 @@ namespace UnityEngine.ProBuilder
     {
         static Vector2 s_TempVector2 = Vector2.zero;
         static readonly List<int> s_IndexBuffer = new List<int>(64);
+        static readonly HashSet<int> s_CachedHashSet = new HashSet<int>();
+        
+        public static bool IsValidTextureGroup(int group) => group > 0;
+
+        internal static void Unwrap(ProBuilderMesh mesh, IEnumerable<Face> faces)
+        {
+            // If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
+            // correct the texture array.
+            if (!mesh.HasArrays(MeshArrays.Texture0))
+            {
+                mesh.textures = new Vector2[mesh.vertexCount];
+                foreach (var face in mesh.faces)
+                    face.manualUV = false;
+                faces = mesh.faces;
+            }
+
+            foreach (var face in faces)
+            {
+                if (face.manualUV || face.indexesInternal?.Length < 3)
+                    continue;
+
+                int textureGroup = face.textureGroup;
+
+                if (!IsValidTextureGroup(textureGroup))
+                    Unwrap(mesh, face);
+                else if (s_CachedHashSet.Add(textureGroup))
+                    ProjectTextureGroup(mesh, textureGroup, face.uv);
+            }
+
+            s_CachedHashSet.Clear();
+        }
 
         internal static void Unwrap(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {

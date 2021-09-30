@@ -49,13 +49,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            if (target == null)
-            {
-                Debug.LogError($"OnEnable FAILED! TARGET IS NULLLLL (editor {GetInstanceID()})");
-                return;
-            }
-            
-            Debug.Log($"OnEnable {target.GetInstanceID()} {serializedObject} (editor {GetInstanceID()})");
             m_ShapeProperty = serializedObject.FindProperty("m_Shape");
             m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
             m_ShapeSizeProperty = serializedObject.FindProperty("m_Size");

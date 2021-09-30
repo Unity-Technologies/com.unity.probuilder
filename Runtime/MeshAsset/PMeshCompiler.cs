@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 {
     static class PMeshCompiler
     {
-        public static bool Compile(PMesh src, Mesh dst, RefreshMask mask = RefreshMask.None)
+        public static bool Compile(PMesh src, Mesh dst)
         {
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
@@ -31,7 +31,6 @@ namespace UnityEngine.ProBuilder
 
             int subMeshCount = src.faces.Max(x => x.submeshIndex) + 1;
             Submesh[] submeshes = Submesh.GetSubmeshes(src.faces, subMeshCount, MeshTopology.Triangles);
-
             dst.subMeshCount = submeshes.Length;
 
             for (int i = 0; i < dst.subMeshCount; i++)
@@ -44,23 +43,8 @@ namespace UnityEngine.ProBuilder
 #endif
                 dst.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
-
-            GenerateVertexAttribs(src, dst, mask);
             
             return false;
-        }
-
-        /// <summary>
-        /// Recalculates mesh attributes: normals, collisions, UVs, tangents, and colors.
-        /// </summary>
-        /// <param name="src">Mesh to generate vertex attributes from.</param>
-        /// <param name="dst">UnityEngine.Mesh to apply generated attributes to.</param>
-        /// <param name="mask">
-        /// Optionally pass a mask to define what components are updated (UV and collisions are expensive to rebuild, and can usually be deferred til completion of task).
-        /// </param>
-        public static void GenerateVertexAttribs(PMesh src, Mesh dst, RefreshMask mask = RefreshMask.All)
-        {
-            // todo
         }
     }
 }

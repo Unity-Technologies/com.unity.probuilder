@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -18,15 +19,31 @@ namespace UnityEngine.ProBuilder
             return "";
 #endif
         }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void Save<T>(T obj) where T : Object
+        {
+            if (obj == null)
+                return;
+            // todo SaveAssetIfDirty isn't saving dirty assets...
+            // AssetDatabase.SaveAssetIfDirty(obj);
+            AssetDatabase.SaveAssets();
+        }
     
-        public static T CreateSceneAsset<T>() where T : ScriptableObject
+        [Conditional("UNITY_EDITOR")]
+        public static void SetDirty<T>(T obj) where T : Object
+        {
+            EditorUtility.SetDirty(obj);
+        }
+    
+        public static T CreateSceneAsset<T>(string name) where T : ScriptableObject
         {
             var asset = ScriptableObject.CreateInstance<T>();
 #if UNITY_EDITOR
             var dir = GetActiveSceneAssetDirectory();
             if(!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath($"{dir}/mesh.asset"));
+            AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath($"{dir}/{name}.asset"));
 #endif
             return asset;
         }
