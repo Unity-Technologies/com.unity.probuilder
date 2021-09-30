@@ -1,5 +1,8 @@
+using System;
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -61,6 +64,51 @@ The default value is <b>On</b>.
         {
             ProBuilderEditor.backfaceSelectionEnabled = !ProBuilderEditor.backfaceSelectionEnabled;
             return new ActionResult(ActionResult.Status.Success, "Set Hidden Element Selection\n" + (!ProBuilderEditor.backfaceSelectionEnabled ? "On" : "Off"));
+        }
+    }
+
+    class SelectBackFacesToggle : EditorToolbarToggle
+    {
+        readonly ToggleSelectBackFaces m_MenuAction;
+
+        public SelectBackFacesToggle(): base(IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On"),
+            IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off"))
+        {
+            m_MenuAction = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
+            name = m_MenuAction.tooltip.title;
+            tooltip = m_MenuAction.tooltip.summary;
+
+            RegisterCallback<AttachToPanelEvent>(AttachedToPanel);
+            RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
+
+            OnSelectBackFacesChange();
+        }
+
+        public override void SetValueWithoutNotify(bool newValue)
+        {
+            base.SetValueWithoutNotify(newValue);
+            ProBuilderEditor.backfaceSelectionEnabled = newValue;
+        }
+
+        void OnSelectBackFacesChange()
+        {
+            value = ProBuilderEditor.backfaceSelectionEnabled;
+        }
+
+        void AttachedToPanel(AttachToPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed += OnMenuActionPerformed;
+        }
+
+        void DetachedFromPanel(DetachFromPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed -= OnMenuActionPerformed;
+        }
+
+        void OnMenuActionPerformed(MenuAction menuAction)
+        {
+            if (menuAction == m_MenuAction)
+                OnSelectBackFacesChange();
         }
     }
 }

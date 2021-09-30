@@ -92,6 +92,9 @@ namespace UnityEditor.ProBuilder
             name = "Selection Settings Toolbar";
 
             Add(new DragRectModeDropdown());
+            Add(new DragSelectionModeDropdown());
+            Add(new SelectBackFacesToggle());
+
             SetupChildrenAsButtonStrip();
         }
     }

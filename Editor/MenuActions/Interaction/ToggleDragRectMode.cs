@@ -79,6 +79,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_MenuAction = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
             name = m_MenuAction.tooltip.title;
+            tooltip = m_MenuAction.tooltip.summary;
 
             m_Partial = EditorGUIUtility.TrTextContent("Intersect");
             m_Complete = EditorGUIUtility.TrTextContent("Complete");
@@ -114,13 +115,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnDropdownOptionChange()
         {
-            tooltip = m_MenuAction.tooltip.summary;
             icon = m_MenuAction.icon;
-
-            //Ensuring constant size of the text area
-            var textElement = this.Q<TextElement>(UnityEditor.Toolbars.EditorToolbar.elementLabelClassName);
-            if (textElement != null)
-                textElement.style.width = 40;
         }
 
         void AttachedToPanel(AttachToPanelEvent evt)
