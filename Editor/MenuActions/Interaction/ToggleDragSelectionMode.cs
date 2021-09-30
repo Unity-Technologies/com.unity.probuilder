@@ -1,5 +1,7 @@
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -65,6 +67,77 @@ namespace UnityEditor.ProBuilder.Actions
             int len = System.Enum.GetValues(typeof(SelectionModifierBehavior)).Length;
             modifier = (SelectionModifierBehavior)((mode + 1) % len);
             return new ActionResult(ActionResult.Status.Success, "Set Shift Drag Mode\n" + modifier);
+        }
+    }
+
+    class DragSelectionModeDropdown : EditorToolbarDropdown
+    {
+        readonly GUIContent m_Add;
+        readonly GUIContent m_Subtract;
+        readonly GUIContent m_Difference;
+        readonly ToggleDragSelectionMode m_MenuAction;
+
+        public DragSelectionModeDropdown()
+        {
+            m_MenuAction = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
+            name = m_MenuAction.tooltip.title;
+            tooltip = m_MenuAction.tooltip.summary;
+
+            m_Add = EditorGUIUtility.TrTextContent("Add");
+            m_Subtract = EditorGUIUtility.TrTextContent("Subtract");
+            m_Difference = EditorGUIUtility.TrTextContent("Difference");
+
+            RegisterCallback<AttachToPanelEvent>(AttachedToPanel);
+            RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
+
+            clicked += OpenContextMenu;
+
+            OnDropdownOptionChange();
+        }
+
+        void OpenContextMenu()
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(m_Add, ProBuilderEditor.selectionModifierBehavior == SelectionModifierBehavior.Add,
+                () => SetDragSelectionModeIfNeeded(SelectionModifierBehavior.Add));
+
+            menu.AddItem(m_Subtract, ProBuilderEditor.selectionModifierBehavior == SelectionModifierBehavior.Subtract,
+                () => SetDragSelectionModeIfNeeded(SelectionModifierBehavior.Subtract));
+
+            menu.AddItem(m_Difference, ProBuilderEditor.selectionModifierBehavior == SelectionModifierBehavior.Difference,
+                () => SetDragSelectionModeIfNeeded(SelectionModifierBehavior.Difference));
+
+            menu.DropDown(worldBound);
+        }
+
+        void SetDragSelectionModeIfNeeded(SelectionModifierBehavior mode)
+        {
+            if (ProBuilderEditor.selectionModifierBehavior != mode)
+            {
+                ProBuilderEditor.selectionModifierBehavior = mode;
+                OnDropdownOptionChange();
+            }
+        }
+
+        void OnDropdownOptionChange()
+        {
+            icon = m_MenuAction.icon;
+        }
+
+        void AttachedToPanel(AttachToPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed += OnMenuActionPerformed;
+        }
+
+        void DetachedFromPanel(DetachFromPanelEvent evt)
+        {
+            MenuAction.afterActionPerformed -= OnMenuActionPerformed;
+        }
+
+        void OnMenuActionPerformed(MenuAction menuAction)
+        {
+            if (menuAction == m_MenuAction)
+                OnDropdownOptionChange();
         }
     }
 }

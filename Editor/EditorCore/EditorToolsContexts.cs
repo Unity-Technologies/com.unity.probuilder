@@ -48,45 +48,53 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorToolbarElement("Select Mode Toolbar", typeof(SceneView))]
-    class SelectionSettingsToolbar : OverlayToolbar
+    class SelectModeToolbar : OverlayToolbar
     {
-        SelectionSettingsToolbar()
+        SelectModeToolbar()
         {
             name = "Select Mode Toolbar";
 
-            CreateSelectModeToggle(SelectMode.Object);
-            CreateSelectModeToggle(SelectMode.Vertex);
-            CreateSelectModeToggle(SelectMode.Edge);
-            CreateSelectModeToggle(SelectMode.Face);
+            CreateSelectModeToggle(SelectMode.Object, "Object Selection", "Modes/Mode_Object");
+            CreateSelectModeToggle(SelectMode.Vertex, "Vertex Selection", "Modes/Mode_Vertex");
+            CreateSelectModeToggle(SelectMode.Edge, "Edge Selection" , "Modes/Mode_Edge");
+            CreateSelectModeToggle(SelectMode.Face, "Face Selection", "Modes/Mode_Face");
 
             SetupChildrenAsButtonStrip();
         }
 
-        void CreateSelectModeToggle(SelectMode mode)
+        void CreateSelectModeToggle(SelectMode mode, string text, string iconName)
         {
-            var toggleContent = UI.EditorGUIUtility.GetSelectModeToggleContent(mode);
-            var toggle = new SelectModeToggle(mode, toggleContent.text, toggleContent.image as Texture2D);
-
+            var icon = IconUtility.GetIcon(iconName);
+            var toggle = new SelectModeToggle(mode, text, icon);
             Add(toggle);
         }
     }
 
-    class ProbuilderToolSettings : Editor, ICreateHorizontalToolbar, ICreateVerticalToolbar
+    class ProbuilderToolSettings : Editor, ICreateToolbar
     {
-        public override VisualElement CreateInspectorGUI() => CreateHorizontalToolbarContent();
-
-        public virtual OverlayToolbar CreateHorizontalToolbarContent()
+        public IEnumerable<string> toolbarElements
         {
-            var root = new OverlayToolbar();
-            root.Add(new DragRectModeDropdown());
-            return root;
+            get
+            {
+                yield return "Tool Settings/Pivot Mode";
+                yield return "ProBuilder Tool Settings/Pivot Rotation";
+                yield return "ProBuilder Tool Settings/Selection";
+            }
         }
+    }
 
-        public virtual OverlayToolbar CreateVerticalToolbarContent()
+    [EditorToolbarElement("ProBuilder Tool Settings/Selection", typeof(SceneView))]
+    class SelectionSettingsToolbar : OverlayToolbar
+    {
+        SelectionSettingsToolbar()
         {
-            var root = new OverlayToolbar();
-            root.Add(new DragRectModeDropdown());
-            return root;
+            name = "Selection Settings Toolbar";
+
+            Add(new DragRectModeDropdown());
+            Add(new DragSelectionModeDropdown());
+            Add(new SelectBackFacesToggle());
+
+            SetupChildrenAsButtonStrip();
         }
     }
 

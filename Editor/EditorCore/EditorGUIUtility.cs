@@ -500,26 +500,6 @@ namespace UnityEditor.ProBuilder.UI
 
             var textureMode = mode.ContainsFlag(SelectMode.TextureVertex | SelectMode.TextureEdge | SelectMode.TextureFace);
 
-            int currentSelectionMode = SelectModeToGroupToggleIndex(mode);
-            currentSelectionMode = GUI.Toolbar(rect, currentSelectionMode, Styles.selectModeIcons, Styles.command);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                if (currentSelectionMode == 0)
-                    mode = SelectMode.Object;
-                else if (currentSelectionMode == 1)
-                    mode = textureMode ? SelectMode.TextureVertex : SelectMode.Vertex;
-                else if (currentSelectionMode == 2)
-                    mode = textureMode ? SelectMode.TextureEdge : SelectMode.Edge;
-                else if (currentSelectionMode == 3)
-                    mode = textureMode ? SelectMode.TextureFace : SelectMode.Face;
-            }
-
-            return mode;
-        }
-
-        static int SelectModeToGroupToggleIndex(SelectMode mode)
-        {
             int currentSelectionMode = -1;
 
             switch (mode)
@@ -544,14 +524,21 @@ namespace UnityEditor.ProBuilder.UI
                     break;
             }
 
-            return currentSelectionMode;
-        }
+            currentSelectionMode = GUI.Toolbar(rect, currentSelectionMode, Styles.selectModeIcons, Styles.command);
 
-        public static GUIContent GetSelectModeToggleContent(SelectMode mode)
-        {
-            var toggleIndex = SelectModeToGroupToggleIndex(mode);
-            Styles.Init();
-            return Styles.selectModeIcons[toggleIndex];
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (currentSelectionMode == 0)
+                    mode = SelectMode.Object;
+                else if (currentSelectionMode == 1)
+                    mode = textureMode ? SelectMode.TextureVertex : SelectMode.Vertex;
+                else if (currentSelectionMode == 2)
+                    mode = textureMode ? SelectMode.TextureEdge : SelectMode.Edge;
+                else if (currentSelectionMode == 3)
+                    mode = textureMode ? SelectMode.TextureFace : SelectMode.Face;
+            }
+
+            return mode;
         }
     }
 }
