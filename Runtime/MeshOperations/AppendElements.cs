@@ -814,7 +814,6 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         // backwards compatibility prevents us from just using insertOnEdge as an optional parameter
-        // <inheritdoc cref="AppendVerticesToFace"/>
         /// <summary>
         /// Adds a set of points to a face and re-triangulates. Points are added to the nearest edge.
         /// </summary>

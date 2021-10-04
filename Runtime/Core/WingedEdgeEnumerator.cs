@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder
 {
-    // <inheritdoc cref="IEnumerator"/> (can't inherit from class that isn't in the same package)
     /// <summary>
     /// Provides a way to enumerate a WingedEdge by walking the <see cref="WingedEdge.next">WingedEdge.next</see> property.
     /// </summary>
@@ -14,7 +13,6 @@ namespace UnityEngine.ProBuilder
         WingedEdge m_Start = null;
         WingedEdge m_Current = null;
 
-        // <inheritdoc />
         /// <summary>
         /// Initializes the enumeration by specifying which WingedEdge object to start with.
         /// </summary>
@@ -25,7 +23,6 @@ namespace UnityEngine.ProBuilder
             m_Current = null;
         }
 
-        // <inheritdoc />
         /// <summary>
         /// Advances the enumerator to the next WingedEdge in the collection.
         /// </summary>
@@ -43,7 +40,6 @@ namespace UnityEngine.ProBuilder
             return !ReferenceEquals(m_Current, null) && !ReferenceEquals(m_Current, m_Start);
         }
 
-        // <inheritdoc />
         /// <summary>
         /// Sets the enumerator to its initial position: before the first element in the collection.
         /// </summary>
@@ -52,7 +48,6 @@ namespace UnityEngine.ProBuilder
             m_Current = null;
         }
 
-        // <inheritdoc />
         /// <summary>
         /// Gets the WingedEdge in the collection at the current position of the enumerator.
         /// </summary>
@@ -71,13 +66,11 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        // <inheritdoc />
         object IEnumerator.Current
         {
             get { return Current; }
         }
 
-        // <inheritdoc />
         /// <summary>
         /// Releases all resources used by the WingedEdgeEnumerator.
         /// </summary>

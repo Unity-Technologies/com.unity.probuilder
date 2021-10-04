@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace UnityEngine.ProBuilder
 {
-    // <inheritdoc cref="IEquatable" /> (can't inherit from base classes that aren't in the same package)
-    // <inheritdoc cref="IEnumerable" />
     /// <summary>
     /// Represents a boundary edge where three faces meet. It holds references to:
     /// - The <see cref="Face" /> connected to this edge

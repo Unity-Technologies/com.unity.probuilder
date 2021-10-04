@@ -16,7 +16,6 @@ namespace UnityEngine.ProBuilder
     /// Coincident vertices are vertices that share the same coordinate position, but are separate entries
     /// in the vertex array.
     /// </remarks>
-    // <inheritdoc cref="ICollection"/> (can't inherit from Microsoft docs)
     [Serializable]
     public sealed class SharedVertex : ICollection<int>
     {
@@ -70,7 +69,6 @@ namespace UnityEngine.ProBuilder
         /// Returns an enumerator that iterates through this collection.
         /// </summary>
         /// <returns>An IEnumerator object that you can use to iterate through the collection.</returns>
-        // <inheritdoc />
         public IEnumerator<int> GetEnumerator()
         {
             return ((IEnumerable<int>)m_Vertices).GetEnumerator();
@@ -80,7 +78,6 @@ namespace UnityEngine.ProBuilder
         /// Returns a string that represents this SharedVertex.
         /// </summary>
         /// <returns>A comma-delimited string (for example `"2,0,6,3"`).</returns>
-        // <inheritdoc />
         public override string ToString()
         {
             return m_Vertices.ToString(",");
@@ -90,7 +87,6 @@ namespace UnityEngine.ProBuilder
         /// Returns an enumerator that iterates through this collection.
         /// </summary>
         /// <returns>An IEnumerator object that you can use to iterate through the collection.</returns>
-        // <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -100,7 +96,6 @@ namespace UnityEngine.ProBuilder
         /// Adds a new entry using the specified index.
         /// </summary>
         /// <param name="item">The index to add.</param>
-        // <inheritdoc />
         public void Add(int item)
         {
             m_Vertices = ArrayUtility.Add(m_Vertices, item);
@@ -109,7 +104,6 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Resets this SharedVertex object to an empty collection.
         /// </summary>
-        // <inheritdoc />
         public void Clear()
         {
             m_Vertices = new int[0];
@@ -120,7 +114,6 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="item">The index of the item to check.</param>
         /// <returns>True if the index was found; false otherwise</returns>
-        // <inheritdoc />
         public bool Contains(int item)
         {
             return Array.IndexOf(m_Vertices, item) > -1;
@@ -131,7 +124,6 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="array">The destination array.</param>
         /// <param name="arrayIndex">The index in the destination array where the collection items will be copied.</param>
-        // <inheritdoc />
         public void CopyTo(int[] array, int arrayIndex)
         {
             m_Vertices.CopyTo(array, arrayIndex);
@@ -142,7 +134,6 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <param name="item">The index of the item to remove.</param>
         /// <returns>True if the index was found and removed; false otherwise</returns>
-        // <inheritdoc />
         public bool Remove(int item)
         {
             int ind = Array.IndexOf(m_Vertices, item);
@@ -156,7 +147,6 @@ namespace UnityEngine.ProBuilder
         /// Gets the number of items in this collection.
         /// </summary>
         /// <returns>The length of this collection</returns>
-        // <inheritdoc />
         public int Count
         {
             get { return m_Vertices.Length; }
@@ -166,7 +156,6 @@ namespace UnityEngine.ProBuilder
         /// Gets whether this collection is read-only.
         /// </summary>
         /// <returns>The value of the IsReadOnly flag.</returns>
-        // <inheritdoc />
         public bool IsReadOnly
         {
             get { return m_Vertices.IsReadOnly; }

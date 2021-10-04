@@ -12,7 +12,6 @@ namespace UnityEngine.ProBuilder
     /// Holds information about a single vertex, and provides methods for averaging between multiple Vertex objects.
     /// </summary>
     /// <remarks>All values are optional; however, ProBuilder can use default values if necessary.</remarks>
-    // <inheritdoc cref="IEquatable"/> (can't inherit from Microsoft docs)
     [Serializable]
     public sealed class Vertex : IEquatable<Vertex>
     {
@@ -338,7 +337,6 @@ namespace UnityEngine.ProBuilder
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>True if `a` equals `b`.</returns>
-        // <inheritdoc cref="Vertex.Equals(Vertex)"/> (can't inherit from missing member)
         public static bool operator==(Vertex a, Vertex b)
         {
             if (ReferenceEquals(a, b))

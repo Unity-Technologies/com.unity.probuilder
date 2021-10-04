@@ -8,7 +8,6 @@ using System;
 
 namespace UnityEditor.ProBuilder
 {
-    // <inheritdoc cref="IEquatable"/>
     /// <summary>
     /// Represents an extended tooltip for a MenuAction.
     /// </summary>
