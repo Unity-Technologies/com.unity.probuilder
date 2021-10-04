@@ -145,7 +145,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Gets the mesh on the active selected GameObject.
+        /// Gets the ProBuilder mesh on the active selected GameObject.
         /// </summary>
         public static ProBuilderMesh activeMesh
         {

@@ -31,7 +31,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Cylinder,
         /// <summary>
-        /// A 10x10 [plane](../manual/Plane.html) with 2 subdivisions.
+        /// [Plane](../manual/Plane.html) shape with 2 subdivisions and 10x10 units size.
         /// </summary>
         Plane,
         /// <summary>
@@ -47,11 +47,11 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Cone,
         /// <summary>
-        /// A [sprite](../manual/Sprite.html) is a 1x1 quad.
+        /// [Sprite](../manual/Sprite.html) shape (1x1 quad).
         /// </summary>
         Sprite,
         /// <summary>
-        /// A 180 degree [arch](../manual/Arch.html).
+        /// [Arch](../manual/Arch.html) shape (180 degrees).
         /// </summary>
         Arch,
         /// <summary>
@@ -1534,7 +1534,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Creates a torus mesh.
+        /// Creates a new torus mesh.
         /// </summary>
         /// <param name="pivotType">Set the location of the shape's pivot (center or first corner).</param>
         /// <param name="rows">Set the number of horizontal divisions to create.</param>

@@ -62,8 +62,9 @@ namespace UnityEngine.ProBuilder.Shapes
         bool m_HomogeneousSteps = true;
 
         /// <summary>
-        /// Sets the degree of curvature on the stairs in degrees, where 0 makes straight stairs and 360 makes stairs
-        /// in a complete circle. Remember that you might need to increase the number of stairs to compensate as you
+        /// Sets the degree of curvature on the stairs in degrees, where 0 makes straight stairs, 360 makes stairs
+        /// in a complete circle, and negative angles makes the stairs curve to the left while positive angles make
+        /// turns to the right. Remember that you might need to increase the number of stairs to compensate as you
         /// increase this value.
         ///
         /// The default value is 0. Valid values range from -360 to 360.

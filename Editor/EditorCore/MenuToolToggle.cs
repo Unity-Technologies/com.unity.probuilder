@@ -33,7 +33,8 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Creates a new button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+        /// Creates a new toggle button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor for this action.
+        /// Toggle buttons have two states: enabled and disabled. When the toggle is enabled, the tool is active.
         /// </summary>
         protected MenuToolToggle()
         {

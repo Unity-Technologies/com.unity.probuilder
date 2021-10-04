@@ -17,7 +17,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Manages the ProBuilder toolbar and tool mode.
+    /// Manages the [ProBuilder toolbar and tool mode](../manual/toolbar.html).
     /// </summary>
     public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
     {

@@ -1501,7 +1501,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Adds a point to a face.
+        /// Adds a point to a mesh.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="point">Point to add to the face.</param>

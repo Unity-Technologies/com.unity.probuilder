@@ -569,7 +569,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Applies a vertex <see cref="UnityEngine.Color"/> to the specified <see cref="Face" />.
+        /// Applies a [vertex color](../manual/workflow-vertexcolors.html) to the specified <see cref="Face" />.
         /// </summary>
         /// <param name="face">The target face to apply the colors to.</param>
         /// <param name="color">The color to apply to this face's referenced vertices.</param>

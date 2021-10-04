@@ -11,10 +11,11 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Defines associations between vertex positions that are [coincident](../manual/gloss.html#coincident).
     /// The indexes stored in this collection correspond to the <see cref="ProBuilderMesh.positions" /> array.
-    ///
+    /// </summary>
+    /// <remarks>
     /// Coincident vertices are vertices that share the same coordinate position, but are separate entries
     /// in the vertex array.
-    /// </summary>
+    /// </remarks>
     // <inheritdoc cref="ICollection"/> (can't inherit from Microsoft docs)
     [Serializable]
     public sealed class SharedVertex : ICollection<int>

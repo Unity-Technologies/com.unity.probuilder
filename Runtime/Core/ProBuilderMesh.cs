@@ -431,8 +431,8 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Creates a new array of vertices with values from a ProBuilderMesh component.
         /// </summary>
-        /// <param name="indexes">An optional list of indices that point to the mesh attribute indices you want to include in the returned <see cref="Vertex" /> array.</param>
-        /// <returns>An array of vertices.</returns>
+        /// <param name="indexes">An optional list of indices used to designate the subset of vertices values to retrieve from the mesh in the array.</param>
+        /// <returns>An array of vertices matching either the specified list in the `indexes` parameter. If the `indexes` parameter contains no list, this returns all mesh vertices. </returns>
         public Vertex[] GetVertices(IList<int> indexes = null)
         {
             int meshVertexCount = vertexCount;

@@ -255,7 +255,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Sets the edge selection for this mesh. Also sets the face and vertex selection to match.
+        /// Sets the edge selection for this mesh. Also sets the vertex selection to match and clears the selected faces.
         /// </summary>
         /// <param name="edges">A set of edges to select.</param>
         public void SetSelectedEdges(IEnumerable<Edge> edges)

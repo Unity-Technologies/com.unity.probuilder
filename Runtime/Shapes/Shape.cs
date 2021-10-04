@@ -7,12 +7,12 @@ namespace UnityEngine.ProBuilder.Shapes
     public abstract class Shape
     {
         /// <summary>
-        /// Returns the <see cref="Mesh.bounds">bounds</see> of the specified mesh.
+        /// Allows the user to redefine the default bounding box for this shape.
         /// </summary>
         /// <param name="mesh">The mesh to find the bounds for.</param>
-        /// <param name="size">The position of the opposite corner of the bounding box for this mesh.</param>
+        /// <param name="size">The desired size for the shape defined when using the [Shape Tool](../manual/shape-tool.html).</param>
         /// <param name="rotation">The rotation (orientation) to use for this mesh.</param>
-        /// <param name="bounds">The (empty) bounds for this mesh.</param>
+        /// <param name="bounds">The default bounds computed for the shape.</param>
         /// <returns>The bounds from this shape's <see cref="Mesh.bounds" /> property.</returns>
         public virtual Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {

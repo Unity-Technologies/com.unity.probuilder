@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder
         public static event Action<ProBuilderMesh, Mesh> meshOptimized = null;
 
         /// <summary>
-        /// Optmizes the mesh geometry, and generates a UV2 channel if object is marked as <see cref="StaticEditorFlags.ContributeGI"/>
+        /// Optimizes the mesh geometry, and generates a UV2 channel if object is marked as <see cref="StaticEditorFlags.ContributeGI"/>
         /// or you set the `generateLightmapUVs` parameter to true.
         /// </summary>
         /// <remarks>This is only applicable to meshes with triangle topology. Quad meshes are not affected by this function.</remarks>

@@ -39,7 +39,7 @@ namespace UnityEditor.ProBuilder
         static GUIContent s_IconContent;
 
         /// <summary>
-        /// Gets the icon and tooltip for the PolyShapeTool. 
+        /// Gets the icon and tooltip for the PolyShapeTool.
         /// </summary>
         public override GUIContent toolbarIcon
         {
@@ -402,7 +402,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Redraws the PolyShape mesh in the Unity Editor based.
+        /// Redraws the PolyShape mesh in the Unity Editor.
         /// </summary>
         /// <param name="vertexCountChanged">This parameter is ignored.</param>
         public void RebuildPolyShapeMesh(bool vertexCountChanged = false)
