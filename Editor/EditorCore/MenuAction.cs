@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets whether this action is visible in the ProBuilder toolbar.
         ///
-        /// True if this action appear in the toolbar with the current mode and settings; false otherwise.
+        /// True if this action appears in the toolbar with the current mode and settings; false otherwise.
         /// </summary>
         /// <remarks>This returns false by default.</remarks>
         /// <seealso cref="enabled"/>
@@ -257,8 +257,8 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Gets a flag that indicates whether your action implements extra options. If it does, you must also
-        /// implement <see cref="OnSettingsGUI"/> so that an options appears for this action button.
+        /// Gets a flag that indicates whether the action implements extra options. If it does, it must also
+        /// implement <see cref="OnSettingsGUI"/> so that an options indicator appears for this action button.
         /// </summary>
         protected virtual MenuActionState optionsMenuState
         {
@@ -266,11 +266,13 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Performs the action for this menu item.
-        ///
-        /// Use <see cref="PerformActionImplementation"/> to implement the action.
+        /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
         /// Calling this method triggers the <see cref="onPerformAction"/> event.
         /// </summary>
+        /// <remarks>
+        /// Any new action classes that derive from this base class must also use the `PerformAction` method to register
+        /// the new action in the Undo call stack.
+        /// </remarks>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         public ActionResult PerformAction()
         {
@@ -281,14 +283,14 @@ namespace UnityEditor.ProBuilder
 
         /// <summary>
         /// Performs the action for this menu item. Use this method to implement the action and then
-        /// use PerformAction to call it.
+        /// use <see cref="PerformAction"/> to call it.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         protected abstract ActionResult PerformActionImplementation();
 
-        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerformAction(), the implementation of the action should inherits from PerformActionImplementation(). (UnityUpgradable) -> PerformAction()";
+        const string obsoleteDoActionMsg = "DoAction() has been replaced by PerformAction(), the implementation of the action should inherit from PerformActionImplementation(). (UnityUpgradable) -> PerformAction()";
         /// <summary>
-        /// Perform whatever action this menu item is supposed to do. You are responsible for implementing Undo.
+        /// Performs whatever action this menu item is supposed to do.
         /// </summary>
         /// <returns>A new ActionResult with a summary of the state of the action's success.</returns>
         [Obsolete(obsoleteDoActionMsg, false)]
@@ -297,8 +299,6 @@ namespace UnityEditor.ProBuilder
 
         /// <summary>
         /// Performs the action for this menu item when in Text mode.
-        ///
-        /// You are responsible for implementing Undo.
         /// </summary>
         protected virtual void DoAlternateAction()
         {
@@ -412,8 +412,6 @@ namespace UnityEditor.ProBuilder
 
         /// <summary>
         /// Draws the menu item for this action in Text mode.
-        ///
-        /// You are responsible for implementing Undo.
         /// </summary>
         /// <param name="options">Optional array of layout options for this menu item.</param>
         /// <returns>True if successful; false otherwise.</returns>
