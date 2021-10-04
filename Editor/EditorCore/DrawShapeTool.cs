@@ -310,6 +310,10 @@ namespace UnityEditor.ProBuilder
             DrawBoundingBox(false);
         }
 
+        /// <summary>
+        /// Recalculates the bounding box for this mesh's shape.
+        /// </summary>
+        /// <seealso cref="UnityEngine.ProBuilderMesh(Refresh)" />
         void RecalculateBounds()
         {
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);

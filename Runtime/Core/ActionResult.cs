@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Contains information about a ProBuilder action (success, failure, notification, etc)
+    /// Contains information about the results of a ProBuilder action (success, failure, and other notifications)
     /// </summary>
     public sealed class ActionResult
     {
@@ -25,25 +25,25 @@ namespace UnityEngine.ProBuilder
             /// </summary>
             Canceled,
             /// <summary>
-            /// The action was not run because there was no meaningful action to be made.
+            /// The action did not run because there was no meaningful action to be made.
             /// </summary>
             NoChange
         }
 
         /// <summary>
-        /// State of affairs after the operation.
+        /// Gets the status of the action following the operation.
         /// </summary>
         public Status status { get; private set; }
 
         /// <summary>
-        /// Short description of the results. Should be no longer than a few words.
+        /// Gets the short description of the results (a few words long).
         /// </summary>
         public string notification { get; private set; }
 
         /// <summary>
-        /// Create a new ActionResult.
+        /// Creates a new ActionResult with a specific status value.
         /// </summary>
-        /// <param name="status">State of affairs after an action.</param>
+        /// <param name="status">Status value to use for the action.</param>
         /// <param name="notification">A short summary of the action performed.</param>
         public ActionResult(ActionResult.Status status, string notification)
         {
@@ -52,27 +52,36 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Convert a result to a boolean value, true if successful and false if not.
+        /// Converts the specified result to a boolean value, where true indicates success.
         /// </summary>
-        /// <param name="res"></param>
-        /// <returns>True if action was successful, false otherwise.</returns>
+        /// <param name="res">ActionResult to convert.</param>
+        /// <returns>True if action was <see cref="Status.Success"/>; false otherwise.</returns>
         public static implicit operator bool(ActionResult res)
         {
             return res != null && res.status == Status.Success;
         }
 
+        /// <summary>
+        /// Checks whether the current ActionResult is set to <see cref="Status.Success"/> or not.
+        /// </summary>
+        /// <returns>True if this ActionResult has a status of <see cref="Status.Success"/>; false otherwise.</returns>
         public bool ToBool()
         {
             return status == Status.Success;
         }
 
+        /// <summary>
+        /// Returns the value of the specified `success` value.
+        /// </summary>
+        /// <param name="success">Boolean value to check.</param>
+        /// <returns>Generic <see cref="ActionResult.Status.Success"/> with an empty notification string if `success` was true; otherwise, returns <see cref="ActionResult.Status.Failure"/> with the "Failure" notification string.</returns>
         public static bool FromBool(bool success)
         {
             return success ? ActionResult.Success : new ActionResult(ActionResult.Status.Failure, "Failure");
         }
 
         /// <summary>
-        /// Generic "Success" action result with no notification text.
+        /// Creates a generic "Success" action result with no notification text.
         /// </summary>
         public static ActionResult Success
         {
@@ -80,7 +89,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Generic "No Selection" action result with "Nothing Selected" notification.
+        /// Creates a generic "No Selection" action result with "Nothing Selected" notification.
         /// </summary>
         public static ActionResult NoSelection
         {
@@ -88,7 +97,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Generic "Canceled" action result with "User Canceled" notification.
+        /// Creates a generic "Canceled" action result with "User Canceled" notification.
         /// </summary>
         public static ActionResult UserCanceled
         {

@@ -5,28 +5,32 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// An edge connecting two vertices. May point to an index in the vertices or the sharedIndexes array (local / common in ProBuilder terminology).
+    /// Represents an edge connecting two vertices.
+    ///
+    /// This might point to an index in the <see cref="ProBuilderMesh.GetVertices">vertices</see> (local) or the <see cref="ProBuilderMesh.sharedVertices" /> (common) array. The ProBuilder terminology "local" and "common" refers to whether this is an index from the list of all vertices in the ProBuilderMesh or an index from the list of only shared vertices.
     /// </summary>
+    /// <seealso cref="ProBuilderMesh.sharedVertices">UnityEngine.ProBuilder.ProBuilderMesh.sharedVertices</seealso>
+    /// <seealso cref="EdgeLookup">UnityEngine.ProBuilder.EdgeLookup</seealso>
     [System.Serializable]
     public struct Edge : System.IEquatable<Edge>
     {
-        /// <value>
-        /// An index corresponding to a mesh vertex array.
-        /// </value>
+        /// <summary>
+        /// Stores an index that corresponds to a mesh vertex array.
+        /// </summary>
         public int a;
 
-        /// <value>
-        /// An index corresponding to a mesh vertex array.
-        /// </value>
+        /// <summary>
+        /// Stores an index that corresponds to a mesh vertex array.
+        /// </summary>
         public int b;
 
-        /// <value>
-        /// An empty edge is defined as -1, -1.
-        /// </value>
+        /// <summary>
+        /// Creates an empty edge defined as `(-1, -1)`.
+        /// </summary>
         public static readonly Edge Empty = new Edge(-1, -1);
 
         /// <summary>
-        /// Create a new edge from two vertex indexes.
+        /// Creates a new edge from two vertex indexes.
         /// </summary>
         /// <param name="a">An index corresponding to a mesh vertex array.</param>
         /// <param name="b">An index corresponding to a mesh vertex array.</param>
@@ -37,7 +41,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Test if this edge points to valid vertex indexes.
+        /// Tests whether this edge points to valid vertex indexes.
         /// </summary>
         /// <returns>True if x and y are both greater than -1.</returns>
         public bool IsValid()
@@ -45,21 +49,39 @@ namespace UnityEngine.ProBuilder
             return a > -1 && b > -1 && a != b;
         }
 
+        /// <summary>
+        /// Returns a string representation of the edge.
+        /// </summary>
+        /// <returns>String formatted as `[a, b]`.</returns>
         public override string ToString()
         {
             return "[" + a + ", " + b + "]";
         }
 
+        /// <summary>
+        /// Tests whether this Edge is equal to another Edge object.
+        /// </summary>
+        /// <param name="other">The Edge to compare against.</param>
+        /// <returns>True if the edges are equal, false if not.</returns>
         public bool Equals(Edge other)
         {
             return (a == other.a && b == other.b) || (a == other.b && b == other.a);
         }
 
+        /// <summary>
+        /// Tests whether this object is equal to another object.
+        /// </summary>
+        /// <param name="obj">The object to compare against.</param>
+        /// <returns>True if the edges are equal, false if not.</returns>
         public override bool Equals(object obj)
         {
             return obj is Edge && Equals((Edge)obj);
         }
 
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>An integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
             // http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode/263416#263416
@@ -74,59 +96,95 @@ namespace UnityEngine.ProBuilder
             return hash;
         }
 
+        /// <summary>
+        /// Creates a new Edge by adding the two left indices together and the two right indices together from both Edge objects.
+        /// </summary>
+        /// <param name="a">Left edge.</param>
+        /// <param name="b">Right edge.</param>
+        /// <returns>A new edge where `{x, y} = {(a.a + b.a), (a.b + b.b)}`.</returns>
         public static Edge operator+(Edge a, Edge b)
         {
             return new Edge(a.a + b.a, a.b + b.b);
         }
 
+        /// <summary>
+        /// Creates a new Edge by subtracting the two left indices together and the two right indices together from both Edge objects.
+        /// </summary>
+        /// <param name="a">Left edge.</param>
+        /// <param name="b">Right edge.</param>
+        /// <returns>A new edge where `{x, y} = {(a.a - b.a), (a.b - b.b)}`.</returns>
         public static Edge operator-(Edge a, Edge b)
         {
             return new Edge(a.a - b.a, a.b - b.b);
         }
 
+        /// <summary>
+        /// Creates a new Edge by adding an integer to both indices on an Edge object.
+        /// </summary>
+        /// <param name="a">The Edge to add to.</param>
+        /// <param name="b">The value to add.</param>
+        /// <returns>A new edge where `{x, y} = {(a.a + b), (a.b + b)}`.</returns>
         public static Edge operator+(Edge a, int b)
         {
             return new Edge(a.a + b, a.b + b);
         }
 
+        /// <summary>
+        /// Creates a new Edge by subtracting an integer from both indices on an Edge object.
+        /// </summary>
+        /// <param name="a">The Edge to subtract from.</param>
+        /// <param name="b">The value to subtract.</param>
+        /// <returns>A new edge where `{x, y} = {(a.a - b), (a.b - b)}`.</returns>
         public static Edge operator-(Edge a, int b)
         {
             return new Edge(a.a - b, a.b - b);
         }
 
+        /// <summary>
+        /// Compares two objects for equality.
+        /// </summary>
+        /// <param name="a">The first Edge instance.</param>
+        /// <param name="b">The second Edge instance.</param>
+        /// <returns>True if the objects are equal; false if not.</returns>
         public static bool operator==(Edge a, Edge b)
         {
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// Returns true if the two objects are not equal.
+        /// </summary>
+        /// <param name="a">The first Edge instance.</param>
+        /// <param name="b">The second Edge instance.</param>
+        /// <returns>True if the objects are not equal; false if they are equal.</returns>
         public static bool operator!=(Edge a, Edge b)
         {
             return !(a == b);
         }
 
         /// <summary>
-        /// Add two edges index values.
+        /// Adds two edges index values.
         /// </summary>
         /// <example>
         /// {0, 1} + {4, 5} = {5, 6}
         /// </example>
         /// <param name="a">Left edge parameter.</param>
         /// <param name="b">Right edge parameter.</param>
-        /// <returns>The sum of a + b.</returns>
+        /// <returns>The sum of `a + b`.</returns>
         public static Edge Add(Edge a, Edge b)
         {
             return a + b;
         }
 
         /// <summary>
-        /// Subtract edge b from a.
+        /// Subtracts edge b from a.
         /// </summary>
         /// <example>
         /// Subtract( {7, 10}, {4, 5} ) = {3, 5}
         /// </example>
         /// <param name="a">The edge to subtract from.</param>
         /// <param name="b">The value to subtract.</param>
-        /// <returns>The sum of a - b.</returns>
+        /// <returns>The difference of `a - b`.</returns>
         public static Edge Subtract(Edge a, Edge b)
         {
             return a - b;
@@ -148,7 +206,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Does this edge contain an index?
+        /// Tests whether this edge contains an index.
         /// </summary>
         /// <param name="index">The index to compare against x and y.</param>
         /// <returns>True if x or y is equal to a. False if not.</returns>
@@ -158,7 +216,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Does this edge have any matching index to edge b?
+        /// Tests whether this edge has any matching index to the other edge `b`.
         /// </summary>
         /// <param name="other">The edge to compare against.</param>
         /// <returns>True if x or y matches either b.x or b.y.</returns>

@@ -2,20 +2,36 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [cylinder](../manual/Cylinder.html) shape.
+    /// </summary>
     [Shape("Cylinder")]
     public class Cylinder : Shape
     {
+        /// <summary>
+        /// Sets the number of sides for the cylinder. The more sides you use, the smoother the sides of the cylinder become.
+        /// The default value is 6. Valid values range from 4 to 64.
+        /// </summary>
         [Range(4,64)]
         [SerializeField]
         int m_AxisDivisions = 6;
 
+        /// <summary>
+        /// Sets the number of divisions to use for the height of the cylinder.
+        /// The default value is 0.
+        /// </summary>
         [Min(0)]
         [SerializeField]
         int m_HeightCuts = 0;
 
+        /// <summary>
+        /// Determines whether to smooth the edges of the polygons.
+        /// This property is enabled by default.
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Cylinder)
@@ -26,6 +42,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;
@@ -45,6 +62,7 @@ namespace UnityEngine.ProBuilder.Shapes
             return bounds;
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);

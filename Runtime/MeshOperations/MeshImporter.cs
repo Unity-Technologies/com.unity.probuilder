@@ -21,9 +21,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         [SerializeField]
         float m_SmoothingThreshold = 1f;
 
-        /// <value>
-        /// Try to quadrangilize triangle meshes.
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to quadrangilize meshes (convert them to quads if possible).
+        /// </summary>
         public bool quads
         {
             get { return m_Quads; }
@@ -33,24 +33,28 @@ namespace UnityEngine.ProBuilder.MeshOperations
         // Allow ngons when importing meshes. @todo
         // public bool ngons = false;
 
-        /// <value>
-        /// Generate smoothing groups based on mesh normals.
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to generate smoothing groups based on mesh normals.
+        /// </summary>
         public bool smoothing
         {
             get { return m_Smoothing; }
             set { m_Smoothing = value; }
         }
 
-        /// <value>
-        /// Degree of difference between face normals to allow when determining smoothing groups.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the allowable degree of difference between face normals when determining smoothing groups.
+        /// </summary>
         public float smoothingAngle
         {
             get { return m_SmoothingThreshold; }
             set { m_SmoothingThreshold = value; }
         }
 
+        /// <summary>
+        /// Returns a string representation of the options.
+        /// </summary>
+        /// <returns>String formatted as `quads: [quads]\nsmoothing: [smoothing]\nthreshold: [threshold]`.</returns>
         public override string ToString()
         {
             return string.Format("quads: {0}\nsmoothing: {1}\nthreshold: {2}",
@@ -77,6 +81,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         ProBuilderMesh m_Destination;
         Vertex[] m_Vertices;
 
+        /// <summary>
+        /// Creates a new ProBuilderMesh importer instance from the specified GameObject.
+        /// </summary>
+        /// <param name="gameObject">The GameObject to write vertex data to.</param>
         public MeshImporter(GameObject gameObject)
         {
             MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
@@ -88,7 +96,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Create a new ProBuilderMesh importer instance.
+        /// Creates a new ProBuilderMesh importer instance from the specified mesh and materials.
         /// </summary>
         /// <param name="sourceMesh">The Mesh asset to import vertex data from.</param>
         /// <param name="sourceMaterials">The materials to assign to the ProBuilderMesh renderer.</param>
@@ -104,12 +112,18 @@ namespace UnityEngine.ProBuilder.MeshOperations
             m_Destination = destination;
         }
 
+        /// <summary>Obsolete.</summary>
+        /// <param name="destination">The ProBuilderMesh asset.</param>
         [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
         public MeshImporter(ProBuilderMesh destination)
         {
             m_Destination = destination;
         }
 
+        /// <summary>Obsolete.</summary>
+        /// <param name="go">The GameObject asset.</param>
+        /// <param name="importSettings">The import settings.</param>
+        /// <returns>Success/failure</returns>
         [Obsolete, EditorBrowsable(EditorBrowsableState.Never)]
         public bool Import(GameObject go, MeshImportSettings importSettings = null)
         {
@@ -129,11 +143,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Import mesh data from a GameObject's MeshFilter.sharedMesh and MeshRenderer.sharedMaterials.
+        /// Imports mesh data from a GameObject's <see cref="UnityEngine.MeshFilter.sharedMesh"/> and
+        /// <see cref="UnityEngine.Renderer.sharedMaterials"/> properties.
         /// </summary>
-        /// <param name="originalMesh">The UnityEngine.Mesh to extract attributes from.</param>
-        /// <param name="materials">The materials array corresponding to the originalMesh submeshes.</param>
-        /// <param name="importSettings">Optional settings parameter defines import customization properties.</param>
+        /// <param name="importSettings">Optional import customization settings.</param>
         /// <exception cref="NotSupportedException">Import only supports triangle and quad mesh topologies.</exception>
         public void Import(MeshImportSettings importSettings = null)
         {

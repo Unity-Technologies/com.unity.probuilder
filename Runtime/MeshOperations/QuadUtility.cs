@@ -3,8 +3,18 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
+    /// <summary>
+    /// Provides a helper function to manage converting triangulated polygons to [quads](../manual/gloss.html#quad).
+    /// </summary>
     public static class QuadUtility
     {
+        /// <summary>
+        /// Converts the faces to quads if possible.
+        /// </summary>
+        /// <param name="mesh">The source mesh.</param>
+        /// <param name="faces">The list of faces to process.</param>
+        /// <param name="smoothing">True to apply smoothing.</param>
+        /// <returns>A list of the processed faces.</returns>
         public static List<Face> ToQuads(this ProBuilderMesh mesh, IList<Face> faces, bool smoothing = true)
         {
             HashSet<Face> processed = new HashSet<Face>();

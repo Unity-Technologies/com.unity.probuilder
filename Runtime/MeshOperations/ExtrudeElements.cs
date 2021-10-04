@@ -7,18 +7,20 @@ using UnityEngine.ProBuilder;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Face and edge extrusion.
+    /// Contains functions to help with face and edge extrusion.
     /// </summary>
     public static class ExtrudeElements
     {
         /// <summary>
-        /// Extrude a collection of faces.
+        /// Extrudes a collection of faces.
+        ///
+        /// This is the equivalent of the [Extrude Faces](../manual/Face_Extrude.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to extrude.</param>
-        /// <param name="method">Describes how faces are extruded.</param>
+        /// <param name="method">Describes how to extrude the faces (separately or as a group, either from averaged or individual normals).</param>
         /// <param name="distance">The distance to extrude faces.</param>
-        /// <returns>An array of the faces created as a result of the extrusion. Null if the faces paramater is null or empty.</returns>
+        /// <returns>An array of the faces created as a result of the extrusion or null if `faces` is null or empty.</returns>
         public static Face[] Extrude(this ProBuilderMesh mesh, IEnumerable<Face> faces, ExtrudeMethod method, float distance)
         {
             switch (method)
@@ -32,13 +34,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Extrude a collection of edges.
+        /// Extrudes a collection of edges.
+        ///
+        /// This is the equivalent of the [Extrude Edges](../manual/Edge_Extrude.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="edges">The edges to extrude.</param>
         /// <param name="distance">The distance to extrude.</param>
-        /// <param name="extrudeAsGroup">If true adjacent edges will be extruded retaining a shared vertex, if false the shared vertex will be split.</param>
-        /// <param name="enableManifoldExtrude">Pass true to allow this function to extrude manifold edges, false to disallow.</param>
+        /// <param name="extrudeAsGroup">True to keep any shared vertices when extruding adjacent edges; false to split the shared vertex.</param>
+        /// <param name="enableManifoldExtrude">True to allow this function to extrude [manifold](../manual/gloss.html#manifold) edges; false to disallow.</param>
         /// <returns>The extruded edges, or null if the action failed due to manifold check or an empty edges parameter.</returns>
         public static Edge[] Extrude(this ProBuilderMesh mesh, IEnumerable<Edge> edges, float distance, bool extrudeAsGroup, bool enableManifoldExtrude)
         {
@@ -177,7 +181,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Split any shared vertices so that this face may be moved independently of the main object.
+        /// Splits any shared vertices so that this face may be moved independently of the GameObject.
+        ///
+        /// This is the equivalent of the [Detach Faces](../manual/Face_Detach.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to split from the mesh.</param>
@@ -188,11 +194,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Split any shared vertices so that this face may be moved independently of the main object.
+        /// Splits any shared vertices so that this face may be moved independently of the GameObject
+        /// and optionally deletes the faces on the source geometry.
+        ///
+        /// This is the equivalent of the [Detach Faces](../manual/Face_Detach.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to split from the mesh.</param>
-        /// <param name="deleteSourceFaces">Whether or not to delete the faces on the source geometry which were detached.</param>
+        /// <param name="deleteSourceFaces">True to delete the faces on the source geometry where the faces were detached; false to keep them.</param>
         /// <returns>The faces created forming the detached face group.</returns>
         public static List<Face> DetachFaces(this ProBuilderMesh mesh, IEnumerable<Face> faces, bool deleteSourceFaces)
         {

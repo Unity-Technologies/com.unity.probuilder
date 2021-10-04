@@ -16,6 +16,7 @@ class pb_Profiler
 }
 #endif
 
+/// <summary>Internal class.</summary>
 public static class profiler
 {
 #if !DO_THE_DEBUG_DANCE
@@ -23,6 +24,8 @@ public static class profiler
 #endif
     static pb_Profiler s_Profiler = new pb_Profiler("Global");
 
+/// <summary>Internal method.</summary>
+/// <param name="str">String contents</param>
 #if !DO_THE_DEBUG_DANCE
     [System.Obsolete("Profiler code exists in non-debug build!")]
 #endif
@@ -31,6 +34,7 @@ public static class profiler
         s_Profiler.BeginSample(str, 1);
     }
 
+/// <summary>Internal method.</summary>
 #if !DO_THE_DEBUG_DANCE
     [System.Obsolete("Profiler code exists in non-debug build!")]
 #endif
@@ -39,6 +43,8 @@ public static class profiler
         s_Profiler.EndSample();
     }
 
+/// <summary>Internal method.</summary>
+/// <param name="str">String contents</param>
 #if !DO_THE_DEBUG_DANCE
     [System.Obsolete("Profiler code exists in non-debug build!")]
 #endif
@@ -47,6 +53,7 @@ public static class profiler
         s_Profiler.BeginSample(str, 1);
     }
 
+/// <summary>Internal method.</summary>
 #if !DO_THE_DEBUG_DANCE
     [System.Obsolete("Profiler code exists in non-debug build!")]
 #endif
@@ -55,6 +62,7 @@ public static class profiler
         s_Profiler.EndSample();
     }
 
+/// <summary>Internal method.</summary>
 #if !DO_THE_DEBUG_DANCE
     [System.Obsolete("Profiler code exists in non-debug build!")]
 #endif

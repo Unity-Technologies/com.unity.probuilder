@@ -2,6 +2,9 @@ using System;
 
 namespace UnityEngine.ProBuilder
 {
+    /// <summary>
+    /// Provides functions to help calculate normals and tangents for a mesh.
+    /// </summary>
     public static class Normals
     {
         static Vector3[] s_SmoothAvg = new Vector3[Smoothing.smoothRangeMax];
@@ -17,6 +20,10 @@ namespace UnityEngine.ProBuilder
                 s_CachedIntArray[i] = 0;
         }
 
+        /// <summary>
+        /// Calculates the tangents for a mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh to calculate tangents for.</param>
         public static void CalculateTangents(ProBuilderMesh mesh)
         {
             int vc = mesh.vertexCount;
@@ -102,6 +109,10 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         /// <returns>A new array of the vertex normals.</returns>
         /// <seealso cref="CalculateNormals"/>
+        /// <summary>
+        /// Calculates the normals for a mesh, taking into account smoothing groups.
+        /// </summary>
+        /// <param name="mesh">The mesh to calculate normals for.</param>
         static void CalculateHardNormals(ProBuilderMesh mesh)
         {
             var vertexCount = mesh.vertexCount;
@@ -162,7 +173,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Calculates the normals for a mesh, taking into account smoothing groups.
         /// </summary>
-        /// <returns>A Vector3 array of the mesh normals</returns>
+        /// <param name="mesh">The mesh to calculate normals for.</param>
         public static void CalculateNormals(ProBuilderMesh mesh)
         {
             CalculateHardNormals(mesh);

@@ -1,7 +1,7 @@
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// How the handle gizmo is oriented with regards to the current element selection.
+    /// Defines how the handle gizmo is oriented with regards to the current element selection.
     /// </summary>
     /// <remarks>
     /// This overrides the Unity Pivot / Global setting when editing vertices, faces, or edges.
@@ -15,7 +15,7 @@ namespace UnityEngine.ProBuilder
         World = 0,
 
         /// <summary>
-        /// The gizmo is aligned relative to the active mesh transform. Also called coordinate or model space.
+        /// The gizmo is aligned relative to the active mesh transform. This is also called "coordinate" or "model" space.
         /// </summary>
         ActiveObject = 1,
 

@@ -17,31 +17,32 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Manages the ProBuilder toolbar window and tool mode.
+    /// Manages the [ProBuilder toolbar and tool mode](../manual/toolbar.html).
     /// </summary>
     public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
     {
         // Match the value set in RectSelection.cs
         const float k_MouseDragThreshold = 6f;
 
-        /// <value>
+        /// <summary>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
-        /// </value>
+        /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> selectionUpdated;
 
-        /// <value>
-        /// Raised when the EditLevel is changed.
-        /// </value>
+        /// <summary>
+        /// Raised when the EditLevel changes.
+        /// </summary>
         public static event Action<SelectMode> selectModeChanged;
 
-        /// <value>
-        /// Called when vertex modifications are complete.
-        /// </value>
+        /// <summary>
+        /// Raised when vertex modifications are complete.
+        /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
 
-        /// <value>
-        /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
-        /// </value>
+        /// <summary>
+        /// Raised immediately prior to beginning vertex modifications, when the ProBuilderMesh is in un-altered state. This is after
+        /// <see cref="ProBuilderMesh.ToMesh"/> and <see cref="ProBuilderMesh.Refresh"/> have been called, but before <see cref="EditorMeshUtility.Optimize"/>.
+        /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         EditorToolbar m_Toolbar;
@@ -174,9 +175,9 @@ namespace UnityEditor.ProBuilder
 
         internal bool isFloatingWindow { get; private set; }
 
-        /// <value>
-        /// Get and set the current SelectMode.
-        /// </value>
+        /// <summary>
+        /// Gets and sets the current <see cref="SelectMode"/> value.
+        /// </summary>
         public static SelectMode selectMode
         {
             get
@@ -194,7 +195,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Set the <see cref="SelectMode"/> to the last used mesh element mode.
+        /// Changes the <see cref="SelectMode"/> to the last used mesh element mode.
         /// </summary>
         public static void ResetToLastSelectMode()
         {
@@ -238,9 +239,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        /// <value>
-        /// Get the active ProBuilderEditor window. Null if no instance is open.
-        /// </value>
+        /// <summary>
+        /// Gets the active ProBuilderEditor window, or null if no instance is open.
+        /// The ProBuilderEditor window appears in the Unity Editor as both the
+        /// [Edit Mode toolbar](../manual/edit-mode-toolbar.html) and the
+        /// [ProBuilder toolbar](../manual/toolbar.html) working together.
+        /// </summary>
         public static ProBuilderEditor instance
         {
             get { return s_Instance; }
@@ -364,8 +368,9 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Rebuild the mesh wireframe and selection caches.
+        /// Rebuilds the mesh wireframe and selection caches.
         /// </summary>
+        /// <param name="vertexCountChanged">True if the number of vertices changed, which is the default value.</param>
         public static void Refresh(bool vertexCountChanged = true)
         {
             if(instance != null)
@@ -414,6 +419,11 @@ namespace UnityEditor.ProBuilder
             IconModeChanged();
         }
 
+        /// <summary>
+        /// Builds the context menu for the ProBuilder toolbar. This menu allows the user to toggle between
+        /// text and button mode, and to change whether the toolbar is floating or dockable.
+        /// </summary>
+        /// <param name="menu">The context menu</param>
         public void AddItemsToMenu(GenericMenu menu)
         {
             bool floating = s_WindowIsFloating;

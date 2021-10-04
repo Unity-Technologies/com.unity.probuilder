@@ -6,13 +6,15 @@ using System.Linq;
 
 namespace UnityEngine.ProBuilder.Stl
 {
-	/**
-	 *	Describes the file format of an STL file.
-	 */
+	/// <summary>
+	/// Describes the file format of an STL file.
+	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public enum FileType
 	{
+    	/// <summary>Use the [ASCII](https://en.wikipedia.org/wiki/ASCII) file format.</summary>
 		Ascii,
+    	/// <summary>Use the [Binary](https://en.wikipedia.org/wiki/Binary_file) file format.</summary>
 		Binary
 	};
 

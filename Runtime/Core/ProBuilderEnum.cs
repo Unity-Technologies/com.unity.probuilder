@@ -62,7 +62,7 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Element selection mode.
+    /// Defines the element selection mode.
     /// </summary>
     enum ComponentMode
     {
@@ -104,65 +104,107 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Determines what GameObject flags this object will have.
+    /// Determines what GameObject flags this object has.
     /// </summary>
     enum EntityType
     {
+        /// <summary>
+        /// The "Detail" flag.
+        /// </summary>
         Detail,
+        /// <summary>
+        /// The "Occluder" flag.
+        /// </summary>
         Occluder,
+        /// <summary>
+        /// The "Trigger" flag.
+        /// </summary>
         Trigger,
+        /// <summary>
+        /// The "Collider" flag.
+        /// </summary>
         Collider,
+        /// <summary>
+        /// The "Mover" flag.
+        /// </summary>
         Mover
     }
 
+    /// <summary>
+    /// Determines what kind of collider this object has.
+    /// </summary>
     enum ColliderType
     {
+        /// <summary>
+        /// The object has no collider.
+        /// </summary>
         None,
+        /// <summary>
+        /// The object's collider shape is a box.
+        /// </summary>
         BoxCollider,
+        /// <summary>
+        /// The object's collider shape matches the mesh shape.
+        /// </summary>
         MeshCollider
     }
 
     /// <summary>
-    /// Axis used in projecting UVs.
+    /// Indicates the axis used for projecting UVs.
     /// </summary>
     public enum ProjectionAxis
     {
         /// <summary>
-        /// Projects on x axis.
+        /// Projects on the positive x-axis.
         /// </summary>
         X,
         /// <summary>
-        /// Projects on y axis.
+        /// Projects on the positive y-axis.
         /// </summary>
         Y,
         /// <summary>
-        /// Projects on z axis.
+        /// Projects on the positive z-axis.
         /// </summary>
         Z,
         /// <summary>
-        /// Projects on -x axis.
+        /// Projects on the negative x-axis.
         /// </summary>
         XNegative,
         /// <summary>
-        /// Projects on -y axis.
+        /// Projects on the negative y-axis.
         /// </summary>
         YNegative,
         /// <summary>
-        /// Projects on -z axis.
+        /// Projects on the negative z-axis.
         /// </summary>
         ZNegative
     }
 
+    /// <summary>
+    /// Indicates which grid axis is active.
+    /// </summary>
     enum HandleAxis
     {
+        /// <summary>
+        /// X-axis is active.
+        /// </summary>
         X = 1 << 0,
+        /// <summary>
+        /// Y-axis is active.
+        /// </summary>
         Y = 1 << 1,
+        /// <summary>
+        /// Z-axis is active.
+        /// </summary>
         Z = 1 << 2,
+        /// <summary>
+        /// All axes are active simultaneously.
+        /// </summary>
         Free = 1 << 3
     }
 
     /// <summary>
-    /// Human readable axis enum.
+    /// Describes the axis in human-readable terms.
     /// </summary>
     public enum Axis
     {
@@ -227,7 +269,7 @@ namespace UnityEngine.ProBuilder
     };
 
     /// <summary>
-    /// A flag which sets the triangle culling mode.
+    /// Defines the triangle culling mode.
     /// </summary>
     [System.Flags]
     public enum CullingMode
@@ -251,22 +293,22 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Defines the behavior of drag selection in the scene view for mesh elements.
+    /// Defines the behavior of drag selection in the Scene view for mesh elements.
     /// </summary>
     public enum RectSelectMode
     {
         /// <summary>
-        /// Any mesh element touching the drag rectangle is selected.
+        /// Selects any mesh element that touches the drag rectangle.
         /// </summary>
         Partial,
         /// <summary>
-        /// Mesh elements must be completely enveloped by the drag rect to be selected.
+        /// Selects only those mesh elements that are completely enveloped by the drag rect.
         /// </summary>
         Complete
     }
 
     /// <summary>
-    /// Describes why a @"UnityEngine.ProBuilder.ProBuilderMesh" is considered to be out of sync with it's UnityEngine.MeshFilter component.
+    /// Describes why a <see cref="ProBuilderMesh"/> is out of sync with its <see cref="UnityEngine.MeshFilter"/> component.
     /// </summary>
     public enum MeshSyncState
     {
@@ -275,14 +317,15 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Null,
         /// <summary>
-        /// The MeshFilter mesh is not owned by the ProBuilderMesh component. Use @"UnityEngine.ProBuilder.ProBuilderMesh.MakeUnique" to remedy.
+        /// The MeshFilter mesh is not owned by the ProBuilderMesh component.
+        /// To fix this, use <see cref="ProBuilderMesh.MakeUnique"/>.
         /// </summary>
-        /// <remarks>This is only used in editor.</remarks>
+        /// <remarks>This is only used in the Editor.</remarks>
         InstanceIDMismatch,
         /// <summary>
         /// The mesh is valid, but does not have a UV2 channel.
         /// </summary>
-        /// <remarks>This is only used in editor.</remarks>
+        /// <remarks>This is only used in the Editor.</remarks>
         Lightmap,
         /// <summary>
         /// The mesh is in sync.
@@ -291,7 +334,7 @@ namespace UnityEngine.ProBuilder
     }
 
     /// <summary>
-    /// Mesh attributes bitmask.
+    /// Defines a bitmask describing the mesh attributes.
     /// </summary>
     [System.Flags]
     public enum MeshArrays
@@ -346,26 +389,26 @@ namespace UnityEngine.ProBuilder
     };
 
     /// <summary>
-    /// Selectively rebuild and apply mesh attributes to the UnityEngine.Mesh asset.
+    /// Selectively rebuilds and applies mesh attributes to the UnityEngine.Mesh asset.
     /// </summary>
     /// <seealso cref="ProBuilderMesh.Refresh"/>
     [System.Flags]
     public enum RefreshMask
     {
         /// <summary>
-        /// Textures channel will be rebuilt.
+        /// Rebuild textures channel.
         /// </summary>
         UV = 0x1,
         /// <summary>
-        /// Colors will be rebuilt.
+        /// Rebuild colors.
         /// </summary>
         Colors = 0x2,
         /// <summary>
-        /// Normals will be recalculated and applied.
+        /// Recalculate and apply normals.
         /// </summary>
         Normals = 0x4,
         /// <summary>
-        /// Tangents will be recalculated and applied.
+        /// Recalculate and apply tangents.
         /// </summary>
         Tangents = 0x8,
         /// <summary>
@@ -373,7 +416,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         Collisions = 0x10,
         /// <summary>
-        /// Bounds will be recalculated.
+        /// Recalculate bounds.
         /// </summary>
         Bounds = 0x16,
         /// <summary>
@@ -385,18 +428,19 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// Describes the different methods of face extrusion.
     /// </summary>
+    /// <seealso cref="MeshOperations.ExtrudeElements"/>
     public enum ExtrudeMethod
     {
         /// <summary>
-        /// Each face is extruded separately.
+        /// Extrude each face separately.
         /// </summary>
         IndividualFaces = 0,
         /// <summary>
-        /// Adjacent faces are merged as a group along the averaged normals.
+        /// Merge adjacent faces as a group along the averaged normals.
         /// </summary>
         VertexNormal = 1,
         /// <summary>
-        /// Adjacent faces are merged as a group, but faces are extruded from each face normal.
+        /// Merge adjacent faces as a group, but extrude faces from each face normal.
         /// </summary>
         FaceNormal = 2
     }

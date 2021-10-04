@@ -10,10 +10,13 @@ namespace UnityEngine.ProBuilder
 {
     /// <summary>
     /// A face is composed of a set of triangles, and a material.
-    /// <br />
-    /// Triangle indexes may point to the same vertex index as long as the vertices are unique to the face. Ie, every vertex that a face references should only be used by that face's indices. To associate vertices that share common attributes (usually position), use the @"UnityEngine.ProBuilder.ProBuilderMesh.sharedIndexes" property.
-    /// <br />
-    /// ProBuilder automatically manages condensing common vertices in the EditorMeshUtility.Optimize function.
+    ///
+    /// Triangle indices may point to the same vertex index as long as the vertices are unique to the face. That is,
+    /// every vertex that a face references should only be used by that face's indices. To associate vertices that
+    /// share common attributes (usually position), use the <see cref="ProBuilderMesh.sharedVertices">sharedIndexes</see> property.
+    ///
+    /// ProBuilder automatically manages condensing common vertices in the
+    /// <see cref="UnityEditor.ProBuilder.EditorMeshUtility.Optimize">EditorMeshUtility.Optimize</see> function.
     /// </summary>
     [Serializable]
     public sealed class Face
@@ -23,21 +26,22 @@ namespace UnityEngine.ProBuilder
         int[] m_Indexes;
 
         /// <summary>
-        /// Adjacent faces sharing this smoothingGroup will have their abutting edge normals averaged.
+        /// Stores the ID of the smoothing group that this Face is part of. ProBuilder averages the edge
+        /// normals for all faces that share a [Smoothing Group](../manual/workflow-edit-smoothing.md).
         /// </summary>
         [SerializeField]
         [FormerlySerializedAs("_smoothingGroup")]
         int m_SmoothingGroup;
 
         /// <summary>
-        /// If manualUV is false, these parameters determine how this face's vertices are projected to 2d space.
+        /// Determines how ProBuilder projects this face's vertices 2D space when <see cref="manualUV" /> is false.
         /// </summary>
         [SerializeField]
         [FormerlySerializedAs("_uv")]
         AutoUnwrapSettings m_Uv;
 
         /// <summary>
-        /// What material does this face use.
+        /// Stores the material for this face to use.
         /// </summary>
         [SerializeField]
         [FormerlySerializedAs("_mat")]
@@ -51,18 +55,22 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("manualUV")]
         bool m_ManualUV;
 
-        /// <value>
-        /// If this face has had it's UV coordinates done by hand, don't update them with the auto unwrap crowd.
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to map this face's UV coordinates manually or automatically. See
+        /// [Mapping Textures with UVs](../manual/workflow-uvs.html) for an overview of the differences.
+        /// </summary>
+        /// <returns>
+        /// True to set UV coordinates manually; false to use <see cref="AutoUnwrapSettings" />.
+        /// </returns>
         public bool manualUV
         {
             get { return m_ManualUV; }
             set { m_ManualUV = value; }
         }
 
-        /// <value>
+        /// <summary>
         /// UV element group. Used by the UV editor to group faces.
-        /// </value>
+        /// </summary>
         [SerializeField]
         internal int elementGroup;
 
@@ -70,18 +78,22 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         int m_TextureGroup;
 
-        /// <value>
-        /// What texture group this face belongs to. Used when projecting auto UVs.
-        /// </value>
+        /// <summary>
+        /// Gets or sets which texture group this face belongs to. ProBuilder uses texture groups when
+        /// projecting Auto UVs. See [Continuous tiling](../manual/workflow-uvs.html#continuous-tiling).
+        /// </summary>
+        /// <returns>
+        /// ID of the texture group for this face.
+        /// </returns>
         public int textureGroup
         {
             get { return m_TextureGroup;}
             set { m_TextureGroup = value; }
         }
 
-        /// <value>
-        /// Return a reference to the triangle indexes that make up this face.
-        /// </value>
+        /// <summary>
+        /// Gets or sets a reference to the array of triangle indices that make up this face.
+        /// </summary>
         internal int[] indexesInternal
         {
             get { return m_Indexes; }
@@ -96,16 +108,19 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// The triangle indexes that make up this face.
-        /// </value>
+        /// <summary>
+        /// Gets the triangle indices that compose this face.
+        /// </summary>
+        /// <returns>
+        /// The array of indices representing this face's triangles.
+        /// </returns>
         public ReadOnlyCollection<int> indexes
         {
             get { return new ReadOnlyCollection<int>(m_Indexes); }
         }
 
         /// <summary>
-        /// Set the triangles that compose this face.
+        /// Sets the triangles that compose this face.
         /// </summary>
         /// <param name="indices">The new triangle array.</param>
         public void SetIndexes(IEnumerable<int> indices)
@@ -126,17 +141,20 @@ namespace UnityEngine.ProBuilder
         [NonSerialized]
         Edge[] m_Edges;
 
-        /// <value>
+        /// <summary>
         /// Returns a reference to the cached distinct indexes (each vertex index is only referenced once in m_DistinctIndexes).
-        /// </value>
+        /// </summary>
         internal int[] distinctIndexesInternal
         {
             get { return m_DistinctIndexes == null ? CacheDistinctIndexes() : m_DistinctIndexes; }
         }
 
-        /// <value>
-        /// A collection of the vertex indexes that the indexes array references, made distinct.
-        /// </value>
+        /// <summary>
+        /// Gets a collection of the vertex indexes that the indexes array references, made distinct.
+        /// </summary>
+        /// <returns>
+        /// A unique collection of vertices.
+        /// </returns>
         public ReadOnlyCollection<int> distinctIndexes
         {
             get { return new ReadOnlyCollection<int>(distinctIndexesInternal); }
@@ -147,26 +165,32 @@ namespace UnityEngine.ProBuilder
             get { return m_Edges == null ? CacheEdges() : m_Edges; }
         }
 
-        /// <value>
-        /// Get the perimeter edges that commpose this face.
-        /// </value>
+        /// <summary>
+        /// Gets the perimeter edges that compose this face.
+        /// </summary>
+        /// <returns>
+        /// The collection of edges on this face.
+        /// </returns>
         public ReadOnlyCollection<Edge> edges
         {
             get { return new ReadOnlyCollection<Edge>(edgesInternal); }
         }
 
-        /// <value>
-        /// What smoothing group this face belongs to, if any. This is used to calculate vertex normals.
-        /// </value>
+        /// <summary>
+        /// Gets or sets which smoothing group this face belongs to, if any. This is used to calculate vertex normals.
+        /// </summary>
+        /// <returns>
+        /// The ID of this smoothing group as an integer.
+        /// </returns>
         public int smoothingGroup
         {
             get { return m_SmoothingGroup; }
             set { m_SmoothingGroup = value; }
         }
 
-        /// <value>
-        /// Get the material that face uses.
-        /// </value>
+        /// <summary>
+        /// Gets the material that this face uses.
+        /// </summary>
         [Obsolete("Face.material is deprecated. Please use submeshIndex instead.")]
         public Material material
         {
@@ -174,15 +198,24 @@ namespace UnityEngine.ProBuilder
             set { m_Material = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the index of the submesh that this face belongs to.
+        /// </summary>
+        /// <returns>
+        /// The ID of the submesh as an integer.
+        /// </returns>
         public int submeshIndex
         {
             get { return m_SubmeshIndex; }
             set { m_SubmeshIndex = value; }
         }
 
-        /// <value>
-        /// A reference to the Auto UV mapping parameters.
-        /// </value>
+        /// <summary>
+        /// Gets or sets a reference to the [Auto UV](../manual/workflow-uvs.html#auto-uv-mode-features) mapping parameters.
+        /// </summary>
+        /// <returns>
+        /// The ID of this submesh as an integer.
+        /// </returns>
         public AutoUnwrapSettings uv
         {
             get { return m_Uv; }
@@ -190,16 +223,19 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Accesses the indexes array.
+        /// Gets the index for the specified triangle in this face's array of triangle indices.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="i">The triangle to access</param>
+        /// <returns>
+        /// The index of the specified triangle.
+        /// </returns>
         public int this[int i]
         {
             get { return indexesInternal[i]; }
         }
 
         /// <summary>
-        /// Default constructor creates a face with an empty triangles array.
+        /// Creates a Face with an empty triangles array.
         /// </summary>
         public Face()
         {
@@ -207,7 +243,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Initialize a Face with a set of triangles and default values.
+        /// Creates a face with default values and the specified set of triangles.
         /// </summary>
         /// <param name="indices">The new triangles array.</param>
         public Face(IEnumerable<int> indices)
@@ -246,18 +282,18 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Deep copy constructor.
+        /// Creates a new Face as a copy of another face.
         /// </summary>
-        /// <param name="other">The Face from which to copy properties.</param>
+        /// <param name="other">The Face from which to copy properties and triangles.</param>
         public Face(Face other)
         {
             CopyFrom(other);
         }
 
         /// <summary>
-        /// Copies values from other to this face.
+        /// Copies properties and triangles from the specified face to this face.
         /// </summary>
-        /// <param name="other">The Face from which to copy properties.</param>
+        /// <param name="other">The Face from which to copy properties and triangles.</param>
         public void CopyFrom(Face other)
         {
             if (other == null)
@@ -318,12 +354,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Test if a triangle is contained within the triangles array of this face.
+        /// Tests whether a triangle matches one of the triangles of this face.
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <param name="c"></param>
-        /// <returns></returns>
+        /// <param name="a">First index in the triangle</param>
+        /// <param name="b">Second index in the triangle</param>
+        /// <param name="c">Third index in the triangle</param>
+        /// <returns>True if {a,b,c} is found in this face's list of triangles; otherwise false.</returns>
         public bool Contains(int a, int b, int c)
         {
             for (int i = 0, cnt = indexesInternal.Length; i < cnt; i += 3)
@@ -338,18 +374,18 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Is this face representable as quad?
+        /// Returns whether this face can be converted to a quad (a polygon with four sides).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if this face is divisible by 4; false otherwise.</returns>
         public bool IsQuad()
         {
             return edgesInternal != null && edgesInternal.Length == 4;
         }
 
         /// <summary>
-        /// Convert a 2 triangle face to a quad representation.
+        /// Converts a two-triangle face to a quad representation.
         /// </summary>
-        /// <returns>A quad (4 indexes), or null if indexes are not able to be represented as a quad.</returns>
+        /// <returns>A quad (an array of four indices); or null if indices are not able to be represented as a quad.</returns>
         public int[] ToQuad()
         {
             if (!IsQuad())
@@ -374,6 +410,10 @@ namespace UnityEngine.ProBuilder
             return quad;
         }
 
+        /// <summary>
+        /// Returns a string representation of the face.
+        /// </summary>
+        /// <returns>String formatted as `[a, b, c], ...`.</returns>
         public override string ToString()
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -396,7 +436,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Add offset to each value in the indexes array.
+        /// Adds an offset to each value in the indices array.
         /// </summary>
         /// <param name="offset">The value to add to each index.</param>
         public void ShiftIndexes(int offset)
@@ -408,9 +448,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Find the smallest value in the triangles array.
+        /// Finds the smallest value in the triangles array.
         /// </summary>
-        /// <returns>The smallest value in the indexes array.</returns>
+        /// <returns>The smallest value in the indices array.</returns>
         int SmallestIndexValue()
         {
             int smallest = m_Indexes[0];
@@ -425,7 +465,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Finds the smallest value in the indexes array, then offsets by subtracting that value from each index.
+        /// Finds the smallest value in the indices array, then offsets by subtracting that value from each index.
         /// </summary>
         /// <example>
         /// ```
@@ -444,7 +484,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Reverse the order of the triangle array. This has the effect of reversing the direction that this face renders.
+        /// Reverses the order of the triangle array. This has the effect of reversing the direction that this face renders.
         /// </summary>
         public void Reverse()
         {
@@ -475,7 +515,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Advance to the next connected edge given a source edge and the index connect.
+        /// Advances to the next connected edge given a source edge and the index connect.
         /// </summary>
         internal bool TryGetNextEdge(Edge source, int index, ref Edge nextEdge, ref int nextIndex)
         {
