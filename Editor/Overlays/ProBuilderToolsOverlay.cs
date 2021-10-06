@@ -35,7 +35,7 @@ sealed class ProBuilderToolsOverlay : ToolbarOverlay
 
     void OnActiveContextChanged()
     {
-        this.displayed = ToolManager.activeContextType == typeof(ProBuilderToolContext);
+        this.displayed = typeof(PositionToolContext).IsAssignableFrom(ToolManager.activeContextType);
     }
 }
 

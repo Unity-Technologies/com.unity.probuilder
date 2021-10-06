@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(ProbuilderMoveTool))]
-    class ProbuilderMoveToolSettings : ProbuilderToolSettings { }
+    class ProBuilderMoveToolSettings : ProBuilderToolSettings { }
 
     class ProbuilderMoveTool : PositionTool
     {

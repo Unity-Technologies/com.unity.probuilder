@@ -4,7 +4,7 @@ using UnityEngine.ProBuilder;
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(ProbuilderRotateTool))]
-    class ProbuilderRotateToolSettings : ProbuilderToolSettings { }
+    class ProBuilderRotateToolSettings : ProBuilderToolSettings { }
 
     class ProbuilderRotateTool : PositionTool
     {

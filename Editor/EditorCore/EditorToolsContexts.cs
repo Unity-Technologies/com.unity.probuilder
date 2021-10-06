@@ -12,13 +12,8 @@ namespace UnityEditor.ProBuilder
 {
 #if UNITY_2020_2_OR_NEWER
 
-    [EditorToolContext("ProBuilder"), Icon(k_IconPath)]
-    class ProBuilderToolContext : EditorToolContext
+    abstract class PositionToolContext : EditorToolContext
     {
-        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Object.png";
-
-        ProBuilderToolContext() { }
-
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
@@ -35,42 +30,40 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [CustomEditor(typeof(ProBuilderToolContext))]
-    class ProBuilderToolContextEditor : Editor, ICreateToolbar
+    [EditorToolContext("Vertex"), Icon(k_IconPath)]
+    class VertexToolContext : PositionToolContext
     {
-        public IEnumerable<string> toolbarElements
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Vertex.png";
+
+        public override void OnActivated()
         {
-            get
-            {
-                yield return "Select Mode Toolbar";
-            }
+            ProBuilderEditor.selectMode = SelectMode.Vertex;
         }
     }
 
-    [EditorToolbarElement("Select Mode Toolbar", typeof(SceneView))]
-    class SelectModeToolbar : OverlayToolbar
+    [EditorToolContext("Edge"), Icon(k_IconPath)]
+    class EdgeToolContext : PositionToolContext
     {
-        SelectModeToolbar()
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Edge.png";
+
+        public override void OnActivated()
         {
-            name = "Select Mode Toolbar";
-
-            CreateSelectModeToggle(SelectMode.Object, "Object Selection", "Modes/Mode_Object");
-            CreateSelectModeToggle(SelectMode.Vertex, "Vertex Selection", "Modes/Mode_Vertex");
-            CreateSelectModeToggle(SelectMode.Edge, "Edge Selection" , "Modes/Mode_Edge");
-            CreateSelectModeToggle(SelectMode.Face, "Face Selection", "Modes/Mode_Face");
-
-            SetupChildrenAsButtonStrip();
-        }
-
-        void CreateSelectModeToggle(SelectMode mode, string text, string iconName)
-        {
-            var icon = IconUtility.GetIcon(iconName);
-            var toggle = new SelectModeToggle(mode, text, icon);
-            Add(toggle);
+            ProBuilderEditor.selectMode = SelectMode.Edge;
         }
     }
 
-    class ProbuilderToolSettings : Editor, ICreateToolbar
+    [EditorToolContext("Face"), Icon(k_IconPath)]
+    class FaceToolContext : PositionToolContext
+    {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png";
+
+        public override void OnActivated()
+        {
+            ProBuilderEditor.selectMode = SelectMode.Face;
+        }
+    }
+
+    class ProBuilderToolSettings : Editor, ICreateToolbar
     {
         public IEnumerable<string> toolbarElements
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(ProbuilderScaleTool))]
-    class ProbuilderScaleToolSettings : ProbuilderToolSettings { }
+    class ProBuilderScaleToolSettings : ProBuilderToolSettings { }
 
     class ProbuilderScaleTool : PositionTool
     {

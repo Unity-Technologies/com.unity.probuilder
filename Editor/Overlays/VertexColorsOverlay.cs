@@ -30,7 +30,7 @@ public class VertexColorsOverlay : Overlay
         }
         get
         {
-            return m_Visible && ToolManager.activeContextType == typeof(ProBuilderToolContext);
+            return m_Visible && typeof(PositionToolContext).IsAssignableFrom(ToolManager.activeContextType);
         }
     }
 
