@@ -118,8 +118,23 @@ namespace UnityEditor.ProBuilder
             selectMode = mode;
 
 #if TOOL_CONTEXTS_ENABLED
-            if (selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
-                ToolManager.SetActiveContext<PositionToolContext>();
+            if (selectMode.IsPositionMode() && !typeof(PositionToolContext).IsAssignableFrom(ToolManager.activeContextType))
+            {
+                switch (selectMode)
+                {
+                    case SelectMode.Vertex:
+                        ToolManager.SetActiveContext<VertexToolContext>();
+                        break;
+                    case SelectMode.Edge:
+                        ToolManager.SetActiveContext<EdgeToolContext>();
+                        break;
+                    case SelectMode.Face:
+                        ToolManager.SetActiveContext<FaceToolContext>();
+                        break;
+                    default:
+                        break;
+                }
+            }
             else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
             else if (!selectMode.IsMeshElementMode())

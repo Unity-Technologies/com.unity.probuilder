@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
+using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
 #if UNITY_2020_2_OR_NEWER
-    class PositionToolContext : EditorToolContext
+    abstract class PositionToolContext : EditorToolContext
     {
-        PositionToolContext() { }
-
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
@@ -21,6 +22,39 @@ namespace UnityEditor.ProBuilder
                 default:
                     return null;
             }
+        }
+    }
+
+    [EditorToolContext("Vertex"), Icon(k_IconPath)]
+    class VertexToolContext : PositionToolContext
+    {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Vertex.png";
+
+        public override void OnActivated()
+        {
+            ProBuilderEditor.selectMode = SelectMode.Vertex;
+        }
+    }
+
+    [EditorToolContext("Edge"), Icon(k_IconPath)]
+    class EdgeToolContext : PositionToolContext
+    {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Edge.png";
+
+        public override void OnActivated()
+        {
+            ProBuilderEditor.selectMode = SelectMode.Edge;
+        }
+    }
+
+    [EditorToolContext("Face"), Icon(k_IconPath)]
+    class FaceToolContext : PositionToolContext
+    {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png";
+
+        public override void OnActivated()
+        {
+            ProBuilderEditor.selectMode = SelectMode.Face;
         }
     }
 

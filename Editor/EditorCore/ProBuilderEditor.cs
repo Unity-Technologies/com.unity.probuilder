@@ -1,3 +1,6 @@
+#if UNITY_2020_2_OR_NEWER
+#define TOOL_CONTEXTS_ENABLED
+#endif
 using System;
 using UnityEngine;
 using System.Linq;
@@ -879,7 +882,9 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
+#if !TOOL_CONTEXTS_ENABLED
                 selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+#endif
 
                 if (s_ShowSceneInfo)
                 {
