@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [EditorToolContext("Vertex"), Icon(k_IconPath)]
+    [EditorToolContext("Vertex", typeof(ProBuilderMesh)), Icon(k_IconPath)]
     class VertexToolContext : PositionToolContext
     {
         const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Vertex.png";
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [EditorToolContext("Edge"), Icon(k_IconPath)]
+    [EditorToolContext("Edge", typeof(ProBuilderMesh)), Icon(k_IconPath)]
     class EdgeToolContext : PositionToolContext
     {
         const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Edge.png";
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [EditorToolContext("Face"), Icon(k_IconPath)]
+    [EditorToolContext("Face", typeof(ProBuilderMesh)), Icon(k_IconPath)]
     class FaceToolContext : PositionToolContext
     {
         const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png";
