@@ -1,9 +1,11 @@
 #pragma warning disable 0168
-
+#if UNITY_2020_2_OR_NEWER
+#define TOOL_CONTEXTS_ENABLED
+#endif
 using UnityEngine;
 using System.Linq;
 using System;
-
+using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
@@ -584,5 +586,16 @@ namespace UnityEditor.ProBuilder
             setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
 #endif
         }
+
+#if TOOL_CONTEXTS_ENABLED
+        internal static bool IsProBuilderContextAvailable()
+        {
+            foreach (var ctx in EditorToolManager.componentContexts)
+                if (typeof(PositionToolContext).IsAssignableFrom(ctx.editorType))
+                    return true;
+
+            return false;
+        }
+#endif
     }
 }
