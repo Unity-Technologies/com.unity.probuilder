@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
@@ -277,6 +278,9 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+#if TOOL_CONTEXTS_ENABLED
+            ToolManager.activeContextChanged += OnActiveContextChanged;
+#endif
 
             ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
@@ -305,6 +309,9 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+#if TOOL_CONTEXTS_ENABLED
+            ToolManager.activeContextChanged -= OnActiveContextChanged;
+#endif
 
             SetOverrideWireframe(false);
             m_Toolbar.Dispose();
@@ -981,6 +988,14 @@ namespace UnityEditor.ProBuilder
             SetOverrideWireframe(true);
             Repaint();
         }
+
+#if TOOL_CONTEXTS_ENABLED
+        void OnActiveContextChanged()
+        {
+            if (ToolManager.activeContextType == typeof(GameObjectToolContext))
+                selectMode = SelectMode.None;
+        }
+#endif
 
         /// <summary>
         /// Hide the default unity wireframe renderer
