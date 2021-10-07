@@ -993,7 +993,7 @@ namespace UnityEditor.ProBuilder
         void OnActiveContextChanged()
         {
             if (ToolManager.activeContextType == typeof(GameObjectToolContext))
-                selectMode = SelectMode.None;
+                selectMode = SelectMode.Object;
         }
 #endif
 

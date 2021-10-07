@@ -137,7 +137,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
-            else if (!selectMode.IsMeshElementMode())
+            else if (!selectMode.IsMeshElementMode() && ToolManager.activeContextType != typeof(GameObjectToolContext))
                 ToolManager.SetActiveContext<GameObjectToolContext>();
 #else
             var tool = activeTool;
