@@ -14,9 +14,38 @@ namespace UnityEditor.ProBuilder
     [CustomEditor(typeof(ProBuilderShape))]
     class ProBuilderShapeEditor : Editor
     {
-        SerializedProperty m_ShapeProperty;
-        SerializedProperty m_ShapePivotProperty;
-        SerializedProperty m_ShapeSizeProperty;
+        SerializedProperty m_ShapeProperty = null;
+        SerializedProperty shapeProperty
+        {
+            get
+            {
+                if(m_ShapeProperty == null)
+                    m_ShapeProperty = serializedObject.FindProperty("m_Shape");
+                return m_ShapeProperty;
+            }
+        }
+
+        SerializedProperty m_ShapePivotProperty = null;
+        SerializedProperty shapePivotProperty
+        {
+            get
+            {
+                if(m_ShapePivotProperty == null)
+                    m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
+                return m_ShapePivotProperty;
+            }
+        }
+
+        SerializedProperty m_ShapeSizeProperty = null;
+        SerializedProperty shapeSizeProperty
+        {
+            get
+            {
+                if(m_ShapeSizeProperty == null)
+                    m_ShapeSizeProperty = serializedObject.FindProperty("m_Size");
+                return m_ShapeSizeProperty;
+            }
+        }
 
         int m_ActiveShapeIndex = 0;
 
@@ -46,13 +75,6 @@ namespace UnityEditor.ProBuilder
         }
 
         Type m_CurrentShapeType;
-
-        void OnEnable()
-        {
-            m_ShapeProperty = serializedObject.FindProperty("m_Shape");
-            m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
-            m_ShapeSizeProperty = serializedObject.FindProperty("m_Size");
-        }
 
         public override void OnInspectorGUI()
         {
@@ -149,20 +171,21 @@ namespace UnityEditor.ProBuilder
                             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
                             proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
                             ProBuilderEditor.Refresh();
+
                         }
                     }
                 }
 
                 if(tool)
-                    EditorGUILayout.PropertyField(m_ShapePivotProperty, k_ShapePivotLabel);
+                    EditorGUILayout.PropertyField(shapePivotProperty, k_ShapePivotLabel);
 
-                EditorGUILayout.PropertyField(m_ShapeSizeProperty);
+                EditorGUILayout.PropertyField(shapeSizeProperty);
 
                 EditorGUI.indentLevel--;
             }
 
             if(!HasMultipleShapeTypes)
-                EditorGUILayout.PropertyField(m_ShapeProperty, new GUIContent("Shape Properties"), true);
+                EditorGUILayout.PropertyField(shapeProperty, new GUIContent("Shape Properties"), true);
 
             if (serializedObject.ApplyModifiedProperties())
             {

@@ -27,6 +27,24 @@ namespace UnityEditor.ProBuilder
 
         Editor m_ShapeEditor;
 
+        bool m_HandleSelectionChanges = false;
+
+        internal bool handleSelectionChange
+        {
+            set
+            {
+                if(m_HandleSelectionChanges == value)
+                    return;
+
+                m_HandleSelectionChanges = value;
+                if(value)
+                    MeshSelection.objectSelectionChanged += OnSelectionChanged;
+                else
+                    MeshSelection.objectSelectionChanged -= OnSelectionChanged;
+
+            }
+        }
+
         // plane of interaction
         internal UnityEngine.Plane m_Plane;
         internal Vector3 m_PlaneForward, m_PlaneRight;
@@ -124,8 +142,8 @@ namespace UnityEditor.ProBuilder
             };
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
-            MeshSelection.objectSelectionChanged += OnSelectionChanged;
             ToolManager.activeToolChanged += OnActiveToolChanged;
+            handleSelectionChange = true;
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -139,6 +157,10 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            handleSelectionChange = false;
+
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
             if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
@@ -147,7 +169,6 @@ namespace UnityEditor.ProBuilder
 
         void OnDestroy()
         {
-            MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             if(m_ShapePreviewMaterial)
                 DestroyImmediate(m_ShapePreviewMaterial);
         }
@@ -158,19 +179,18 @@ namespace UnityEditor.ProBuilder
                 SetBounds(currentShapeInOverlay.size);
         }
 
+
         void HandleUndoRedoPerformed()
         {
             if(ToolManager.IsActiveTool(this))
                 m_CurrentState = ShapeState.ResetState();
         }
 
-        void OnSelectionChanged()
+        public void OnSelectionChanged()
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(Selection.activeGameObject != null
-                        && (MeshSelection.activeMesh == null
-                        || MeshSelection.activeMesh.GetComponent<ProBuilderShape>() == null))
+                if(Selection.activeGameObject != null)
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
@@ -357,7 +377,6 @@ namespace UnityEditor.ProBuilder
                 shapeComponent.rotation = Quaternion.identity;
                 shapeComponent.gameObject.name = EditorShapeUtility.GetName(shapeComponent.shape);
                 UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
-                EditorUtility.InitObject(shapeComponent.mesh);
                 m_IsShapeInit = true;
             }
 
@@ -491,7 +510,6 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        Selection.activeObject = null;
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
                         SetBounds(currentShapeInOverlay.size);
 
