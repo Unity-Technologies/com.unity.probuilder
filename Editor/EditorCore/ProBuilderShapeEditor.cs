@@ -171,7 +171,6 @@ namespace UnityEditor.ProBuilder
                             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
                             proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
                             ProBuilderEditor.Refresh();
-
                         }
                     }
                 }
