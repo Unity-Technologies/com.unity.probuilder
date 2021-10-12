@@ -1,6 +1,9 @@
 #if UNITY_2020_2_OR_NEWER
 #define TOOL_CONTEXTS_ENABLED
 #endif
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
+#endif
 
 using System;
 using System.Diagnostics;
@@ -117,7 +120,7 @@ namespace UnityEditor.ProBuilder
 
             selectMode = mode;
 
-#if TOOL_CONTEXTS_ENABLED
+#if OVERLAYS_AVAILABLE
             if (selectMode.IsPositionMode() && !typeof(PositionToolContext).IsAssignableFrom(ToolManager.activeContextType))
             {
                 switch (selectMode)
@@ -138,6 +141,13 @@ namespace UnityEditor.ProBuilder
             else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
                 ToolManager.SetActiveContext<TextureToolContext>();
             else if (!selectMode.IsMeshElementMode() && ToolManager.activeContextType != typeof(GameObjectToolContext))
+                ToolManager.SetActiveContext<GameObjectToolContext>();
+#elif TOOL_CONTEXTS_ENABLED
+             if (selectMode.IsPositionMode() && ToolManager.activeContextType != typeof(PositionToolContext))
+                ToolManager.SetActiveContext<PositionToolContext>();
+             else if (selectMode.IsTextureMode() && ToolManager.activeContextType != typeof(TextureToolContext))
+                ToolManager.SetActiveContext<TextureToolContext>();
+            else if (!selectMode.IsMeshElementMode())
                 ToolManager.SetActiveContext<GameObjectToolContext>();
 #else
             var tool = activeTool;

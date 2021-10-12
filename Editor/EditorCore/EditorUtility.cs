@@ -1,6 +1,6 @@
 #pragma warning disable 0168
-#if UNITY_2020_2_OR_NEWER
-#define TOOL_CONTEXTS_ENABLED
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
 #endif
 using UnityEngine;
 using System.Linq;
@@ -587,7 +587,7 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-#if TOOL_CONTEXTS_ENABLED
+#if OVERLAYS_AVAILABLE
         internal static bool IsProBuilderContextAvailable()
         {
             foreach (var ctx in EditorToolManager.componentContexts)

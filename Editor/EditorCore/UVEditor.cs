@@ -1,5 +1,5 @@
-#if UNITY_2020_2_OR_NEWER
-#define TOOL_CONTEXTS_ENABLED
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
 #endif
 using UnityEngine;
 using System.Collections.Generic;
@@ -2447,13 +2447,13 @@ namespace UnityEditor.ProBuilder
             if (EditorGUI.EndChangeCheck())
                 Tools.current = (Tool) activeTool;
 
-            var showSelectModeToolbar = true;
-#if TOOL_CONTEXTS_ENABLED
-            showSelectModeToolbar = EditorUtility.IsProBuilderContextAvailable();
-#endif
-            if (showSelectModeToolbar)
-                ProBuilderEditor.selectMode = UI.EditorGUIUtility.DoElementModeToolbar(toolbarRect_select, ProBuilderEditor.selectMode);
 
+#if OVERLAYS_AVAILABLE
+            if (EditorUtility.IsProBuilderContextAvailable())
+                ProBuilderEditor.selectMode = UI.EditorGUIUtility.DoElementModeToolbar(toolbarRect_select, ProBuilderEditor.selectMode);
+#else
+            ProBuilderEditor.selectMode = UI.EditorGUIUtility.DoElementModeToolbar(toolbarRect_select, ProBuilderEditor.selectMode);
+#endif
             // begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
             Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 140, PAD - 1, 36f, 22f);
 

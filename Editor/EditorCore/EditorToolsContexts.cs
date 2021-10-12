@@ -1,3 +1,6 @@
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
+#endif
 using System;
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
@@ -6,8 +9,13 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+
 #if UNITY_2020_2_OR_NEWER
+#if OVERLAYS_AVAILABLE
     abstract class PositionToolContext : EditorToolContext
+#else
+    class PositionToolContext : EditorToolContext
+#endif
     {
         protected override Type GetEditorToolType(Tool tool)
         {
@@ -24,7 +32,28 @@ namespace UnityEditor.ProBuilder
             }
         }
     }
+    class TextureToolContext : EditorToolContext
+    {
+        TextureToolContext() { }
 
+        protected override Type GetEditorToolType(Tool tool)
+        {
+            switch(tool)
+            {
+                case Tool.Move:
+                    return typeof(TextureMoveTool);
+                case Tool.Rotate:
+                    return typeof(TextureRotateTool);
+                case Tool.Scale:
+                    return typeof(TextureScaleTool);
+                default:
+                    return null;
+            }
+        }
+    }
+#endif
+
+#if OVERLAYS_AVAILABLE
     [EditorToolContext("Vertex", typeof(ProBuilderMesh)), Icon(k_IconPath)]
     class VertexToolContext : PositionToolContext
     {
@@ -55,26 +84,6 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             ProBuilderEditor.selectMode = SelectMode.Face;
-        }
-    }
-
-    class TextureToolContext : EditorToolContext
-    {
-        TextureToolContext() { }
-
-        protected override Type GetEditorToolType(Tool tool)
-        {
-            switch(tool)
-            {
-                case Tool.Move:
-                    return typeof(TextureMoveTool);
-                case Tool.Rotate:
-                    return typeof(TextureRotateTool);
-                case Tool.Scale:
-                    return typeof(TextureScaleTool);
-                default:
-                    return null;
-            }
         }
     }
 #endif

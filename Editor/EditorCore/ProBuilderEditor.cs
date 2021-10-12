@@ -1,5 +1,5 @@
-#if UNITY_2020_2_OR_NEWER
-#define TOOL_CONTEXTS_ENABLED
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
 #endif
 using System;
 using UnityEngine;
@@ -278,7 +278,7 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
-#if TOOL_CONTEXTS_ENABLED
+#if OVERLAYS_AVAILABLE
             ToolManager.activeContextChanged += OnActiveContextChanged;
 #endif
 
@@ -309,7 +309,7 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
-#if TOOL_CONTEXTS_ENABLED
+#if OVERLAYS_AVAILABLE
             ToolManager.activeContextChanged -= OnActiveContextChanged;
 #endif
 
@@ -889,7 +889,7 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
-#if !TOOL_CONTEXTS_ENABLED
+#if !OVERLAYS_AVAILABLE
                 selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
 #endif
 
@@ -989,7 +989,7 @@ namespace UnityEditor.ProBuilder
             Repaint();
         }
 
-#if TOOL_CONTEXTS_ENABLED
+#if OVERLAYS_AVAILABLE
         void OnActiveContextChanged()
         {
             if (ToolManager.activeContextType == typeof(GameObjectToolContext))
