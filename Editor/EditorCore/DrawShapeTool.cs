@@ -186,7 +186,7 @@ namespace UnityEditor.ProBuilder
                 m_CurrentState = ShapeState.ResetState();
         }
 
-        public void OnSelectionChanged()
+        void OnSelectionChanged()
         {
             if(ToolManager.IsActiveTool(this))
             {
