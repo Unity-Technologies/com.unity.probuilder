@@ -94,7 +94,7 @@ namespace UnityEditor.ProBuilder.Actions
              ToolManager.SetActiveTool(m_Tool);
 
             MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += OnActiveToolChanging;
+            ToolManager.activeToolChanged += OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_Tool = null;
             MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= OnActiveToolChanging;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
@@ -137,7 +137,7 @@ namespace UnityEditor.ProBuilder.Actions
             if( m_Tool == null )
                 return;
 
-            if(MeshSelection.activeMesh.GetComponent<PolyShape>() == null)
+            if(MeshSelection.activeMesh == null || MeshSelection.activeMesh.GetComponent<PolyShape>() == null)
                 EditorApplication.delayCall += () => LeaveTool();
         }
 
@@ -146,9 +146,9 @@ namespace UnityEditor.ProBuilder.Actions
             LeaveTool();
         }
 
-        void OnActiveToolChanging()
+        void OnActiveToolChanged()
         {
-            if(m_Tool != null && ToolManager.IsActiveTool(m_Tool))
+            if(m_Tool != null && ToolManager.activeToolType != m_Tool.GetType())
                  LeaveTool();
         }
 

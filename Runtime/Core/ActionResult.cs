@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace UnityEngine.ProBuilder
@@ -61,12 +62,21 @@ namespace UnityEngine.ProBuilder
             return res != null && res.status == Status.Success;
         }
 
+        /// <summary>
+        /// Convert the ActionResult to a boolean value, true if successful and false if not.
+        /// </summary>
+        /// <returns>True if action was successful, false otherwise.</returns>
         public bool ToBool()
         {
             return status == Status.Success;
         }
 
-        public static bool FromBool(bool success)
+        /// <summary>
+        /// Convert a boolean value to an ActionResult, Success if true and Failure if false.
+        /// </summary>
+        /// <param name="success">The bool value to convert</param>
+        /// <returns>Success if success is true and Failure if false.</returns>
+        public static ActionResult FromBool(bool success)
         {
             return success ? ActionResult.Success : new ActionResult(ActionResult.Status.Failure, "Failure");
         }
