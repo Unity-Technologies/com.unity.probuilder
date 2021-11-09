@@ -1,3 +1,6 @@
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
+#endif
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -8,6 +11,7 @@ using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
 using System.Reflection;
+using UnityEditor.EditorTools;
 using UnityObject = UnityEngine.Object;
 using Edge = UnityEngine.ProBuilder.Edge;
 
@@ -154,7 +158,7 @@ namespace UnityEditor.ProBuilder
             s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
 
             if(EditorGUI.EndChangeCheck())
-                ProBuilderEditor.UpdateMeshHandles(true);
+                SelectionGUI.UpdateMeshHandles(true);
         }
 
         internal static float dotCapSize
@@ -312,6 +316,8 @@ namespace UnityEditor.ProBuilder
             if (Event.current.type != EventType.Repaint)
                 return;
 
+            Debug.Log("EditorHandleDrawing: DrawSceneHandles");
+
             // Update the scale based on EditorGUIUtility.pixelsPerPoints in case the DPI would have changed.
             SetMaterialsScaleAttribute();
 
@@ -360,6 +366,7 @@ namespace UnityEditor.ProBuilder
 
             if(material.SetPass(0))
             {
+                Debug.Log("EditorHandleDrawing: handleCount " + handles.Count);
                 foreach(var kvp in handles)
                     kvp.Value.DrawMeshNow(0);
             }
@@ -381,6 +388,54 @@ namespace UnityEditor.ProBuilder
                 ClearHandlesInternal(s_TemporaryHandles);
         }
 
+//#if OVERLAYS_AVAILABLE
+        public static void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes)
+        {
+            void RebuildEdgeMeshHandles(ProBuilderMesh mesh)
+            {
+                if(m_ForceWireframeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                    RebuildMeshHandle(mesh, wireHandles, MeshHandles.CreateEdgeMesh);
+                else
+                    RebuildMeshHandle(mesh, wireHandles, MeshHandles.CreateEdgeBillboardMesh);
+            }
+
+            ClearHandles();
+
+            foreach (var mesh in meshes)
+            {
+                if (ToolManager.activeContextType == typeof(VertexToolContext))
+                {
+                    RebuildMeshHandle(mesh, vertexHandles, MeshHandles.CreateVertexMesh);
+                    var handle = GetMeshHandle(mesh, selectedVertexHandles);
+                    MeshHandles.CreateVertexMesh(mesh, handle.mesh, mesh.selectedIndexesInternal);
+                    RebuildEdgeMeshHandles(mesh);
+                }
+                else if (ToolManager.activeContextType == typeof(EdgeToolContext))
+                {
+                    if(m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                        RebuildMeshHandle(mesh, wireHandles, MeshHandles.CreateEdgeMesh);
+                    else
+                        RebuildMeshHandle(mesh, wireHandles, MeshHandles.CreateEdgeBillboardMesh);
+
+                    var handle = GetMeshHandle(mesh, selectedEdgeHandles);
+
+                    if (m_ForceEdgeLinesGL || BuiltinMaterials.geometryShadersSupported)
+                        MeshHandles.CreateEdgeMesh(mesh, handle.mesh, mesh.selectedEdgesInternal);
+                    else
+                        MeshHandles.CreateEdgeBillboardMesh(mesh, handle.mesh, mesh.selectedEdgesInternal);
+                }
+                else if (ToolManager.activeContextType == typeof(FaceToolContext))
+                {
+                    RebuildMeshHandle(mesh, selectedFaceHandles, MeshHandles.CreateFaceMesh);
+                    RebuildEdgeMeshHandles(mesh);
+                }
+                else
+                {
+                    RebuildEdgeMeshHandles(mesh);
+                }
+            }
+        }
+//#else
         public static void RebuildSelectedHandles(IEnumerable<ProBuilderMesh> meshes, SelectMode selectionMode)
         {
             ClearHandles();
@@ -432,6 +487,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
+//#endif
 
         static MeshHandle GetMeshHandle(ProBuilderMesh mesh, Dictionary<ProBuilderMesh, MeshHandle> cache)
         {

@@ -64,6 +64,7 @@ namespace UnityEditor.ProBuilder
 
         internal override MeshAndElementSelection GetElementSelection(ProBuilderMesh mesh, PivotPoint pivot)
         {
+            Debug.Log("RecalculateSelectedElementGroups: GetElementSelection");
             return new MeshAndPositions(mesh, pivot);
         }
 

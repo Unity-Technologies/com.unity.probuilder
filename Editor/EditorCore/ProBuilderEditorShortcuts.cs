@@ -1,3 +1,6 @@
+#if UNITY_2021_2_OR_NEWER
+#define OVERLAYS_AVAILABLE
+#endif
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -33,6 +36,7 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.selectMode = SelectMode.Face;
 		}
 
+#if !OVERLAYS_AVAILABLE
 		[Shortcut("ProBuilder/Editor/Toggle Geometry Mode", typeof(SceneView), KeyCode.G)]
 		static void Toggle_ObjectElementMode()
 		{
@@ -48,5 +52,6 @@ namespace UnityEditor.ProBuilder
 			if(ProBuilderEditor.instance != null)
 				ProBuilderEditor.instance.ToggleSelectionMode();
 		}
+#endif
 	}
 }

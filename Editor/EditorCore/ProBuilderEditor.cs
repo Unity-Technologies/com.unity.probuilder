@@ -25,24 +25,29 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     public sealed class ProBuilderEditor : EditorWindow, IHasCustomMenu
     {
+        // REMOVE: moved to SelectionGUI
         // Match the value set in RectSelection.cs
         const float k_MouseDragThreshold = 6f;
 
+        // REMOVE: keep but backwards compatibility gets complicated if moved to SelectionGUI
         /// <value>
         /// Raised any time the ProBuilder editor refreshes the selection. This is called every frame when interacting with mesh elements, and after any mesh operation.
         /// </value>
         public static event Action<IEnumerable<ProBuilderMesh>> selectionUpdated;
 
+        // REMOVE: keep
         /// <value>
         /// Raised when the EditLevel is changed.
         /// </value>
         public static event Action<SelectMode> selectModeChanged;
 
+        // REMOVE: keep + move to context?
         /// <value>
         /// Called when vertex modifications are complete.
         /// </value>
         public static event Action<IEnumerable<ProBuilderMesh>> afterMeshModification;
 
+        // REMOVE: keep + move to context?
         /// <value>
         /// Called immediately prior to beginning vertex modifications. The ProBuilderMesh will be in un-altered state at this point (meaning ProBuilderMesh.ToMesh and ProBuilderMesh.Refresh have been called, but not Optimize).
         /// </value>
@@ -57,10 +62,6 @@ namespace UnityEditor.ProBuilder
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
 
-        [UserSetting("General", "Show Scene Info",
-            "Toggle the display of information about selected meshes in the Scene View.")]
-        static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
-
         [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
         internal static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
 
@@ -68,6 +69,15 @@ namespace UnityEditor.ProBuilder
             "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
         internal static Pref<bool> s_AllowNonManifoldActions =
             new Pref<bool>("editor.allowNonManifoldActions", false, SettingsScope.User);
+
+        [UserSetting("Graphics", "Show Hover Highlight", "Highlight the mesh element nearest to the mouse cursor.")]
+        static Pref<bool> s_ShowHoverHighlight =
+            new Pref<bool>("editor.showPreselectionHighlight", true, SettingsScope.User);
+
+        [UserSetting("General", "Show Scene Info",
+            "Toggle the display of information about selected meshes in the Scene View.")]
+        static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
+
 
         [UserSetting("Toolbar", "Toolbar Location",
             "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
@@ -145,9 +155,6 @@ namespace UnityEditor.ProBuilder
         SceneSelection m_HoveringPrevious = new SceneSelection();
         ScenePickerPreferences m_ScenePickerPreferences;
 
-        [UserSetting("Graphics", "Show Hover Highlight", "Highlight the mesh element nearest to the mouse cursor.")]
-        static Pref<bool> s_ShowHoverHighlight =
-            new Pref<bool>("editor.showPreselectionHighlight", true, SettingsScope.User);
 
         Vector2 m_InitialMousePosition;
         Rect m_MouseDragRect;
@@ -162,12 +169,14 @@ namespace UnityEditor.ProBuilder
         Vector3[][] m_VertexPositions;
         Vector3[] m_VertexOffset;
 
+        // REMOVE: [MOVED] SelectionGUI
         GUIContent m_SceneInfo = new GUIContent();
-
+        // REMOVE: [MOVED] SelectionGUI
         Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
 
         bool m_wasSelectingPath;
 
+        // REMOVE : [moved] SelectionGUI
         // All selected pb_Objects
         internal List<ProBuilderMesh> selection
         {
@@ -175,7 +184,6 @@ namespace UnityEditor.ProBuilder
         }
 
         Event m_CurrentEvent;
-
         internal bool isFloatingWindow { get; private set; }
 
         /// <value>
@@ -183,20 +191,12 @@ namespace UnityEditor.ProBuilder
         /// </value>
         public static SelectMode selectMode
         {
-            get
-            {
-                // for backwards compatibility reasons `Object` is returned when editor is closed
-                if (s_Instance != null)
-                    return ProBuilderToolManager.selectMode;
-                return SelectMode.Object;
-            }
+            get { return SelectionGUI.selectMode; }
 
-            set
-            {
-                toolManager?.SetSelectMode(value);
-            }
+            set { SelectionGUI.selectMode = value; }
         }
 
+//#if !OVERLAYS_AVAILABLE
         /// <summary>
         /// Set the <see cref="SelectMode"/> to the last used mesh element mode.
         /// </summary>
@@ -210,6 +210,24 @@ namespace UnityEditor.ProBuilder
         internal static void SyncEditorToolSelectMode()
         {
             toolManager?.ForwardBuiltinToolCheck();
+        }
+
+        /// <summary>
+        /// Toggles between the SelectMode values and updates the graphic handles as necessary.
+        /// </summary>
+        internal void ToggleSelectionMode()
+        {
+            ProBuilderToolManager.NextMeshSelectMode();
+            Refresh();
+        }
+//#endif
+        // REMOVE: possibly move here^
+        void OnSelectModeChanged()
+        {
+            Refresh();
+            if (selectModeChanged != null)
+                selectModeChanged(ProBuilderToolManager.selectMode);
+            Repaint();
         }
 
         static class SceneStyles
@@ -326,14 +344,6 @@ namespace UnityEditor.ProBuilder
                 s_Instance = null;
         }
 
-        void OnSelectModeChanged()
-        {
-            Refresh();
-            if (selectModeChanged != null)
-                selectModeChanged(ProBuilderToolManager.selectMode);
-            Repaint();
-        }
-
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
         {
             if(beforeMeshModification != null)
@@ -353,6 +363,7 @@ namespace UnityEditor.ProBuilder
             SceneView.RepaintAll();
         }
 
+        // REMOVE: [MOVED] to SelectionGUI
         void LoadSettings()
         {
             EditorApplication.delayCall += EditorHandleDrawing.ResetPreferences;
@@ -371,15 +382,6 @@ namespace UnityEditor.ProBuilder
             VertexTranslationInfoStyle.normal.background = EditorGUIUtility.whiteTexture;
             VertexTranslationInfoStyle.normal.textColor = new Color(1f, 1f, 1f, .6f);
             VertexTranslationInfoStyle.padding = new RectOffset(3, 3, 3, 0);
-        }
-
-        /// <summary>
-        /// Rebuild the mesh wireframe and selection caches.
-        /// </summary>
-        public static void Refresh(bool vertexCountChanged = true)
-        {
-            if(instance != null)
-                instance.UpdateSelection(vertexCountChanged);
         }
 
         void OnGUI()
@@ -463,10 +465,13 @@ namespace UnityEditor.ProBuilder
 
             m_CurrentEvent = Event.current;
 
+            // REMOVE: Draws top wireframe
             EditorHandleDrawing.DrawSceneHandles(SceneDragAndDropListener.isDragging ? SelectMode.None : selectMode);
 
+            // REMOVE: Draws selection highlights and handles (vertices, edges, faces). SelectionGUI?
             DrawHandleGUI(sceneView);
 
+            // REMOVE: switches back to Object mode on ESC hit
             if (m_CurrentEvent.type == EventType.KeyDown)
             {
                 // Escape isn't assignable as a shortcut
@@ -481,6 +486,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+            // REMOVE: early exist if we're in object select mode
             if (selectMode == SelectMode.Object)
                 return;
 
@@ -563,6 +569,7 @@ namespace UnityEditor.ProBuilder
             HandleMouseEvent(sceneView, m_DefaultControl);
         }
 
+        // REMOVE: called by OnSceneGUI
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
             if(m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID)
@@ -642,6 +649,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        // To MeshSelection?
         void SelectAll()
         {
             if (MeshSelection.selectedObjectCount < 1)
@@ -692,6 +700,7 @@ namespace UnityEditor.ProBuilder
             Refresh();
         }
 
+        // To MeshSelection?
         void DeselectAll()
         {
             if (MeshSelection.selectedObjectCount < 1)
@@ -728,6 +737,7 @@ namespace UnityEditor.ProBuilder
             Refresh();
         }
 
+        // To MeshSelection
         void InvertSelection()
         {
             if (MeshSelection.selectedObjectCount < 1)
@@ -794,6 +804,7 @@ namespace UnityEditor.ProBuilder
             Refresh();
         }
 
+        // REMOVE: called by HandleMouseEvent
         void DoubleClick(Event e)
         {
             var mesh = EditorSceneViewPicker.DoMouseClick(m_CurrentEvent, selectMode, m_ScenePickerPreferences);
@@ -829,6 +840,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        // REMOVE: SelectionGUI class. Called in OnSceneGUI - Can't move just to context as otherwise it's not backwards compatible
         void DrawHandleGUI(SceneView sceneView)
         {
             if (sceneView != SceneView.lastActiveSceneView)
@@ -851,6 +863,10 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
+
+            // TODO:
+            // Move this and DoElementModeToolbar to separate method and call at the end. Replace
+            // this whole method with SelectionGUI.DrawHandlesGUI()(
             using (new HandleGUI())
             {
                 int screenWidth = (int)sceneView.position.width;
@@ -921,15 +937,17 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+
+        // REMOVE: [MOVED] move to SelectionGUI
         /// <summary>
-        /// Toggles between the SelectMode values and updates the graphic handles as necessary.
+        /// Rebuild the mesh wireframe and selection caches.
         /// </summary>
-        internal void ToggleSelectionMode()
+        public static void Refresh(bool vertexCountChanged = true)
         {
-            ProBuilderToolManager.NextMeshSelectMode();
-            Refresh();
+            SelectionGUI.Refresh();
         }
 
+        // REMOVE: [MOVED] move to SelectionGUI
         void UpdateSelection(bool selectionChanged = true)
         {
             UpdateMeshHandles(selectionChanged);
@@ -943,6 +961,25 @@ namespace UnityEditor.ProBuilder
             SceneView.RepaintAll();
         }
 
+        // REMOVE: move to SelectionGUI
+        internal void ClearElementSelection()
+        {
+            foreach (ProBuilderMesh pb in selection)
+                pb.ClearSelection();
+
+            m_Hovering.Clear();
+        }
+
+        // REMOVE: move to SelectionGUI
+        void OnObjectSelectionChanged()
+        {
+            m_Hovering.Clear();
+            UpdateSelection();
+            SetOverrideWireframe(true);
+            Repaint();
+        }
+
+        // REMOVE: [MOVED] move to SelectionGUI
         internal static void UpdateMeshHandles(bool selectionOrVertexCountChanged = true)
         {
             if (!s_Instance)
@@ -959,6 +996,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        // REMOVE: [MOVED] SelectionGUI
         void UpdateSceneInfo()
         {
             m_SceneInfo.text = string.Format(
@@ -973,22 +1011,6 @@ namespace UnityEditor.ProBuilder
                     MeshSelection.selectedVertexCount.ToString());
         }
 
-        internal void ClearElementSelection()
-        {
-            foreach (ProBuilderMesh pb in selection)
-                pb.ClearSelection();
-
-            m_Hovering.Clear();
-        }
-
-        void OnObjectSelectionChanged()
-        {
-            m_Hovering.Clear();
-            UpdateSelection();
-            SetOverrideWireframe(true);
-            Repaint();
-        }
-
 #if OVERLAYS_AVAILABLE
         void OnActiveContextChanged()
         {
@@ -997,6 +1019,7 @@ namespace UnityEditor.ProBuilder
         }
 #endif
 
+        // REMOVE: SelectionGUI possibly as this controls handle rendering
         /// <summary>
         /// Hide the default unity wireframe renderer
         /// </summary>
@@ -1017,6 +1040,7 @@ namespace UnityEditor.ProBuilder
             SceneView.RepaintAll();
         }
 
+        // REMOVE: ProGrids
         /// <summary>
         /// Called from ProGrids.
         /// </summary>
@@ -1045,6 +1069,7 @@ namespace UnityEditor.ProBuilder
             UpdateSelection();
         }
 
+        // REMOVE: ProGrids
         void ProGridsToolbarOpen(bool menuOpen)
         {
             bool active = ProGridsInterface.IsActive();

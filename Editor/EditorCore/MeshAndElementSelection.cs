@@ -68,8 +68,9 @@ namespace UnityEditor.ProBuilder
 
         public static List<ElementGroup> GetElementGroups(ProBuilderMesh mesh, bool collectCoincident)
         {
+            Debug.Log("RecalculateSelectedElementGroups: GetElementGroups");
             var groups = new List<ElementGroup>();
-            var selectMode = ProBuilderEditor.selectMode;
+            var selectMode = SelectionGUI.selectMode;
 
             if (selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.TextureVertex))
             {

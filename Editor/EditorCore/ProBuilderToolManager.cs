@@ -11,6 +11,7 @@ using UnityEditor.EditorTools;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using UnityEngine.ProBuilder;
+using Debug = UnityEngine.Debug;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -36,6 +37,7 @@ namespace UnityEditor.ProBuilder
                 if (value.IsMeshElementMode())
                     s_LastMeshSelectMode.SetValue(value);
                 s_SelectMode.SetValue(value);
+                Debug.Log("SelectMode set to: " + value);
                 ProBuilderSettings.Save();
                 if (selectModeChanged != null)
                     selectModeChanged();

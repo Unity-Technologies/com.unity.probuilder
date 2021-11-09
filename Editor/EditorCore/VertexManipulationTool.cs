@@ -192,6 +192,7 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+            Debug.Log("VertexManipulationTool vert count: " + MeshSelection.selectedVertexCount);
             if(MeshSelection.selectedVertexCount == 0)
                 return;
 
