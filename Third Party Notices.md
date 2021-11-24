@@ -1,32 +1,27 @@
-# Third-party code & licenses
-
-Third-party code and licenses used in ProBuilder.
-
-Where applicable links to ports & forks are also listed (original project
-is always listed first).
-
----
+This package contains third-party software components governed by the license(s) indicated below:
 
 ## Poly2Tri
+Component Name: Poly2Tri
 
-- https://github.com/greenm01/poly2tri
-- https://github.com/MaulingMonkey/poly2tri-cs
-- https://github.com/procore3d/poly2tri-cs
+License Type: 3- Clause BSD
 
-Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors
+Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors 
 http://code.google.com/p/poly2tri/
 
-All rights reserved.
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+Link to component:
+https://github.com/greenm01/poly2tri
+https://github.com/MaulingMonkey/poly2tri-cs
+https://github.com/procore3d/poly2tri-cs
 
-* Redistributions of source code must retain the above copyright notice,
+All rights reserved. 
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, 
   this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-* Neither the name of Poly2Tri nor the names of its contributors may be
-  used to endorse or promote products derived from this software without
+* Redistributions in binary form must reproduce the above copyright notice, 
+  this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Poly2Tri nor the names of its contributors may be 
+  used to endorse or promote products derived from this software without 
   specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -45,10 +40,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## csg.js
 
-- https://github.com/evanw/csg.js
-- https://github.com/karl-/pb_CSG
+Component Name: csg.js
+
+License Type: MIT
 
 Copyright (c) 2011 Evan Wallace (http://madebyevan.com/)
+https://github.com/evanw/csg.js
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Component Name: csg.js
+
+License Type: MIT
+
+Copyright (c) 2015 Karl Henkel
+https://github.com/karl-/pb_CSG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -72,12 +94,12 @@ SOFTWARE.
 
 ## KdTree
 
-- https://github.com/codeandcats/KdTree
-- https://github.com/procore3d/KdTree
+Component Name: KdTree
 
-The MIT License (MIT)
+License Type: MIT
 
 Copyright (c) 2013 codeandcats
+https://github.com/codeandcats/KdTree
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -101,11 +123,12 @@ SOFTWARE.
 
 ## pb_Stl
 
-- https://github.com/karl-/pb_Stl
+Component Name: pb_Stl
 
-The MIT License (MIT)
+License Type: 
 
 Copyright (c) 2016 Karl Henkel
+https://github.com/karl-/pb_Stl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -129,15 +152,29 @@ SOFTWARE.
 
 ## Unity Utilities
 
-- https://github.com/CapnRat/Unity-Utilities
+Component Name: Unity Utilities
 
-The MIT License (MIT)
+License Type: MIT
 
 Copyright (c) 2016 Shawn White
+https://github.com/CapnRat/Unity-Utilities
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to deal 
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+SOFTWARE.
 
