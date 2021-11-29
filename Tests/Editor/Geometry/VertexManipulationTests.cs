@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using System.Collections;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.TestTools;
@@ -11,8 +12,8 @@ using UObject = UnityEngine.Object;
 
 class VertexManipulationTests
 {
-    [Test]
-    public static void ExtrudeOrthogonally_OneElementManyTimes_NoYOffsetAccumulates()
+    [UnityTest]
+    public static IEnumerator ExtrudeOrthogonally_OneElementManyTimes_NoYOffsetAccumulates()
     {
         // Generate single face plane
         var pb = ShapeGenerator.GeneratePlane(PivotLocation.Center, 1f, 1f, 0, 0, Axis.Up);
@@ -51,6 +52,28 @@ class VertexManipulationTests
             var bounds = SceneView.focusedWindow.rootVisualElement.worldBound;
             var mousePos = (bounds.size * 0.5f + bounds.position) + new Vector2Int(1, 1);
 
+            e = new UnityEngine.Event()
+            {
+                type = EventType.MouseDown,
+                mousePosition = mousePos,
+                modifiers = EventModifiers.None,
+                clickCount = 1,
+                delta = Vector2.zero,
+            };
+            sceneView.SendEvent(e);
+
+            e = new UnityEngine.Event()
+            {
+                type = EventType.MouseUp,
+                mousePosition = mousePos,
+                modifiers = EventModifiers.None,
+                clickCount = 0,
+                delta = Vector2.zero,
+            };
+            sceneView.SendEvent(e);
+
+            yield return null;
+
             const int k_ExtrudeCount = 100;
             for (int i = 0; i < k_ExtrudeCount; i++)
             {
@@ -80,6 +103,8 @@ class VertexManipulationTests
                 e.mousePosition = mousePos;
                 e.delta = Vector2.zero;
                 sceneView.SendEvent(e);
+
+                yield return null;
             }
 
             // Check that our face count is correct after all extrusions
