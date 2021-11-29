@@ -317,7 +317,7 @@ namespace UnityEditor.ProBuilder
                             goto default;
 
                         Edge[] newEdges = mesh.Extrude(mesh.selectedEdges,
-                                0.0001f,
+                                0f,
                                 s_ExtrudeEdgesAsGroup,
                                 ProBuilderEditor.s_AllowNonManifoldActions);
 
@@ -333,7 +333,7 @@ namespace UnityEditor.ProBuilder
 
                         if (len > 0)
                         {
-                            mesh.Extrude(mesh.selectedFacesInternal, s_ExtrudeMethod, 0.0001f);
+                            mesh.Extrude(mesh.selectedFacesInternal, s_ExtrudeMethod, 0f);
                             mesh.SetSelectedFaces(mesh.selectedFacesInternal);
                             ef += len;
                         }

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1368465] Fixed issue where extruding an element orthogonally to their normal would result in some additional extrusion along the normal.
 - [case: 1369443] Fixed SerializedObjectNotCreatableException errors in the console with Shape Tool.
 - [case: 1334017] Fixed errors while exporting a PBShape using FBX Exporter and cleaning export.
 - [case: 1332226] Fixed issue where some Gizmos menu items would be missing in projects that have ProBuilder package installed.
