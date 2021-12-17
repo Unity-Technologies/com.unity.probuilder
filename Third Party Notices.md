@@ -45,6 +45,8 @@ Component Name: csg.js
 License Type: MIT
 
 Copyright (c) 2011 Evan Wallace (http://madebyevan.com/)
+
+Link to component:
 https://github.com/evanw/csg.js
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -70,6 +72,8 @@ Component Name: csg.js
 License Type: MIT
 
 Copyright (c) 2015 Karl Henkel
+
+Link to component:
 https://github.com/karl-/pb_CSG
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -99,6 +103,8 @@ Component Name: KdTree
 License Type: MIT
 
 Copyright (c) 2013 codeandcats
+
+Link to component:
 https://github.com/codeandcats/KdTree
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -125,9 +131,11 @@ SOFTWARE.
 
 Component Name: pb_Stl
 
-License Type: 
+License Type: MIT
 
 Copyright (c) 2016 Karl Henkel
+
+Link to component:
 https://github.com/karl-/pb_Stl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -157,6 +165,8 @@ Component Name: Unity Utilities
 License Type: MIT
 
 Copyright (c) 2016 Shawn White
+
+Link to component:
 https://github.com/CapnRat/Unity-Utilities
 
 
