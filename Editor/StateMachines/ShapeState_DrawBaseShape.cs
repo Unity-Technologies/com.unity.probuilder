@@ -91,6 +91,7 @@ namespace UnityEditor.ProBuilder
 
         public void CreateLastShape()
         {
+            tool.handleSelectionChange = false;
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType, (PivotLocation)DrawShapeTool.s_LastPivotLocation.value).GetComponent<ProBuilderShape>();
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
