@@ -20,6 +20,7 @@ Debug/**
 Debug.meta
 art_source~
 UpgradeProjects~
+doc-validation~
 
 # Internal package files
 QAReport.md

@@ -3,17 +3,29 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [door](../manual/Door.html) shape.
+    /// </summary>
     [Shape("Door")]
     public class Door : Shape
     {
+        /// <summary>
+        /// Sets the height of the top of the door frame in meters.
+        /// The default value is 0.5. The minimum value is 0.01.
+        /// </summary>
         [Min(0.01f)]
         [SerializeField]
         float m_DoorHeight = .5f;
 
+        /// <summary>
+        /// Sets the width of the door frame on the sides in meters.
+        /// The default value is 0.75. The minimum value is 0.01.
+        /// </summary>
         [Min(0.01f)]
         [SerializeField]
         float m_LegWidth = .75f;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Door)
@@ -23,6 +35,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var upDir = Vector3.Scale(rotation * Vector3.up, size) ;

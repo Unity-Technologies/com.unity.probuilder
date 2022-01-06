@@ -1,6 +1,6 @@
 # ![Extrude Edges icon](images/icons/Edge_Extrude.png) Extrude Edges
 
-The __Extrude Edges__ action pushes a new edge out from each selected edge, connected by a new face for each edge. This action only works on open edges (that is, an edge that has no connected face on one side). However, you can override this restriction with the **Manifold Edge Extrusion** option.
+The __Extrude Edges__ action pushes a new edge out from each selected edge, connected by a new face for each edge. This action only works on open edges (that is, an edge that has no connected face on one side). However, you can override this restriction with the [Allow non-manifold actions](preferences.md#bridge) option.
 
 Each new face follows the direction of the normals of the face that is adjacent to the selected edge.
 

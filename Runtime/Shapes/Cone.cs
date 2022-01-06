@@ -3,18 +3,30 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [cone](../manual/Cone.html) shape.
+    /// </summary>
     [Shape("Cone")]
     public class Cone : Shape
     {
+        /// <summary>
+        /// Sets the number of sides for the cone. The more sides you use, the smoother the sides of the cone become.
+        /// The default value is 6. Valid values range from 3 to 64.
+        /// </summary>
         [Range(3,64)]
         [SerializeField]
         internal int m_NumberOfSides = 6;
 
         float m_Radius = 0;
 
+        /// <summary>
+        /// Determines whether to smooth the edges of the polygons.
+        /// This is enabled by default.
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Cone)
@@ -26,6 +38,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             var upLocalAxis = rotation * Vector3.up;
@@ -40,6 +53,7 @@ namespace UnityEngine.ProBuilder.Shapes
             return bounds;
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);

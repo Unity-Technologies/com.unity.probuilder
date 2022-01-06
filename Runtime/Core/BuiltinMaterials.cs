@@ -5,52 +5,54 @@ using System.Reflection;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Access the built-in materials that ProBuilder uses. In the editor, see
-    /// <see cref="UnityEditor.ProBuilder.EditorMaterialUtility"/> for access to the full array of provided materials
+    /// Provides access to the built-in materials that ProBuilder uses. In the Editor, see
+    /// <see cref="UnityEditor.ProBuilder.EditorMaterialUtility"/> for access to the full array of materials
     /// and shaders.
     /// </summary>
     public static class BuiltinMaterials
     {
         static bool s_IsInitialized;
 
-        /// <value>
-        /// A shader used to highlight face selections.
-        /// </value>
+        /// <summary>
+        /// Represents the shader used to highlight <see cref="Face" /> selections.
+        /// </summary>
         public const string faceShader = "Hidden/ProBuilder/FaceHighlight";
 
-        /// <value>
-        /// A shader used to highlight edge selections.
-        /// </value>
+        /// <summary>
+        /// Represents the shader used to highlight <see cref="Edge" /> selections.
+        /// </summary>
         /// <remarks>
-        /// If the graphics device does not support geometry shaders, this shader will not be compiled.
-        /// Use <see cref="wireShader"/> in that case.
+        /// If the graphics device does not support geometry shaders, this shader doesn't compile.
+        /// In that case, use <see cref="wireShader"/>.
         /// </remarks>
         public const string lineShader = "Hidden/ProBuilder/LineBillboard";
 
-        /// <value>
-        /// A line shader for use with CreateEdgeBillboardMesh when geometry shaders are not available. Prefer to use
-        /// <see cref="lineShader"/> where possible.
-        /// </value>
+        /// <summary>
+        /// Represents a line shader for use with `CreateEdgeBillboardMesh` when geometry
+        /// shaders are not available. Use <see cref="lineShader"/> where possible.
+        /// </summary>
         public const string lineShaderMetal = "Hidden/ProBuilder/LineBillboardMetal";
 
-        /// <value>
-        /// A shader used to draw camera facing billboards from a single vertex.
-        /// </value>
+        /// <summary>
+        /// Represents the shader used to draw camera facing billboards from a single vertex.
+        /// </summary>
         /// <remarks>
-        /// If the graphics device does not support geometry shaders, this shader will not be compiled.
-        /// Use <see cref="dotShader"/> in that case.
+        /// If the graphics device does not support geometry shaders, this shader doesn't compile.
+        /// In that case, use <see cref="dotShader"/>.
         /// </remarks>
         public const string pointShader = "Hidden/ProBuilder/PointBillboard";
 
-        /// <value>
-        /// A fallback shader used to draw lines when the graphics device does not support geometry shaders.
-        /// </value>
+        /// <summary>
+        /// Represents the fallback shader used to draw lines when the graphics device
+        /// does not support geometry shaders.
+        /// </summary>
         /// <seealso cref="lineShader"/>
         public const string wireShader = "Hidden/ProBuilder/FaceHighlight";
 
-        /// <value>
-        /// A fallback shader used to draw billboards when the graphics device does not support geometry shaders.
-        /// </value>
+        /// <summary>
+        /// Represents a fallback shader used to draw billboards when the graphics
+        /// device does not support geometry shaders.
+        /// </summary>
         /// <seealso cref="pointShader"/>
         public const string dotShader = "Hidden/ProBuilder/VertexShader";
 
@@ -122,8 +124,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Return true if the current graphics device supports geometry shaders, and false if it does not.
+        /// Tests whether the current graphics device supports geometry shaders.
         /// </summary>
+        /// <returns>True if the current graphics device supports geometry shaders, and false if it does not.</returns>
         public static bool geometryShadersSupported
         {
             get
@@ -133,9 +136,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// The default ProBuilder material.
-        /// </value>
+        /// <summary>
+        /// Represents the default ProBuilder material.
+        /// </summary>
         /// <remarks>
         /// When using the Scriptable Render Pipeline this returns the default material for that pipeline.
         /// </remarks>
@@ -148,9 +151,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Shader used in selection picking functions.
-        /// </value>
+        /// <summary>
+        /// Represents the shader used in selection picking functions.
+        /// </summary>
         internal static Shader selectionPickerShader
         {
             get
@@ -160,9 +163,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Material used for face picking functions.
-        /// </value>
+        /// <summary>
+        /// Represents the material used for face picking functions.
+        /// </summary>
         internal static Material facePickerMaterial
         {
             get
@@ -172,9 +175,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Material used for vertex picking functions.
-        /// </value>
+        /// <summary>
+        /// Represents the material used for vertex picking functions.
+        /// </summary>
         internal static Material vertexPickerMaterial
         {
             get
@@ -184,9 +187,9 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Material used for edge picking functions.
-        /// </value>
+        /// <summary>
+        /// Represents the material used for edge picking functions.
+        /// </summary>
         internal static Material edgePickerMaterial
         {
             get
@@ -196,9 +199,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// The ProBuilder "Trigger" entity type material.
-        /// </value>
+        /// <summary>
+        /// Represents the material used for the ProBuilder <see cref="Entity_Trigger">Trigger</see>
+        /// entity type material.
+        /// </summary>
         internal static Material triggerMaterial
         {
             get
@@ -208,9 +212,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// The ProBuilder "Collider" entity type material.
-        /// </value>
+        /// <summary>
+        /// Represents the material used for the ProBuilder <see cref="Entity_Trigger">Collider</see>
+        /// entity type material.
+        /// </summary>
         internal static Material colliderMaterial
         {
             get
@@ -221,7 +226,8 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// The ProBuilder "NoDraw" material. Faces with this material are hidden when the game is played.
+        /// Represents the ProBuilder "NoDraw" material. Faces with this material
+        /// are hidden when the game is played.
         /// </summary>
         [Obsolete("NoDraw is no longer supported.")]
         internal static Material noDrawMaterial
@@ -234,7 +240,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Default Unity diffuse material.
+        /// Represents the default Unity diffuse material.
         /// </summary>
         internal static Material GetLegacyDiffuse()
         {
@@ -284,7 +290,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// An unlit vertex color material.
+        /// Represents an unlit vertex color material.
         /// </summary>
         internal static Material unlitVertexColor
         {

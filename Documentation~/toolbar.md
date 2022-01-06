@@ -1,15 +1,16 @@
 # The ProBuilder toolbar
 
-You can open the **ProBuilder** toolbar from Unity’s top menu: __Tools__ > __ProBuilder__ > __ProBuilder Window__. 
+You can open the **ProBuilder** toolbar from Unity’s top menu: __Tools__ > __ProBuilder__ > __ProBuilder Window__.
 
 ![The ProBuilder toolbar, displaying text buttons in a dockable container](images/toolbar_main.png)
 
 When you open the main **ProBuilder** toolbar, the [Edit mode toolbar](edit-mode-toolbar.md) also opens in the active Scene view, where you can see and change the [current editing mode](modes.md).
 
-Use the **ProBuilder** toolbar to access Editor windows, selection, creation, and editing tools for Meshes. 
+Use the **ProBuilder** toolbar to access Editor windows, selection, creation, and editing tools for Meshes.
 
 
 
+<a name="category"></a>
 
 ## Tool categories
 
@@ -56,7 +57,6 @@ Some actions (such as [Extrude](Face_Extrude.md), [Collapse](Vert_Collapse.md), 
 
 ![Options for Select Material tool](images/pb_options.png)
 
-For example, the [Select by Material](Selection_SelectByMaterial.md) action allows you to specify whether ProBuilder limits the new selection to match only faces on the currently selected object or faces on any object in the scene. 
+For example, the [Select by Material](Selection_SelectByMaterial.md) action allows you to specify whether ProBuilder limits the new selection to match only faces on the currently selected object or faces on any object in the scene.
 
 > **Note:** The documentation for each action includes information about any options.
-
