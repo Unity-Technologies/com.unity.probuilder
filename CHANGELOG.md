@@ -10,9 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Bug Fixes
+
+- [case: 1389642] Fixed Grid snapping not working properly with EditShape Tool.
+
 ### Changes
 
-* Updates to API documentation
+- Updates to API documentation
 
 ## [5.0.4] - 2021-06-08
 
