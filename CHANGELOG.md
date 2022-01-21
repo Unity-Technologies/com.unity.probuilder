@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- [case: 1395936] Fixed Editor crash when opening a EditorWindow dropdown (MacOS).
+
 ### Changes
 
 * Updates to API documentation
