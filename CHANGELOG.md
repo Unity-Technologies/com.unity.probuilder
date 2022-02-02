@@ -1,6 +1,3 @@
----
-uid: pb-changelog
----
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -10,21 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-- [case: 1395936] Fixed Editor crash when opening a EditorWindow dropdown (MacOS).
-
-### Changes
-
-* Updates to API documentation
-
-## [5.0.4] - 2021-06-08
-
 ### Bug Fixes
 
+- [case: 1395936] Fixed Editor crash when opening a EditorWindow dropdown (MacOS).
+- [case: 1389642] Fixed Grid snapping not working properly with EditShape Tool.
 - [case: 1368465] Fixed issue where extruding an element orthogonally to their normal would result in some additional extrusion along the normal.
 - [case: 1369443] Fixed SerializedObjectNotCreatableException errors in the console with Shape Tool.
-- [case: 1334017] Fixed errors while exporting a PBShape using FBX Exporter and cleaning export.
-- [case: 1332226] Fixed issue where some Gizmos menu items would be missing in projects that have ProBuilder package installed.
-- [case: 1324374] Fixed incorrect vertex/edge/face rect selection when mesh's parent is rotated and/or scaled.
 - [case: 1348463] Fixed issue where instantiating a prefab would not build UV2s.
 - [case: 1348434] Added more detailed instructions in the missing UV2 warning log.
 - Fix some styling issues with Overlays in 21.2
@@ -32,7 +20,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Updates to API documentation
 - Cylinder shape is allowed to have 3 sides, and can have an odd number of sides.
+
+## [5.0.4] - 2021-06-08
+
+### Bug Fixes
+
+- [case: 1334017] Fixed errors while exporting a PBShape using FBX Exporter and cleaning export.
+- [case: 1332226] Fixed issue where some Gizmos menu items would be missing in projects that have ProBuilder package installed.
+- [case: 1324374] Fixed incorrect vertex/edge/face rect selection when mesh's parent is rotated and/or scaled.
 
 ## [5.0.3] - 2021-04-01
 
