@@ -3,19 +3,22 @@
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Functions for picking mesh elements in a view. Can either render a texture to test, or cast a ray. Prefer this over calling SelectionPickerRenderer directly.
+    /// Provides functions for picking mesh elements in a view. This allows the Editor to either render a
+    /// texture to test, or cast a ray.
     /// </summary>
     public static class SelectionPicker
     {
         /// <summary>
-        /// Pick the vertex indexes contained within a rect.
+        /// Picks the vertex indices contained within a rect (rectangular selection).
         /// </summary>
-        /// <param name="cam"></param>
-        /// <param name="rect">Rect is in GUI space, where 0,0 is top left of screen, width = cam.pixelWidth / pointsPerPixel.</param>
-        /// <param name="selectable">The objects to hit test.</param>
-        /// <param name="options">Culling options.</param>
-        /// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
-        /// <returns>A dictionary of ProBuilderMesh and sharedIndexes that are in the selection rect. To get triangle indexes access the pb.sharedIndexes[index] array.</returns>
+        /// <param name="cam">Use this camera to evaluate whether any vertices are inside the `rect`.</param>
+        /// <param name="rect">Rect is in GUI space, where 0,0 is the top left of the screen, and `width = cam.pixelWidth / pointsPerPixel`.</param>
+        /// <param name="selectable">The collection of objects to check for selectability. ProBuilder verifies whether these objects fall inside the `rect`.</param>
+        /// <param name="options">The options that define whether to include mesh elements that are hidden and whether to consider elements that only partially fall inside the `rect`.</param>
+        /// <param name="pixelsPerPoint">
+        /// Scale the render texture to match `rect` coordinates. By default, ProBuilder doesn't scale the texture (the default value is set to 1.0),
+        /// but you can specify <see cref="UnityEditor.EditorGUIUtility.pixelsPerPoint" /> if you need to use a different number of screen pixels per point.</param>
+        /// <returns>A dictionary of ProBuilderMesh and sharedIndexes that are in the selection `rect`. To get triangle indexes, use the <see cref="ProBuilderMesh.sharedVertices">sharedVertices</see> array.</returns>
         public static Dictionary<ProBuilderMesh, HashSet<int>> PickVerticesInRect(
             Camera cam,
             Rect rect,
@@ -71,14 +74,16 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Pick faces contained within rect.
+        /// Picks the <see cref="Face" /> objects contained within a rect (rectangular selection).
         /// </summary>
-        /// <param name="cam"></param>
-        /// <param name="rect">Rect is in GUI space, where 0,0 is top left of screen, width = cam.pixelWidth / pointsPerPixel.</param>
-        /// <param name="selectable"></param>
-        /// <param name="options"></param>
-        /// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pixelsPerPoint.</param>
-        /// <returns></returns>
+        /// <param name="cam">Use this camera to evaluate whether any face object(s) are inside the `rect`.</param>
+        /// <param name="rect">Rect is in GUI space, where 0,0 is the top left of the screen, and `width = cam.pixelWidth / pointsPerPixel`.</param>
+        /// <param name="selectable">The collection of objects to check for selectability. ProBuilder verifies whether these objects fall inside the `rect`.</param>
+        /// <param name="options">The options that define whether to include mesh elements that are hidden and whether to consider elements that only partially fall inside the `rect`.</param>
+        /// <param name="pixelsPerPoint">
+        /// Scale the render texture to match `rect` coordinates. By default, ProBuilder doesn't scale the texture (the default value is set to 1.0),
+        /// but you can specify <see cref="UnityEditor.EditorGUIUtility.pixelsPerPoint" /> if you need to use a different number of screen pixels per point.</param>
+        /// <returns>A dictionary of ProBuilderMesh and Face objects that are in the selection `rect`. </returns>
         public static Dictionary<ProBuilderMesh, HashSet<Face>> PickFacesInRect(
             Camera cam,
             Rect rect,
@@ -204,14 +209,16 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Pick the edges contained within a rect.
+        /// Picks the <see cref="Edge" /> objects contained within a rect (rectangular selection).
         /// </summary>
-        /// <param name="cam"></param>
-        /// <param name="rect">Rect is in GUI space, where 0,0 is top left of screen, width = cam.pixelWidth / pointsPerPixel.</param>
-        /// <param name="selectable">The ProBuilder mesh objects to consider when hit testing.</param>
-        /// <param name="options">Culling options.</param>
-        /// <param name="pixelsPerPoint">Scale the render texture to match rect coordinates. Generally you'll just pass in EditorGUIUtility.pointsPerPixel.</param>
-        /// <returns>A dictionary of ProBuilderMesh and edges that are in the selection rect.</returns>
+        /// <param name="cam">Use this camera to evaluate whether any edge object(s) are inside the `rect`.</param>
+        /// <param name="rect">Rect is in GUI space, where 0,0 is the top left of the screen, and `width = cam.pixelWidth / pointsPerPixel`.</param>
+        /// <param name="selectable">The collection of objects to check for selectability. ProBuilder verifies whether these objects fall inside the `rect`.</param>
+        /// <param name="options">The options that define whether to include mesh elements that are hidden and whether to consider elements that only partially fall inside the `rect`.</param>
+        /// <param name="pixelsPerPoint">
+        /// Scale the render texture to match `rect` coordinates. By default, ProBuilder doesn't scale the texture (the default value is set to 1.0),
+        /// but you can specify <see cref="UnityEditor.EditorGUIUtility.pixelsPerPoint" /> if you need to use a different number of screen pixels per point.</param>
+        /// <returns>A dictionary of ProBuilderMesh and Edge objects that are in the selection `rect`. </returns>
         public static Dictionary<ProBuilderMesh, HashSet<Edge>> PickEdgesInRect(
             Camera cam,
             Rect rect,
@@ -290,12 +297,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Returns the first hit face on a ProBuilder mesh given a screen position and camera.
+        /// Returns the first face on a ProBuilder mesh that collides with the ray cast by ProBuilder, given a specific screen position and camera.
         /// </summary>
         /// <param name="camera">The camera to use when calculating the raycast.</param>
         /// <param name="mousePosition">The screen position to use when calculating the raycast.</param>
-        /// <param name="pickable">The ProBuilderMesh to test for ray/face intersection.</param>
-        /// <returns>A Face if successful, null if the hit test failed.</returns>
+        /// <param name="pickable">The ProBuilderMesh to test for the ray/face intersection.</param>
+        /// <returns>The intersected face if successful; null if the ray failed to hit a face.</returns>
         public static Face PickFace(Camera camera, Vector3 mousePosition, ProBuilderMesh pickable)
         {
             Ray ray = camera.ScreenPointToRay(mousePosition);

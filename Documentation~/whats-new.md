@@ -13,7 +13,7 @@ The main updates in this release include:
 
 ### Updated
 
-* The new [Shape](shape-tool.md) tool has been completely rebuilt as an [EditorTool](https://docs.unity3d.com/ScriptReference/EditorTools.EditorTool.html). 
+* The new [Shape](shape-tool.md) tool has been completely rebuilt as an [EditorTool](https://docs.unity3d.com/ScriptReference/EditorTools.EditorTool.html).
 * The [Poly Shape](polyshape.md) tool is now an [EditorTool](https://docs.unity3d.com/ScriptReference/EditorTools.EditorTool.html).
 
 ### Fixed
@@ -21,5 +21,4 @@ The main updates in this release include:
 * Fixed Undo so that it only reverts the last action, instead of all actions performed.
 * Selection, picking and highlight shaders have been updated to be compatible with SRPs as well as with orthographic cameras (there are several bug fixes that directly support these adjustments).
 
-For a full list of changes and updates in this version, see the [ProBuilder package changelog](../changelog/CHANGELOG.html).
-
+For a full list of changes and updates in this version, see the [ProBuilder package changelog](xref:pb-changelog).

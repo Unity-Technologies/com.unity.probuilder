@@ -13,9 +13,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
     public static class SurfaceTopology
     {
         /// <summary>
-        /// Convert a selection of faces from n-gons to triangles.
-        /// <br />
-        /// If a face is successfully converted to triangles, each new triangle is created as a separate face and the original face is deleted.
+        /// Converts a selection of faces from n-gons to triangles.
+        ///
+        /// When this method successfully converts a face to triangles, it creates each new triangle as a separate face
+        /// and deletes the original face.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="faces">The faces to convert from quads to triangles.</param>
@@ -78,11 +79,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Attempt to extract the winding order for a face.
+        /// Returns the [winding order](../manual/gloss.html#winding) for a face.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="face">The face to test.</param>
-        /// <returns>The winding order if successfull, unknown if not.</returns>
+        /// <returns>The winding order if successful; <see cref="WindingOrder.Unknown"/> if not.</returns>
         public static WindingOrder GetWindingOrder(this ProBuilderMesh mesh, Face face)
         {
             Vector2[] p = Projection.PlanarProject(mesh.positionsInternal, face.distinctIndexesInternal);
@@ -102,11 +103,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Return the winding order of a set of ordered points.
+        /// Returns the winding order for a set of ordered points.
         /// </summary>
         /// <remarks>http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order</remarks>
-        /// <param name="points">A path of points in 2d space.</param>
-        /// <returns>The winding order if found, WindingOrder.Unknown if not.</returns>
+        /// <param name="points">A path of points in 2D space.</param>
+        /// <returns>The winding order if found; <see cref="WindingOrder.Unknown"/> if not.</returns>
         public static WindingOrder GetWindingOrder(IList<Vector2> points)
         {
             if (points == null)
@@ -138,10 +139,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// . |____\|      |/____|
         /// ```
         /// ]]>
+        ///
+        /// This is the equivalent to the [Flip Face Edge](../manual/Face_FlipTri.html) action.
         /// </summary>
         /// <param name="mesh">The mesh that face belongs to.</param>
         /// <param name="face">The target face.</param>
-        /// <returns>True if successful, false if not. Operation will fail if face does not contain two triangles with exactly 2 shared vertices.</returns>
+        /// <returns>True if successful; false if not. This operation will fail if the face does not contain two triangles with exactly two shared vertices.</returns>
         public static bool FlipEdge(this ProBuilderMesh mesh, Face face)
         {
             if (mesh == null)
@@ -207,11 +210,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Ensure that all adjacent face normals are pointing in a uniform direction. This function supports multiple islands of connected faces, but it may not unify each island the same way.
+        /// Ensures that all adjacent face normals are pointing in a uniform direction.
+        /// This function supports multiple islands of connected faces, but it may not unify each island the same way.
+        ///
+        /// This is equivalent to the [Conform Normals (Faces)](../manual/Face_ConformNormals.html) action.
         /// </summary>
         /// <param name="mesh">The mesh that the faces belong to.</param>
         /// <param name="faces">The faces to make uniform.</param>
-        /// <returns>The state of the action.</returns>
+        /// <returns>The result of the action.</returns>
         public static ActionResult ConformNormals(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, faces);

@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEditor.ProBuilder;
 
+/// <summary>Internal class.</summary>
 [InitializeOnLoad]
 public class RegisterDebugDefines
 {

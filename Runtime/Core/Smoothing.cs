@@ -5,40 +5,43 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Utilities for working with smoothing groups. Smoothing groups are how ProBuilder defines hard and soft edges.
-    /// ProBuilder calculates vertex normals by first calculating the normal for every face, which in turn is applied to each
-    /// vertex that makes up the face. Afterwards, each vertex normal is averaged with coincident vertices belonging to the
-    /// same smoothing group.
+    /// Provides utilities for working with smoothing groups. ProBuilder uses smoothing groups to define hard and soft edges.
+    /// To calculate vertex normals, ProBuilder performs these tasks:
+    ///
+    /// 1. Calculates the normals for every face.
+    /// 2. Applies the results of those calculations to each vertex on the face.
+    /// 3. Averages each vertex normal with coincident vertices belonging to the same smoothing group.
+    /// 
     /// </summary>
     public static class Smoothing
     {
-        /// <value>
+        /// <summary>
         /// Faces with smoothingGroup = 0 are hard edges. Historically negative values were sometimes also written as hard edges.
-        /// </value>
+        /// </summary>
         internal const int smoothingGroupNone = 0;
 
-        /// <value>
+        /// <summary>
         /// Smoothing groups 1-24 are smooth.
-        /// </value>
+        /// </summary>
         internal const int smoothRangeMin = 1;
 
-        /// <value>
+        /// <summary>
         /// Smoothing groups 1-24 are smooth.
-        /// </value>
+        /// </summary>
         internal const int smoothRangeMax = 24;
 
-        /// <value>
+        /// <summary>
         /// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked smoothingGroupNone.
-        /// </value>
+        /// </summary>
         internal const int hardRangeMin = 25;
 
-        /// <value>
+        /// <summary>
         /// Smoothing groups 25-42 are hard. Note that this is soon to be obsolete, and generally hard faces should be marked smoothingGroupNone.
-        /// </value>
+        /// </summary>
         internal const int hardRangeMax = 42;
 
         /// <summary>
-        /// Get the first available unused smoothing group.
+        /// Returns the first available unused smoothing group.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <returns>An unused smoothing group.</returns>
@@ -70,21 +73,21 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Is the smooth group value considered smooth?
+        /// Tests whether the specified smoothing group is smooth.
         /// </summary>
-        /// <param name="index">The smoothing group to test.</param>
-        /// <returns>True if the smoothing group value is smoothed, false if not.</returns>
+        /// <param name="index">The ID of the smoothing group to test.</param>
+        /// <returns>True if the smoothing group value is smoothed; false otherwise.</returns>
         public static bool IsSmooth(int index)
         {
             return (index > smoothingGroupNone && (index < hardRangeMin || index > hardRangeMax));
         }
 
         /// <summary>
-        /// Generate smoothing groups for a set of faces by comparing adjacent faces with normal differences less than angleThreshold (in degrees).
+        /// Generates smoothing groups for a set of faces by comparing adjacent faces with normal differences less than `angleThreshold` (in degrees).
         /// </summary>
-        /// <param name="mesh">The source mesh.</param>
-        /// <param name="faces">Faces to be considered for smoothing.</param>
-        /// <param name="angleThreshold">The maximum angle difference in degrees between adjacent face normals for the shared edge to be considered smooth.</param>
+        /// <param name="mesh">The mesh to apply new smoothing groups to.</param>
+        /// <param name="faces">Faces to inspect for smoothing.</param>
+        /// <param name="angleThreshold">Set the maximum value to consider the shared edge smooth. This value is an angle in degrees that represents the difference between adjacent face normals. </param>
         public static void ApplySmoothingGroups(ProBuilderMesh mesh, IEnumerable<Face> faces, float angleThreshold)
         {
             ApplySmoothingGroups(mesh, faces, angleThreshold, null);

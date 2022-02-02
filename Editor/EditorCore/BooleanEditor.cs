@@ -331,15 +331,15 @@ namespace UnityEditor.ProBuilder
             switch (operation)
             {
                 case BooleanOperation.Union:
-                    result = Boolean.Union(lhs.gameObject, rhs.gameObject);
+                    result = CSG.Union(lhs.gameObject, rhs.gameObject);
                     break;
 
                 case BooleanOperation.Subtract:
-                    result = Boolean.Subtract(lhs.gameObject, rhs.gameObject);
+                    result = CSG.Subtract(lhs.gameObject, rhs.gameObject);
                     break;
 
                 default:
-                    result = Boolean.Intersect(lhs.gameObject, rhs.gameObject);
+                    result = CSG.Intersect(lhs.gameObject, rhs.gameObject);
                     break;
             }
 

@@ -16,6 +16,8 @@ namespace UnityEditor.ProBuilder
 {
     class DrawShapeTool : EditorTool
     {
+        internal const int k_MinOverlayWidth = 250;
+
         ShapeState m_CurrentState;
 
         internal ProBuilderShape m_LastShapeCreated = null;
@@ -24,6 +26,24 @@ namespace UnityEditor.ProBuilder
         internal bool m_IsShapeInit;
 
         Editor m_ShapeEditor;
+
+        bool m_HandleSelectionChanges = false;
+
+        internal bool handleSelectionChange
+        {
+            set
+            {
+                if(m_HandleSelectionChanges == value)
+                    return;
+
+                m_HandleSelectionChanges = value;
+                if(value)
+                    MeshSelection.objectSelectionChanged += OnSelectionChanged;
+                else
+                    MeshSelection.objectSelectionChanged -= OnSelectionChanged;
+
+            }
+        }
 
         // plane of interaction
         internal UnityEngine.Plane m_Plane;
@@ -122,8 +142,8 @@ namespace UnityEditor.ProBuilder
             };
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
-            MeshSelection.objectSelectionChanged += OnSelectionChanged;
             ToolManager.activeToolChanged += OnActiveToolChanged;
+            handleSelectionChange = true;
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -137,6 +157,10 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            handleSelectionChange = false;
+
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
             if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
@@ -145,7 +169,6 @@ namespace UnityEditor.ProBuilder
 
         void OnDestroy()
         {
-            MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             if(m_ShapePreviewMaterial)
                 DestroyImmediate(m_ShapePreviewMaterial);
         }
@@ -155,6 +178,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
                 SetBounds(currentShapeInOverlay.size);
         }
+
 
         void HandleUndoRedoPerformed()
         {
@@ -166,9 +190,7 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(Selection.activeGameObject != null
-                        && (MeshSelection.activeMesh == null
-                        || MeshSelection.activeMesh.GetComponent<ProBuilderShape>() == null))
+                if(Selection.activeGameObject != null)
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();
@@ -310,6 +332,10 @@ namespace UnityEditor.ProBuilder
             DrawBoundingBox(false);
         }
 
+        /// <summary>
+        /// Recalculates the bounding box for this mesh's shape.
+        /// </summary>
+        /// <seealso cref="UnityEngine.ProBuilderMesh(Refresh)" />
         void RecalculateBounds()
         {
             var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
@@ -355,7 +381,6 @@ namespace UnityEditor.ProBuilder
                 shapeComponent.rotation = Quaternion.identity;
                 shapeComponent.gameObject.name = EditorShapeUtility.GetName(shapeComponent.shape);
                 UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
-                EditorUtility.InitObject(shapeComponent.mesh);
                 m_IsShapeInit = true;
             }
 
@@ -367,7 +392,10 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+            // todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window(k_ShapeTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
+#pragma warning restore 618
 
             var evt = Event.current;
 
@@ -425,11 +453,20 @@ namespace UnityEditor.ProBuilder
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
-            using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
+            // 21.2 introduces Scene View Overlays. There's no need for additional styling, but we do need to force
+            // the width to accomodate for IMGUI not laying out nicely.
+#if UNITY_2021_2_OR_NEWER
+            GUILayout.BeginVertical(GUILayout.MinWidth(k_MinOverlayWidth));
+            ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
+            ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
+            GUILayout.EndVertical();
+#else
+            using (new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).m_ShapePropertyLabel.text = foldoutName;
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(this);
+                ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
+                ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
             }
+#endif
         }
 
         void ResetPrefs()
@@ -477,7 +514,6 @@ namespace UnityEditor.ProBuilder
                             m_LastShapeCreated = null;
 
                         UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        Selection.activeObject = null;
                         currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
                         SetBounds(currentShapeInOverlay.size);
 

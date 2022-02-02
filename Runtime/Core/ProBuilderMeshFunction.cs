@@ -67,11 +67,20 @@ namespace UnityEngine.ProBuilder
                && faceCount > 0
                && meshSyncState == MeshSyncState.Null)
             {
-                using(new NonVersionedEditScope(this))
+                using (new NonVersionedEditScope(this))
+                {
                     Rebuild();
+                    meshWasInitialized?.Invoke(this);
+                }
             }
         }
 
+        /// <summary>
+        /// Rebuilds the mesh positions and submeshes, and then recalculates the normals, collisions,
+        /// UVs, tangents, and colors.
+        /// </summary>
+        /// <seealso cref="ToMesh"/>
+        /// <seealso cref="Refresh"/>
         void Reset()
         {
             if (meshSyncState != MeshSyncState.Null && meshSyncState != MeshSyncState.InstanceIDMismatch)
@@ -82,6 +91,12 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Cleans up when the ProBuilderMesh component is removed (that is, when a ProBuilder mesh
+        /// is converted to a standard Unity mesh).
+        /// </summary>
+        /// <seealso cref="meshWillBeDestroyed" />
+        /// <seealso cref="preserveMeshAssetOnDestroy"/>
         void OnDestroy()
         {
             // Always re-enable the MeshFilter when the ProBuilderMesh component is removed
@@ -105,6 +120,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Increments the mesh version's index. This helps ProBuilder track
+        /// when the mesh changes.
+        /// </summary>
         void IncrementVersionIndex()
         {
             // it doesn't matter if the version index wraps. the important thing is that it is changed.
@@ -112,7 +131,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Reset all the attribute arrays on this object.
+        /// Resets (empties) all the attribute arrays on this object and clears any selected elements.
+        /// The attribute arrays include faces, positions, texture UVs, tangents, shared vertices,
+        /// shared textures, and vertex colors.
         /// </summary>
         public void Clear()
         {
@@ -165,8 +186,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer. All arrays are
-        /// initialized as empty.
+        /// Creates a new GameObject with a ProBuilderMesh, <see cref="UnityEngine.MeshFilter" />,
+        /// and <see cref="UnityEngine.MeshRenderer" /> component but leaves the position and face
+        /// information empty.
         /// </summary>
         /// <returns>A reference to the new ProBuilderMesh component.</returns>
         public static ProBuilderMesh Create()
@@ -179,7 +201,8 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer, then initializes the ProBuilderMesh with a set of positions and faces.
+        /// Creates a new GameObject with a ProBuilderMesh, <see cref="UnityEngine.MeshFilter" />, and <see cref="UnityEngine.MeshRenderer" /> component.
+        /// Then it initializes the ProBuilderMesh with the specified sets of positions and faces.
         /// </summary>
         /// <param name="positions">Vertex positions array.</param>
         /// <param name="faces">Faces array.</param>
@@ -195,14 +218,17 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a new GameObject with a ProBuilderMesh component, MeshFilter, and MeshRenderer, then initializes the ProBuilderMesh with a set of positions and faces.
+        /// Creates a new GameObject with a ProBuilderMesh, <see cref="UnityEngine.MeshFilter" />, and
+        /// <see cref="UnityEngine.MeshRenderer" /> component. Then it initializes the ProBuilderMesh
+        /// with the specified sets of positions and faces, and if specified, coincident vertices,
+        /// texture coordinates, and materials.
         /// </summary>
-        /// <param name="vertices">Vertex positions array.</param>
-        /// <param name="faces">Faces array.</param>
-        /// <param name="sharedVertices">Optional SharedVertex[] defines coincident vertices.</param>
-        /// <param name="sharedTextures">Optional SharedVertex[] defines coincident texture coordinates (UV0).</param>
-        /// <param name="materials">Optional array of materials that will be assigned to the MeshRenderer.</param>
-        /// <returns></returns>
+        /// <param name="vertices">Array of vertex positions to use.</param>
+        /// <param name="faces">Array of faces to use.</param>
+        /// <param name="sharedVertices">Optional <see cref="SharedVertex" /> array to define the coincident vertices.</param>
+        /// <param name="sharedTextures">Optional <see cref="SharedVertex" /> array to define the coincident texture coordinates (UV0).</param>
+        /// <param name="materials">Optional array of materials to be assigned to the <see cref="UnityEngine.MeshRenderer" />.</param>
+        /// <returns>A reference to the new ProBuilderMesh component.</returns>
         public static ProBuilderMesh Create(
             IList<Vertex> vertices,
             IList<Face> faces,
@@ -255,10 +281,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Clear all mesh attributes and reinitialize with new positions and face collections.
+        /// Clears all mesh attributes and reinitializes the mesh with new positions and face collections.
         /// </summary>
-        /// <param name="vertices">Vertex positions array.</param>
-        /// <param name="faces">Faces array.</param>
+        /// <param name="vertices">New vertex positions array to use.</param>
+        /// <param name="faces">New faces array to use.</param>
         public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
         {
             if (vertices == null)
@@ -284,9 +310,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Rebuild the mesh positions and submeshes. If vertex count matches new positions array the existing attributes are kept, otherwise the mesh is cleared. UV2 is the exception, it is always cleared.
+        /// Rebuilds the mesh positions and submeshes.
+        ///
+        /// If the vertex count matches the new positions array, the existing attributes are kept
+        /// (except for UV2s, which are always cleared). Otherwise, the mesh is cleared.
         /// </summary>
-        /// <param name="preferredTopology">Triangles and Quads are supported.</param>
+        /// <param name="preferredTopology">You can specify MeshTopology.Quads if you don't want to use the default MeshTopology.Triangles. </param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             bool usedInParticleSystem = false;
@@ -348,7 +377,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Ensure that the UnityEngine.Mesh associated with this object is unique
+        /// Ensures that the UnityEngine.Mesh associated with this object is unique.
         /// </summary>
         internal void MakeUnique()
         {
@@ -359,9 +388,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Copy mesh data from another mesh to self.
+        /// Copies the mesh data from another mesh to this one.
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">The mesh to copy from.</param>
         public void CopyFrom(ProBuilderMesh other)
         {
             if (other == null)
@@ -392,7 +421,9 @@ namespace UnityEngine.ProBuilder
         /// Recalculates mesh attributes: normals, collisions, UVs, tangents, and colors.
         /// </summary>
         /// <param name="mask">
-        /// Optionally pass a mask to define what components are updated (UV and collisions are expensive to rebuild, and can usually be deferred til completion of task).
+        /// Optional. Specify a RefreshMask to indicate which components to update. Use this when you want to
+        /// wait until later to rebuild some components in order to save processing power, since UVs and
+        /// collisions are expensive to rebuild and can usually be deferred until the task finishes.
         /// </param>
         public void Refresh(RefreshMask mask = RefreshMask.All)
         {
@@ -430,11 +461,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Returns a new unused texture group id.
-        /// Will be greater than or equal to i.
+        /// Returns a new unused texture group ID.
         /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
+        /// <param name="i">Optional value specifying the 'last' used ID. Defaults to 1.</param>
+        /// <returns>
+        /// An integer greater than or equal to the specified value `i`.
+        /// </returns>
         internal int GetUnusedTextureGroup(int i = 1)
         {
             while (Array.Exists(facesInternal, element => element.textureGroup == i))
@@ -443,6 +475,13 @@ namespace UnityEngine.ProBuilder
             return i;
         }
 
+        /// <summary>
+        /// Tests whether the specified texture group ID is valid.
+        /// </summary>
+        /// <param name="group">ID of the texture group to check.</param>
+        /// <returns>
+        /// True if the specified group is greater than 0; false otherwise.
+        /// </returns>
         static bool IsValidTextureGroup(int group)
         {
             return group > 0;
@@ -450,10 +489,11 @@ namespace UnityEngine.ProBuilder
 
         /// <summary>
         /// Returns a new unused element group.
-        /// Will be greater than or equal to i.
         /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
+        /// <param name="i">Optional value specifying the 'last' used group. Defaults to 1.</param>
+        /// <returns>
+        /// An integer greater than or equal to the specified value `i`.
+        /// </returns>
         internal int UnusedElementGroup(int i = 1)
         {
             while (Array.Exists(facesInternal, element => element.elementGroup == i))
@@ -462,6 +502,14 @@ namespace UnityEngine.ProBuilder
             return i;
         }
 
+        /// <summary>
+        /// Rebuilds the UV arrays on the specified faces.
+        ///
+        /// This usually applies only to faces set to use Auto UVs. However, if ProBuilder can't detect
+        /// any valid UV arrays, it resets the faces from Manual to Auto before rebuilding them.
+        /// </summary>
+        /// <param name="facesToRefresh">The set of faces to process.</param>
+        /// <seealso cref="Refresh" />
         public void RefreshUV(IEnumerable<Face> facesToRefresh)
         {
             // If the UV array has gone out of sync with the positions array, reset all faces to Auto UV so that we can
@@ -513,6 +561,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Reapplies the vertex colors for this mesh.
+        /// </summary>
+        /// <seealso cref="Refresh" />
         void RefreshColors()
         {
             Mesh m = filter.sharedMesh;
@@ -520,10 +572,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the vertex colors for a @"UnityEngine.ProBuilder.Face".
+        /// Applies a [vertex color](../manual/workflow-vertexcolors.html) to the specified <see cref="Face" />.
         /// </summary>
-        /// <param name="face">The target face.</param>
-        /// <param name="color">The color to set this face's referenced vertices to.</param>
+        /// <param name="face">The target face to apply the colors to.</param>
+        /// <param name="color">The color to apply to this face's referenced vertices.</param>
         public void SetFaceColor(Face face, Color color)
         {
             if (face == null)
@@ -537,10 +589,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the material for a collection of faces.
+        /// Sets a specific material on a collection of faces.
         /// </summary>
         /// <remarks>
-        /// To apply the changes to the UnityEngine.Mesh, make sure to call ToMesh and Refresh.
+        /// To apply the changes to the <see cref="UnityEngine.Mesh" />, call
+        /// <see cref="ToMesh" /> and <see cref="Refresh" />.
         /// </remarks>
         /// <param name="faces">The faces to apply the material to.</param>
         /// <param name="material">The material to apply.</param>
@@ -590,12 +643,20 @@ namespace UnityEngine.ProBuilder
             IncrementVersionIndex();
         }
 
+        /// <summary>
+        /// Recalculates the normals for this mesh.
+        /// </summary>
+        /// <seealso cref="Refresh" />
         void RefreshNormals()
         {
             Normals.CalculateNormals(this);
             mesh.normals = m_Normals;
         }
 
+        /// <summary>
+        /// Recalculates the tangents on this mesh.
+        /// </summary>
+        /// <seealso cref="Refresh" />
         void RefreshTangents()
         {
             Normals.CalculateTangents(this);
@@ -603,9 +664,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Find the index of a vertex index (triangle) in an IntArray[]. The index returned is called the common index, or shared index in some cases.
+        /// Finds the index of a vertex index (triangle) in an array of vertices.
+        /// The index returned is called the common index, or shared index.
         /// </summary>
         /// <remarks>Aids in removing duplicate vertex indexes.</remarks>
+        /// <param name="vertex">The vertex to find.</param>
         /// <returns>The common (or shared) index.</returns>
         internal int GetSharedVertexHandle(int vertex)
         {
@@ -634,10 +697,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+        /// Returns a list of vertices that are coincident to any of the specified vertices.
         /// </summary>
-        /// <param name="vertices">A collection of indexes relative to the mesh positions.</param>
-        /// <returns>A list of all vertices that share a position with any of the passed vertices.</returns>
+        /// <param name="vertices">A collection of indices relative to the mesh positions.</param>
+        /// <returns>A list of all vertices that share a position with any of the specified vertices.</returns>
         /// <exception cref="ArgumentNullException">The vertices parameter may not be null.</exception>
         public List<int> GetCoincidentVertices(IEnumerable<int> vertices)
         {
@@ -650,10 +713,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+        /// Populates a list of vertices that are coincident to any of the specified vertices.
         /// </summary>
         /// <param name="faces">A collection of faces to gather vertices from.</param>
-        /// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+        /// <param name="coincident">The list to clear and populate with any vertices that are coincident.</param>
         /// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
         public void GetCoincidentVertices(IEnumerable<Face> faces, List<int> coincident)
         {
@@ -685,10 +748,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+        /// Populates a list of vertices that are coincident to any of the specified vertices.
         /// </summary>
         /// <param name="edges">A collection of edges to gather vertices from.</param>
-        /// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+        /// <param name="coincident">The list to clear and populate with any vertices that are coincident.</param>
         /// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
         public void GetCoincidentVertices(IEnumerable<Edge> edges, List<int> coincident)
         {
@@ -727,10 +790,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Populate a list of vertices that are coincident to any of the vertices in the passed vertices parameter.
+        /// Populates a list of vertices that are coincident to any of the specified vertices.
         /// </summary>
-        /// <param name="vertices">A collection of indexes relative to the mesh positions.</param>
-        /// <param name="coincident">A list to be cleared and populated with any vertices that are coincident.</param>
+        /// <param name="vertices">A collection of indices relative to the mesh positions.</param>
+        /// <param name="coincident">The list to clear and populate with any vertices that are coincident.</param>
         /// <exception cref="ArgumentNullException">The vertices and coincident parameters may not be null.</exception>
         public void GetCoincidentVertices(IEnumerable<int> vertices, List<int> coincident)
         {
@@ -759,10 +822,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Populate a list with all the vertices that are coincident to the requested vertex.
+        /// Populates a list with all the vertices that are coincident to the specified vertex.
         /// </summary>
         /// <param name="vertex">An index relative to a positions array.</param>
-        /// <param name="coincident">A list to be populated with all coincident vertices.</param>
+        /// <param name="coincident">The list to clear and populate with any vertices that are coincident.</param>
         /// <exception cref="ArgumentNullException">The coincident list may not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The SharedVertex[] does not contain an entry for the requested vertex.</exception>
         public void GetCoincidentVertices(int vertex, List<int> coincident)
@@ -782,12 +845,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Sets the passed vertices as being considered coincident by the ProBuilderMesh.
+        /// Marks the specified vertices as coincident on this mesh.
         /// </summary>
         /// <remarks>
-        /// Note that it is up to the caller to ensure that the passed vertices are indeed sharing a position.
+        /// Note that it is up to the caller to ensure that the specified vertices are indeed sharing a position.
         /// </remarks>
-        /// <param name="vertices">Returns a list of vertices to be associated as coincident.</param>
+        /// <param name="vertices">The list of vertices to be marked as coincident.</param>
         public void SetVerticesCoincident(IEnumerable<int> vertices)
         {
             var lookup = sharedVertexLookup;

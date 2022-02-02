@@ -1,0 +1,39 @@
+apiRules:
+  - exclude:
+      hasAttribute:
+        uid: System.ObsoleteAttribute
+      type: Member
+  - exclude:
+      hasAttribute:
+        uid: System.ObsoleteAttribute
+      type: Type
+  - exclude:
+      uidRegex: Tests(.Framework)$
+      type: Namespace
+  - exclude:
+      uidRegex: ^Global Namespace.*
+      type: Namespace
+  - exclude:
+      uidRegex: ^ProBuilder.Example*
+      type: Namespace
+  - exclude:
+      uidRegex: ^ProBuilder2*
+      type: Namespace
+  - exclude:
+      uidRegex: SoftDeleteEdgesAction*
+      type: Type
+  - exclude:
+      uidRegex: profiler*
+      type: Type
+  - exclude:
+      uidRegex: ShowHoveredInfo*
+      type: Type
+  - exclude:
+      uidRegex: EditorPrefBrowser*
+      type: Type
+  - exclude:
+      uidRegex: RegisterDebugDefines*
+      type: Type
+  - exclude:
+      uidRegex: ^*SceneSelection\.(vertex|edge|face)$
+      type: Member

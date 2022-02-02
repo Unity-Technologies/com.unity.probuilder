@@ -8,16 +8,18 @@ using System;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Functions for beveling edges.
+    /// Provides functions for beveling edges.
     /// </summary>
     public static class Bevel
     {
         /// <summary>
-        /// Apply a bevel to a set of edges.
+        /// Applies a bevel to a set of edges.
+        ///
+        /// This is the equivalent of the [Bevel (Edge)](../manual/Edge_Bevel.html) action.
         /// </summary>
         /// <param name="mesh">Target mesh.</param>
         /// <param name="edges">A set of edges to apply bevelling to.</param>
-        /// <param name="amount">A value from 0 (bevel not at all) to 1 (bevel entire face).</param>
+        /// <param name="amount">A value from 0 (do not bevel) to 1 (bevel the entire face).</param>
         /// <returns>The new faces created to form the bevel.</returns>
         public static List<Face> BevelEdges(ProBuilderMesh mesh, IList<Edge> edges, float amount)
         {

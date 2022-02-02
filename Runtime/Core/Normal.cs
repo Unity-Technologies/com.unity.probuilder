@@ -7,26 +7,35 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     public struct Normal : IEquatable<Normal>
     {
-        /// <value>
+        /// <summary>
         /// A unit normal.
-        /// </value>
+        /// </summary>
         public Vector3 normal { get; set; }
 
-        /// <value>
+        /// <summary>
         /// A unit tangent.
-        /// </value>
+        /// </summary>
         public Vector4 tangent { get; set; }
 
-        /// <value>
+        /// <summary>
         /// A unit bitangent (sometimes called binormal).
-        /// </value>
+        /// </summary>
         public Vector3 bitangent { get; set; }
 
+        /// <summary>
+        /// Tests whether this object is equal to another object.
+        /// </summary>
+        /// <param name="obj">The object to compare against.</param>
+        /// <returns>True if the objects are equal, false if not.</returns>
         public override bool Equals(object obj)
         {
             return obj is Normal && Equals((Normal)obj);
         }
 
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>An integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
             unchecked
@@ -38,6 +47,11 @@ namespace UnityEngine.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Tests whether the specified Normal is equal to this one.
+        /// </summary>
+        /// <param name="other">The Normal object to compare against.</param>
+        /// <returns>True if the objects are equal, false if not.</returns>
         public bool Equals(Normal other)
         {
             return Math.Approx3(normal, other.normal) &&
@@ -45,11 +59,23 @@ namespace UnityEngine.ProBuilder
                 Math.Approx3(bitangent, other.bitangent);
         }
 
+        /// <summary>
+        /// Compares two objects for equality.
+        /// </summary>
+        /// <param name="a">The first Normal instance.</param>
+        /// <param name="b">The second Normal instance.</param>
+        /// <returns>True if the objects are equal; false if not.</returns>
         public static bool operator==(Normal a, Normal b)
         {
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// Compares two objects for inequality.
+        /// </summary>
+        /// <param name="a">The first Normal instance.</param>
+        /// <param name="b">The second Normal instance.</param>
+        /// <returns>True if the objects are not equal; false if not.</returns>
         public static bool operator!=(Normal a, Normal b)
         {
             return !(a == b);

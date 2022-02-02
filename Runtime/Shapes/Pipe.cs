@@ -3,24 +3,44 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [pipe](../manual/Pipe.html) shape.
+    /// </summary>
     [Shape("Pipe")]
     public class Pipe : Shape
     {
+        /// <summary>
+        /// Sets the thickness of the walls of the pipe in meters. The thicker the value, the smaller the hole becomes.
+        /// The default value is 0.25. The minimum value is 0.01.
+        /// </summary>
         [Min(0.01f)]
         [SerializeField]
         float m_Thickness = .25f;
 
+        /// <summary>
+        /// Sets the number of sides for the pipe. The more sides you use, the smoother the sides of the pipe become.
+        /// The default value is 6. Valid values range from 3 to 64.
+        /// </summary>
         [Range(3, 64)]
         [SerializeField]
         int m_NumberOfSides = 6;
 
+        /// <summary>
+        /// Sets the number of divisions to use for the height of the pipe.
+        /// The default value is 0. Valid values range from 0 to 31.
+        /// </summary>
         [Range(0, 31)]
         [SerializeField]
         int m_HeightCuts = 0;
 
+        /// <summary>
+        /// Determines whether to smooth the edges of the polygons.
+        /// This property is enabled by default.
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Pipe)
@@ -33,12 +53,14 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds.size = size;
             return bounds;
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var upDir = Vector3.Scale(rotation * Vector3.up, size) ;

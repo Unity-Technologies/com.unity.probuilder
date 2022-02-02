@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>Internal class.</summary>
 [RequireComponent(typeof(Collider))]
 public class ShowHoveredInfo : MonoBehaviour
 {

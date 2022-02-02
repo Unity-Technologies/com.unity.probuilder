@@ -16,6 +16,9 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+    /// <summary>
+    /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+    /// </summary>
     [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
@@ -34,6 +37,10 @@ namespace UnityEditor.ProBuilder
         GUIContent m_OverlayTitle;
 
         static GUIContent s_IconContent;
+
+        /// <summary>
+        /// Gets the icon and tooltip for the PolyShapeTool.
+        /// </summary>
         public override GUIContent toolbarIcon
         {
             get
@@ -91,6 +98,10 @@ namespace UnityEditor.ProBuilder
         Vector3 m_CurrentPosition = Vector3.positiveInfinity;
 
         PolyShape m_Polygon;
+
+        /// <summary>
+        /// Gets or sets the custom polygon shape.
+        /// </summary>
         public PolyShape polygon
         {
             set
@@ -200,13 +211,17 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Main GUI update for the tool, calls every secondary methods to place points, update lines and compute the cut
+        /// Implements the PolyShapeTool in the Unity Editor. This method is called when the PolyShapeTool is activated.
         /// </summary>
-        /// <param name="window">current window calling the tool : SceneView</param>
+        /// <param name="window">The window calling the tool (SceneView).</param>
         public override void OnToolGUI(EditorWindow window)
         {
             Event evt = Event.current;
+
+            // todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
+#pragma warning restore 618
 
             if (polygon == null)
                 return;
@@ -390,6 +405,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Redraws the PolyShape mesh in the Unity Editor.
+        /// </summary>
+        /// <param name="vertexCountChanged">This parameter is ignored.</param>
         public void RebuildPolyShapeMesh(bool vertexCountChanged = false)
         {
             // If Undo is called immediately after creation this situation can occur
