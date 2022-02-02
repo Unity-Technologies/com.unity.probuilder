@@ -92,7 +92,7 @@ mesh.Optimize();
 
 ## Third Party Notices
 
-[Third Party Notices](Third Party Notices.md)
+[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/Third%20Party%20Notices.md)
 
 ## Contributing
 
