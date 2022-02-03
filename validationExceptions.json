@@ -3,7 +3,7 @@
     [
         {
              "ValidationTest": "API Validation",
-             "PackageVersion": "5.0.3"
+             "PackageVersion": "5.0.4"
        }
     ]
 }

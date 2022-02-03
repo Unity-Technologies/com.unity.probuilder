@@ -4,7 +4,9 @@ using UnityEngine;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Defines what area of the ProBuilder toolbar a MenuAction should be grouped into.
+    /// Defines the [tool category](../manual/toolbar.html#category) for a MenuAction.
+    /// In the Unity Editor, ProBuilder groups actions with the same tool category on
+    /// the ProBuilder toolbar using color coding.
     /// </summary>
     public enum ToolbarGroup
     {

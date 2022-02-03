@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder.Csg
 {
@@ -7,23 +9,20 @@ namespace UnityEngine.ProBuilder.Csg
     {
         public List<Polygon> polygons;
 
-        public Node front;  /// Reference to front node.
-        public Node back;   /// Reference to front node.
+        public Node front;
+        public Node back;
 
         public Plane plane;
 
         public Node()
         {
-            this.front = null;
-            this.back = null;
+            front = null;
+            back = null;
         }
 
         public Node(List<Polygon> list)
         {
             Build(list);
-
-            // this.front = null;
-            // this.back = null;
         }
 
         public Node(List<Polygon> list, Plane plane, Node front, Node back)
@@ -90,44 +89,46 @@ namespace UnityEngine.ProBuilder.Csg
             if (list.Count < 1)
                 return;
 
-            if (this.plane == null || !this.plane.Valid())
+            bool newNode = plane == null || !plane.Valid(); 
+
+            if (newNode)
             {
-                this.plane = new Plane();
-                this.plane.normal = list[0].plane.normal;
-                this.plane.w = list[0].plane.w;
+                plane = new Plane();
+                plane.normal = list[0].plane.normal;
+                plane.w = list[0].plane.w;
             }
 
-
-            if (this.polygons == null)
-                this.polygons = new List<Polygon>();
-
-            List<Polygon> list_front = new List<Polygon>();
-            List<Polygon> list_back = new List<Polygon>();
+            if (polygons == null)
+                polygons = new List<Polygon>();
+                
+            var listFront = new List<Polygon>();
+            var listBack = new List<Polygon>();
 
             for (int i = 0; i < list.Count; i++)
-            {
-                this.plane.SplitPolygon(list[i], this.polygons, this.polygons, list_front, list_back);
+                plane.SplitPolygon(list[i], polygons, polygons, listFront, listBack);
+            
+            
+            if (listFront.Count > 0)
+            {                
+                // SplitPolygon can fail to correctly identify coplanar planes when the epsilon value is too low. When
+                // this happens, the front or back list will be filled and built into a new node recursively. This 
+                // check catches that case and sorts the front/back lists into the coplanar polygons collection.
+                if (newNode && list.SequenceEqual(listFront))
+                    polygons.AddRange(listFront);
+                else
+                    (front ?? (front = new Node())).Build(listFront);
             }
 
-            if (list_front.Count > 0)
+            if (listBack.Count > 0)
             {
-                if (this.front == null)
-                    this.front = new Node();
-
-                this.front.Build(list_front);
-            }
-
-            if (list_back.Count > 0)
-            {
-                if (this.back == null)
-                    this.back = new Node();
-
-                this.back.Build(list_back);
+                if (newNode && list.SequenceEqual(listBack))
+                    polygons.AddRange(listBack);
+                else
+                    (back ?? (back = new Node())).Build(listBack);
             }
         }
 
-        // Recursively remove all polygons in `polygons` that are inside this BSP
-        // tree.
+        // Recursively remove all polygons in `polygons` that are inside this BSP tree.
         public List<Polygon> ClipPolygons(List<Polygon> list)
         {
             if (!this.plane.Valid())
@@ -194,27 +195,27 @@ namespace UnityEngine.ProBuilder.Csg
         {
             Node a = a1.Clone();
             Node b = b1.Clone();
-
+        
             a.ClipTo(b);
             b.ClipTo(a);
             b.Invert();
             b.ClipTo(a);
             b.Invert();
-
+        
             a.Build(b.AllPolygons());
-
+        
             Node ret = new Node(a.AllPolygons());
-
+        
             return ret;
         }
-
+        
         // Return a new CSG solid representing space in this solid but not in the
         // solid `csg`. Neither this solid nor the solid `csg` are modified.
         public static Node Subtract(Node a1, Node b1)
         {
             Node a = a1.Clone();
             Node b = b1.Clone();
-
+        
             a.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
@@ -223,9 +224,9 @@ namespace UnityEngine.ProBuilder.Csg
             b.Invert();
             a.Build(b.AllPolygons());
             a.Invert();
-
+        
             Node ret = new Node(a.AllPolygons());
-
+        
             return ret;
         }
 
@@ -241,6 +242,7 @@ namespace UnityEngine.ProBuilder.Csg
             b.Invert();
             a.ClipTo(b);
             b.ClipTo(a);
+
             a.Build(b.AllPolygons());
             a.Invert();
 

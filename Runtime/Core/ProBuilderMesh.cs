@@ -9,7 +9,8 @@ using UnityEngine.Rendering;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// This component is responsible for storing all the data necessary for editing and compiling UnityEngine.Mesh objects.
+    /// Represents the ProBuilder MeshFilter component, which is responsible for storing all
+    /// the data necessary for editing and compiling <see cref="UnityEngine.Mesh" /> objects.
     /// </summary>
     // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
     [AddComponentMenu("//ProBuilder MeshFilter")]
@@ -27,12 +28,12 @@ namespace UnityEngine.ProBuilder
 #endif
 
         /// <summary>
-        /// Max number of UV channels that ProBuilderMesh format supports.
+        /// Stores the maximum number of UV channels that the ProBuilderMesh format supports.
         /// </summary>
         const int k_UVChannelCount = 4;
 
         /// <summary>
-        /// The current mesh format version. This is used to run expensive upgrade functions once in ToMesh().
+        /// Represents the current mesh format version. This is used to run expensive upgrade functions once in ToMesh().
         /// </summary>
         internal const int k_MeshFormatVersion = k_MeshFormatVersionAutoUVScaleOffset;
         internal const int k_MeshFormatVersionSubmeshMaterialRefactor = 1;
@@ -103,18 +104,18 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("_colors")]
         Color[] m_Colors;
 
-        /// <value>
+        /// <summary>
         /// If false, ProBuilder will automatically create and scale colliders.
-        /// </value>
+        /// </summary>
         public bool userCollisions { get; set; }
 
         [FormerlySerializedAs("unwrapParameters")]
         [SerializeField]
         UnwrapParameters m_UnwrapParameters;
 
-        /// <value>
+        /// <summary>
         /// UV2 generation parameters.
-        /// </value>
+        /// </summary>
         public UnwrapParameters unwrapParameters
         {
             get { return m_UnwrapParameters; }
@@ -125,9 +126,9 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         bool m_PreserveMeshAssetOnDestroy;
 
-        /// <value>
+        /// <summary>
         /// If "Meshes are Assets" feature is enabled, this is used to relate pb_Objects to stored meshes.
-        /// </value>
+        /// </summary>
         [SerializeField]
         internal string assetGuid;
 
@@ -171,10 +172,10 @@ namespace UnityEngine.ProBuilder
         }
 #pragma warning restore 109
 
-        /// <value>
-        /// Simple uint tracking number of time ToMesh() and Refresh() function are called to modify the mesh
-        /// Used to check if 2 versions of the ProBuilderMesh are the same or not.
-        /// </value>
+        /// <summary>
+        /// Tracks each time the ToMesh() and Refresh() functions are called to modify the mesh.
+        /// This is a simple uint number used to check whether two versions of the ProBuilderMesh are the same or not.
+        /// </summary>
         [SerializeField]
         ushort m_VersionIndex = 0;
         internal ushort versionIndex => m_VersionIndex;
@@ -196,10 +197,13 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// In the editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
-        /// However, there are situations you'd want to keep the mesh around, like when stripping probuilder scripts.
-        /// </value>
+        /// <summary>
+        /// Gets or sets whether to destroy the mesh asset if this ProBuilderMesh is deleted.
+        ///
+        /// In the Editor, when you delete a ProBuilderMesh you usually also want to destroy the mesh asset.
+        /// However, there are situations you'd want to keep the mesh around, like when stripping ProBuilder scripts.
+        /// </summary>
+        /// <returns>True to keep the mesh asset; false to destroy it.</returns>
         public bool preserveMeshAssetOnDestroy
         {
             get { return m_PreserveMeshAssetOnDestroy; }
@@ -207,7 +211,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Check if the mesh contains the requested arrays.
+        /// Tests whether the mesh contains the requested arrays.
         /// </summary>
         /// <param name="channels">A flag containing the array types that a ProBuilder mesh stores.</param>
         /// <returns>True if all arrays in the flag are present, false if not.</returns>
@@ -226,7 +230,7 @@ namespace UnityEngine.ProBuilder
             missing |= (channels & MeshArrays.Tangent) == MeshArrays.Tangent && (m_Tangents == null || m_Tangents.Length != vc);
 
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
-            // at it has a cost to check.
+            // and it has a cost to check.
             if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && mesh != null)
             {
 #if UNITY_2019_3_OR_NEWER
@@ -247,11 +251,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Meshes are composed of vertices and faces. Faces primarily contain triangles and material information. With these components, ProBuilder will compile a mesh.
+        /// Gets or sets the faces that ProBuilder uses to compile a mesh.
+        ///
+        /// Meshes are composed of vertices and faces. Faces primarily contain triangles and material information.
         /// </summary>
-        /// <value>
-        /// A collection of the @"UnityEngine.ProBuilder.Face"'s that make up this mesh.
-        /// </value>
+        /// <returns>A collection of the Face objects that make up this mesh.</returns>
         public IList<Face> faces
         {
             get { return new ReadOnlyCollection<Face>(m_Faces); }
@@ -311,16 +315,18 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// ProBuilder makes the assumption that no @"UnityEngine.ProBuilder.Face" references a vertex used by another.
-        /// However, we need a way to associate vertices in the editor for many operations. These vertices are usually
-        /// called coincident, or shared vertices. ProBuilder manages these associations with the sharedIndexes array.
-        /// Each array contains a list of triangles that point to vertices considered to be coincident. When ProBuilder
-        /// compiles a UnityEngine.Mesh from the ProBuilderMesh, these vertices will be condensed to a single vertex
-        /// where possible.
+        /// Gets or sets the sharedVertices for this ProBuilderMesh object.
+        ///
+        /// ProBuilder makes the assumption that no <see cref="Face" /> references a vertex used by another.
+        /// However, ProBuilder needs to be able to associate vertices in the Editor for many operations.
+        /// These vertices are usually called [coincident](../manual/gloss.html#coincident), or "shared" vertices.
+        /// ProBuilder manages these associations with the sharedIndexes array.
+        ///
+        /// Each array contains a list of triangles that points to vertices considered to be coincident.
+        /// When ProBuilder compiles a <see cref="UnityEngine.Mesh" /> from the ProBuilderMesh, it condenses
+        /// these vertices to a single vertex where possible.
         /// </summary>
-        /// <value>
-        /// The shared (or common) index array for this mesh.
-        /// </value>
+        /// <returns>The shared (or common) index array for this mesh.</returns>
         public IList<SharedVertex> sharedVertices
         {
             get { return new ReadOnlyCollection<SharedVertex>(m_SharedVertices); }
@@ -356,11 +362,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the sharedIndexes array for this mesh with a lookup dictionary.
+        /// Sets the sharedIndexes array for this mesh with a lookup dictionary.
         /// </summary>
-        /// <param name="indexes">
-        /// The new sharedIndexes array.
-        /// </param>
+        /// <param name="indexes">The new sharedIndexes array.</param>
         /// <seealso cref="sharedVertices"/>
         internal void SetSharedVertices(IEnumerable<KeyValuePair<int, int>> indexes)
         {
@@ -410,9 +414,9 @@ namespace UnityEngine.ProBuilder
             set { m_Positions = value; }
         }
 
-        /// <value>
-        /// The vertex positions that make up this mesh.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the vertex positions that compose this mesh.
+        /// </summary>
         public IList<Vector3> positions
         {
             get { return new ReadOnlyCollection<Vector3>(m_Positions); }
@@ -425,10 +429,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Creates a new array of vertices with values from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+        /// Creates a new array of vertices with values from a ProBuilderMesh component.
         /// </summary>
-        /// <param name="indexes">An optional list of indexes pointing to the mesh attribute indexes to include in the returned Vertex array.</param>
-        /// <returns>An array of vertices.</returns>
+        /// <param name="indexes">An optional list of indices used to designate the subset of vertices values to retrieve from the mesh in the array.</param>
+        /// <returns>An array of vertices matching either the specified list in the `indexes` parameter. If the `indexes` parameter contains no list, this returns all mesh vertices. </returns>
         public Vertex[] GetVertices(IList<int> indexes = null)
         {
             int meshVertexCount = vertexCount;
@@ -493,10 +497,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a list of vertices from a @"UnityEngine.ProBuilder.ProBuilderMesh" component.
+        /// Returns a list of vertices from a ProBuilderMesh component.
         /// </summary>
-        /// <param name="vertices">The list that will be filled by the method.</param>
-        /// <returns></returns>
+        /// <param name="vertices">The list to populate.</param>
         internal void GetVerticesInList(IList<Vertex> vertices)
         {
             int vc = vertexCount;
@@ -556,10 +559,15 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the vertex element arrays on this mesh.
+        /// Sets the vertex element arrays on this mesh.
         /// </summary>
         /// <param name="vertices">The new vertex array.</param>
-        /// <param name="applyMesh">An optional parameter that will apply elements to the MeshFilter.sharedMesh. Note that this should only be used when the mesh is in its original state, not optimized (meaning it won't affect triangles which can be modified by Optimize).</param>
+        /// <param name="applyMesh">
+        /// Optionally indicate whether to apply elements to the <see cref="UnityEngine.MeshFilter.sharedMesh" />.
+        /// Note that you should only use this when the mesh is in its original state, not optimized
+        /// (that is, when it won't affect triangles which can be
+        /// <see cref="UnityEditor.ProBuilder.EditorMeshUtility.Optimize" >optimized</see>).
+        /// </param>
         public void SetVertices(IList<Vertex> vertices, bool applyMesh = false)
         {
             if (vertices == null)
@@ -617,11 +625,12 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// The mesh normals.
-        /// </value>
+        /// <summary>
+        /// Gets the normals for this mesh.
+        /// </summary>
         /// <see cref="Refresh"/>
         /// <see cref="Normals.CalculateNormals"/>
+        /// <returns>A collection of normals for this mesh.</returns>
         public IList<Vector3> normals
         {
             get { return m_Normals != null ? new ReadOnlyCollection<Vector3>(m_Normals) : null; }
@@ -633,12 +642,10 @@ namespace UnityEngine.ProBuilder
             set { m_Normals = value; }
         }
 
-        /// <value>
-        /// Get the normals array for this mesh.
-        /// </value>
-        /// <returns>
-        /// Returns the normals for this mesh.
-        /// </returns>
+        /// <summary>
+        /// Gets the normals array for this mesh.
+        /// </summary>
+        /// <returns>An array of normals for this mesh.</returns>
         public Vector3[] GetNormals()
         {
             if (!HasArrays(MeshArrays.Normal))
@@ -653,9 +660,11 @@ namespace UnityEngine.ProBuilder
             set { m_Colors = value; }
         }
 
-        /// <value>
-        /// Vertex colors array for this mesh. When setting, the value must match the length of positions.
-        /// </value>
+        /// <summary>
+        /// Gets or sets a collecton of the vertex colors for this mesh.
+        /// When setting, the value must match the length of the positions.
+        /// </summary>
+        /// <returns>A collection of colors for this mesh.</returns>
         public IList<Color> colors
         {
             get { return m_Colors != null ? new ReadOnlyCollection<Color>(m_Colors) : null; }
@@ -672,9 +681,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get an array of Color values from the mesh.
+        /// Returns the Color values from the mesh.
         /// </summary>
-        /// <returns>The colors array for this mesh. If mesh does not contain colors, a new array is returned filled with the default value (Color.white).</returns>
+        /// <returns>
+        /// An array of colors for this mesh. If the mesh does not contain colors, it returns a new array
+        /// filled with the default value (<see cref="UnityEngine.Color.white" />).
+        /// </returns>
         public Color[] GetColors()
         {
             if (HasArrays(MeshArrays.Color))
@@ -682,9 +694,10 @@ namespace UnityEngine.ProBuilder
             return ArrayUtility.Fill(Color.white, vertexCount);
         }
 
-        /// <value>
-        /// Get the user-set tangents array for this mesh. If tangents have not been explicitly set, this value will be null.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the array of tangents that the user explicitly set for this mesh.
+        /// </summary>
+        /// <returns>A collection of tangents for this mesh or null if the user hasn't set any tangents yet.</returns>
         /// <remarks>
         /// To get the generated tangents that are applied to the mesh through Refresh(), use GetTangents().
         /// </remarks>
@@ -716,9 +729,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the tangents applied to the mesh, or create and cache them if not yet initialized.
+        /// Returns the tangents applied to the mesh. If they haven't been initialized yet, it creates and caches them.
         /// </summary>
-        /// <returns>The tangents applied to the MeshFilter.sharedMesh. If the tangents array length does not match the vertex count, null is returned.</returns>
+        /// <returns>
+        /// The tangents applied to <see cref="UnityEngine.MeshFilter.sharedMesh" />
+        /// or null if the tangents array length doesn't match the vertex count.
+        /// </returns>
         public Vector4[] GetTangents()
         {
             if (!HasArrays(MeshArrays.Tangent))
@@ -745,9 +761,10 @@ namespace UnityEngine.ProBuilder
             set { m_Textures3 = value; }
         }
 
-        /// <value>
-        /// The UV0 channel. Null if not present.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the UV0 channel.
+        /// </summary>
+        /// <returns>The list of texture UVs for this mesh or null if there are none.</returns>
         /// <seealso cref="GetUVs"/>
         public IList<Vector2> textures
         {
@@ -764,10 +781,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Copy values in a UV channel to uvs.
+        /// Copies values from the specified UV channel to the list of texture UVs.
         /// </summary>
         /// <param name="channel">The index of the UV channel to fetch values from. The valid range is `{0, 1, 2, 3}`.</param>
-        /// <param name="uvs">A list that will be cleared and populated with the UVs copied from this mesh.</param>
+        /// <param name="uvs">The list of texture UVs to clear and populate with the copied UVs.</param>
         public void GetUVs(int channel, List<Vector4> uvs)
         {
             if (uvs == null)
@@ -824,11 +841,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Set the mesh UVs per-channel. Channels 0 and 1 are cast to Vector2, where channels 2 and 3 are kept Vector4.
+        /// Sets the mesh UVs per channel. Channels 0 and 1 are cast to Vector2, but channels 2 and 3 remain Vector4.
         /// </summary>
         /// <remarks>Does not apply to mesh (use Refresh to reflect changes after application).</remarks>
-        /// <param name="channel">The index of the UV channel to fetch values from. The valid range is `{0, 1, 2, 3}`.</param>
-        /// <param name="uvs">The new UV values.</param>
+        /// <param name="channel">The index of the UV channel to copy values to. The valid range is `{0, 1, 2, 3}`.</param>
+        /// <param name="uvs">The list of new UV values.</param>
         public void SetUVs(int channel, List<Vector4> uvs)
         {
             switch (channel)
@@ -851,25 +868,28 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// How many faces does this mesh have?
-        /// </value>
+        /// <summary>
+        /// Gets the number of faces that this mesh has.
+        /// </summary>
+        /// <returns>The number of faces on this mesh.</returns>
         public int faceCount
         {
             get { return m_Faces == null ? 0 : m_Faces.Length; }
         }
 
-        /// <value>
-        /// How many vertices are in the positions array.
-        /// </value>
+        /// <summary>
+        /// Gets the number of vertices in the positions array.
+        /// </summary>
+        /// <returns>The number of vertex positions for this mesh.</returns>
         public int vertexCount
         {
             get { return m_Positions == null ? 0 : m_Positions.Length; }
         }
 
-        /// <value>
-        /// How many edges compose this mesh.
-        /// </value>
+        /// <summary>
+        /// Gets the number of edges that compose this mesh.
+        /// </summary>
+        /// <returns>The number of edges in this mesh.</returns>
         public int edgeCount
         {
             get
@@ -881,45 +901,54 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// How many vertex indexes make up this mesh.
-        /// </value>
+        /// <summary>
+        /// Gets the number of vertex indices that compose this mesh.
+        /// </summary>
+        /// <returns>The number of vertices in this mesh.</returns>
         public int indexCount
         {
             get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length); }
         }
 
-        /// <value>
-        /// How many triangles make up this mesh.
-        /// </value>
+        /// <summary>
+        /// Gets the number of triangles that compose this mesh.
+        /// </summary>
+        /// <returns>The number of triangles in this mesh.</returns>
         public int triangleCount
         {
             get { return m_Faces == null ? 0 : m_Faces.Sum(x => x.indexesInternal.Length) / 3; }
         }
 
         /// <summary>
-        /// In the editor, when a ProBuilderMesh is destroyed it will also destroy the MeshFilter.sharedMesh that is
-        /// found with the parent GameObject. You may override this behaviour by subscribing to onDestroyObject.
+        /// Invoked when this ProBuilderMesh is deleted.
+        ///
+        /// In the Editor, when a ProBuilderMesh is destroyed it also destroys the
+        /// <see cref="UnityEngine.MeshFilter.sharedMesh" /> that it finds with the parent GameObject.
+        /// To override the default behavior, subscribe to onDestroyObject. When onDestroyObject has a
+        /// subscriber, ProBuilder invokes it instead of cleaning up unused meshes by itself.
         /// </summary>
-        /// <value>
-        /// If onDestroyObject has a subscriber ProBuilder will invoke it instead of cleaning up unused meshes by itself.
-        /// </value>
         /// <seealso cref="preserveMeshAssetOnDestroy"/>
+        /// <seealso cref="OnDestroy"/>
         public static event Action<ProBuilderMesh> meshWillBeDestroyed;
 
-        /// <value>
+        /// <summary>
+        /// Mesh was rebuilt from Awake call.
+        /// </summary>
+        internal static event Action<ProBuilderMesh> meshWasInitialized;
+
+        /// <summary>
         /// Invoked from ProBuilderMesh.OnDestroy before any cleanup is performed.
-        /// </value>
+        /// </summary>
         internal static event Action<ProBuilderMesh> componentWillBeDestroyed;
 
-        /// <value>
+        /// <summary>
         /// Invoked from ProBuilderMesh.Reset after component is rebuilt.
-        /// </value>
+        /// </summary>
         internal static event Action<ProBuilderMesh> componentHasBeenReset;
 
-        /// <value>
+        /// <summary>
         /// Invoked when the element selection changes on any ProBuilderMesh.
-        /// </value>
+        /// </summary>
         /// <seealso cref="SetSelectedFaces"/>
         /// <seealso cref="SetSelectedVertices"/>
         /// <seealso cref="SetSelectedEdges"/>
@@ -943,9 +972,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Ensure that the UnityEngine.Mesh is in sync with the ProBuilderMesh.
+        /// Gets a flag that indicates whether the <see cref="UnityEngine.Mesh" /> is in sync with the ProBuilderMesh.
         /// </summary>
-        /// <returns>A flag describing the state of the synchronicity between the MeshFilter.sharedMesh and ProBuilderMesh components.</returns>
+        /// <returns>
+        /// A flag that describes the state of the synchronicity between the
+        /// <see cref="UnityEngine.MeshFilter.sharedMesh" /> and ProBuilderMesh components.
+        /// </returns>
         public MeshSyncState meshSyncState
         {
             get

@@ -2,17 +2,29 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [plane](../manual/Plane.html) shape.
+    /// </summary>
     [Shape("Plane")]
     public class Plane : Shape
     {
+        /// <summary>
+        /// Set the number of divisions to use for the length of the plane.
+        /// The default value is 1. The minimum value is 0.
+        /// </summary>
         [Min(0)]
         [SerializeField]
         int m_HeightSegments = 1;
 
+        /// <summary>
+        /// Sets the number of divisions to use for the width of the plane.
+        /// The default value is 1. The minimum value is 0.
+        /// </summary>
         [Min(0)]
         [SerializeField]
         int m_WidthSegments = 1;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Plane)
@@ -22,6 +34,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             int w = m_WidthSegments + 1;
@@ -93,4 +106,3 @@ namespace UnityEngine.ProBuilder.Shapes
     }
 #endif
 }
-

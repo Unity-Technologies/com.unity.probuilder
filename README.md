@@ -11,22 +11,25 @@
 
 ProBuilder is a 3D modeling plugin for [Unity](https://unity3d.com).
 
-This readme is intended as a brief introduction for developers interested in working with the API.
+This readme provides a brief introduction for developers interested in working with the API. For more information, the following guides are available:
 
-See the [Manual](https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/manual/index.html) for a user guide, or the [Scripting Reference](https://docs.unity3d.com/Packages/com.unity.probuilder@4.0/api/index.html) for API documentation.
+* See the [Manual](https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/manual/index.html) for information about working with ProBuilder in the Unity Editor. 
+* See the [Scripting Reference](https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/api/index.html) for API documentation.
+
+Working code samples are also available from the package repository under the `Samples~` subfolder, or from the Package Manager you can import them directly into your Unity project.
 
 ## Development
 
-ProBuilder is a developed as a package and distributed with Package Manager.
+Unity provides ProBuilder as a package, distributed with the Package Manager.
 
-The simplest way to get started working with source is to clone the repository into your `Packages` directory.
+To start working with ProBuilder source, clone the repository into your `Packages` directory.
 
 ```
 ~/Desktop/MyProject$ cd Packages/
 ~/Desktop/MyProject/Packages$ git clone https://github.com/Unity-Technologies/com.unity.probuilder
 ```
 
-See the [Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@2.0/manual/index.html#installing-removing-disabling-and-updating-packages) documentation for more information on installing packages.
+Then you can install the cloned package directly in the Package Manager using the "local" method. For more information on installing local packages in the Package Manager, see the [Package Manager](https://docs.unity3d.com/Manual/upm-ui-local.html) documentation.
 
 ## API
 
@@ -85,9 +88,11 @@ mesh.Optimize();
 
 [Unity Companion License](LICENSE.md)
 
-## Third Party Licenses<a name="third-party-licenses"></a>
+<a name="third-party-licenses"></a>
 
-[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/com.unity.probuilder/Third%20Party%20Notices.md)
+## Third Party Notices
+
+[Third Party Licenses](https://github.com/Unity-Technologies/com.unity.probuilder/blob/master/Third%20Party%20Notices.md)
 
 ## Contributing
 

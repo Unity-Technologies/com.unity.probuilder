@@ -6,31 +6,29 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Functions for projecting 3d points to 2d space.
+    /// Contains functions for projecting 3D points to 2D space.
     /// </summary>
     public static class Projection
     {
         /// <summary>
-        /// Project a collection of 3d positions to a 2d plane. The direction from which the vertices are projected
-        /// is calculated using <see cref="FindBestPlane"/>.
+        /// Projects a collection of 3D positions to a 2D plane. This method uses <see cref="FindBestPlane"/> to calculate
+        /// the direction from which the vertices are projected.
         /// </summary>
         /// <param name="positions">A collection of positions to project based on a direction.</param>
-        /// <param name="indexes"></param>
-        /// <returns>The positions array projected into 2d coordinates.</returns>
+        /// <param name="indexes">A collection of indices to project. The returned array matches the length of this collection.</param>
+        /// <returns>The positions array projected into 2D coordinates.</returns>
         public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes = null)
         {
             return PlanarProject(positions, indexes, FindBestPlane(positions, indexes).normal);
         }
 
         /// <summary>
-        /// Project a collection of 3d positions to a 2d plane.
+        /// Projects a collection of 3D positions to a 2D plane in the specified direction.
         /// </summary>
         /// <param name="positions">A collection of positions to project based on a direction.</param>
-        /// <param name="indexes">
-        /// A collection of indices to project. The returned array will match the length of indices.
-        /// </param>
-        /// <param name="direction">The direction from which vertex positions are projected into 2d space.</param>
-        /// <returns>The positions array projected into 2d coordinates.</returns>
+        /// <param name="indexes">A collection of indices to project. The returned array matches the length of this collection.</param>
+        /// <param name="direction">The direction from which vertex positions are projected into 2D space.</param>
+        /// <returns>The positions array projected into 2D coordinates.</returns>
         public static Vector2[] PlanarProject(IList<Vector3> positions, IList<int> indexes, Vector3 direction)
         {
             List<Vector2> results = new List<Vector2>(indexes != null ? indexes.Count : positions.Count);
@@ -46,7 +44,7 @@ namespace UnityEngine.ProBuilder
             if(results == null)
                 throw new ArgumentNullException("results");
 
-            var nrm = direction;
+            var nrm = Math.EnsureUnitVector(direction);
             var axis = VectorToProjectionAxis(nrm);
             var prj = GetTangentToAxis(axis);
             var len = indexes == null ? positions.Count : indexes.Count;
@@ -125,7 +123,7 @@ namespace UnityEngine.ProBuilder
 
         internal static void PlanarProject(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {
-            var nrm = Math.Normal(mesh, face);
+            var nrm = Math.EnsureUnitVector(Math.Normal(mesh, face));
             var trs = (Transform)null;
             var worldSpace = face.uv.useWorldSpace;
 
@@ -258,7 +256,7 @@ namespace UnityEngine.ProBuilder
                     return -Vector3.forward;
 
                 default:
-                    return Vector3.zero;
+                    return Vector3.forward;
             }
         }
 
@@ -289,12 +287,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Find a plane that best fits a set of 3d points.
+        /// Finds the plane that best fits the specified set of 3D points.
         /// </summary>
         /// <remarks>http://www.ilikebigbits.com/blog/2015/3/2/plane-from-points</remarks>
         /// <param name="points">The points to find a plane for. Order does not matter.</param>
-        /// <param name="indexes">If provided, only the vertices referenced by the indexes array will be considered.</param>
-        /// <returns>A plane that best matches the layout of the points array.</returns>
+        /// <param name="indexes">If provided, this method considers only the vertices referenced by this array.</param>
+        /// <returns>The plane that best matches the layout of the points array.</returns>
         public static Plane FindBestPlane(IList<Vector3> points, IList<int> indexes = null)
         {
             float   xx = 0f, xy = 0f, xz = 0f,

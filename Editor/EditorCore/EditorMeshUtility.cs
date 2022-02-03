@@ -12,7 +12,7 @@ using Math = UnityEngine.ProBuilder.Math;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Mesh editing helper functions that are only available in the Editor.
+    /// Contains helper functions for mesh editing that are only available in the Editor.
     /// </summary>
     public static class EditorMeshUtility
     {
@@ -31,20 +31,21 @@ namespace UnityEditor.ProBuilder
             set => s_AutoManageMaterials.value = value;
         }
 
-        static readonly List<int> s_IndicesBuffer = new List<int>();
-
-        /// <value>
-        /// This callback is raised after a ProBuilderMesh has been successfully optimized.
-        /// </value>
+        static readonly List<int> s_IndicesBuffer = new
+          
+        /// <summary>
+        /// Raised after a ProBuilderMesh has been successfully optimized.
+        /// </summary>
         /// <seealso cref="Optimize"/>
         public static event Action<ProBuilderMesh, Mesh> meshOptimized = null;
 
         /// <summary>
-        /// Optmizes the mesh geometry, and generates a UV2 channel (if object is marked as LightmapStatic, or generateLightmapUVs is true).
+        /// Optimizes the mesh geometry, and generates a UV2 channel if object is marked as <see cref="StaticEditorFlags.ContributeGI"/>
+        /// or you set the `generateLightmapUVs` parameter to true.
         /// </summary>
         /// <remarks>This is only applicable to meshes with triangle topology. Quad meshes are not affected by this function.</remarks>
-        /// <param name="mesh">The ProBuilder mesh component to be optimized.</param>
-        /// <param name="generateLightmapUVs">If the Auto UV2 preference is disabled this parameter can be used to force UV2s to be built.</param>
+        /// <param name="mesh">The ProBuilder mesh component to optimize.</param>
+        /// <param name="generateLightmapUVs">True to force ProBuilder to build UV2s if the Auto UV2 preference is disabled.</param>
         public static void Optimize(this ProBuilderMesh mesh, bool generateLightmapUVs = false)
         {
             if (mesh == null)
@@ -256,7 +257,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Resize any collider components on this mesh to match the size of the mesh bounds.
+        /// Resizes any collider components on this mesh to match the size of the mesh bounds.
         /// </summary>
         /// <param name="mesh">The mesh target to rebuild collider volumes for.</param>
         public static void RebuildColliders(this ProBuilderMesh mesh)

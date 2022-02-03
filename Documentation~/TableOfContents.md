@@ -115,7 +115,7 @@
 		* [Prism](Prism)
 		* [Sphere](Sphere)
 		* [Sprite](Sprite)
-		* [Stair](Stair)
+		* [Stairs](Stair)
 		* [Torus](Torus)
 * [Editor window reference](ref_windows)
 	* [Lightmap UV Editor window](lightmap-uv)
@@ -135,3 +135,4 @@
 		* [Bezier Shape component](bezier)
 	* [Boolean operations](boolean)
 * [Scripting API overview](api)
+* [Glossary](gloss)

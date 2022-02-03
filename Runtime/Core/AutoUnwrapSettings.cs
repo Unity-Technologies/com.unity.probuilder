@@ -4,11 +4,14 @@ using UnityEngine.Serialization;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A collection of settings describing how to project UV coordinates for a @"UnityEngine.ProBuilder.Face".
+    /// A collection of settings describing how to project UV coordinates for a <see cref="Face"/>.
     /// </summary>
     [System.Serializable]
     public struct AutoUnwrapSettings
     {
+        /// <summary>
+        /// Creates and returns the default set of AutoUnwrapSettings.
+        /// </summary>
         public static AutoUnwrapSettings defaultAutoUnwrapSettings
         {
             get
@@ -20,26 +23,27 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// The point from which UV transform operations will be performed.
-        /// <br />
-        /// After the initial projection into 2d space, UVs will be translated to the anchor position. Next, the offset and rotation are applied, followed by the various other settings.
+        /// Defines the point from which ProBuilder performs UV transform operations.
+        ///
+        /// After the initial projection into 2D space, ProBuilder translates UVs to the anchor position.
+        /// Next, ProBuilder applies the offset and rotation, followed by the other settings.
         /// </summary>
         public enum Anchor
         {
             /// <summary>
-            /// The top left bound of the projected UVs is aligned with UV coordinate {0, 1}.
+            /// The top left bounding point of the projected UVs is aligned with UV coordinate {0, 1}.
             /// </summary>
             UpperLeft,
             /// <summary>
-            /// The center top bound of the projected UVs is aligned with UV coordinate {.5, 1}.
+            /// The center top bounding point of the projected UVs is aligned with UV coordinate {.5, 1}.
             /// </summary>
             UpperCenter,
             /// <summary>
-            /// The right top bound of the projected UVs is aligned with UV coordinate {1, 1}.
+            /// The right top bounding point of the projected UVs is aligned with UV coordinate {1, 1}.
             /// </summary>
             UpperRight,
             /// <summary>
-            /// The middle left bound of the projected UVs is aligned with UV coordinate {0, .5}.
+            /// The middle left bounding point of the projected UVs is aligned with UV coordinate {0, .5}.
             /// </summary>
             MiddleLeft,
             /// <summary>
@@ -47,42 +51,42 @@ namespace UnityEngine.ProBuilder
             /// </summary>
             MiddleCenter,
             /// <summary>
-            /// The middle right bound of the projected UVs is aligned with UV coordinate {1, .5}.
+            /// The middle right bounding point of the projected UVs is aligned with UV coordinate {1, .5}.
             /// </summary>
             MiddleRight,
             /// <summary>
-            /// The lower left bound of the projected UVs is aligned with UV coordinate {0, 0}.
+            /// The lower left bounding point of the projected UVs is aligned with UV coordinate {0, 0}.
             /// </summary>
             LowerLeft,
             /// <summary>
-            /// The lower center bound of the projected UVs is aligned with UV coordinate {.5, 0}.
+            /// The lower center bounding point of the projected UVs is aligned with UV coordinate {.5, 0}.
             /// </summary>
             LowerCenter,
             /// <summary>
-            /// The lower right bound of the projected UVs is aligned with UV coordinate {1, 0}.
+            /// The lower right bounding point of the projected UVs is aligned with UV coordinate {1, 0}.
             /// </summary>
             LowerRight,
             /// <summary>
-            /// UVs are not aligned following projection.
+            /// UVs are not aligned with any projection.
             /// </summary>
             None
         }
 
         /// <summary>
-        /// Describes how the projected UV bounds are optionally stretched to fill normalized coordinate space.
+        /// Describes how ProBuilder optionally stretches the projected UV bounds to fill the normalized coordinate space.
         /// </summary>
         public enum Fill
         {
             /// <summary>
-            /// UV bounds are resized to fit within a 1 unit square while retaining original aspect ratio.
+            /// Retain original aspect ratio while resizing UV bounds to fit within a 1 unit square.
             /// </summary>
             Fit,
             /// <summary>
-            /// UV bounds are not resized.
+            /// Don't resize UV bounds.
             /// </summary>
             Tile,
             /// <summary>
-            /// UV bounds are resized to fit within a 1 unit square, not retaining aspect ratio.
+            /// Don't retain aspect ratio while resizing UV bounds to fit within a 1 unit square.
             /// </summary>
             Stretch
         }
@@ -124,7 +128,8 @@ namespace UnityEngine.ProBuilder
         Anchor m_Anchor;
 
         /// <summary>
-        /// By default, UVs are project in local (or model) coordinates. Enable useWorldSpace to transform vertex positions into world space for UV projection.
+        /// Gets or sets whether to transform vertex positions into world space for UV projection.
+        /// By default, ProBuilder projects UVs in local (or model) coordinates.
         /// </summary>
         public bool useWorldSpace
         {
@@ -133,7 +138,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// When enabled UV coordinates will be inverted horizontally.
+        /// Gets or sets whether to invert UV coordinates horizontally.
         /// </summary>
         public bool flipU
         {
@@ -142,7 +147,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// When enabled UV coordinates will be inverted vertically.
+        /// Gets or sets whether to invert UV coordinates vertically.
         /// </summary>
         public bool flipV
         {
@@ -151,7 +156,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// When enabled the coordinates will have their U and V parameters exchanged.
+        /// Gets or sets whether to exchange the U and V coordinate parameters.
         /// </summary>
         /// <example>
         /// {U, V} becomes {V, U}
@@ -163,7 +168,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// The @"UnityEngine.ProBuilder.AutoUnwrapSettings.Fill" mode.
+        /// Gets or sets the <see cref="AutoUnwrapSettings.Fill"/> mode.
         /// </summary>
         public Fill fill
         {
@@ -172,7 +177,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Coordinates are multiplied by this value after projection and anchor settings.
+        /// Gets or sets the scaling value to apply to coordinates after applying projection and anchor settings.
         /// </summary>
         public Vector2 scale
         {
@@ -181,7 +186,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Added to UV coordinates after projection and anchor settings.
+        /// Gets or sets the value to add to UV coordinates after applying projection and anchor settings.
         /// </summary>
         public Vector2 offset
         {
@@ -190,7 +195,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// An amount in degrees that UV coordinates are to be rotated clockwise.
+        /// Gets or sets the amount in degrees to rotate UV coordinates clockwise.
         /// </summary>
         public float rotation
         {
@@ -199,7 +204,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// The starting point from which UV transform operations will be performed.
+        /// Gets or sets the starting point to use for UV transform operations.
         /// </summary>
         public Anchor anchor
         {
@@ -208,9 +213,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// A copy constructor.
+        /// Creates a new set of AutoUnwrapSettings from the specified source object.
         /// </summary>
-        /// <param name="unwrapSettings">The settings to copy to this new instance.</param>
+        /// <param name="unwrapSettings">The settings to copy to the new instance.</param>
         public AutoUnwrapSettings(AutoUnwrapSettings unwrapSettings)
         {
             m_UseWorldSpace = unwrapSettings.m_UseWorldSpace;
@@ -225,7 +230,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a set of unwrap parameters that tiles UVs.
+        /// Gets a set of unwrap parameters that tiles UVs.
         /// </summary>
         public static AutoUnwrapSettings tile
         {
@@ -238,7 +243,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a set of unwrap parameters that strectches the face texture to fill a normalized coordinate space, maintaining th aspect ratio.
+        /// Gets a set of unwrap parameters that strectches the face texture to fill a normalized coordinate space, maintaining the aspect ratio.
         /// </summary>
         public static AutoUnwrapSettings fit
         {
@@ -252,7 +257,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a set of unwrap parameters that strectches the face texture to fill a normalized coordinate space, disregarding the aspect ratio.
+        /// Gets a set of unwrap parameters that stretches the face texture to fill a normalized coordinate space, disregarding the aspect ratio.
         /// </summary>
         public static AutoUnwrapSettings stretch
         {
@@ -266,7 +271,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Resets all parameters to default values.
+        /// Resets all parameters to their default values.
         /// </summary>
         public void Reset()
         {
@@ -281,6 +286,10 @@ namespace UnityEngine.ProBuilder
             m_Anchor = Anchor.None;
         }
 
+        /// <summary>
+        /// Returns a string representation of the AutoUnwrapSettings.
+        /// </summary>
+        /// <returns>A multi-line string containing the values for each setting.</returns>
         public override string ToString()
         {
             string str =
