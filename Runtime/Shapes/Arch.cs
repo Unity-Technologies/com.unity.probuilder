@@ -3,27 +3,50 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [arch](../manual/Arch.html) shape.
+    /// </summary>
     [Shape("Arch")]
     public class Arch : Shape
     {
+        /// <summary>
+        /// The thickness of the arch in meters. The larger the thickness, the smaller the opening becomes.
+        /// The default value is 0.1. The minimum value is 0.01.
+        /// </summary>
         [Min(0.01f)]
         [SerializeField]
         float m_Thickness = .1f;
 
+        /// <summary>
+        /// The number of sides for the arch. The more sides you use (relative to the size of the Radius), the smoother the arch becomes.
+        /// The default value is 5. Valid values range from 3 to 200.
+        /// </summary>
         [Range(3, 200)]
         [SerializeField]
         int m_NumberOfSides = 5;
 
+        /// <summary>
+        /// The circumference of the arch in degrees.
+        /// The default value is 180. Valid values range from 1 to 360.
+        /// </summary>
         [Range(1, 360)]
         [SerializeField]
         float m_ArchDegrees = 180;
 
+        /// <summary>
+        /// True to create faces for the ends of the arch (default).
+        /// You can set this value to false as an optimization strategy.
+        /// </summary>
         [SerializeField]
         bool m_EndCaps = true;
 
+        /// <summary>
+        /// True to smooth the edges of the polygons (default).
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Arch)
@@ -48,6 +71,7 @@ namespace UnityEngine.ProBuilder.Shapes
             };
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var upDir = Vector3.Scale(rotation * Vector3.up, size) ;
@@ -188,6 +212,7 @@ namespace UnityEngine.ProBuilder.Shapes
         static readonly GUIContent k_EndCapsContent = new GUIContent("End Caps", L10n.Tr("Whether to generate faces for the ends of the arch."));
         static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the arch."));
 
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);

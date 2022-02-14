@@ -11,28 +11,36 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder.Actions
 {
+    /// <summary>
+    /// Represents the [Cut tool](../manual/cut-tool.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+    /// </summary>
     public class CutToolToggle : MenuToolToggle
     {
+        /// <inheritdoc/>
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Geometry; }
         }
 
+        /// <inheritdoc/>
         public override Texture2D icon
         {
             get { return IconUtility.GetIcon("Toolbar/CutTool", IconSkin.Pro); }
         }
 
+        /// <inheritdoc/>
         public override TooltipContent tooltip
         {
             get { return s_Tooltip; }
         }
 
+        /// <inheritdoc/>
         public override SelectMode validSelectModes
         {
             get { return SelectMode.Vertex | SelectMode.Edge | SelectMode.Face; }
         }
 
+        /// <inheritdoc/>
         protected override bool hasFileMenuEntry
         {
             get { return false; }
@@ -45,11 +53,13 @@ namespace UnityEditor.ProBuilder.Actions
             keyCommandAlt, keyCommandShift, 'C'
         );
 
+        /// <inheritdoc/>
         public override bool enabled
         {
             get => MeshSelection.selectedObjectCount > 0;
         }
 
+        /// <inheritdoc/>
         protected override ActionResult PerformActionImplementation()
         {
             m_Tool = ScriptableObject.CreateInstance<CutTool>();

@@ -8,7 +8,7 @@ using System.Text;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Functions for generating mesh attributes and various other mesh utilities.
+    /// Provides functions for generating mesh attributes and utilities.
     /// </summary>
     public static class MeshUtility
     {
@@ -51,9 +51,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Generate tangents and apply them.
+        /// Generates tangents and applies them on the specified mesh.
         /// </summary>
-        /// <param name="mesh">The UnityEngine.Mesh mesh target.</param>
+        /// <param name="mesh">The <see cref="UnityEngine.Mesh"/> mesh target.</param>
         public static void GenerateTangent(Mesh mesh)
         {
             if (mesh == null)
@@ -134,10 +134,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Performs a deep copy of a mesh and returns a new mesh object.
+        /// Returns a new mesh containing all attributes and values copied from the specified source mesh.
         /// </summary>
-        /// <param name="source">The source mesh.</param>
-        /// <returns>A new UnityEngine.Mesh object with the same values as source.</returns>
+        /// <param name="source">The mesh to copy from.</param>
+        /// <returns>A new <see cref="UnityEngine.Mesh"/> object with the same values as the source mesh.</returns>
         public static Mesh DeepCopy(Mesh source)
         {
             Mesh m = new Mesh();
@@ -146,9 +146,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Copy source mesh values to destination mesh.
+        /// Copies mesh attribute values from one mesh to another.
         /// </summary>
-        /// <param name="source">The mesh from which to copy attributes.</param>
+        /// <param name="source">The mesh from which to copy attribute values.</param>
         /// <param name="destination">The destination mesh to copy attribute values to.</param>
         /// <exception cref="ArgumentNullException">Throws if source or destination is null.</exception>
         public static void CopyTo(Mesh source, Mesh destination)
@@ -236,35 +236,36 @@ namespace UnityEngine.ProBuilder
             return res != null && res.Count == vertexCount ? res : default(T);
         }
 
+        static void PrintAttribute<T>(StringBuilder sb, string title, IEnumerable<T> attrib, string fmt)
+        {
+            sb.AppendLine($"  - {title}");
+            if (attrib != null && attrib.Any())
+            {
+                foreach (var value in attrib)
+                    sb.AppendLine(string.Format($"    {fmt}", value));
+            }
+            else
+            {
+                sb.AppendLine("\tnull");
+            }
+        }
+
         /// <summary>
-        /// Print a detailed string summary of the mesh attributes.
+        /// Prints a detailed string summary of the mesh attributes.
         /// </summary>
-        /// <param name="mesh"></param>
-        /// <returns></returns>
+        /// <param name="mesh">The mesh to print information for.</param>
+        /// <returns>A tab-delimited string (positions, normals, colors, tangents, and UV coordinates).</returns>
         public static string Print(Mesh mesh)
         {
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-            sb.AppendLine(string.Format("vertices: {0}\ntriangles: {1}\nsubmeshes: {2}", mesh.vertexCount, mesh.triangles.Length, mesh.subMeshCount));
-
-            sb.AppendLine(string.Format("     {0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
-                    "Positions",
-                    "Normals",
-                    "Colors",
-                    "Tangents",
-                    "UV0",
-                    "UV2",
-                    "UV3",
-                    "UV4"));
+            StringBuilder sb = new StringBuilder();
 
             Vector3[] positions = mesh.vertices;
             Vector3[] normals = mesh.normals;
             Color[] colors = mesh.colors;
             Vector4[] tangents = mesh.tangents;
-
             List<Vector4> uv0 = new List<Vector4>();
             Vector2[] uv2 = mesh.uv2;
             List<Vector4> uv3 = new List<Vector4>();
@@ -274,38 +275,19 @@ namespace UnityEngine.ProBuilder
             mesh.GetUVs(2, uv3);
             mesh.GetUVs(3, uv4);
 
-            if (positions != null && positions.Count() != mesh.vertexCount)
-                positions = null;
-            if (normals != null && normals.Count() != mesh.vertexCount)
-                normals = null;
-            if (colors != null && colors.Count() != mesh.vertexCount)
-                colors = null;
-            if (tangents != null && tangents.Count() != mesh.vertexCount)
-                tangents = null;
-            if (uv0.Count() != mesh.vertexCount)
-                uv0 = null;
-            if (uv2.Count() != mesh.vertexCount)
-                uv2 = null;
-            if (uv3.Count() != mesh.vertexCount)
-                uv3 = null;
-            if (uv4.Count() != mesh.vertexCount)
-                uv4 = null;
+            sb.AppendLine($"# Sanity Check");
+            sb.AppendLine(MeshUtility.SanityCheck(mesh));
 
-            sb.AppendLine("# Attributes");
+            sb.AppendLine($"# Attributes ({mesh.vertexCount})");
 
-            for (int i = 0, c = mesh.vertexCount; i < c; i++)
-            {
-                sb.AppendLine(string.Format("\t{8,-5}{0,-28}{1,-28}{2,-28}{3,-28}{4,-28}{5,-28}{6,-28}{7,-28}",
-                        positions == null   ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", positions[i].x, positions[i].y, positions[i].z),
-                        normals == null     ? "null" : string.Format("{0:F3}, {1:F3}, {2:F3}", normals[i].x, normals[i].y, normals[i].z),
-                        colors == null      ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", colors[i].r, colors[i].g, colors[i].b, colors[i].a),
-                        tangents == null    ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", tangents[i].x, tangents[i].y, tangents[i].z, tangents[i].w),
-                        uv0 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv0[i].x, uv0[i].y, uv0[i].z, uv0[i].w),
-                        uv2 == null         ? "null" : string.Format("{0:F2}, {1:F2}", uv2[i].x, uv2[i].y),
-                        uv3 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv3[i].x, uv3[i].y, uv3[i].z, uv3[i].w),
-                        uv4 == null         ? "null" : string.Format("{0:F2}, {1:F2}, {2:F2}, {3:F2}", uv4[i].x, uv4[i].y, uv4[i].z, uv4[i].w),
-                        i));
-            }
+            PrintAttribute(sb, $"positions ({positions.Length})", positions, "pos: {0:F2}");
+            PrintAttribute(sb, $"normals ({normals.Length})", normals, "nrm: {0:F2}");
+            PrintAttribute(sb, $"colors ({colors.Length})", colors, "col: {0:F2}");
+            PrintAttribute(sb, $"tangents ({tangents.Length})", tangents, "tan: {0:F2}");
+            PrintAttribute(sb, $"uv0 ({uv0.Count})", uv0, "uv0: {0:F2}");
+            PrintAttribute(sb, $"uv2 ({uv2.Length})", uv2, "uv2: {0:F2}");
+            PrintAttribute(sb, $"uv3 ({uv3.Count})", uv3, "uv3: {0:F2}");
+            PrintAttribute(sb, $"uv4 ({uv4.Count})", uv4, "uv4: {0:F2}");
 
             sb.AppendLine("# Topology");
 
@@ -340,10 +322,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the number of indexes this mesh contains.
+        /// Returns the number of indices this mesh contains.
         /// </summary>
         /// <param name="mesh">The source mesh to sum submesh index counts from.</param>
-        /// <returns>The count of all indexes contained within this meshes submeshes.</returns>
+        /// <returns>The count of all indices contained within this mesh's submeshes.</returns>
         public static uint GetIndexCount(Mesh mesh)
         {
             uint sum = 0;
@@ -358,10 +340,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the number of triangles or quads this mesh contains. Other mesh topologies are not considered.
+        /// Returns the number of triangles or quads this mesh contains. No other mesh topologies are considered.
         /// </summary>
         /// <param name="mesh">The source mesh to sum submesh primitive counts from.</param>
-        /// <returns>The count of all triangles or quads contained within this meshes submeshes.</returns>
+        /// <returns>The count of all triangles or quads contained within this mesh's submeshes.</returns>
         public static uint GetPrimitiveCount(Mesh mesh)
         {
             uint sum = 0;
@@ -381,12 +363,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Compile a UnityEngine.Mesh from a ProBuilderMesh.
+        /// Compiles a <see cref="UnityEngine.Mesh"/> from a ProBuilderMesh.
         /// </summary>
-        /// <param name="probuilderMesh">The mesh source.</param>
-        /// <param name="targetMesh">Destination UnityEngine.Mesh.</param>
-        /// <param name="preferredTopology">If specified, the function will try to create topology matching the reqested format (and falling back on triangles where necessary).</param>
-        /// <returns>The resulting material array from the compiled faces array. This is suitable to assign to the MeshRenderer.sharedMaterials property.</returns>
+        /// <param name="probuilderMesh">The source mesh.</param>
+        /// <param name="targetMesh">The destination `UnityEngine.Mesh`.</param>
+        /// <param name="preferredTopology">True to try to create topology that matches the requested format. If the method can't create topology using the requested format, it uses triangles where necessary.</param>
         public static void Compile(ProBuilderMesh probuilderMesh, Mesh targetMesh, MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             if (probuilderMesh == null)
@@ -431,7 +412,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Creates a new array of vertices with values from a UnityEngine.Mesh.
+        /// Creates a new array of vertices with values from a <see cref="UnityEngine.Mesh"/> object.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <returns>An array of vertices.</returns>
@@ -496,14 +477,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Merge coincident vertices where possible, optimizing the vertex count of a UnityEngine.Mesh.
+        /// Merges coincident vertices where possible, optimizing the vertex count of a <see cref="UnityEngine.Mesh"/> object.
         /// </summary>
         /// <param name="mesh">The mesh to optimize.</param>
         /// <param name="vertices">
-        /// If provided these values are used in place of extracting attributes from the Mesh.
-        /// <br />
-        /// This is a performance optimization for when this array already exists. If not provided this array will be
-        /// automatically generated for you.
+        /// Specify an array of <see cref="Vertex"/> objects to use instead of extracting attributes from the mesh.
+        ///
+        /// This is a performance optimization for when this array already exists. If not specified, ProBuilder generates this array automatically.
         /// </param>
         public static void CollapseSharedVertices(Mesh mesh, Vertex[] vertices = null)
         {
@@ -558,11 +538,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Scale mesh vertices to fit within a bounds size.
+        /// Scales mesh vertices to fit within a bounding box.
         /// </summary>
-        /// <param name="mesh">The mesh to apply scaling to.</param>
-        /// <param name="currentSize">The bounding size of the original shape we want to fit.</param>
-        /// <param name="sizeToFit">The size to fit mesh contents within.</param>
+        /// <param name="mesh">The mesh to scale.</param>
+        /// <param name="currentSize">The bounding box that defines the mesh's shape. </param>
+        /// <param name="sizeToFit">The new size to fit mesh contents within.</param>
         public static void FitToSize(ProBuilderMesh mesh, Bounds currentSize, Vector3 sizeToFit)
         {
             if (mesh.vertexCount < 1)

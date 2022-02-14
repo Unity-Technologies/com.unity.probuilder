@@ -2,11 +2,14 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [cube](../manual/Cube.html) shape.
+    /// </summary>
     [Shape("Cube")]
     public class Cube : Shape
     {
         /// <summary>
-        /// A set of 8 vertices forming the template for a cube mesh.
+        /// Defines a set of 8 vertices that forms the template for a cube mesh.
         /// </summary>
         static readonly Vector3[] k_CubeVertices = new Vector3[]
         {
@@ -24,14 +27,16 @@ namespace UnityEngine.ProBuilder.Shapes
         };
 
         /// <summary>
-        /// A set of triangles forming a cube with reference to the k_CubeVertices array.
+        /// Defines a set of triangles forming a cube with reference to the k_CubeVertices array.
         /// </summary>
         static readonly int[] k_CubeTriangles = new int[] {
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             mesh.Clear();

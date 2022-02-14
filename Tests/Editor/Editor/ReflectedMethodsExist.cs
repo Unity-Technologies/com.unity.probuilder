@@ -5,6 +5,10 @@ using System;
 using System.Reflection;
 using UnityEngine.ProBuilder;
 
+#if ENABLE_DRIVEN_PROPERTIES
+using SerializationUtility = UnityEngine.ProBuilder.SerializationUtility;
+#endif
+
 static class ReflectedMethodsExist
 {
     const BindingFlags k_BindingFlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -31,6 +35,7 @@ static class ReflectedMethodsExist
     [Test]
     public static void HandleUtility_ApplyWireMaterial()
     {
+
         var m_ApplyWireMaterial = typeof(UnityEditor.HandleUtility).GetMethod(
                 "ApplyWireMaterial",
                 BindingFlags.Static | BindingFlags.NonPublic,

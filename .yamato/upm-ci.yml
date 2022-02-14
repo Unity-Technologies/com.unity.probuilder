@@ -1,7 +1,8 @@
 test_editors:
   - version: 2019.4
-  - version: 2020.1
-  - version: 2020.2
+  - version: 2020.3
+  - version: 2021.2
+  - version: 2022.1
   - version: trunk
 test_platforms:
   - name: win
@@ -67,6 +68,8 @@ publish:
     type: Unity::VM
     image: package-ci/win10:stable
     flavor: b1.large
+  variables:
+    UPMCI_ENABLE_PACKAGE_SIGNING: 1
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package publish

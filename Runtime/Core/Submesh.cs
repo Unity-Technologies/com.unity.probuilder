@@ -7,7 +7,7 @@ using UnityEngine;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A set of indexes and material.
+    /// Defines a set of indices and material.
     /// </summary>
     [Serializable]
     public sealed class Submesh
@@ -21,27 +21,28 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal int m_SubmeshIndex;
 
-        /// <value>
-        /// Indexes making up this submesh. Can be triangles or quads, check with topology.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the indices making up this submesh. Use the <see cref="topology"/> property
+        /// to find out whether the submesh contains triangles or quads.
+        /// </summary>
         public IEnumerable<int> indexes
         {
             get { return new ReadOnlyCollection<int>(m_Indexes); }
             set { m_Indexes = value.ToArray(); }
         }
 
-        /// <value>
-        /// What is the topology (triangles, quads) of this submesh?
-        /// </value>
+        /// <summary>
+        /// Gets or sets the topology (whether this submesh is made with triangles or quads).
+        /// </summary>
         public MeshTopology topology
         {
             get { return m_Topology; }
             set { m_Topology = value; }
         }
 
-        /// <value>
-        /// The index in the sharedMaterials array that this submesh aligns with.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the index in the <see cref="Renderer.sharedMaterials">sharedMaterials</see> array that this submesh aligns with.
+        /// </summary>
         public int submeshIndex
         {
             get { return m_SubmeshIndex; }
@@ -49,10 +50,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create new Submesh.
+        /// Creates a new Submesh from a submesh index for the material, the topology, and a set of indices.
         /// </summary>
-        /// <param name="submeshIndex">The index of this submesh corresponding to the MeshRenderer.sharedMaterials property.</param>
-        /// <param name="topology">What topology is this submesh. ProBuilder only recognizes Triangles and Quads.</param>
+        /// <param name="submeshIndex">The index of this submesh that corresponds to the <see cref="Renderer.sharedMaterials">sharedMaterials</see> property.</param>
+        /// <param name="topology">The topology of this submesh. ProBuilder only recognizes Triangles and Quads.</param>
         /// <param name="indexes">The triangles or quads.</param>
         public Submesh(int submeshIndex, MeshTopology topology, IEnumerable<int> indexes)
         {
@@ -65,7 +66,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create new Submesh from a mesh, submesh index, and material.
+        /// Creates a new Submesh from a source mesh and a submesh index for the material.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="subMeshIndex">Which submesh to read from.</param>
@@ -79,6 +80,10 @@ namespace UnityEngine.ProBuilder
             m_SubmeshIndex = subMeshIndex;
         }
 
+        /// <summary>
+        /// Returns a string that represents this Submesh.
+        /// </summary>
+        /// <returns>A comma-delimited string (for example `"[subMeshIndex],[topology],[indices]"`).</returns>
         public override string ToString()
         {
             return string.Format("{0}, {1}, {2}", m_SubmeshIndex, m_Topology.ToString(), m_Indexes != null ? m_Indexes.Length.ToString() : "0");
@@ -98,11 +103,14 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create submeshes from a set of faces. Currently only Quads and Triangles are supported.
+        /// Creates an array of submeshes from a set of faces. Currently only Quads and Triangles are supported.
         /// </summary>
-        /// <param name="faces">The faces to be included in the resulting submeshes. This method handles groups submeshes by comparing the material property of each face.</param>
-        /// <param name="submeshCount">How many submeshes to create. Usually you will just want to pass the length of the MeshRenderer.sharedMaterials array.</param>
-        /// <param name="preferredTopology">Should the resulting submeshes be in quads or triangles. Note that quads are not guaranteed; ie, some faces may not be able to be represented in quad format and will fall back on triangles.</param>
+        /// <param name="faces">The faces to be included in the list of submeshes. This method handles group submeshes by comparing the material property of each face.</param>
+        /// <param name="submeshCount">The number of submeshes to create. Usually you can set this value to the length of the <see cref="Renderer.sharedMaterials"/> array.</param>
+        /// <param name="preferredTopology">
+        /// By default, ProBuilder creates triangles, but you can set this value to false to construct quads.
+        /// However, ProBuilder falls back to creating triangles if it can't represent some faces in quad format.
+        /// </param>
         /// <returns>An array of Submeshes.</returns>
         /// <exception cref="NotImplementedException">Thrown in the event that a MeshTopology other than Quads or Triangles is passed.</exception>
         public static Submesh[] GetSubmeshes(IEnumerable<Face> faces, int submeshCount, MeshTopology preferredTopology = MeshTopology.Triangles)

@@ -1,7 +1,7 @@
 namespace UnityEngine.ProBuilder
 {
 	/// <summary>
-	/// When drag selecting mesh elements, this defines how the Shift key will modify the selection.
+	/// Defines how the Shift key modifies the selection when drag-selecting mesh elements.
 	/// </summary>
 	/// <remarks>Editor only.</remarks>
 	public enum SelectionModifierBehavior

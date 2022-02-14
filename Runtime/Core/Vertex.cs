@@ -9,10 +9,9 @@ using System.Text;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Holds information about a single vertex, and provides methods for averaging between many.
-    /// <remarks>All values are optional. Where not present a default value will be substituted if necessary.</remarks>
+    /// Holds information about a single vertex, and provides methods for averaging between multiple Vertex objects.
     /// </summary>
-    /// <inheritdoc cref="IEquatable{T}"/>
+    /// <remarks>All values are optional; however, ProBuilder can use default values if necessary.</remarks>
     [Serializable]
     public sealed class Vertex : IEquatable<Vertex>
     {
@@ -43,9 +42,10 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         MeshArrays m_Attributes;
 
-        /// <value>
-        /// The position in model space.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the position in local space.
+        /// </summary>
+        /// <returns>The position in local space.</returns>
         /// <seealso cref="ProBuilderMesh.positions"/>
         public Vector3 position
         {
@@ -57,10 +57,12 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Vertex color.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the [vertex color](../manual/workflow-vertexcolors.html).
+        /// </summary>
+        /// <returns>The color applied to this vertex.</returns>
         /// <seealso cref="ProBuilderMesh.colors"/>
+        /// <seealso cref="UnityEngine.Color" />
         public Color color
         {
             get { return m_Color; }
@@ -71,9 +73,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Unit vector normal.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the unit vector normal.
+        /// </summary>
+        /// <returns>The unit vector normal.</returns>
         /// <seealso cref="ProBuilderMesh.GetNormals"/>
         public Vector3 normal
         {
@@ -85,9 +88,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// Vertex tangent (sometimes called binormal).
-        /// </value>
+        /// <summary>
+        /// Gets or sets the vertex tangent (sometimes called binormal).
+        /// </summary>
+        /// <returns>The vertex tangent.</returns>
         /// <seealso cref="ProBuilderMesh.tangents"/>
         public Vector4 tangent
         {
@@ -99,9 +103,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// UV 0 channel. Also called textures.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the UV0 channel. Also called texture UVs.
+        /// </summary>
+        /// <returns>The UV0 channel.</returns>
         /// <seealso cref="ProBuilderMesh.textures"/>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector2 uv0
@@ -114,9 +119,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// UV 2 channel.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the UV2 channel.
+        /// </summary>
+        /// <returns>The UV2 channel.</returns>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector2 uv2
         {
@@ -128,9 +134,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// UV 3 channel.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the UV3 channel.
+        /// </summary>
+        /// <returns>The UV3 channel.</returns>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector4 uv3
         {
@@ -142,9 +149,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        /// <value>
-        /// UV 4 channel.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the UV4 channel.
+        /// </summary>
+        /// <returns>The UV4 channel.</returns>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector4 uv4
         {
@@ -162,10 +170,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Find if a vertex attribute has been set.
+        /// Tests whether the specified vertex attribute has been set.
         /// </summary>
-        /// <param name="attribute">The attribute or attributes to test for.</param>
-        /// <returns>True if this vertex has the specified attributes set, false if they are default values.</returns>
+        /// <param name="attribute">An array containing one or more attribute(s) to find.</param>
+        /// <returns>True if this vertex has the specified attributes set; false if they are default values.</returns>
         public bool HasArrays(MeshArrays attribute)
         {
             return (m_Attributes & attribute) == attribute;
@@ -220,26 +228,27 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Initialize a Vertex with no values.
+        /// Initializes a Vertex with no values.
         /// </summary>
         public Vertex()
         {
         }
 
         /// <summary>
-        /// Compare Vertex to an object.
+        /// Determines whether the specified generic object is equal to this Vertex.
         /// </summary>
-        /// <param name="obj">The object to compare this vertex to.</param>
-        /// <returns>True if obj is a Vertex, and equal to this.</returns>
+        /// <param name="obj">The object to compare this Vertex object to.</param>
+        /// <returns>True if the other object is a Vertex and is equal to this.</returns>
         public override bool Equals(object obj)
         {
             return obj is Vertex && Equals((Vertex)obj);
         }
 
         /// <summary>
-        /// Compare the equality of vertex values. Uses the @"UnityEngine.ProBuilder.Math" Approx functions to compare float values.
+        /// Determines whether the specified Vertex object is equal to this Vertex by checking whether all
+        /// components are within a certain distance of the other.
         /// </summary>
-        /// <param name="other">The vertex to compare.</param>
+        /// <param name="other">The other Vertex to compare to.</param>
         /// <returns>True if all values are the same (within float.Epsilon).</returns>
         public bool Equals(Vertex other)
         {
@@ -256,6 +265,14 @@ namespace UnityEngine.ProBuilder
                 Math.Approx4(m_UV4, other.m_UV4);
         }
 
+        /// <summary>
+        /// Determines whether the specified Vertex object is equal to this Vertex by checking whether each
+        /// component for a specific set of attributes is within a certain distance of the other. The MeshArrays
+        /// `mask` determines which set of attributes to compare.
+        /// </summary>
+        /// <param name="other">The other Vertex to compare to.</param>
+        /// <param name="mask">A bitmask that defines which attributes to compare.</param>
+        /// <returns>True if all values are the same (within float.Epsilon).</returns>
         public bool Equals(Vertex other, MeshArrays mask)
         {
             if (ReferenceEquals(other, null))
@@ -272,7 +289,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Creates a new hashcode from position, uv0, and normal.
+        /// Creates a new hashcode from this Vertex's position, UV0, and normal.
         /// </summary>
         /// <returns>A hashcode for this object.</returns>
         public override int GetHashCode()
@@ -288,7 +305,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Copy constructor.
+        /// Creates a new Vertex object as a copy of another Vertex object.
         /// </summary>
         /// <param name="vertex">The Vertex to copy field data from.</param>
         public Vertex(Vertex vertex)
@@ -314,7 +331,12 @@ namespace UnityEngine.ProBuilder
             hasUV4 = vertex.hasUV4;
         }
 
-        /// <inheritdoc cref="Vertex.Equals(Vertex)"/>
+        /// <summary>
+        /// Determines whether the specified Vertex is equal to this one.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>True if `a` equals `b`.</returns>
         public static bool operator==(Vertex a, Vertex b)
         {
             if (ReferenceEquals(a, b))
@@ -327,39 +349,43 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Test for inequality.
+        /// Determines whether the specified Vertex is not equal to this one.
         /// </summary>
-        /// <param name="a">Left parameter.</param>
-        /// <param name="b">Right parameter.</param>
-        /// <returns>True if a does not equal b.</returns>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>True if `a` does not equal `b`.</returns>
         public static bool operator!=(Vertex a, Vertex b)
         {
             return !(a == b);
         }
 
         /// <summary>
-        /// Addition is performed component-wise for every property.
+        /// Adds two Vertex objects together and returns the result in a new Vertex object.
+        /// Addition is performed component-wise for every attribute on the Vertex.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side addition parameter.</param>
-        /// <param name="b">Right side addition parameter.</param>
-        /// <returns>A new Vertex with the sum of a + b.</returns>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>A new Vertex with the sum of `a` + `b`.</returns>
         public static Vertex operator+(Vertex a, Vertex b)
         {
             return Add(a, b);
         }
 
         /// <summary>
-        /// Addition is performed component-wise for every property.
+        /// Adds two Vertex objects together and returns the result in a new Vertex object.
+        /// Addition is performed component-wise for every attribute on the Vertex.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side addition parameter.</param>
-        /// <param name="b">Right side addition parameter.</param>
-        /// <returns>A new Vertex with the sum of a + b.</returns>
+        /// <param name="a">First Vertex object.</param>
+        /// <param name="b">Second Vertex object.</param>
+        /// <returns>A new Vertex with the sum of `a` + `b`.</returns>
         public static Vertex Add(Vertex a, Vertex b)
         {
             Vertex v = new Vertex(a);
@@ -368,12 +394,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Addition is performed component-wise for every property.
+        /// Adds another Vertex object to this one using component-wise addition on each attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="b">Right side addition parameter.</param>
+        /// <param name="b">The Vertex object to add.</param>
         public void Add(Vertex b)
         {
             if (b == null)
@@ -390,28 +417,32 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Subtraction is performed component-wise for every property.
+        /// Subtracts two Vertex objects and returns the result in a new Vertex object.
+        /// Subtraction is performed component-wise for every attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side subtraction parameter.</param>
-        /// <param name="b">Right side subtraction parameter.</param>
-        /// <returns>A new Vertex with the sum of a - b.</returns>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>A new Vertex with the difference of `a` - `b`.</returns>
         public static Vertex operator-(Vertex a, Vertex b)
         {
             return Subtract(a, b);
         }
 
         /// <summary>
-        /// Subtraction is performed component-wise for every property.
+        /// Subtracts two Vertex objects and returns the result in a new Vertex object.
+        /// Subtraction is performed component-wise for every attribute on the Vertex.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side subtraction parameter.</param>
-        /// <param name="b">Right side subtraction parameter.</param>
-        /// <returns>A new Vertex with the sum of a - b.</returns>
+        /// <param name="a">First Vertex object.</param>
+        /// <param name="b">Second Vertex object.</param>
+        /// <returns>A new Vertex with the difference of `a` - `b`.</returns>
         public static Vertex Subtract(Vertex a, Vertex b)
         {
             var c = new Vertex(a);
@@ -420,12 +451,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Subtraction is performed component-wise for every property.
+        /// Subtracts another Vertex object from this one using component-wise subtraction on each attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="b">Right side subtraction parameter.</param>
+        /// <param name="b">The Vertex object to subtract.</param>
         public void Subtract(Vertex b)
         {
             if (b == null)
@@ -442,25 +474,32 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Multiplication is performed component-wise for every property.
+        /// Multiples a Vertex object by the specified `value` and returns the result in a new Vertex object.
+        /// Multiplication is performed component-wise for every attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side multiplication parameter.</param>
-        /// <param name="value">Right side multiplication parameter.</param>
-        /// <returns>A new Vertex with the sum of a * b.</returns>
+        /// <param name="a">Vertex object to multiply</param>
+        /// <param name="value">Multiplication factor.</param>
+        /// <returns>A new Vertex with the product of `a` * `b`.</returns>
         public static Vertex operator*(Vertex a, float value)
         {
             return Multiply(a, value);
         }
 
         /// <summary>
-        /// Multiplication is performed component-wise for every property.
+        /// Multiples a Vertex object by the specified `value` and returns the result in a new Vertex object.
+        /// Multiplication is performed component-wise for every attribute on the Vertex.
         /// </summary>
-        /// <param name="a">Left side multiplication parameter.</param>
-        /// <param name="value">Right side multiplication parameter.</param>
-        /// <returns>A new Vertex with the sum of a * b.</returns>
+        /// <remarks>
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
+        /// </remarks>
+        /// <param name="a">Vertex object to multiply</param>
+        /// <param name="value">Multiplication factor.</param>
+        /// <returns>A new Vertex with the product of `a` * `b`.</returns>
         public static Vertex Multiply(Vertex a, float value)
         {
             Vertex v = new Vertex(a);
@@ -469,12 +508,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Multiplication is performed component-wise for every property.
+        /// Multiples this Vertex object by the specified `value` using component-wise multiplication on each attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="value">Right side multiplication parameter.</param>
+        /// <param name="value">Multiplication factor.</param>
         public void Multiply(float value)
         {
             m_Position *= value;
@@ -488,28 +528,32 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Division is performed component-wise for every property.
+        /// Divides a Vertex object by the specified `value` and returns the result in a new Vertex object.
+        /// Division is performed component-wise for every attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side division parameter.</param>
-        /// <param name="value">Right side division parameter.</param>
-        /// <returns>A new Vertex with the sum of a / b.</returns>
+        /// <param name="a">Vertex object to divide (dividend).</param>
+        /// <param name="value">Divisor.</param>
+        /// <returns>A new Vertex with the quotient of `a` / `b`.</returns>
         public static Vertex operator/(Vertex a, float value)
         {
             return Divide(a, value);
         }
 
         /// <summary>
-        /// Division is performed component-wise for every property.
+        /// Divides a Vertex object by the specified `value` and returns the result in a new Vertex object.
+        /// Division is performed component-wise for every attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="a">Left side division parameter.</param>
-        /// <param name="value">Right side division parameter.</param>
-        /// <returns>A new Vertex with the sum of a / b.</returns>
+        /// <param name="a">Vertex object to divide (dividend).</param>
+        /// <param name="value">Divisor.</param>
+        /// <returns>A new Vertex with the quotient of `a` / `b`.</returns>
         public static Vertex Divide(Vertex a, float value)
         {
             Vertex v = new Vertex(a);
@@ -518,12 +562,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Division is performed component-wise for every property.
+        /// Divides this Vertex object by the specified `value` using component-wise division on each attribute.
         /// </summary>
         /// <remarks>
-        /// Color, normal, and tangent values are not normalized within this function. If you are expecting unit vectors, make sure to normalize these properties.
+        /// Color, normal, and tangent values are not normalized within this function.
+        /// If you are expecting unit vectors, you need to normalize these attributes.
         /// </remarks>
-        /// <param name="value">Right side Division parameter.</param>
+        /// <param name="value">Divisor.</param>
         public void Divide(float value)
         {
             m_Position /= value;
@@ -537,7 +582,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Normalize all vector values in place.
+        /// Normalizes all vector values in place.
         /// </summary>
         public void Normalize()
         {
@@ -554,10 +599,10 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// ToString override that prints every available property.
+        /// Returns a multi-line string listing every populated attribute.
         /// </summary>
-        /// <param name="args">An optional string argument that is provided to the component ToString calls.</param>
-        /// <returns>A string with the values of all set properties.</returns>
+        /// <param name="args">An [optional string argument](https://docs.microsoft.com/en-us/dotnet/api/system.int16.tostring?view=net-5.0#System_Int16_ToString_System_String_) to pass to the component ToString calls.</param>
+        /// <returns>A string with the values of all populated attributes.</returns>
         public string ToString(string args = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -573,12 +618,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Allocate and fill all attribute arrays. This method will fill all arrays, regardless of whether or not real data populates the values (check what attributes a Vertex contains with HasAttribute()).
+        /// Allocates and fills all attribute arrays. This method fills all arrays, regardless of whether or not
+        /// real data populates the values. You can check which attributes a Vertex contains with `HasAttribute()`).
         /// </summary>
         /// <remarks>
-        /// If you are using this function to rebuild a mesh, use SetMesh instead. SetMesh handles setting null arrays where appropriate for you.
+        /// If you are using this function to rebuild a mesh, use <see cref="SetMesh" /> instead.
+        /// SetMesh handles setting null arrays where appropriate.
         /// </remarks>
-        /// <seealso cref="SetMesh"/>
         /// <param name="vertices">The source vertices.</param>
         /// <param name="position">A new array of the vertex position values.</param>
         /// <param name="color">A new array of the vertex color values.</param>
@@ -603,12 +649,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Allocate and fill the requested attribute arrays.
+        /// Allocates and fills the specified attribute arrays.
         /// </summary>
         /// <remarks>
-        /// If you are using this function to rebuild a mesh, use SetMesh instead. SetMesh handles setting null arrays where appropriate for you.
+        /// If you are using this function to rebuild a mesh, use <see cref="SetMesh" /> instead.
+        /// SetMesh handles setting null arrays where appropriate.
         /// </remarks>
-        /// <seealso cref="SetMesh"/>
         /// <param name="vertices">The source vertices.</param>
         /// <param name="position">A new array of the vertex position values if requested by the attributes parameter, or null.</param>
         /// <param name="color">A new array of the vertex color values if requested by the attributes parameter, or null.</param>
@@ -618,7 +664,7 @@ namespace UnityEngine.ProBuilder
         /// <param name="uv2">A new array of the vertex uv2 values if requested by the attributes parameter, or null.</param>
         /// <param name="uv3">A new array of the vertex uv3 values if requested by the attributes parameter, or null.</param>
         /// <param name="uv4">A new array of the vertex uv4 values if requested by the attributes parameter, or null.</param>
-        /// <param name="attributes">A flag with the MeshAttributes requested.</param>
+        /// <param name="attributes">A bitmask of the set of MeshAttributes you want.</param>
         /// <seealso cref="HasArrays"/>
         public static void GetArrays(
             IList<Vertex> vertices,
@@ -670,7 +716,8 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Replace mesh values with vertex array. Mesh is cleared during this function, so be sure to set the triangles after calling.
+        /// Replaces mesh values with the specified vertex array. The mesh is cleared during this function,
+        /// so you need to set the triangles after calling this method.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="vertices">The vertices to replace the mesh attributes with.</param>
@@ -721,10 +768,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Average all vertices to a single vertex.
+        /// Averages all vertices to a single vertex and returns the result as a new Vertex object.
         /// </summary>
-        /// <param name="vertices">A list of vertices.</param>
-        /// <param name="indexes">If indexes is null, all vertices will be averaged. If indexes is provided, only the vertices referenced by the indexes array are averaged.</param>
+        /// <param name="vertices">The list of vertices to average.</param>
+        /// <param name="indexes">
+        /// Specify a list of vertex points to calculate the average from.
+        /// If not specified, it averages the entire set of vertices instead.
+        /// </param>
         /// <returns>An averaged vertex value.</returns>
         public static Vertex Average(IList<Vertex> vertices, IList<int> indexes = null)
         {
@@ -851,12 +901,15 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Linearly interpolate between two vertices.
+        /// Linearly interpolates between two vertices using the specified weight.
         /// </summary>
-        /// <param name="x">Left parameter.</param>
-        /// <param name="y">Right parameter.</param>
-        /// <param name="weight">The weight of the interpolation. 0 is fully x, 1 is fully y.</param>
-        /// <returns>A new vertex interpolated by weight between x and y.</returns>
+        /// <param name="x">The first Vertex object.</param>
+        /// <param name="y">The second Vertex object.</param>
+        /// <param name="weight">
+        /// The weight of the interpolation, where `0` is weighted fully towards the first Vertex
+        /// object `x`, and `1` is weighted fully towards the second Vertex object `y`.
+        /// </param>
+        /// <returns>A new Vertex object interpolated between the two objects according to the specified `weight`.</returns>
         public static Vertex Mix(Vertex x, Vertex y, float weight)
         {
             if (x == null || y == null)

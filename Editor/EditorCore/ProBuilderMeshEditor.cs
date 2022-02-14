@@ -49,13 +49,12 @@ namespace UnityEditor.ProBuilder
 
         Renderer m_MeshRenderer = null;
 
-        protected override void OnHeaderGUI()
-        {
-        }
-
         void OnEnable()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
+
+            if(target == null)
                 return;
 
             m_Mesh = (ProBuilderMesh)target;

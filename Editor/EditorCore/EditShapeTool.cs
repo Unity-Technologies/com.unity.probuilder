@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
         static Vector3 s_StartScale;
         static Vector3 s_StartScaleInverse;
         static Vector3 s_StartCenter;
-        static Vector3 s_Scaling;
+        static Vector3 s_Direction;
         static bool s_SizeManipulationInit;
         static float s_SizeDelta;
 
@@ -171,7 +171,10 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
+// todo refactor overlays to use `Overlay` class
+#pragma warning disable 618
             SceneViewOverlay.Window( m_OverlayTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle );
+#pragma warning restore 618
 
             if(Event.current.type == EventType.MouseMove)
             {
@@ -200,11 +203,19 @@ namespace UnityEditor.ProBuilder
                     EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
             }
 #endif
+
+#if UNITY_2021_2_OR_NEWER
+            GUILayout.BeginVertical(GUILayout.MinWidth(DrawShapeTool.k_MinOverlayWidth));
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
+            GUILayout.EndVertical();
+#else
             using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
             {
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
                 ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             }
+#endif
         }
 
         /// <summary>
@@ -271,51 +282,54 @@ namespace UnityEditor.ProBuilder
 
                     if(!s_SizeManipulationInit)
                     {
-                        s_StartCenter = proBuilderShape.transform.position + proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
+                        var offset = proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
+                        s_StartCenter = proBuilderShape.transform.position + offset;
                         s_StartScale = proBuilderShape.transform.lossyScale;
                         s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
-                        s_StartPositionLocal = face.CenterPosition;
-                        s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(Vector3.Scale(face.CenterPosition, s_StartScale));
+                        s_StartPositionLocal = face.CenterPosition + Vector3.Scale(offset, s_StartScale);
+                        s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(s_StartPositionLocal);
                         s_StartSize = proBuilderShape.size;
                         s_SizeManipulationInit = true;
-                        s_Scaling = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
+                        s_Direction = Vector3.Scale(face.Normal, Math.Sign(s_StartSize));
                     }
 
                     var targetSize = s_StartSize;
+                    //Should we expand on the 2 sides?
+                    var modifier = evt.alt ? 2f : 1f;
+                    var delta = modifier * ( s_SizeDelta * s_Faces[i].Normal );
+
                     if(Math.IsCardinalAxis(proBuilderShape.transform.up)
                        && EditorSnapSettings.gridSnapEnabled
                        && !EditorSnapSettings.incrementalSnapActive
                        && !evt.alt)
                     {
-                        var faceDelta = ( s_SizeDelta * s_Faces[i].Normal );
-                        var facePosition = s_StartPositionGlobal + faceDelta;
-                        facePosition = ProBuilderSnapping.Snap(facePosition, EditorSnapping.activeMoveSnapValue);
-                        targetSize += Vector3.Scale((facePosition - s_StartPositionGlobal), s_Scaling);
+                        var facePosition = s_StartPositionGlobal + Vector3.Scale(delta,s_StartScaleInverse);
+                        var snapValue = Vector3.Scale(Vector3.Scale(EditorSnapping.activeMoveSnapValue, s_StartScaleInverse), Math.Abs(face.Normal));
+
+                        facePosition = ProBuilderSnapping.Snap(facePosition, snapValue);
+                        targetSize += Vector3.Scale((facePosition - s_StartPositionGlobal), s_Direction);
                     }
                     else
                     {
-                        //Should we expand on the 2 sides?
-                        var modifier = evt.alt ? 2f : 1f;
-                        var delta = modifier * ( s_SizeDelta * s_Faces[i].Normal );
-                        delta.Scale(s_Scaling);
-                        delta.Scale(s_StartScaleInverse);
-
-                        targetSize += delta;
-                        var snap = EditorSnapSettings.incrementalSnapActive
-                            ? Vector3.Scale(EditorSnapping.activeMoveSnapValue, Math.Abs(face.Normal))
+                        var snapValue = EditorSnapSettings.incrementalSnapActive
+                            ? Vector3.Scale(Vector3.Scale(EditorSnapping.activeMoveSnapValue, s_StartScaleInverse), Math.Abs(face.Normal))
                             : Vector3.zero;
 
-                        targetSize = ProBuilderSnapping.Snap(targetSize, snap);
+                        //Move regarding the face tangent direction
+                        delta.Scale(s_Direction);
+                        //scale by the object scale factor
+                        delta.Scale(s_StartScaleInverse);
+
+                        targetSize = ProBuilderSnapping.Snap(targetSize + delta, snapValue);
                     }
 
                     var center = Vector3.zero;
                     if(!evt.alt)
                     {
-                        center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Scaling);
+                        center = Vector3.Scale((targetSize - s_StartSize) / 2f, s_Direction);
                         center = Vector3.Scale(center, Math.Sign(s_StartScale));
                         center = proBuilderShape.transform.TransformVector(center);
                     }
-
                     ApplyProperties(proBuilderShape, s_StartCenter + center, targetSize);
 
                     if(updatePrefs)

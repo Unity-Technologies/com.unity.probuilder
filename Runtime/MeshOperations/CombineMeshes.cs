@@ -5,15 +5,15 @@ using System.Linq;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Methods for merging multiple <see cref="ProBuilderMesh"/> objects to a single mesh.
+    /// Provides methods for merging multiple <see cref="ProBuilderMesh"/> objects into a single mesh.
     /// </summary>
 	public static class CombineMeshes
     {
         /// <summary>
-        /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. This may result in
+        /// Merges a collection of <see cref="ProBuilderMesh"/> objects to create as few meshes as possible. This may result in
         /// more than one mesh due to a max vertex count limit of 65535.
         /// </summary>
-        /// <param name="meshes">A collection of meshes to be merged.</param>
+        /// <param name="meshes">The collection of meshes to merge.</param>
         /// <returns>
         /// A list of merged meshes. In most cases this will be a single mesh. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.
@@ -25,14 +25,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Merge a collection of <see cref="ProBuilderMesh"/> objects to as few meshes as possible. It will re-use the meshTarget object as the first
-        /// destination for the first <see cref="ProBuilderMesh.maxVertexCount"/> -1 vertices. If the sum of vertices is above <see cref="ProBuilderMesh.maxVertexCount"/> - 1
-        /// it will generate new meshes unless there is a single mesh left in which case it will append it to the return list.
+        /// Merges a collection of <see cref="ProBuilderMesh"/> objects into as few meshes as possible. It re-uses the `meshTarget` object as the first
+        /// destination for the first <see cref="ProBuilderMesh.maxVertexCount"/> -1 vertices. If the sum of vertices is above <see cref="ProBuilderMesh.maxVertexCount"/> - 1,
+        /// it generates new meshes unless there is a single mesh left. In that case it appends it to the return list.
         /// </summary>
-        /// <param name="meshes">A collection of meshes to be merged. Note: it is expected that meshes includes meshTarget.</param>
-        /// <param name="meshTarget">A mesh which will be used as the starting point for merging and which will be kept as reference/target.</param>
+        /// <param name="meshes">A collection of meshes to merge. This collection should include the `meshTarget` object.</param>
+        /// <param name="meshTarget">A mesh to use as the starting point for merging and which will be kept as a reference (target).</param>
         /// <returns>
-        /// A list of merged meshes. In most cases this will be a single mesh corresponding to meshTarget. However it can be multiple in cases
+        /// A list of merged meshes. In most cases this is a single mesh corresponding to `meshTarget`. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.
         /// </returns>
         public static List<ProBuilderMesh> Combine(IEnumerable<ProBuilderMesh> meshes, ProBuilderMesh meshTarget)

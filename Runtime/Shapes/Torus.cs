@@ -4,32 +4,64 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [torus](../manual/Torus.html) shape.
+    /// </summary>
     [Shape("Torus")]
     public class Torus : Shape
     {
+        /// <summary>
+        /// Sets the complexity of the mesh, together with the `Columns` value. The higher the value,
+        /// the smoother the shape, but at the cost of more polygons to calculate.
+        ///
+        /// The default value is 16. Valid values are from 3 to 64.
+        /// </summary>
         [Range(3, 64)]
         [SerializeField]
         int m_Rows = 16;
 
+        /// <summary>
+        /// Sets the complexity of the mesh, together with the `Rows` value. The higher the value,
+        /// the smoother the shape, but at the cost of more polygons (and therefore more computation).
+        ///
+        /// The default value is 24. Valid values are from 3 to 64.
+        /// </summary>
         [Range(3, 64)]
         [SerializeField]
         int m_Columns = 24;
 
+        /// <summary>
+        /// Sets the radius of the tube itself in meters.
+        /// The default value is 0.1. The minimum value is 0.01.
+        /// </summary>
         [Min(0.01f)]
         [SerializeField]
         float m_TubeRadius = .1f;
 
+        /// <summary>
+        /// Sets the degree of the torus's circumference.
+        /// The default value is 360. Valid values are from 0 to 360.
+        /// </summary>
         [Range(0, 360)]
         [SerializeField]
         float m_HorizontalCircumference = 360;
 
+        /// <summary>
+        /// Sets the degree of the tube's circumference.
+        /// The default value is 360. Valid values are from 0 to 360.
+        /// </summary>
         [Range(0, 360)]
         [SerializeField]
         float m_VerticalCircumference = 360;
 
+        /// <summary>
+        /// Determines whether to smooth the edges of the polygons.
+        /// The default value is true.
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Torus)
@@ -44,12 +76,14 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds.size = mesh.mesh.bounds.size;
             return bounds;
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(rotation * size);

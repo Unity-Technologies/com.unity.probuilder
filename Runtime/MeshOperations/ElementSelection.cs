@@ -4,17 +4,19 @@ using System.Collections.Generic;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
+    /// <summary>
+    /// Provides helper functions for working with selected faces, edges, and vertices.
+    /// </summary>
     public static class ElementSelection
     {
         const int k_MaxHoleIterations = 2048;
 
         /// <summary>
-        /// Fills a list of <![CDATA[Face]]> where each face is connected to the passed edge in the ProBuilderMesh.
+        /// Creates a list of <see cref="Face"/> objects where each face is connected to a specific <see cref="Edge"/> in the ProBuilderMesh.
         /// </summary>
-        /// <param name="mesh">the ProBuilder mesh to consider</param>
-        /// <param name="edge">the edge ton consider</param>
-        ///<param name="neighborFaces"> The list filled by the method</param>
-        /// <returns></returns>
+        /// <param name="mesh">The ProBuilder mesh containing the edge.</param>
+        /// <param name="edge">The edge to evaluate.</param>
+        /// <param name="neighborFaces">Specify an empty list of faces for the method to fill.</param>
         public static void GetNeighborFaces(ProBuilderMesh mesh, Edge edge, List<Face> neighborFaces)
         {
             var lookup = mesh.sharedVertexLookup;
@@ -144,10 +146,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Get all edges that are on the perimeter of this face group selection.
+        /// Returns all the edges that are on the perimeter of this set of selected faces.
         /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="faces">The faces to search for perimeter edge path.</param>
+        /// <param name="mesh">The mesh containing the faces.</param>
+        /// <param name="faces">The faces to search for perimeter edge paths.</param>
         /// <returns>A list of the edges on the perimeter of each group of adjacent faces.</returns>
         public static IEnumerable<Edge> GetPerimeterEdges(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
@@ -585,12 +587,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Grow faces to include any face touching the perimeter edges.
+        /// Expand the selected faces to include any face touching the perimeter edges.
+        /// This corresponds to the [Grow Selection](../manual/Selection_Grow.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to grow out from.</param>
-        /// <param name="maxAngleDiff">If provided, adjacent faces must have a normal that is within maxAngleDiff (in degrees) difference of the perimeter face.</param>
-        /// <returns>The original faces selection, plus any new faces added as a result the grow operation.</returns>
+        /// <param name="maxAngleDiff">Specify the maximum difference (in degrees) between the normals on the selected face and those on the perimeter face.</param>
+        /// <returns>The original faces selection, plus any new faces added as a result of the grow operation.</returns>
         public static HashSet<Face> GrowSelection(ProBuilderMesh mesh, IEnumerable<Face> faces, float maxAngleDiff = -1f)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, true);
@@ -675,12 +678,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Recursively add all faces touching any of the selected faces.
+        /// Recursively adds all faces touching any of the selected faces to the selection.
+        ///
+        /// This corresponds to the [Grow Selection](../manual/Selection_Grow.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="faces">The starting faces.</param>
-        /// <param name="maxAngleDiff">Faces must have a normal that is within maxAngleDiff (in degrees) difference of the perimeter face to be added to the collection.</param>
-        /// <returns>A collection of faces that are connected by shared edges to the original faces.</returns>
+        /// <param name="faces">The selected faces.</param>
+        /// <param name="maxAngleDiff">Specify the maximum difference (in degrees) between the normals on the selected face and those on the perimeter face.</param>
+        /// <returns>The original faces selection, plus any new faces added as a result of the grow operation.</returns>
         public static HashSet<Face> FloodSelection(ProBuilderMesh mesh, IList<Face> faces, float maxAngleDiff)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh, true);
@@ -699,7 +704,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Fetch a face loop.
+        /// Finds and returns a face loop.
+        ///
+        /// This is the equivalent of the [Select Face Loop](../manual/Selection_Loop_Face.html) and
+        /// [Select Face Ring](../manual/Selection_Ring_Face.html) actions.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to scan for loops.</param>
@@ -723,11 +731,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Get both a face ring and loop from the selected faces.
+        /// Finds and returns both a face ring and loop from the selected faces.
+        /// This is the equivalent of the [Select Face Loop](../manual/Selection_Loop_Face.html) and
+        /// [Select Face Ring](../manual/Selection_Ring_Face.html) actions.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
         /// <param name="faces">The faces to scan for ring and loops.</param>
-        /// <returns>A collection of faces gathered by extending in a ring and loop,</returns>
+        /// <returns>A collection of faces gathered by extending in a ring and loop.</returns>
         public static HashSet<Face> GetFaceRingAndLoop(ProBuilderMesh mesh, Face[] faces)
         {
             if (mesh == null)

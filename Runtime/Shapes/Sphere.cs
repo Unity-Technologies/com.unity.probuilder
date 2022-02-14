@@ -2,6 +2,9 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [sphere](../manual/Sphere.html) shape.
+    /// </summary>
     [Shape("Sphere")]
     public class Sphere : Shape
     {
@@ -50,15 +53,27 @@ namespace UnityEngine.ProBuilder.Shapes
             9, 8, 1
         };
 
+        /// <summary>
+        /// Sets the number of times to subdivide each triangle. The more subdivisions you create, the smoother the sphere appears.
+        /// However, remember that each subdivision increases the number of triangles exponentially, which means that it uses a lot
+        /// more resources to render.
+        ///
+        /// The default value is 3. Valid values range from 1 to 5.
+        /// </summary>
         [Range(1, 5)]
         [SerializeField]
         int m_Subdivisions = 3;
 
         int m_BottomMostVertexIndex = 0;
 
+        /// <summary>
+        /// Determines whether to smooth the edges of the polygons. 
+        /// This property is enabled by default.
+        /// </summary>
         [SerializeField]
         bool m_Smooth = true;
 
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Sphere)
@@ -70,12 +85,14 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             bounds = mesh.mesh.bounds;
             return bounds;
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var radius = .5f;

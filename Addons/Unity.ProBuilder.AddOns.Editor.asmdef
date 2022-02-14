@@ -1,10 +1,12 @@
 {
     "name": "Unity.ProBuilder.AddOns.Editor",
+    "rootNamespace": "",
     "references": [
         "Unity.ProBuilder",
-        "Unity.ProBuilder.Editor"
+        "Unity.ProBuilder.Editor",
+        "Unity.Formats.Fbx.Editor",
+        "Autodesk.Fbx"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -12,5 +14,14 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.formats.fbx",
+            "expression": "4.0.0",
+            "define": "FBX_EXPORTER"
+        }
+    ],
+    "noEngineReferences": false
 }

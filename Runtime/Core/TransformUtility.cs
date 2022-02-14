@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Helper functions for working with transforms.
+    /// Contains helper functions for working with transforms.
     /// </summary>
     public static class TransformUtility
     {
@@ -17,7 +17,7 @@ namespace UnityEngine.ProBuilder
         internal static void UnparentChildren(Transform t)
         {
             Transform[] children = new Transform[t.childCount];
-            
+
             for (int i = t.childCount - 1; i >= 0; --i)
             {
                 Transform child = t.GetChild(i);
@@ -36,8 +36,8 @@ namespace UnityEngine.ProBuilder
         {
             Transform[] children;
 
-            if (s_ChildStack.TryGetValue(t, out children)) 
-            { 
+            if (s_ChildStack.TryGetValue(t, out children))
+            {
                 foreach (Transform c in children)
                     c.SetParent(t, true);
 
@@ -46,7 +46,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Transform a vertex into world space.
+        /// Transforms a vertex into world space.
         /// </summary>
         /// <param name="transform">The transform to apply.</param>
         /// <param name="vertex">A model space vertex.</param>
@@ -83,7 +83,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Transform a vertex from world space to local space.
+        /// Transforms a vertex from world space to local space.
         /// </summary>
         /// <param name="transform">The transform to apply.</param>
         /// <param name="vertex">A world space vertex.</param>

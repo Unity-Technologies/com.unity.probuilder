@@ -15,15 +15,17 @@ namespace UnityEngine.ProBuilder.MeshOperations
     public static class VertexEditing
     {
         /// <summary>
-        /// Collapses all passed indexes to a single shared index.
+        /// Collapses all specified indices to a single shared index.
+        ///
+        /// This is equivalent to the [Collapse Vertices](../manual/Vert_Collapse.html) action.
         /// </summary>
         /// <remarks>
         /// Retains vertex normals.
         /// </remarks>
         /// <param name="mesh">Target mesh.</param>
         /// <param name="indexes">The indexes to merge to a single shared vertex.</param>
-        /// <param name="collapseToFirst">If true, instead of merging all vertices to the average position, the vertices will be collapsed onto the first vertex position.</param>
-        /// <returns>The first available local index created as a result of the merge. -1 if action is unsuccessfull.</returns>
+        /// <param name="collapseToFirst">True to collapse the vertices onto the first vertex position; false to merge all vertices to the average position.</param>
+        /// <returns>The first available local index created as a result of the merge, or -1 if action failed.</returns>
         public static int MergeVertices(this ProBuilderMesh mesh, int[] indexes, bool collapseToFirst = false)
         {
             if (mesh == null)
@@ -60,7 +62,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Split the vertices referenced by edge from their shared indexes so that each vertex moves independently.
+        /// Splits the vertices referenced by edge from their shared indices so that each vertex moves independently.
+        ///
+        /// This corresponds to the [Split Vertices](../manual/Vert_Split.html) action.
         /// </summary>
         /// <remarks>
         /// This is equivalent to calling `SplitVertices(mesh, new int[] { edge.x, edge.y });`.
@@ -74,10 +78,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Split vertices from their shared indexes so that each vertex moves independently.
+        /// Splits vertices from their shared indices so that each vertex moves independently.
+        ///
+        /// This corresponds to the [Split Vertices](../manual/Vert_Split.html) action.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="vertices">A list of vertex indexes to split.</param>
+        /// <param name="vertices">A list of vertex indices to split.</param>
         /// <seealso cref="ProBuilderMesh.sharedVertices"/>
         public static void SplitVertices(this ProBuilderMesh mesh, IEnumerable<int> vertices)
         {
@@ -96,12 +102,15 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Similar to Merge vertices, expect that this method only collapses vertices within a specified distance of one another (typically Mathf.Epsilon is used).
+        /// Similar to Merge vertices, expect that this method only collapses vertices within a specified distance
+        /// of one another (typically `Mathf.Epsilon` is used).
+        ///
+        /// This is equivalent to the [Weld Vertices](../manual/Vert_Weld.html) action.
         /// </summary>
-        /// <param name="mesh">Target pb_Object.</param>
-        /// <param name="indexes">The vertex indexes to be scanned for inclusion. To weld the entire object for example, pass pb.faces.SelectMany(x => x.indexes).</param>
-        /// <param name="neighborRadius">The minimum distance from another vertex to be considered within welding distance.</param>
-        /// <returns>The indexes of any new vertices created by a weld.</returns>
+        /// <param name="mesh">The source mesh.</param>
+        /// <param name="indexes">The vertex indices to consider. For example, to weld the entire object, set this value to the return value from `pb.faces.SelectMany(x => x.indexes)`.</param>
+        /// <param name="neighborRadius">The minimum distance between vertices to consider them for welding.</param>
+        /// <returns>The indices of any new vertices created by a weld.</returns>
         public static int[] WeldVertices(this ProBuilderMesh mesh, IEnumerable<int> indexes, float neighborRadius)
         {
             if (mesh == null)

@@ -7,32 +7,38 @@ using UnityEditor;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Describes the type of pivot ProBuilder would automatically assign on primitive creation.
+    /// Describes the type of pivot ProBuilder assigns by default when it creates new primitives.
     /// </summary>
     public enum PivotLocation
     {
+        /// <summary>Place the pivot in the middle of the bounding box.</summary>
         Center,
+        /// <summary>Place the pivot at the "first corner" (the first corner vertex defined) of the bounding box.</summary>
         FirstCorner
     }
 
+    /// <summary>
+    /// Provides methods to instantiate GameObjects in the Editor using ProBuilder shapes.
+    /// </summary>
     public static class ShapeFactory
     {
         /// <summary>
-        /// Create a shape with default parameters.
+        /// Creates a default shape with default parameters.
         /// </summary>
-        /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
+        /// <typeparam name="T">The Shape to instantiate</typeparam>
+        /// <param name="pivotType">By default, new shapes pivot around the center of the bounding box but you can specify <see cref="PivotLocation.FirstCorner" /> instead. </param>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the default primitive shape.</returns>
         public static ProBuilderMesh Instantiate<T>(PivotLocation pivotType = PivotLocation.Center) where T : Shape, new()
         {
             return Instantiate(typeof(T));
         }
 
         /// <summary>
-        /// Create a shape with default parameters.
+        /// Creates a specific shape with default parameters.
         /// </summary>
-        /// <param name="shapeType">The ShapeType to create.</param>
-        /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
+        /// <param name="shapeType">The <see cref="ShapeType" /> to create.</param>
+        /// <param name="pivotType">By default, new shapes pivot around the center of the bounding box but you can specify <see cref="PivotLocation.FirstCorner" /> instead. </param>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the specified primitive <see cref="ShapeType" />.</returns>
         public static ProBuilderMesh Instantiate(Type shapeType, PivotLocation pivotType = PivotLocation.Center)
         {
             if (shapeType == null)
@@ -57,11 +63,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Create a shape with default parameters.
+        /// Creates a specific shape with default parameters.
         /// </summary>
-        /// <param name="shape">The ShapeType to create.</param>
-        /// <param name="pivotType">Where the shape's pivot will be.</param>
-        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive shape.</returns>
+        /// <param name="shape">The <see cref="Shape" /> to create.</param>
+        /// <param name="pivotType">By default, new shapes pivot around the center of the bounding box but you can specify <see cref="PivotLocation.FirstCorner" /> instead. </param>
+        /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive <see cref="Shape" />.</returns>
         public static ProBuilderMesh Instantiate(Shape shape, PivotLocation pivotType = PivotLocation.Center)
         {
             if (shape == null)

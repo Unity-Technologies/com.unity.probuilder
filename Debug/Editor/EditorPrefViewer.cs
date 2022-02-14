@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>Internal class.</summary>
 public class EditorPrefBrowser : EditorWindow, IHasCustomMenu
 {
     private static class Styles
@@ -42,17 +43,20 @@ public class EditorPrefBrowser : EditorWindow, IHasCustomMenu
         get { return !string.IsNullOrEmpty(m_Filter); }
     }
 
+    /// <summary>Internal method.</summary>
     [MenuItem("Tools/Debug/Editor Pref Browser")]
     public static void ShowWindow()
     {
         GetWindow<EditorPrefBrowser>().titleContent = new GUIContent("Editor Pref");
     }
 
+    /// <summary>Internal method.</summary>
     public void OnEnable()
     {
         FetchKeyValues();
     }
 
+    /// <summary>Internal method.</summary>
     public void OnGUI()
     {
         EditorGUIUtility.labelWidth = 400f;
@@ -190,6 +194,8 @@ public class EditorPrefBrowser : EditorWindow, IHasCustomMenu
         return keyValueName.Split(new[] { "_h" }, StringSplitOptions.None).First();
     }
 
+    /// <summary>Internal method.</summary>
+    /// <param name="menu">The menu to add it to.</param>
     public void AddItemsToMenu(GenericMenu menu)
     {
         menu.AddItem(new GUIContent("Delete All"), false, EditorPrefs.DeleteAll);

@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 	public static class MeshValidation
 	{
 	    /// <summary>
-	    /// Check if any face on a mesh contains degenerate triangles. A degenerate triangle does not have any area.
+	    /// Returns whether any face on a mesh contains [degenerate triangles](../manual/gloss.html#degenerate).
 	    /// </summary>
 	    /// <param name="mesh">The mesh to test for degenerate triangles.</param>
 	    /// <returns>True if any face contains a degenerate triangle, false if no degenerate triangles are found.</returns>
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Check if any face contains degenerate triangles. A degenerate triangle does not have any area.
+        /// Returns whether any of the specified faces contains [degenerate triangles](../manual/gloss.html#degenerate).
         /// </summary>
         /// <param name="mesh">The mesh to test for degenerate triangles.</param>
         /// <param name="faces">The faces to test for degenerate triangles.</param>
@@ -51,7 +51,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Check if any face contains degenerate triangles. A degenerate triangle does not have any area.
+        /// Returns whether the specified face contains [degenerate triangles](../manual/gloss.html#degenerate).
         /// </summary>
         /// <param name="mesh">The mesh to test for degenerate triangles.</param>
         /// <param name="face">The face to test for degenerate triangles.</param>
@@ -77,11 +77,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Tests that all triangles in a face are connected.
+        /// Checks whether any triangles in a face are disconnected (non-contiguous).
         /// </summary>
-        /// <param name="mesh">The mesh that owns the face to be tested.</param>
+        /// <param name="mesh">The mesh that owns the face to test.</param>
         /// <param name="face">The face to test.</param>
-        /// <returns>True if the face contains split triangles, false if the face is contiguous.</returns>
+        /// <returns>True if the face contains split triangles; false if the face is contiguous.</returns>
         public static bool ContainsNonContiguousTriangles(this ProBuilderMesh mesh, Face face)
         {
             Edge current = face.edgesInternal[0], start = current;
@@ -99,9 +99,9 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Ensure that each face in faces is composed of contiguous triangle sets. If a face contains non-contiguous
-        /// triangles, it will be split into as many faces as necessary to ensure that each group of adjacent triangles
-        /// compose a single face.
+        /// Ensures that each face in the specified set is composed of contiguous triangle sets. If a face contains any
+        /// non-contiguous triangles, this method splits them into as many faces as necessary to ensure that each group
+        /// of adjacent triangles compose a single face.
         /// </summary>
         /// <param name="mesh">The mesh that contains the faces to test.</param>
         /// <param name="faces">The faces to test for non-contiguous triangles.</param>
@@ -171,13 +171,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Iterates through all faces in a mesh and removes triangles with an area less than float.Epsilon, or with
-        /// indexes that point to the same vertex. This function also enforces the rule that a face must contain no
+        /// Iterates through all faces in a mesh and removes any triangles with an area less than `float.Epsilon`, or with
+        /// indices that point to the same vertex. This function also enforces the rule that a face must contain no
         /// coincident vertices.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="removed">An optional list to be populated with the removed indices. If no degenerate triangles are found, this list will contain no elements.</param>
-        /// <returns>True if degenerate triangles were found and removed, false if no degenerate triangles were found.</returns>
+        /// <param name="removed">An optional list to be populated with the removed indices. If no degenerate triangles are found, this list contains no elements.</param>
+        /// <returns>True if degenerate triangles were found and removed; false if no degenerate triangles were found.</returns>
         public static bool RemoveDegenerateTriangles(ProBuilderMesh mesh, List<int> removed = null)
         {
             if (mesh == null)
@@ -273,8 +273,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Removes vertices that no face references.
         /// </summary>
         /// <param name="mesh">The source mesh.</param>
-        /// <param name="removed">An optional list to be populated with the removed indices. If no vertices are removed, this list will contain no elements.</param>
-        /// <returns>A list of deleted vertex indexes.</returns>
+        /// <param name="removed">An optional list to be populated with the removed indices. If no vertices are removed, this list contains no elements.</param>
+        /// <returns>A list of deleted vertex indices.</returns>
         public static bool RemoveUnusedVertices(ProBuilderMesh mesh, List<int> removed = null)
         {
             if (mesh == null)
@@ -371,7 +371,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The mesh to test.</param>
         /// <param name="removedVertices">If fixes were made, this will be set to the number of vertices removed during that process.</param>
         /// <returns>Returns true if no problems were found, false if topology issues were discovered and fixed.</returns>
-        internal static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
+        public static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
         {
             removedVertices = 0;
 
@@ -396,7 +396,101 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 }
             }
 
+            EnsureValidAttributes(mesh);
+
             return true;
+        }
+
+        enum AttributeValidationStrategy
+        {
+            Resize,
+            Nullify
+        }
+
+        static void EnsureRealNumbers(IList<Vector2> attribute)
+        {
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++) 
+                attribute[i] = Math.FixNaN(attribute[i]);
+        }
+
+        static void EnsureRealNumbers(IList<Vector3> attribute)
+        {
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++)
+                attribute[i] = Math.FixNaN(attribute[i]);
+        }
+
+        static void EnsureRealNumbers(IList<Vector4> attribute)
+        {
+            for (int i = 0, c = attribute?.Count ?? 0; i < c; i++)
+                attribute[i] = Math.FixNaN(attribute[i]);
+        }
+
+        static void EnsureArraySize<T>(ref T[] attribute,
+            int expectedVertexCount,
+            AttributeValidationStrategy strategy = AttributeValidationStrategy.Nullify,
+            T fill = default)
+        {
+            if (attribute == null || attribute.Length == expectedVertexCount)
+                return;
+            if (strategy == AttributeValidationStrategy.Nullify)
+            {
+                attribute = null;
+                return;
+            }
+
+            int previous = attribute.Length;
+            Array.Resize(ref attribute, expectedVertexCount);
+            for (int i = previous - 1; i < expectedVertexCount; i++)
+                attribute[i] = fill;
+        }
+
+        static void EnsureListSize<T>(ref List<T> attribute,
+            int expectedVertexCount,
+            AttributeValidationStrategy strategy = AttributeValidationStrategy.Nullify,
+            T fill = default)
+        {
+            if (attribute == null || attribute.Count == expectedVertexCount)
+                return;
+
+            if (strategy == AttributeValidationStrategy.Nullify)
+            {
+                attribute = null;
+                return;
+            }
+
+            var prev = attribute.Count;
+            var copy = new List<T>(expectedVertexCount);
+            for (int i = 0, c = Mathf.Min(prev, expectedVertexCount); i < c; i++)
+                copy.Add(attribute[i]);
+            for (int i = copy.Count - 1; i < expectedVertexCount; i++)
+                copy.Add(fill);
+            attribute = copy;
+        }
+
+        static void EnsureValidAttributes(ProBuilderMesh mesh)
+        {
+            var vertexCount = mesh.vertexCount;
+            var normals = mesh.normalsInternal;
+            var colors = mesh.colorsInternal;
+            var tangents = mesh.tangentsInternal;
+            var uv0 = mesh.texturesInternal;
+            var uv2 = mesh.textures2Internal;
+            var uv3 = mesh.textures3Internal;
+
+            EnsureArraySize(ref normals, vertexCount);
+            EnsureArraySize(ref colors, vertexCount);
+            EnsureArraySize(ref tangents, vertexCount);
+            EnsureArraySize(ref normals, vertexCount);
+            EnsureArraySize(ref uv0, vertexCount);
+            EnsureListSize(ref uv2, vertexCount);
+            EnsureListSize(ref uv3, vertexCount);
+
+            EnsureRealNumbers(normals);
+            EnsureRealNumbers(tangents);
+            EnsureRealNumbers(normals);
+            EnsureRealNumbers(uv0);
+            EnsureRealNumbers(uv2);
+            EnsureRealNumbers(uv3);
         }
 	}
 }
