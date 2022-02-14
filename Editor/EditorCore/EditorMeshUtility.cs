@@ -5,8 +5,6 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder;
-using UnityEngine.Profiling;
-using UnityEngine.Rendering;
 using Math = UnityEngine.ProBuilder.Math;
 
 namespace UnityEditor.ProBuilder
@@ -22,7 +20,7 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Mesh Editing", "Auto Resize Colliders", "Automatically resize colliders with mesh bounds as you edit.")]
         static Pref<bool> s_AutoResizeCollisions = new Pref<bool>("editor.autoRecalculateCollisions", false, SettingsScope.Project);
 
-        [UserSetting("Mesh Settings", "Auto Remove Materials", "Automatically remove materials that are no longer used.")]
+        [UserSetting("Mesh Settings", "Removed Unused Materials", "Automatically remove materials that are no longer used.")]
         static Pref<bool> s_AutoManageMaterials = new Pref<bool>("editor.autoManageMaterials", true, SettingsScope.Project);
 
         internal static bool autoManageMaterials
