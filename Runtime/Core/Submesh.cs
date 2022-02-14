@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace UnityEngine.ProBuilder
 {
@@ -204,39 +205,55 @@ namespace UnityEngine.ProBuilder
             return submeshes;
         }
 
-        internal static void RemoveSubmeshes(IEnumerable<Face> faces, List<int> indicesToRemove)
+        internal static void RemoveSubmeshes(Mesh mesh, IList<Face> faces, List<int> indicesToRemove)
         {
             if (faces == null)
                 throw new ArgumentNullException(nameof(faces));
 
             if (indicesToRemove == null)
                 throw new ArgumentNullException(nameof(indicesToRemove));
-            
-            foreach (var face in faces)
+
+            var submeshes = new List<SubMeshDescriptor>(mesh.subMeshCount);
+            for (int i = 0; i < mesh.subMeshCount; ++i)
+                submeshes.Add(mesh.GetSubMesh(i));
+
+            foreach (var index in indicesToRemove)
             {
-                int submeshIndex = face.submeshIndex;
-                foreach (var index in indicesToRemove)
+                foreach (var face in faces)
                 {
+                    int submeshIndex = face.submeshIndex;
+
                     if (face.submeshIndex >= index)
                         --submeshIndex;
                     else
                         break;
-                }
-                face.submeshIndex = submeshIndex;
-            }
-        }
 
-        internal static void GetEmptySubmeshes(Mesh umesh, List<int> emptySubMeshes)
+                    face.submeshIndex = submeshIndex;
+                }
+
+                submeshes.RemoveAt(index);
+            }
+
+            mesh.SetSubMeshes(submeshes);
+        }
+        
+        internal static void GetEmptySubmeshes(int materialCount, IList<Face> faces, List<int> emptySubMeshes)
         {
-            if (umesh == null)
-                throw new ArgumentNullException(nameof(umesh));
+            if (faces == null)
+                throw new ArgumentNullException(nameof(faces));
 
             if (emptySubMeshes == null)
                 throw new ArgumentNullException(nameof(emptySubMeshes));
             
             emptySubMeshes.Clear();
-            for (int i = 0, count = umesh.subMeshCount; i < count; ++i)
-                if (umesh.GetSubMesh(i).vertexCount == 0)
+            var lastSubmesh = 0;
+
+            bool[] subMeshFound = new bool[materialCount];
+            foreach (var face in faces)
+                subMeshFound[face.submeshIndex] = true;
+
+            for (int i = 0, count = subMeshFound.Length; i < count; ++i)
+                if (!subMeshFound[i])
                     emptySubMeshes.Add(i);
         }
 

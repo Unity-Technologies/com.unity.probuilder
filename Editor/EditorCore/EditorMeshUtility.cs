@@ -129,10 +129,10 @@ namespace UnityEditor.ProBuilder
         static void CleanupSubmeshesAndMaterials(ProBuilderMesh mesh)
         {
             s_IndicesBuffer.Clear();
-            Submesh.GetEmptySubmeshes(mesh.mesh, s_IndicesBuffer);
+            Submesh.GetEmptySubmeshes(MaterialUtility.GetMaterialCount(mesh.renderer), mesh.facesInternal, s_IndicesBuffer);
             if (s_IndicesBuffer.Count > 0)
             {
-                Submesh.RemoveSubmeshes(mesh.facesInternal, s_IndicesBuffer);
+                Submesh.RemoveSubmeshes(mesh.mesh, mesh.facesInternal, s_IndicesBuffer);
                 MaterialUtility.RemoveMaterialsAndTrimExcess(mesh.renderer, s_IndicesBuffer, Submesh.GetSubmeshCount(mesh));
             }
         }
