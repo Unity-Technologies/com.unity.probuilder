@@ -213,6 +213,7 @@ namespace UnityEngine.ProBuilder
             if (indicesToRemove == null)
                 throw new ArgumentNullException(nameof(indicesToRemove));
 
+            indicesToRemove.Sort((a, b) => b.CompareTo(a)); //inverse sort
             var submeshes = new List<SubMeshDescriptor>(mesh.subMeshCount);
             for (int i = 0; i < mesh.subMeshCount; ++i)
                 submeshes.Add(mesh.GetSubMesh(i));
@@ -221,17 +222,12 @@ namespace UnityEngine.ProBuilder
             {
                 foreach (var face in faces)
                 {
-                    int submeshIndex = face.submeshIndex;
-
                     if (face.submeshIndex >= index)
-                        --submeshIndex;
-                    else
-                        break;
-
-                    face.submeshIndex = submeshIndex;
+                        face.submeshIndex -= 1;
                 }
 
-                submeshes.RemoveAt(index);
+                if (index < submeshes.Count)
+                    submeshes.RemoveAt(index);
             }
 
             mesh.SetSubMeshes(submeshes);

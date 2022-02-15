@@ -33,27 +33,27 @@ class SubmeshUtilityTests
             yield return new TestCase("0 Submesh", 0);
 
             yield return new TestCase("1 Submesh", 1,
-                new Face {submeshIndex = 0});
+                new Face { submeshIndex = 0 });
 
             yield return new TestCase("Multiple Submeshes", 3,
-                new Face {submeshIndex = 0},
-                new Face {submeshIndex = 1},
-                new Face {submeshIndex = 2});
+                new Face { submeshIndex = 0 },
+                new Face { submeshIndex = 1 },
+                new Face { submeshIndex = 2 });
 
             yield return new TestCase("Multiple Submeshes with 1 Empty", 3,
-                    new Face {submeshIndex = 0},
-                    new Face {submeshIndex = 2})
-                {emptySubmeshes = new[] {1}};
+                    new Face { submeshIndex = 0 },
+                    new Face { submeshIndex = 2 })
+            { emptySubmeshes = new[] { 1 } };
 
             yield return new TestCase("Multiple Submeshes with 3 Empty", 8,
-                    new Face {submeshIndex = 0},
-                    new Face {submeshIndex = 2},
-                    new Face {submeshIndex = 2},
-                    new Face {submeshIndex = 4},
-                    new Face {submeshIndex = 7},
-                    new Face {submeshIndex = 7},
-                    new Face {submeshIndex = 7})
-                {emptySubmeshes = new[] {1, 3, 5, 6}};
+                    new Face { submeshIndex = 0 },
+                    new Face { submeshIndex = 2 },
+                    new Face { submeshIndex = 2 },
+                    new Face { submeshIndex = 4 },
+                    new Face { submeshIndex = 7 },
+                    new Face { submeshIndex = 7 },
+                    new Face { submeshIndex = 7 })
+            { emptySubmeshes = new[] { 1, 3, 5, 6 } };
         }
     }
 
@@ -102,7 +102,7 @@ class SubmeshUtilityTests
         PopulateTestMesh(testCase);
 
         List<int> emptySubmeshes = new List<int>();
-        Submesh.GetEmptySubmeshes(m_TestMesh, emptySubmeshes);
+        Submesh.GetEmptySubmeshes(testCase.submeshes, testCase.faces, emptySubmeshes);
 
         Assert.That(emptySubmeshes.Count, Is.EqualTo(testCase.emptySubmeshes.Length));
         foreach (var emptySubmesh in testCase.emptySubmeshes)
@@ -116,14 +116,14 @@ class SubmeshUtilityTests
         PopulateTestMesh(testCase);
 
         List<int> emptySubmeshes = new List<int>();
-        Submesh.GetEmptySubmeshes(m_TestMesh, emptySubmeshes);
+        Submesh.GetEmptySubmeshes(testCase.submeshes, testCase.faces, emptySubmeshes);
 
         Assume.That(emptySubmeshes.Count, Is.EqualTo(testCase.emptySubmeshes.Length));
         foreach (var emptySubmesh in testCase.emptySubmeshes)
             Assume.That(emptySubmeshes, Does.Contain(emptySubmesh));
 
         List<Face> faces = new List<Face>(testCase.faces);
-        Submesh.RemoveSubmeshes(faces, emptySubmeshes);
+        Submesh.RemoveSubmeshes(m_TestMesh, faces, emptySubmeshes);
 
         //Check that no empty submeshes remains
         for (int i = 0, count = Submesh.GetSubmeshCount(faces); i < count; ++i)
