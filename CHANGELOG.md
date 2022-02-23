@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Bug Fixes
+
+- [case: 1403852] Fixing Plane generation that was not consistent regarding Width/Length.
+
 ## [4.5.3] - 2021-07-23
 
 ### Bug Fixes
