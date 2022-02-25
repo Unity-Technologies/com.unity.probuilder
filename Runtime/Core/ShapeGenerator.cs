@@ -438,6 +438,8 @@ namespace UnityEngine.ProBuilder
                 }
 
                 float uvRotation = ((inc1 + inc0) * -.5f) * Mathf.Rad2Deg;
+                if(circumference < 0)
+                    uvRotation = -uvRotation;
                 uvRotation %= 360f;
                 if (uvRotation < 0f)
                     uvRotation = 360f + uvRotation;
@@ -544,8 +546,14 @@ namespace UnityEngine.ProBuilder
                 for (int i = 0; i < positions.Length; i++)
                     positions[i].Scale(flip);
 
-                foreach (Face f in faces)
+                foreach(Face f in faces)
+                {
+                    var uv = f.uv;
+                    uv.flipU = circumference < 0;
+                    f.uv = uv;
+
                     f.Reverse();
+                }
             }
 
             ProBuilderMesh pb = ProBuilderMesh.Create(positions, faces);
