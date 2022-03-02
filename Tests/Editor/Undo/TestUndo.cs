@@ -1,9 +1,11 @@
 using UnityEngine;
 using NUnit.Framework;
+using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEditor.ProBuilder.Actions;
 
 static class UndoTests
 {
