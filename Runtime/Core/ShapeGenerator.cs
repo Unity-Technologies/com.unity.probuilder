@@ -988,14 +988,15 @@ namespace UnityEngine.ProBuilder
                         p[i + 2] = new Vector2(x0,    y1);
                         p[i + 3] = new Vector2(x1,    y1);
 
+                        var invertFace = axis == Axis.Left || axis == Axis.Down || axis == Axis.Forward;
                         f[j++] = new Face(new int[6]
                         {
                             i + 0,
+                            invertFace? i + 2 : i + 1,
+                            invertFace? i + 1 : i + 2,
                             i + 1,
-                            i + 2,
-                            i + 1,
-                            i + 3,
-                            i + 2
+                            invertFace? i + 2 : i + 3,
+                            invertFace? i + 3 : i + 2,
                         });
 
                         i += 4;
@@ -1006,25 +1007,16 @@ namespace UnityEngine.ProBuilder
             switch (axis)
             {
                 case Axis.Right:
+                case Axis.Left:
                     for (i = 0; i < v.Length; i++)
                         v[i] = new Vector3(0f, p[i].x, p[i].y);
                     break;
-                case Axis.Left:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(0f, p[i].y, p[i].x);
-                    break;
                 case Axis.Up:
+                case Axis.Down:
                     for (i = 0; i < v.Length; i++)
                         v[i] = new Vector3(p[i].y, 0f, p[i].x);
                     break;
-                case Axis.Down:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].x, 0f, p[i].y);
-                    break;
                 case Axis.Forward:
-                    for (i = 0; i < v.Length; i++)
-                        v[i] = new Vector3(p[i].x, p[i].y, 0f);
-                    break;
                 case Axis.Backward:
                     for (i = 0; i < v.Length; i++)
                         v[i] = new Vector3(p[i].y, p[i].x, 0f);
