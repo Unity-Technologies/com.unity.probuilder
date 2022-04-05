@@ -127,8 +127,6 @@ namespace UnityEditor.ProBuilder.Actions
                         EditorUtility.SynchronizeWithMeshFilter(child);
                 }
 
-                Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
-
                 mesh.DeleteFaces(primary);
                 copy.DeleteFaces(inverse);
 
@@ -142,6 +140,8 @@ namespace UnityEditor.ProBuilder.Actions
                 copy.ClearSelection();
 
                 copy.SetSelectedFaces(copy.faces);
+
+                Undo.RegisterCreatedObjectUndo(copy.gameObject, "Detach Selection");
 
                 copy.gameObject.name = GameObjectUtility.GetUniqueNameForSibling(mesh.transform.parent, mesh.gameObject.name); ;
                 detached.Add(copy.gameObject);

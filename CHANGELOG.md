@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: 1407518] Fixed issue where 'Detach Faces' action would not undo correctly.
 - [case: 1393809] Fixed move tool when working with small scales.
 - [case: 1395936] Fixed Editor crash when opening a EditorWindow dropdown (MacOS).
 - [case: 1389642] Fixed Grid snapping not working properly with EditShape Tool.
