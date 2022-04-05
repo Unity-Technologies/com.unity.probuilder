@@ -6,7 +6,7 @@ namespace UnityEditor.ProBuilder
     class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;
-        const float k_MinTranslateDeltaSqrMagnitude = .00001f;
+        const float k_MinTranslateDeltaSqrMagnitude = .0001f;
         Vector3 m_Position;
         Vector3 m_RawHandleDelta;
         Vector3Mask m_ActiveAxesModel;
@@ -51,8 +51,7 @@ namespace UnityEditor.ProBuilder
             m_RawHandleDelta = m_Position - handlePositionOrigin;
 
             var delta = m_RawHandleDelta;
-
-            if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude)
+            if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude * HandleUtility.GetHandleSize(m_Position))
             {
                 if (!isEditing)
                     BeginEdit("Translate Selection");
