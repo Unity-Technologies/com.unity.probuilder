@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1348434] Added more detailed instructions in the missing UV2 warning log.
 - Fix some styling issues with Overlays in 21.2
 - [case: 1350635] Fixed crash when using CSG operations.
+- [case: 1407039] Fixed stair creation tool missing the inner radius parameter.
 
 ### Changes
 
