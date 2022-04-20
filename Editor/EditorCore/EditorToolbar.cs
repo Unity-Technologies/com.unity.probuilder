@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
                         if (!showTooltipTimer)
                         {
                             showTooltipTimer = true;
-                            RepaintIfFocused();
+                            window.Repaint();
                         }
                     }
                     else
@@ -124,7 +124,7 @@ namespace UnityEditor.ProBuilder
                 if (scrollTimer >= scrollTotalTime)
                     doAnimateScroll = false;
 
-                RepaintIfFocused();
+                window.Repaint();
             }
         }
 
@@ -292,17 +292,12 @@ namespace UnityEditor.ProBuilder
 
             m_Scroll.value = GUILayout.BeginScrollView(m_Scroll.value, false, false, GUIStyle.none, GUIStyle.none, GUIStyle.none);
 
-            bool tooltipShown = false,
-                hovering = false;
-
-                Rect optionRect = new Rect(0f, 0f, 0f, 0f);
+            bool tooltipShown = false, hovering = false;
+            Rect optionRect = new Rect(0f, 0f, 0f, 0f);
 
             GUILayout.BeginHorizontal();
 
-            // e.mousePosition != mpos at this point - @todo figure out why
-            bool windowContainsMouse =  window == EditorWindow.mouseOverWindow
-                && mpos.x > 0 && mpos.x < window.position.width &&
-                mpos.y > 0 && mpos.y < window.position.height;
+            bool windowContainsMouse = (window == EditorWindow.mouseOverWindow || TooltipEditor.IsFocused());
 
             int columnCount = 0;
 
@@ -406,7 +401,7 @@ namespace UnityEditor.ProBuilder
 
             m_WantsRepaint |= EditorWindow.mouseOverWindow == window && evt.type == EventType.MouseMove;
 
-            if (Application.isFocused && m_WantsRepaint)
+            if (m_WantsRepaint)
                 window.Repaint();
 
             m_WantsRepaint = false;
@@ -415,12 +410,6 @@ namespace UnityEditor.ProBuilder
         void ScheduleRepaint()
         {
             m_WantsRepaint = true;
-        }
-
-        void RepaintIfFocused()
-        {
-            if(Application.isFocused)
-                window.Repaint();
         }
     }
 }
