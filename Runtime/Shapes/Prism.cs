@@ -2,11 +2,16 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Represents a basic [prism](../manual/Prism.html) shape.
+    /// </summary>
     [Shape("Prism")]
     public class Prism : Shape
     {
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             var meshSize = Math.Abs(size);

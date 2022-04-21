@@ -30,12 +30,6 @@ namespace UnityEditor.ProBuilder
 
             win.onSettingsGUI = onSettingsGUI;
 
-            // don't let window hang around after a script reload nukes the pb_MenuAction instances
-            object parent = ReflectionUtility.GetValue(win, typeof(EditorWindow), "m_Parent");
-            object window = ReflectionUtility.GetValue(parent, typeof(EditorWindow), "window");
-            ReflectionUtility.SetValue(parent, "mouseRayInvisible", true);
-            ReflectionUtility.SetValue(window, "m_DontSaveToLayout", true);
-
             win.Show();
 
             return win;

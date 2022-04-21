@@ -5,9 +5,6 @@ using System;
 
 namespace UnityEngine.ProBuilder.MeshOperations
 {
-    /// <summary>
-    /// Store face rebuild data with indexes to mark which vertices are new.
-    /// </summary>
     sealed class ConnectFaceRebuildData
     {
         public FaceRebuildData faceRebuildData;
@@ -26,10 +23,12 @@ namespace UnityEngine.ProBuilder.MeshOperations
     public static class ConnectElements
     {
         /// <summary>
-        /// Insert new edges from the center of each edge on a face to a new vertex in the center of the face.
+        /// Inserts new edges on a face starting from the center of each edge to a new vertex in the center of the face.
+        ///
+        /// This is the equivalent of the [Connect Edges](../manual/Edge_Connect.html) action.
         /// </summary>
         /// <param name="mesh">Target mesh.</param>
-        /// <param name="faces">The faces to poke.</param>
+        /// <param name="faces">The faces to affect.</param>
         /// <returns>The faces created as a result of inserting new edges.</returns>
         public static Face[] Connect(this ProBuilderMesh mesh, IEnumerable<Face> faces)
         {
@@ -48,7 +47,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Insert new edges connecting a set of edges. If a face contains more than 2 edges to be connected, a new vertex is inserted at the center of the face and each edge is connected to the center point.
+        /// Inserts new edges in order to connect a set of edges. If a face contains more than two edges to connect, this method inserts
+        /// a new vertex at the center of the face and connects each edge to the center point.
+        ///
+        /// This is the equivalent of the [Connect Edges](../manual/Edge_Connect.html) action.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="edges">A list of edges to connect.</param>
@@ -62,11 +64,13 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Inserts edges connecting a list of indexes.
+        /// Inserts edges connecting a list of indices.
+        ///
+        /// This is the equivalent of the [Connect Edges](../manual/Edge_Connect.html) action.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
-        /// <param name="indexes">A list of indexes (corresponding to the @"UnityEngine.ProBuilder.ProBuilderMesh.positions" array) to connect with new edges.</param>
-        /// <returns>Because this function may modify the ordering of the positions array, a new array containing the equivalent values of the passed connected indexes is returned.</returns>
+        /// <param name="indexes">A list of indices (corresponding to the <see cref="ProBuilderMesh.positions"/> array) to connect to the new edges.</param>
+        /// <returns>A new array containing the indices of the newly connected positions. This method rebuilds the `indexes` array because it might modify the ordering of the original array.</returns>
         public static int[] Connect(this ProBuilderMesh mesh, IList<int> indexes)
         {
             if (mesh == null)

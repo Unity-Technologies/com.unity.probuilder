@@ -23,7 +23,7 @@ using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageU
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    /// Utilities for working in Unity editor.
+    /// Contains utilities for working in the Unity Editor.
     /// </summary>
     public static class EditorUtility
     {
@@ -58,11 +58,11 @@ namespace UnityEditor.ProBuilder
             get { return s_NewShapesPivotAtCenter; }
         }
 
-        /// <value>
-        /// Subscribe to this delegate to be notified when a new mesh has been created and initialized through ProBuilder.
-        /// </value>
+        /// <summary>
+        /// Raised when a new mesh has been created and initialized through ProBuilder.
+        /// </summary>
         /// <remarks>
-        /// This is only called when an object is initialized in editor, and created by ProBuilder menu items.
+        /// This is only called when a user creates an object in the Editor using a ProBuilder menu item.
         /// </remarks>
         public static event Action<ProBuilderMesh> meshCreated = null;
 
@@ -178,9 +178,10 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Ensure that this object has a valid mesh reference, and the geometry is current. If it is not valid, this function will attempt to repair the sync state.
+        /// Checks whether this object has a valid mesh reference, and the geometry is current. If the check fails, this function
+        /// attempts to repair the sync state.
         /// </summary>
-        /// <param name="mesh">The component to test.</param>
+        /// <param name="mesh">The mesh component to test.</param>
         /// <seealso cref="ProBuilderMesh.meshSyncState"/>
         public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
         {
@@ -569,6 +570,11 @@ namespace UnityEditor.ProBuilder
             return EditorPrefs.GetBool("DeveloperMode", false);
         }
 
+        /// <summary>
+        /// Attaches a scene gizmo to the mesh in the Unity Editor.
+        /// </summary>
+        /// <param name="script">The Type representing the class of the item to attach the gizmo to (for example, the ProBuilderMesh).</param>
+        /// <param name="enabled">True to render the gizmo (for example, while selected); false to not render it.</param>
         public static void SetGizmoIconEnabled(Type script, bool enabled)
         {
 #if UNITY_2019_1_OR_NEWER

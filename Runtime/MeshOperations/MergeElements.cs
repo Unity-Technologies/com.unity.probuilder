@@ -6,17 +6,20 @@ using UnityEngine.ProBuilder;
 namespace UnityEngine.ProBuilder.MeshOperations
 {
     /// <summary>
-    /// Methods for merging multiple faces of a <see cref="ProBuilderMesh"/> to a single face.
+    /// Provides methods for merging multiple faces of a <see cref="ProBuilderMesh"/> to a single face.
     /// </summary>
     public static class MergeElements
     {
         /// <summary>
-        /// Merge each pair of faces to a single face. Indexes are combined, but otherwise the properties of the first face in the pair take precedence. Returns a list of the new faces created.
+        /// Merges each pair of faces into a single face. Indexes are combined, but otherwise the properties of
+        /// the first face in the pair take precedence.
+        ///
+        /// This is the equivalent of the [Merge Faces](../manual/Face_Merge.html) action.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="pairs"></param>
-        /// <param name="collapseCoincidentVertices"></param>
-        /// <returns></returns>
+        /// <param name="target">The source mesh.</param>
+        /// <param name="pairs">The list of face pairs to merge.</param>
+        /// <param name="collapseCoincidentVertices">True to condense coincident vertex positions on each face.</param>
+        /// <returns>A list of the new faces created.</returns>
         public static List<Face> MergePairs(ProBuilderMesh target, IEnumerable<SimpleTuple<Face, Face>> pairs, bool collapseCoincidentVertices = true)
         {
             HashSet<Face> remove = new HashSet<Face>();
@@ -53,15 +56,16 @@ namespace UnityEngine.ProBuilder.MeshOperations
         }
 
         /// <summary>
-        /// Merge a collection of faces to a single face. This function does not
-        /// perform any sanity checks, it just merges faces. It's the caller's
-        /// responsibility to make sure that the input is valid.
-        /// In addition to merging faces this method also removes duplicate vertices
+        /// Merges a collection of faces into a single face. This function does not
+        /// perform any sanity checks: it just merges faces, so the caller must make
+        /// sure that the input is valid. This method also removes duplicate vertices
         /// created as a result of merging previously common vertices.
+        ///
+        /// This is the equivalent of the [Merge Faces](../manual/Face_Merge.html) action.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="faces"></param>
-        /// <returns></returns>
+        /// <param name="target">The source mesh.</param>
+        /// <param name="faces">The collection of faces to move.</param>
+        /// <returns>The single merged Face.</returns>
         public static Face Merge(ProBuilderMesh target, IEnumerable<Face> faces)
         {
             int mergedCount = faces != null ? faces.Count() : 0;

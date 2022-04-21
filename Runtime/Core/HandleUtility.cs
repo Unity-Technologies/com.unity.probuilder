@@ -8,7 +8,7 @@ using System.Linq;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Static methods for working with ProBuilderMesh objects in an editor.
+    /// Provides static methods for working with ProBuilderMesh objects in the Editor.
     /// </summary>
     public static class HandleUtility
     {
@@ -420,12 +420,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// Returns a rotation suitable for orienting a handle or gizmo relative to the Face selection.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
-        /// <param name="faces">Faces to consider in the rotation calculations. Only used when
-        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <param name="faces">Which faces to consider in the rotation calculations. This is only used when the
+        /// <see cref="HandleOrientation"/> is set to <see cref="HandleOrientation.ActiveElement"/>.</param>
         /// <returns>A rotation appropriate to the orientation and element selection.</returns>
         public static Quaternion GetFaceRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Face> faces)
         {
@@ -448,11 +448,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the rotation of a face in world space.
+        /// Returns the rotation of a <see cref="Face"/> in world space.
         /// </summary>
-        /// <param name="mesh">The mesh that face belongs to.</param>
-        /// <param name="face">The face calculate rotation for.</param>
-        /// <returns>The rotation of face in world space coordinates.</returns>
+        /// <param name="mesh">The mesh that the face belongs to.</param>
+        /// <param name="face">The face you want to calculate the rotation for.</param>
+        /// <returns>The rotation of the face in world space coordinates.</returns>
         public static Quaternion GetFaceRotation(ProBuilderMesh mesh, Face face)
         {
             if (mesh == null)
@@ -472,12 +472,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// Returns a rotation suitable for orienting a handle or gizmo relative to the Edge selection.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
-        /// <param name="edges">Edges to consider in the rotation calculations. Only used when
-        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <param name="edges">Which edges to consider in the rotation calculations. This is only used when the
+        /// <see cref="HandleOrientation"/> is set to <see cref="HandleOrientation.ActiveElement"/>.</param>
         /// <returns>A rotation appropriate to the orientation and element selection.</returns>
         public static Quaternion GetEdgeRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<Edge> edges)
         {
@@ -502,11 +502,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the rotation of an edge in world space.
+        /// Returns the rotation of an <see cref="Edge"/> in world space.
         /// </summary>
         /// <param name="mesh">The mesh that edge belongs to.</param>
-        /// <param name="edge">The edge calculate rotation for.</param>
-        /// <returns>The rotation of edge in world space coordinates.</returns>
+        /// <param name="edge">The edge you want to calculate the rotation for.</param>
+        /// <returns>The rotation of the edge in world space coordinates.</returns>
         public static Quaternion GetEdgeRotation(ProBuilderMesh mesh, Edge edge)
         {
             if (mesh == null)
@@ -516,12 +516,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get a rotation suitable for orienting a handle or gizmo relative to the element selection.
+        /// Returns a rotation suitable for orienting a handle or gizmo relative to the Vertex selection.
         /// </summary>
         /// <param name="mesh">The target mesh.</param>
         /// <param name="orientation">The type of <see cref="HandleOrientation"/> to calculate.</param>
-        /// <param name="vertices">Edges to consider in the rotation calculations. Only used when
-        /// <see cref="HandleOrientation"/> is <see cref="HandleOrientation.ActiveElement"/>.</param>
+        /// <param name="vertices">Array of <see cref="Vertex"/> indices pointing to the vertices to consider in the rotation calculations. This is only used when the
+        /// <see cref="HandleOrientation"/> is set to <see cref="HandleOrientation.ActiveElement"/>.</param>
         /// <returns>A rotation appropriate to the orientation and element selection.</returns>
         public static Quaternion GetVertexRotation(ProBuilderMesh mesh, HandleOrientation orientation, IEnumerable<int> vertices)
         {
@@ -546,8 +546,8 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Get the rotation of a vertex in world space.
         /// </summary>
-        /// <param name="mesh">The mesh that `vertex` belongs to.</param>
-        /// <param name="vertex">The vertex to calculate rotation for.</param>
+        /// <param name="mesh">The mesh that the vertex belongs to.</param>
+        /// <param name="vertex">The index that points to the vertex to calculate the rotation for.</param>
         /// <returns>The rotation of a vertex normal in world space coordinates.</returns>
         public static Quaternion GetVertexRotation(ProBuilderMesh mesh, int vertex)
         {

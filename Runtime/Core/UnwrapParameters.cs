@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// Store UV2 unwrapping parameters.
+    /// Stores parameters that define how ProBuilder unwraps UV2s when Auto UV mode is on.
     /// </summary>
     [System.Serializable]
     public sealed class UnwrapParameters
@@ -38,34 +38,36 @@ namespace UnityEngine.ProBuilder
         [FormerlySerializedAs("areaError")]
         float m_AreaError = k_AreaError;
 
-        /// <value>
-        /// Angle between neighbor triangles that will generate seam.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the angle that generates seams between neighbor triangles.
+        /// </summary>
         public float hardAngle { get { return m_HardAngle; } set { m_HardAngle = value; } }
 
-        /// <value>
-        /// Measured in pixels, assuming mesh will cover an entire 1024x1024 lightmap.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the pack margin in pixels for a mesh that covers an entire 1024x1024 lightmap.
+        /// </summary>
         public float packMargin { get { return m_PackMargin; } set { m_PackMargin = value; } }
 
-        /// <value>
-        /// Measured in percents. Angle error measures deviation of UV angles from geometry angles. Area error measures
-        /// deviation of UV triangles area from geometry triangles if they were uniformly scaled.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the deviation of UV angles from geometry angles, as a percentage.
+        /// </summary>
         public float angleError { get { return m_AngleError; } set { m_AngleError = value; } }
 
-        /// <value>
-        /// Does... something.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the deviation of the UV triangles area from geometry triangles if they were uniformly scaled, as a percentage.
+        /// </summary>
         public float areaError { get { return m_AreaError; } set { m_AreaError = value; } }
 
+        /// <summary>
+        /// Creates a set of UnwrapParameters using default values.
+        /// </summary>
         public UnwrapParameters()
         {
             Reset();
         }
 
         /// <summary>
-        /// Copy constructor.
+        /// Creates a set of unwrap parameters by copying values from another set.
         /// </summary>
         /// <param name="other">The UnwrapParameters to copy properties from.</param>
         public UnwrapParameters(UnwrapParameters other)
@@ -80,7 +82,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Reset the unwrap parameters to default values.
+        /// Resets the unwrap parameter values to their defaults.
         /// </summary>
         public void Reset()
         {
@@ -90,6 +92,18 @@ namespace UnityEngine.ProBuilder
             areaError = k_AreaError;
         }
 
+        /// <summary>
+        /// Returns a string representation of the UnwrapParameters.
+        /// </summary>
+        /// <returns>String formatted as follows:
+        ///
+        /// `hardAngle: [hardAngle]`
+        ///
+        /// `packMargin: [packMargin]`
+        ///
+        /// `angleError: [angleError]`
+        ///
+        /// `areaError: [areaError]`</returns>
         public override string ToString()
         {
             return string.Format("hardAngle: {0}\npackMargin: {1}\nangleError: {2}\nareaError: {3}",

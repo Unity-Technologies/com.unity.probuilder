@@ -4,22 +4,22 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     /// <summary>
-    /// A collection of math functions that are useful when working with 3d meshes.
+    /// Defines a set of math functions that are useful for working with 3D meshes.
     /// </summary>
     public static class Math
     {
-        /// <value>
-        /// Pi / 2.
-        /// </value>
+        /// <summary>
+        /// Defines `Pi / 2`.
+        /// </summary>
         public const float phi = 1.618033988749895f;
 
         /// <summary>
-        /// ProBuilder epsilon constant.
+        /// Defines ProBuilder's epsilon constant.
         /// </summary>
         const float k_FltEpsilon = float.Epsilon;
 
         /// <summary>
-        /// Epsilon to use when comparing vertex positions for equality.
+        /// Defines the epsilon to use when comparing vertex positions for equality.
         /// </summary>
         const float k_FltCompareEpsilon = .0001f;
 
@@ -129,11 +129,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Squared distance between two points. This is the same as `(b - a).sqrMagnitude`.
+        /// Returns the squared distance between two points. This is the same as `(b - a).sqrMagnitude`.
         /// </summary>
         /// <param name="a">First point.</param>
         /// <param name="b">Second point.</param>
-        /// <returns></returns>
+        /// <returns>The squared distance between two points.</returns>
         public static float SqrDistance(Vector3 a, Vector3 b)
         {
             float dx = b.x - a.x,
@@ -143,9 +143,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the area of a triangle.
+        /// Returns the area of a triangle.
         /// </summary>
-        /// <remarks>http://www.iquilezles.org/blog/?p=1579</remarks>
+        /// <remarks>See [area of triangles, the fast way blog](http://www.iquilezles.org/blog/?p=1579).</remarks>
         /// <param name="x">First vertex position of the triangle.</param>
         /// <param name="y">Second vertex position of the triangle.</param>
         /// <param name="z">Third vertex position of the triangle.</param>
@@ -206,12 +206,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Scales a Vector2 using origin as the pivot point.
+        /// Scales a Vector2 using the origin as the pivot point.
         /// </summary>
-        /// <param name="v"></param>
-        /// <param name="origin"></param>
-        /// <param name="scale"></param>
-        /// <returns></returns>
+        /// <param name="v">The Vector2 to scale.</param>
+        /// <param name="origin">The center point to use as the pivot point.</param>
+        /// <param name="scale">Unit(s) to scale by.</param>
+        /// <returns>The scaled Vector2</returns>
         public static Vector2 ScaleAroundPoint(this Vector2 v, Vector2 origin, Vector2 scale)
         {
             Vector2 tp = v - origin;
@@ -249,13 +249,13 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the distance between a point and a finite line segment.
+        /// Returns the distance between a point and a finite line segment using Vector2s.
         /// </summary>
-        /// <remarks>http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</remarks>
+        /// <remarks>See [Shortest distance between a point and a line segment](http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment).</remarks>
         /// <param name="point">The point.</param>
-        /// <param name="lineStart">Line start.</param>
-        /// <param name="lineEnd">Line end.</param>
-        /// <returns>The distance from point to the nearest point on a line segment.</returns>
+        /// <param name="lineStart">Where the line starts.</param>
+        /// <param name="lineEnd">Where the line ends.</param>
+        /// <returns>The distance from the point to the nearest point on a line segment.</returns>
         public static float DistancePointLineSegment(Vector2 point, Vector2 lineStart, Vector2 lineEnd)
         {
             // Return minimum distance between line segment vw and point p
@@ -279,9 +279,9 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Get the distance between a point and a finite line segment.
+        /// Returns the distance between a point and a finite line segment using Vector3s.
         /// </summary>
-        /// <remarks>http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment</remarks>
+        /// <remarks>See [Shortest distance between a point and a line segment](http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment).</remarks>
         /// <param name="point">The point.</param>
         /// <param name="lineStart">Line start.</param>
         /// <param name="lineEnd">Line end.</param>
@@ -309,11 +309,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Calculate the nearest point between two rays.
+        /// Calculates and returns the nearest point between two rays.
         /// </summary>
         /// <param name="a">First ray.</param>
         /// <param name="b">Second ray.</param>
-        /// <returns></returns>
+        /// <returns>The nearest point between the two rays</returns>
         public static Vector3 GetNearestPointRayRay(Ray a, Ray b)
         {
             return GetNearestPointRayRay(a.origin, a.direction, b.origin, b.direction);
@@ -494,19 +494,18 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Test if a raycast intersects a triangle. Does not test for culling.
+        /// Tests whether a raycast intersects a triangle. Does not test for culling.
         /// </summary>
         /// <remarks>
-        /// http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-        /// http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+        /// See [Möller–Trumbore intersection algorithm](http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm).
         /// </remarks>
-        /// <param name="InRay"></param>
+        /// <param name="InRay">The ray to test.</param>
         /// <param name="InTriangleA">First vertex position in the triangle.</param>
         /// <param name="InTriangleB">Second vertex position in the triangle.</param>
         /// <param name="InTriangleC">Third vertex position in the triangle.</param>
-        /// <param name="OutDistance">If triangle is intersected, this is the distance of intersection point from ray origin. Zero if not intersected.</param>
-        /// <param name="OutPoint">If triangle is intersected, this is the point of collision. Zero if not intersected.</param>
-        /// <returns>True if ray intersects, false if not.</returns>
+        /// <param name="OutDistance">The distance of the intersection point from the ray origin if the ray intersects the triangle; otherwise, 0.</param>
+        /// <param name="OutPoint">The point of collision if the ray intersects the triangle; otherwise, 0.</param>
+        /// <returns>True if the ray intersects the triangle; otherwise false.</returns>
         public static bool RayIntersectsTriangle(Ray InRay, Vector3 InTriangleA, Vector3 InTriangleB, Vector3 InTriangleC,
             out float OutDistance, out Vector3 OutPoint)
         {
@@ -620,25 +619,24 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Return the secant of a radian.
-        /// Equivalent to: `1f / cos(x)`.
+        /// Returns the secant of a radian. This is equivalent to: `1f / cos(x)`.
         /// </summary>
         /// <param name="x">The radian to calculate the secant of.</param>
-        /// <returns>The secant of radian x.</returns>
+        /// <returns>The secant of radian `x`.</returns>
         public static float Secant(float x)
         {
             return 1f / Mathf.Cos(x);
         }
 
         /// <summary>
-        /// Calculate the unit vector normal of 3 points.
-        /// <br />
-        /// Equivalent to: `B-A x C-A`
+        /// Calculates and returns the unit vector normal of 3 points in a triangle.
+        ///
+        /// This is equivalent to: `B-A x C-A`.
         /// </summary>
         /// <param name="p0">First point of the triangle.</param>
         /// <param name="p1">Second point of the triangle.</param>
         /// <param name="p2">Third point of the triangle.</param>
-        /// <returns></returns>
+        /// <returns>The unit vector normal of the points</returns>
         public static Vector3 Normal(Vector3 p0, Vector3 p1, Vector3 p2)
         {
             float   ax = p1.x - p0.x,
@@ -690,11 +688,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Finds the best normal for a face.
+        /// Finds and returns the best normal for a face.
         /// </summary>
         /// <param name="mesh">The mesh that the target face belongs to.</param>
         /// <param name="face">The face to calculate a normal for.</param>
-        /// <returns>A normal that most closely matches the face orientation in model corrdinates.</returns>
+        /// <returns>A normal that most closely matches the face orientation in model coordinates.</returns>
         public static Vector3 Normal(ProBuilderMesh mesh, Face face)
         {
             if (mesh == null || face == null)
@@ -1009,11 +1007,14 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Gets the average of a vector array.
+        /// Calculates and returns the average of a Vector2 array.
         /// </summary>
-        /// <param name="array">The array</param>
-        /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
-        /// <returns>Average Vector3 of passed vertex array.</returns>
+        /// <param name="array">The array to get the average for.</param>
+        /// <param name="indexes">
+        /// Specify a list of points in the vector array to calculate the average from.
+        /// If not specified, it uses the entire `array` instead.
+        /// </param>
+        /// <returns>Average of the whole vertex array or the portion specified in the `indexes` list.</returns>
         public static Vector2 Average(IList<Vector2> array, IList<int> indexes = null)
         {
             if (array == null)
@@ -1031,11 +1032,14 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Gets the average of a vector array.
+        /// Calculates and returns the average of the specified Vector3 array.
         /// </summary>
-        /// <param name="array">The array.</param>
-        /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
-        /// <returns>Average Vector3 of passed vertex array.</returns>
+        /// <param name="array">The array to get the average for.</param>
+        /// <param name="indexes">
+        /// Specify a list of points in the vector array to calculate the average from.
+        /// If not specified, it uses the entire `array` instead.
+        /// </param>
+        /// <returns>Average of the whole vertex array or the portion specified in the `indexes` list.</returns>
         public static Vector3 Average(IList<Vector3> array, IList<int> indexes = null)
         {
             if (array == null)
@@ -1068,11 +1072,14 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Gets the average of a vector array.
+        /// Calculates and returns the average of a Vector4 array.
         /// </summary>
-        /// <param name="array">The array.</param>
-        /// <param name="indexes">If provided the average is the sum of all points contained in the indexes array. If not, the entire v array is used.</param>
-        /// <returns>Average Vector4 of passed vertex array.</returns>
+        /// <param name="array">The array to get the average for.</param>
+        /// <param name="indexes">
+        /// Specify a list of points in the vector array to calculate the average from.
+        /// If not specified, it uses the entire `array` instead.
+        /// </param>
+        /// <returns>Average of the whole vertex array or the portion specified in the `indexes` list.</returns>
         public static Vector4 Average(IList<Vector4> array, IList<int> indexes = null)
         {
             if (array == null)
@@ -1185,12 +1192,12 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Clamp a int to a range.
+        /// Clamps an integer value to the specified range.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <param name="lowerBound">The lowest value that the clamped value can be.</param>
         /// <param name="upperBound">The highest value that the clamped value can be.</param>
-        /// <returns>A value clamped with the range of lowerBound and upperBound.</returns>
+        /// <returns>A value clamped inside the range of `lowerBound` and `upperBound`.</returns>
         public static int Clamp(int value, int lowerBound, int upperBound)
         {
             return value < lowerBound

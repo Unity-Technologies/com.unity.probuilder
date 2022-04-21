@@ -538,7 +538,7 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     prev = point.position;
-                    prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
+                    prev = FreeMoveHandle(prev, size, Vector3.zero, Handles.DotHandleCap);
                     if (!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
                     {
                         eventHasBeenUsed = true;
@@ -571,7 +571,7 @@ namespace UnityEditor.ProBuilder
                     else
                     {
                         prev = point.tangentIn;
-                        prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
+                        prev = FreeMoveHandle(prev, size, Vector3.zero, Handles.DotHandleCap);
 
                         if (!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
                         {
@@ -603,7 +603,7 @@ namespace UnityEditor.ProBuilder
                     else
                     {
                         prev = point.tangentOut;
-                        prev = Handles.FreeMoveHandle(prev, Quaternion.identity, size, Vector3.zero, Handles.DotHandleCap);
+                        prev = FreeMoveHandle(prev, size, Vector3.zero, Handles.DotHandleCap);
 
                         if (!eventHasBeenUsed && eventType == EventType.MouseUp && e.type == EventType.Used)
                         {
@@ -659,6 +659,15 @@ namespace UnityEditor.ProBuilder
 
             if (EditorGUI.EndChangeCheck())
                 UpdateMesh(false);
+        }
+
+        Vector3 FreeMoveHandle(Vector3 position, float size, Vector3 snap, Handles.CapFunction capFunction)
+        {
+#if UNITY_2022
+            return Handles.FreeMoveHandle(position, size, snap, capFunction);
+#else
+            return Handles.FreeMoveHandle(position, Quaternion.identity, size, snap, capFunction);
+#endif
         }
 
         bool IsHoveringHandlePoint(Vector2 mpos)

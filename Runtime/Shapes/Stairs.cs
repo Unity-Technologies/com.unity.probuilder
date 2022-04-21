@@ -2,42 +2,98 @@ using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    /// <summary>
+    /// Describes how ProBuilder will construct the <see cref="Stairs" /> mesh.
+    /// </summary>
     enum StepGenerationType
     {
+        /// <summary>
+        /// Instructs ProBuilder to generate a predictable height for each step in the staircase.
+        /// This means that if you increase the height of the overall size of the staircase, the number of steps increases.
+        /// </summary>
         Height,
+        /// <summary>
+        /// ProBuilder to generate a specific number of steps, regardless of any changes in the size of the staircase.
+        /// This means that if you increase the height of the overall size of the stairs, each step becomes higher.
+        /// </summary>
         Count
     }
 
+    /// <summary>
+    /// Represents a basic [stairs](../manual/Stairs.html) shape.
+    /// </summary>
     [Shape("Stairs")]
     public class Stairs : Shape
     {
+        /// <summary>
+        /// Determines whether you want ProBuilder to build the same number of steps regardless of how the size of the stairs
+        /// changes (the default) or make each step the same height and automatically adapt the number of steps to match the stairs size.
+        ///
+        /// The default value is to build the same number of steps.
+        /// </summary>
         [SerializeField]
         StepGenerationType m_StepGenerationType = StepGenerationType.Count;
 
+        /// <summary>
+        /// Sets the fixed height of each step on the stairs.
+        /// The default value is 0.2.
+        /// </summary>
+        /// <seealso cref="StepGenerationType.Count" />
         [Min(0.01f)]
         [SerializeField]
         float m_StepsHeight = .2f;
 
+        /// <summary>
+        /// Sets the fixed number of steps that the stairs always has.
+        /// The default value is 10. Valid values range from 1 to 256.
+        /// </summary>
+        /// <seealso cref="StepGenerationType.Height" />
         [Range(1, 256)]
         [SerializeField]
         int m_StepsCount = 10;
 
+        /// <summary>
+        /// Determines whether to force every step to be the exactly the same height. If disabled,
+        /// the height of the last step is smaller than the others depending on the remaining height.
+        /// This is enabled by default.
+        /// </summary>
+        /// <seealso cref="StepGenerationType.Height" />
         [SerializeField]
         bool m_HomogeneousSteps = true;
 
+        /// <summary>
+        /// Sets the degree of curvature on the stairs in degrees, where 0 makes straight stairs, 360 makes stairs
+        /// in a complete circle, and negative angles makes the stairs curve to the left while positive angles make
+        /// turns to the right. Remember that you might need to increase the number of stairs to compensate as you
+        /// increase this value.
+        ///
+        /// The default value is 0. Valid values range from -360 to 360.
+        /// </summary>
         [Range(-360, 360)]
         [SerializeField]
         float m_Circumference = 0f;
 
+        /// <summary>
+        /// Determines whether to draw polygons on the sides of the stairs.
+        /// This is enabled by default. You can disable this option if the sides of your stairs
+        /// are not visible to the camera (for example, if your stairs are built into a wall).
+        /// </summary>
         [SerializeField]
         bool m_Sides = true;
 
+        /// <summary>
+        /// Gets or sets whether to draw polygons on the sides of the stairs.
+        /// </summary>
         public bool sides
         {
             get => m_Sides;
             set => m_Sides = value;
         }
 
+        [SerializeField, Min(0f)]
+        float m_InnerRadius;
+
+        /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
             if(shape is Stairs)
@@ -52,6 +108,7 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
+        /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
             if (Mathf.Abs(m_Circumference) > 0)
@@ -60,6 +117,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 return BuildStairs(mesh, size, rotation);
         }
 
+        /// <inheritdoc/>
         public override Bounds UpdateBounds(ProBuilderMesh mesh, Vector3 size, Quaternion rotation, Bounds bounds)
         {
             if (Mathf.Abs(m_Circumference) > 0)
@@ -264,8 +322,9 @@ namespace UnityEngine.ProBuilder.Shapes
             var meshSize = Math.Abs(size);
 
             var buildSides = m_Sides;
-            var innerRadius = meshSize.z;
-            var stairWidth = meshSize.x;
+            var maxWidth = Mathf.Min(meshSize.x, meshSize.z);
+            var innerRadius = Mathf.Clamp(m_InnerRadius, 0f, maxWidth - float.Epsilon);
+            var stairWidth = maxWidth - innerRadius;
             var height = Mathf.Abs(meshSize.y);
             var circumference = m_Circumference;
             bool noInnerSide = innerRadius < Mathf.Epsilon;
@@ -526,6 +585,7 @@ namespace UnityEngine.ProBuilder.Shapes
         static readonly GUIContent k_HomogeneousStepsContent = new GUIContent("Homogeneous Steps", L10n.Tr("Whether to round the step height to create homogenous steps."));
         static readonly GUIContent k_CircumferenceContent = new GUIContent("Circumference", L10n.Tr("Circumference of the stairs. Use a negative number to rotate in the opposite direction."));
         static readonly GUIContent k_SidesContent = new GUIContent("Sides", L10n.Tr("Whether to generate sides."));
+        static readonly GUIContent k_InnerRadius = new GUIContent("Inner Radius", L10n.Tr("In a curved stair-set, this defines the radius from center to the inner edge of the stair."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -552,7 +612,15 @@ namespace UnityEngine.ProBuilder.Shapes
                     EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), k_HomogeneousStepsContent);
                 }
 
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), k_CircumferenceContent);
+                var circumference = property.FindPropertyRelative("m_Circumference");
+                var innerRadius = property.FindPropertyRelative("m_InnerRadius");
+                EditorGUILayout.PropertyField(circumference, k_CircumferenceContent);
+                EditorGUI.BeginDisabledGroup(Mathf.Abs(circumference.floatValue) < float.Epsilon);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(innerRadius, k_InnerRadius);
+                EditorGUI.indentLevel--;
+                EditorGUI.EndDisabledGroup();
+
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Sides"), k_SidesContent);
             }
 

@@ -8,9 +8,8 @@ using System;
 
 namespace UnityEditor.ProBuilder
 {
-    /// <inheritdoc />
     /// <summary>
-    /// An extended tooltip for use in MenuAction.
+    /// Represents an extended tooltip for a MenuAction.
     /// </summary>
     [Serializable]
     public sealed class TooltipContent : IEquatable<TooltipContent>
@@ -45,33 +44,27 @@ namespace UnityEditor.ProBuilder
         static readonly Color separatorColor = new Color(.65f, .65f, .65f, .5f);
 
         /// <summary>
-        /// The title to show in the tooltip window.
+        /// Gets or sets the title in the tooltip window.
         /// </summary>
-        /// <value>
-        /// The header text for this tooltip.
-        /// </value>
         public string title { get; set; }
 
         /// <summary>
-        /// A brief summary of what this menu action does.
+        /// Gets or sets a brief summary of what this menu action does.
         /// </summary>
-        /// <value>
-        /// The body of the summary text.
-        /// </value>
         public string summary { get; set; }
 
         /// <summary>
-        /// The shortcut assigned to this menu item.
+        /// Gets or sets a text representation of the (optional) shortcut assigned to this menu item.
         /// </summary>
-        /// <value>
-        /// A text representation of the optional shortcut.
-        /// </value>
         public string shortcut { get; set; }
 
         internal static TooltipContent TempContent = new TooltipContent("", "");
 
         /// <summary>
-        /// Create a new tooltip.
+        /// Creates a new tooltip with a title, a summary, and an optional array of characters for the shortcut.
+        ///
+        /// To specify modifier keys, use the Windows control keys. ProBuilder manages switching to Linux
+        /// control keys for the macOS and Linux versions of the Unity Editor.
         /// </summary>
         /// <param name="title">The header text for this tooltip.</param>
         /// <param name="summary">The body of the tooltip text. This should be kept brief.</param>
@@ -98,7 +91,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Create a new tooltip.
+        /// Creates a new tooltip with a title, a summary, and an optional string for the shortcut.
         /// </summary>
         /// <param name="title">The header text for this tooltip.</param>
         /// <param name="summary">The body of the tooltip text. This should be kept brief.</param>
@@ -185,32 +178,38 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Equality check is performed by comparing the title property of each tooltip.
+        /// Compares the <see cref="title"/> property of each tooltip to determine whether
+        /// the specified tooltip is equal to this one.
         /// </summary>
-        /// <param name="other">The ToolTip content to compare.</param>
-        /// <returns>True if title is the same, false otherwise.</returns>
+        /// <param name="other">The ToolTip to compare.</param>
+        /// <returns>True if the title is the same; false otherwise.</returns>
         public bool Equals(TooltipContent other)
         {
             return other != null && other.title != null && other.title.Equals(this.title);
         }
 
         /// <summary>
-        /// Equality check is performed by comparing the title property of each tooltip.
+        /// Compares the <see cref="title"/> property of each tooltip to determine whether
+        /// the specified tooltip is equal to this one.
         /// </summary>
-        /// <param name="obj">The ToolTip content to compare.</param>
-        /// <returns>True if title is the same, false otherwise.</returns>
+        /// <param name="obj">The object to compare.</param>
+        /// <returns>True if the title is the same; false otherwise.</returns>
         public override bool Equals(object obj)
         {
             return obj is TooltipContent && ((TooltipContent)obj).title.Equals(title);
         }
 
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>An integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
             return title.GetHashCode();
         }
 
         /// <summary>
-        /// Convert a tooltip to a string.
+        /// Converts a tooltip to a string.
         /// </summary>
         /// <param name="content">The Tooltip to convert.</param>
         /// <returns>The title of content.</returns>
@@ -223,9 +222,9 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Create a Tooltip with a title.
+        /// Creates a new Tooltip with only the specified title.
         /// </summary>
-        /// <param name="title">The title to apply to the new Tooltip.</param>
+        /// <param name="title">The title for the new Tooltip.</param>
         /// <returns>A new Tooltip with title and no content.</returns>
         public static explicit operator TooltipContent(string title)
         {
@@ -233,7 +232,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Convert a Tooltip to a string.
+        /// Converts a Tooltip to a string.
         /// </summary>
         /// <returns>The title of the Tooltip.</returns>
         public override string ToString()
@@ -242,9 +241,9 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Create a new tooltip with title.
+        /// Creates a new Tooltip with only the specified title.
         /// </summary>
-        /// <param name="title">The title to apply to the new Tooltip.</param>
+        /// <param name="title">The title for the new Tooltip.</param>
         /// <returns>A new Tooltip with title and no content.</returns>
         public static TooltipContent FromString(string title)
         {
