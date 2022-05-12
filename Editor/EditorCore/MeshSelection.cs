@@ -267,7 +267,7 @@ namespace UnityEditor.ProBuilder
             if (!willInvokeChangeCallback)
             {
                 var activeMesh = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
-                if (activeMesh != null && !topInternal.Contains(activeMesh))
+                if (activeMesh != null && !topInternal.Contains(activeMesh) || (activeMesh == null && topInternal.Count == 0))
                     EditorApplication.delayCall += OnObjectSelectionChanged;
             }
 
