@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [case: 1403852] Fixing Plane generation that was not consistent regarding Width/Length.
 - [case: 1403850] Fixing UVs for mirrored stairs.
+- [case: PBLD-8] Fixed ProBuilderize action not handling redo operation correctly.
 
 ## [4.5.3] - 2021-07-23
 
