@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1350635] Fixed crash when using CSG operations.
 - [case: 1407039] Fixed stair creation tool missing the inner radius parameter.
 - [case: PBLD-3] Fixed vertex manipulation tools locking grid snapping settings on activation.
+- [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
 - [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
 
 ### Changes
