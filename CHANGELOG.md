@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
+- [case: PBLD-10] Fixed issue where adding and then removing Collider or Trigger behaviours would cause meshes to not render in builds.
 - [case: 1403852] Fixing Plane generation that was not consistent regarding Width/Length.
 - [case: 1403850] Fixing UVs for mirrored stairs.
 
