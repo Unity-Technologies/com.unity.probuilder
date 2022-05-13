@@ -253,13 +253,22 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         internal static void UndoRedoPerformed()
         {
+            var willInvokeChangeCallback = false;
             for (int i = 0; i < topInternal.Count; i++)
             {
                 if (topInternal[i] == null || !Selection.Contains(topInternal[i].gameObject))
                 {
                     EditorApplication.delayCall += OnObjectSelectionChanged;
+                    willInvokeChangeCallback = true;
                     break;
                 }
+            }
+
+            if (!willInvokeChangeCallback)
+            {
+                var activeMesh = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ProBuilderMesh>() : null;
+                if (activeMesh != null && !topInternal.Contains(activeMesh) || (activeMesh == null && topInternal.Count == 0))
+                    EditorApplication.delayCall += OnObjectSelectionChanged;
             }
 
             InvalidateCaches();
