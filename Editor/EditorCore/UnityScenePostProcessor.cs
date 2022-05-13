@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
                 if (entity.manageVisibility)
                     entity.OnEnterPlayMode();
 
-                if ((entity is TriggerBehaviour or ColliderBehaviour) && entity.gameObject.TryGetComponent(out MeshRenderer renderer))
+                if ((entity is TriggerBehaviour || entity is ColliderBehaviour) && entity.gameObject.TryGetComponent(out MeshRenderer renderer))
                     renderersToStrip.Add(renderer);
             }
 
