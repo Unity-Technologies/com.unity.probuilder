@@ -24,11 +24,6 @@ namespace UnityEngine.ProBuilder
             collision.isTrigger = true;
 
             SetMaterial(BuiltinMaterials.triggerMaterial);
-
-            var r = GetComponent<Renderer>();
-
-            if (r != null)
-                r.hideFlags = HideFlags.DontSaveInBuild;
         }
 
         public override void OnEnterPlayMode()
