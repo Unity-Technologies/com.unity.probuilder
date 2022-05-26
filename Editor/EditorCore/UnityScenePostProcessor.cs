@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -47,10 +48,14 @@ namespace UnityEditor.ProBuilder
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
 
+            var renderersToStrip = new List<Renderer>();
             foreach (var entity in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
             {
                 if (entity.manageVisibility)
                     entity.OnEnterPlayMode();
+
+                if ((entity is TriggerBehaviour || entity is ColliderBehaviour) && entity.gameObject.TryGetComponent(out MeshRenderer renderer))
+                    renderersToStrip.Add(renderer);
             }
 
             foreach (var mesh in pbMeshes)
@@ -87,6 +92,9 @@ namespace UnityEditor.ProBuilder
                 StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(gameObject, mesh, true);
 
             }
+
+            foreach (var renderer in renderersToStrip)
+                Undo.DestroyObjectImmediate(renderer);
         }
 
         static Entity ProcessLegacyEntity(GameObject go)
