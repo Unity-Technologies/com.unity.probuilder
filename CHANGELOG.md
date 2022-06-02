@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix some styling issues with Overlays in 21.2
 - [case: 1350635] Fixed crash when using CSG operations.
 - [case: 1405226] Fixed tooltips inconsistently showing and hiding.
+- [case: 1407039] Fixed stair creation tool missing the inner radius parameter.
+- [case: PBLD-3] Fixed vertex manipulation tools locking grid snapping settings on activation.
+- [case: PBLD-9] Fixed issue where adding and then removing Collider or Trigger behaviours would cause meshes to not render in builds.
+- [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
+- [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
 
 ### Changes
 

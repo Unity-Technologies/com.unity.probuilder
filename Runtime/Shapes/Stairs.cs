@@ -90,6 +90,9 @@ namespace UnityEngine.ProBuilder.Shapes
             set => m_Sides = value;
         }
 
+        [SerializeField, Min(0f)]
+        float m_InnerRadius;
+
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
@@ -319,8 +322,9 @@ namespace UnityEngine.ProBuilder.Shapes
             var meshSize = Math.Abs(size);
 
             var buildSides = m_Sides;
-            var innerRadius = meshSize.z;
-            var stairWidth = meshSize.x;
+            var maxWidth = Mathf.Min(meshSize.x, meshSize.z);
+            var innerRadius = Mathf.Clamp(m_InnerRadius, 0f, maxWidth - float.Epsilon);
+            var stairWidth = maxWidth - innerRadius;
             var height = Mathf.Abs(meshSize.y);
             var circumference = m_Circumference;
             bool noInnerSide = innerRadius < Mathf.Epsilon;
@@ -581,6 +585,7 @@ namespace UnityEngine.ProBuilder.Shapes
         static readonly GUIContent k_HomogeneousStepsContent = new GUIContent("Homogeneous Steps", L10n.Tr("Whether to round the step height to create homogenous steps."));
         static readonly GUIContent k_CircumferenceContent = new GUIContent("Circumference", L10n.Tr("Circumference of the stairs. Use a negative number to rotate in the opposite direction."));
         static readonly GUIContent k_SidesContent = new GUIContent("Sides", L10n.Tr("Whether to generate sides."));
+        static readonly GUIContent k_InnerRadius = new GUIContent("Inner Radius", L10n.Tr("In a curved stair-set, this defines the radius from center to the inner edge of the stair."));
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -607,7 +612,15 @@ namespace UnityEngine.ProBuilder.Shapes
                     EditorGUILayout.PropertyField(property.FindPropertyRelative("m_HomogeneousSteps"), k_HomogeneousStepsContent);
                 }
 
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Circumference"), k_CircumferenceContent);
+                var circumference = property.FindPropertyRelative("m_Circumference");
+                var innerRadius = property.FindPropertyRelative("m_InnerRadius");
+                EditorGUILayout.PropertyField(circumference, k_CircumferenceContent);
+                EditorGUI.BeginDisabledGroup(Mathf.Abs(circumference.floatValue) < float.Epsilon);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(innerRadius, k_InnerRadius);
+                EditorGUI.indentLevel--;
+                EditorGUI.EndDisabledGroup();
+
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("m_Sides"), k_SidesContent);
             }
 
