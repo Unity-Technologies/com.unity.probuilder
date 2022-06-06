@@ -233,7 +233,6 @@ namespace UnityEditor.ProBuilder
             if (m_NextMouseUpAdvancesMode && evt.type == EventType.MouseUp)
             {
                 evt.Use();
-
                 m_NextMouseUpAdvancesMode = false;
 
                 if (SceneCameraIsAlignedWithPolyUp())
@@ -259,7 +258,7 @@ namespace UnityEditor.ProBuilder
             if (polygon == null)
                 return;
 
-             if (EditorHandleUtility.SceneViewInUse(evt))
+            if (EditorHandleUtility.SceneViewInUse(evt))
                  return;
 
             m_ControlId = GUIUtility.GetControlID(FocusType.Passive);
@@ -679,6 +678,7 @@ namespace UnityEditor.ProBuilder
                 if (!used && evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
                     evt.Use();
+                    UndoUtility.RecordObject(polygon, "Set Height");
                     SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                 }
 
