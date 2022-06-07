@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
 - [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
 - [case: PBLD-11] Fixed Poly Shape Tool missing an undo step after setting height.
+- [case: PBLD-13] Fixed undo/redo of a newly created shape.
 
 ### Changes
 
