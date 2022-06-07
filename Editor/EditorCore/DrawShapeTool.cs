@@ -212,10 +212,12 @@ namespace UnityEditor.ProBuilder
             ShapeState initState = new ShapeState_InitShape();
             ShapeState drawBaseState = new ShapeState_DrawBaseShape();
             ShapeState drawHeightState = new ShapeState_DrawHeightShape();
+            ShapeState finalizeState = new ShapeState_FinalizeShape();
             ShapeState.s_defaultState = initState;
             initState.m_nextState = drawBaseState;
             drawBaseState.m_nextState = drawHeightState;
-            drawHeightState.m_nextState = initState;
+            drawHeightState.m_nextState = finalizeState;
+            finalizeState.m_nextState = initState;
 
             return ShapeState.StartStateMachine();
         }
@@ -380,7 +382,6 @@ namespace UnityEditor.ProBuilder
                 shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
                 shapeComponent.rotation = Quaternion.identity;
                 shapeComponent.gameObject.name = EditorShapeUtility.GetName(shapeComponent.shape);
-                UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
                 m_IsShapeInit = true;
             }
 

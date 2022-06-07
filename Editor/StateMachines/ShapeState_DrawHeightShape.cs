@@ -7,13 +7,6 @@ namespace UnityEditor.ProBuilder
 {
     internal class ShapeState_DrawHeightShape : ShapeState
     {
-        protected override void EndState()
-        {
-            tool.RebuildShape();
-            tool.m_LastShapeCreated = tool.m_ProBuilderShape;
-            tool.m_ProBuilderShape = null;
-        }
-
         ShapeState ValidateShape()
         {
             tool.handleSelectionChange = false;
