@@ -380,7 +380,6 @@ namespace UnityEditor.ProBuilder
                 shapeComponent.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
                 shapeComponent.rotation = Quaternion.identity;
                 shapeComponent.gameObject.name = EditorShapeUtility.GetName(shapeComponent.shape);
-                UndoUtility.RegisterCreatedObjectUndo(shapeComponent.gameObject, "Draw Shape");
                 m_IsShapeInit = true;
             }
 
