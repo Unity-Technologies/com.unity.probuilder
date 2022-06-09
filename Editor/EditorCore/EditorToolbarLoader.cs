@@ -45,6 +45,9 @@ namespace UnityEditor.ProBuilder
                 new Actions.OpenVertexColorEditor(),
                 new Actions.OpenSmoothingEditor(),
 
+                // test menu action
+                new Actions.TestMenuAction(),
+
                 new Actions.ToggleSelectBackFaces(),
                 new Actions.ToggleHandleOrientation(),
                 new Actions.ToggleDragSelectionMode(),

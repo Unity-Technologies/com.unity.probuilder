@@ -17,6 +17,25 @@ namespace UnityEditor.ProBuilder
         const string k_MenuPrefix = "Tools/ProBuilder/";
         const string k_ShortcutPrefix = "ProBuilder/";
 
+        // Test Menu Action
+        [MenuItem(k_MenuPrefix + "Editors/Test Menu Action", true, PreferenceKeys.menuEditor + 1)]
+        static bool MenuVerify_TestMenuAction()
+        {
+            var instance = EditorToolbarLoader.GetInstance<TestMenuAction>();
+            return instance != null && instance.enabled;
+        }
+
+        [MenuItem(k_MenuPrefix + "Editors/Test Menu Action", false, PreferenceKeys.menuEditor + 1)]
+        static void MenuPerform_TestMenuAction()
+        {
+            var instance = EditorToolbarLoader.GetInstance<TestMenuAction>();
+            if(instance != null && instance.enabled)
+            {
+                EditorUtility.ShowNotification(instance.PerformAction().notification);
+                ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+            }
+        }
+
 		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewBezierShape()
 		{
@@ -35,7 +54,7 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape Toggle", true, PreferenceKeys.menuEditor + 1)]
+        [MenuItem(k_MenuPrefix + "Editors/New Poly Shape Toggle", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewPolyShapeToggle()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
