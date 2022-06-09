@@ -87,9 +87,12 @@ namespace UnityEngine.ProBuilder
                 // that switches rendering path if replacement shaders are in use, but I wasn't able to get that
                 // approach to work without also requiring that the drawing happen during a repaint event.
                 var currentRenderPipeline = GraphicsSettings.renderPipelineAsset;
+                var qualitySettingsRenderPipeline = QualitySettings.renderPipeline;
                 GraphicsSettings.renderPipelineAsset = null;
+                QualitySettings.renderPipeline = null;
                 renderCam.RenderWithShader(shader, tag);
                 GraphicsSettings.renderPipelineAsset = currentRenderPipeline;
+                QualitySettings.renderPipeline = qualitySettingsRenderPipeline;
 
                 Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
                 img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
