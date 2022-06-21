@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
 - [case: PBLD-11] Fixed Poly Shape Tool missing an undo step after setting height.
 - [case: PBLD-13] Fixed a bug where a newly created shape would not be redrawn with Redo. 
-- [case: PBLD-15] Fixed URP support in the Game View.
+- [case: PBLD-15] Fixed a bug with URP that prevented some items from being selectable in the Game view. 
 
 ### Changes
 
