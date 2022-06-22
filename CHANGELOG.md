@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.0.5] - 2022-06-06
 
 ### Bug Fixes
 
@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
 - [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
 - [case: PBLD-11] Fixed Poly Shape Tool missing an undo step after setting height.
+- [case: PBLD-13] Fixed a bug where a newly created shape would not be redrawn with Redo. 
+- [case: PBLD-15] Fixed a bug with URP that prevented some items from being selectable in the Game view. 
 
 ### Changes
 
