@@ -17,18 +17,17 @@ namespace UnityEditor.ProBuilder
         const string k_MenuPrefix = "Tools/ProBuilder/";
         const string k_ShortcutPrefix = "ProBuilder/";
 
-        // Test Menu Action
-        [MenuItem(k_MenuPrefix + "Editors/Test Menu Action", true, PreferenceKeys.menuEditor + 1)]
-        static bool MenuVerify_TestMenuAction()
+        [MenuItem(k_MenuPrefix + "Editors/New Bezier Mesh", true, PreferenceKeys.menuEditor + 1)]
+        static bool MenuVerify_NewBezierMesh()
         {
-            var instance = EditorToolbarLoader.GetInstance<TestMenuAction>();
+            var instance = EditorToolbarLoader.GetInstance<NewBezierMesh>();
             return instance != null && instance.enabled;
         }
 
-        [MenuItem(k_MenuPrefix + "Editors/Test Menu Action", false, PreferenceKeys.menuEditor + 1)]
-        static void MenuPerform_TestMenuAction()
+        [MenuItem(k_MenuPrefix + "Editors/New Bezier Mesh", false, PreferenceKeys.menuEditor + 1)]
+        static void MenuPerform_NewBezierMesh()
         {
-            var instance = EditorToolbarLoader.GetInstance<TestMenuAction>();
+            var instance = EditorToolbarLoader.GetInstance<NewBezierMesh>();
             if(instance != null && instance.enabled)
             {
                 EditorUtility.ShowNotification(instance.PerformAction().notification);
