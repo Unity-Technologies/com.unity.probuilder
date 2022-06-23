@@ -81,9 +81,11 @@ namespace UnityEditor.ProBuilder.Actions
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
-            bezier.ExtrudeMesh();
+            bezier.Extrude2DMesh();
+            EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());
             MeshSelection.SetSelection(go);
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
+            bezier.isEditing = true;
         }
 
         private void CreateProBuilderMeshCube()
