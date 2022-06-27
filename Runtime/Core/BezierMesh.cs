@@ -57,7 +57,7 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField] private int m_segmentCount = 6; // min 2
 
-        [SerializeField] private int m_facesAroundRadiusCount = 3; // min 3
+        [SerializeField] private int m_facesAroundRadiusCount = 4; // min 3
 
         public void Init()
         {
@@ -190,14 +190,6 @@ namespace UnityEngine.ProBuilder
                 Vector3 normal = SplineUtility.EvaluateUpVector(m_spline, t);
                 t += 1f / m_segmentCount;
 
-                var pos1 = position + normal.normalized * m_radius;
-                var pos2 = position;
-                var pos3 = position - normal.normalized * m_radius;
-
-                vertexPositions.Add(pos1);
-                vertexPositions.Add(pos2);
-                vertexPositions.Add(pos3);
-
                 // define the vertex positions around the spline at each segmentPosition along the spline
                 for(int j = 0; j < m_facesAroundRadiusCount; j++)
                 {
@@ -206,7 +198,7 @@ namespace UnityEngine.ProBuilder
                     var horizontalPos = Mathf.Cos(angleInRadians);
                     var vertexDirection = new Vector3(horizontalPos, verticalPos, 0);
                     var vertexPosition = position + vertexDirection * m_radius;
-                    vertexPositions[i] = vertexPosition;
+                    vertexPositions.Add(vertexPosition);
                 }
 
                 // define faces from vertices
