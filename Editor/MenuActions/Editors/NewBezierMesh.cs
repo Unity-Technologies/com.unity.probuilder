@@ -67,11 +67,10 @@ namespace UnityEditor.ProBuilder.Actions
         protected override ActionResult PerformActionImplementation()
         {
             // CreateProBuilderMeshCube();
-            //CreateProBuilderMeshCylinder();
+            // CreateProBuilderMeshCylinder();
 
             CreateNewBezierMesh();
 
-            Debug.Log("clicked on my menu action !");
             return new ActionResult(ActionResult.Status.Success, "Created Bezier Mesh using Splines");
         }
 
