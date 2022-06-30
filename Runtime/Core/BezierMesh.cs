@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEditor;
-using UnityEngine.Serialization;
 using UnityEngine.Splines;
 
 namespace UnityEngine.ProBuilder
@@ -48,14 +46,14 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField] private float m_Radius = 0.5f; // min 0.01f
 
-        [SerializeField] private int m_SegmentCount = 50; // min 2
+        [SerializeField] private int m_SegmentsPerUnit = 1; // min 1
 
-        [SerializeField] private int m_FacesAroundRadiusCount = 10; // min 3
+        [SerializeField] private int m_FaceCount = 10; // min 3
 
         public void Init()
         {
             float3 tan = new float3(0f, 0f, 2f);
-            float3 p1 = new float3(3f, 0f, 0f);
+            float3 p1 = new float3(20f, 0f, 0f);
 
             Splines = new Splines.Spline[] { new Splines.Spline() };
             m_Spline.Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
@@ -66,23 +64,24 @@ namespace UnityEngine.ProBuilder
 
         public void Extrude3DMesh()
         {
-            vertexPositions = new List<Vector3>(m_SegmentCount * m_FacesAroundRadiusCount);
-            List<Face> faces = new List<Face>(m_SegmentCount * m_FacesAroundRadiusCount);
+            int segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
+            vertexPositions = new List<Vector3>(segmentsCount * m_FaceCount);
+            List<Face> faces = new List<Face>(segmentsCount * m_FaceCount);
 
             float t = 0f;
             int vertexIndex = 0;
 
             // define the positions of each segment, and the vertex positions at each segment
-            for (int i = 0; i < m_SegmentCount + 1; i++)
+            for (int i = 0; i < segmentsCount + 1; i++)
             {
                 SplineUtility.Evaluate(m_Spline, t, out var position, out var tangent, out var up);
                 var right = Vector3.Cross(tangent, up).normalized;
-                t += 1f / m_SegmentCount;
+                t += 1f / segmentsCount;
 
                 // define the vertex positions around the spline at each segmentPosition along the spline
-                for (int j = 0; j < m_FacesAroundRadiusCount; j++)
+                for (int j = 0; j < m_FaceCount; j++)
                 {
-                    var angleInRadians = 2 * Mathf.PI / m_FacesAroundRadiusCount * j;
+                    var angleInRadians = 2 * Mathf.PI / m_FaceCount * j;
                     var verticalPos = Mathf.Sin(angleInRadians);
                     var horizontalPos = Mathf.Cos(angleInRadians);
                     var vertexDirection = horizontalPos * right + verticalPos * (Vector3)up;
@@ -93,42 +92,40 @@ namespace UnityEngine.ProBuilder
                 // define faces
                 if (i > 0)
                 {
-                    for (int j = 0; j < m_FacesAroundRadiusCount; j++)
+                    for (int j = 0; j < m_FaceCount; j++)
                     {
                         int[] face = new int[]
                         {
                             vertexIndex + j,
-                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount,
-                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount + m_FacesAroundRadiusCount,
+                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount,
+                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount + m_FaceCount,
                             vertexIndex + j,
-                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount + m_FacesAroundRadiusCount,
-                            vertexIndex + j + m_FacesAroundRadiusCount
+                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount + m_FaceCount,
+                            vertexIndex + j + m_FaceCount
                         };
 
                         faces.Add(new Face(face));
                     }
-
-                    vertexIndex += m_FacesAroundRadiusCount;
+                    vertexIndex += m_FaceCount;
                 }
             }
-
             mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
         }
 
         public void Extrude2DMesh()
         {
-            List<Vector3> segmentPositions = new List<Vector3>(m_SegmentCount + 1);
+            List<Vector3> segmentPositions = new List<Vector3>(m_SegmentsPerUnit + 1);
             int verticesAtSegment = 3;
             vertexPositions = new List<Vector3>(segmentPositions.Count * verticesAtSegment);
-            List<Face> faces = new List<Face>(m_SegmentCount * verticesAtSegment);
+            List<Face> faces = new List<Face>(m_SegmentsPerUnit * verticesAtSegment);
 
             float t = 0f;
 
             // define the positions of each segment of the spline
-            for (int i = 0; i < m_SegmentCount + 1; i++)
+            for (int i = 0; i < m_SegmentsPerUnit + 1; i++)
             {
                 segmentPositions.Add(SplineUtility.EvaluatePosition(m_Spline, t));
-                t += 1f / m_SegmentCount;
+                t += 1f / m_SegmentsPerUnit;
             }
 
             t = 0f;
@@ -145,7 +142,7 @@ namespace UnityEngine.ProBuilder
                 vertexPositions.Add(pos2);
                 vertexPositions.Add(pos3);
 
-                t += 1f / m_SegmentCount;
+                t += 1f / m_SegmentsPerUnit;
             }
 
             // define faces
@@ -173,18 +170,18 @@ namespace UnityEngine.ProBuilder
         public void Extrude2DMeshOptimized()
         {
             int verticesAtSegment = 3;
-            vertexPositions = new List<Vector3>(m_SegmentCount * verticesAtSegment);
-            List<Face> faces = new List<Face>(m_SegmentCount * verticesAtSegment);
+            vertexPositions = new List<Vector3>(m_SegmentsPerUnit * verticesAtSegment);
+            List<Face> faces = new List<Face>(m_SegmentsPerUnit * verticesAtSegment);
 
             float t = 0f;
             int vertexIndex = 0;
 
             // define the positions of each segment, and the vertex positions at each segment
-            for (int i = 0; i < m_SegmentCount + 1; i++)
+            for (int i = 0; i < m_SegmentsPerUnit + 1; i++)
             {
                 SplineUtility.Evaluate(m_Spline, t, out var position, out var tangent, out var normal);
 
-                t += 1f / m_SegmentCount;
+                t += 1f / m_SegmentsPerUnit;
 
                 var pos1 = position + math.normalize(normal) * m_Radius;
                 var pos2 = position;
