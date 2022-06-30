@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine.Serialization;
 using UnityEngine.Splines;
 
@@ -47,9 +48,9 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField] private float m_Radius = 0.5f; // min 0.01f
 
-        [SerializeField] private int m_SegmentCount = 3; // min 2
+        [SerializeField] private int m_SegmentCount = 50; // min 2
 
-        [SerializeField] private int m_FacesAroundRadiusCount = 4; // min 3
+        [SerializeField] private int m_FacesAroundRadiusCount = 10; // min 3
 
         public void Init()
         {
@@ -62,6 +63,57 @@ namespace UnityEngine.ProBuilder
         }
 
         private List<Vector3> vertexPositions;
+
+        public void Extrude3DMesh()
+        {
+            vertexPositions = new List<Vector3>(m_SegmentCount * m_FacesAroundRadiusCount);
+            List<Face> faces = new List<Face>(m_SegmentCount * m_FacesAroundRadiusCount);
+
+            float t = 0f;
+            int vertexIndex = 0;
+
+            // define the positions of each segment, and the vertex positions at each segment
+            for (int i = 0; i < m_SegmentCount + 1; i++)
+            {
+                SplineUtility.Evaluate(m_Spline, t, out var position, out var tangent, out var up);
+                var right = Vector3.Cross(tangent, up).normalized;
+                t += 1f / m_SegmentCount;
+
+                // define the vertex positions around the spline at each segmentPosition along the spline
+                for (int j = 0; j < m_FacesAroundRadiusCount; j++)
+                {
+                    var angleInRadians = 2 * Mathf.PI / m_FacesAroundRadiusCount * j;
+                    var verticalPos = Mathf.Sin(angleInRadians);
+                    var horizontalPos = Mathf.Cos(angleInRadians);
+                    var vertexDirection = horizontalPos * right + verticalPos * (Vector3)up;
+                    var vertexPosition = (Vector3)position + vertexDirection * m_Radius;
+                    vertexPositions.Add(vertexPosition);
+                }
+
+                // define faces
+                if (i > 0)
+                {
+                    for (int j = 0; j < m_FacesAroundRadiusCount; j++)
+                    {
+                        int[] face = new int[]
+                        {
+                            vertexIndex + j,
+                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount,
+                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount + m_FacesAroundRadiusCount,
+                            vertexIndex + j,
+                            vertexIndex + (j + m_FacesAroundRadiusCount - 1) % m_FacesAroundRadiusCount + m_FacesAroundRadiusCount,
+                            vertexIndex + j + m_FacesAroundRadiusCount
+                        };
+
+                        faces.Add(new Face(face));
+                    }
+
+                    vertexIndex += m_FacesAroundRadiusCount;
+                }
+            }
+
+            mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
+        }
 
         public void Extrude2DMesh()
         {
@@ -125,7 +177,7 @@ namespace UnityEngine.ProBuilder
             List<Face> faces = new List<Face>(m_SegmentCount * verticesAtSegment);
 
             float t = 0f;
-            int vertexPosition = 0;
+            int vertexIndex = 0;
 
             // define the positions of each segment, and the vertex positions at each segment
             for (int i = 0; i < m_SegmentCount + 1; i++)
@@ -147,86 +199,35 @@ namespace UnityEngine.ProBuilder
                 {
                     int[] face1 = new int[6]
                     {
-                        vertexPosition + 1, vertexPosition, vertexPosition + 3,
-                        vertexPosition + 1, vertexPosition + 3, vertexPosition + 4
+                        vertexIndex + 1, vertexIndex, vertexIndex + 3,
+                        vertexIndex + 1, vertexIndex + 3, vertexIndex + 4
                     };
 
                     int[] face2 = new int[6]
                     {
-                        vertexPosition + 1, vertexPosition + 4, vertexPosition + 2,
-                        vertexPosition + 2, vertexPosition + 4, vertexPosition + 5
+                        vertexIndex + 1, vertexIndex + 4, vertexIndex + 2,
+                        vertexIndex + 2, vertexIndex + 4, vertexIndex + 5
                     };
 
                     faces.Add(new Face(face1));
                     faces.Add(new Face(face2));
 
-                    vertexPosition += 3;
+                    vertexIndex += verticesAtSegment;
                 }
             }
 
             mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
         }
 
-        public void Extrude3DMesh()
-        {
-            vertexPositions = new List<Vector3>(m_SegmentCount * m_FacesAroundRadiusCount);
-            List<Face> faces = new List<Face>(m_SegmentCount * m_FacesAroundRadiusCount);
-
-            float t = 0f;
-            int vertexPositionCount = 0;
-
-            // define the positions of each segment, and the vertex positions at each segment
-            for (int i = 0; i < m_SegmentCount + 1; i++)
-            {
-                SplineUtility.Evaluate(m_Spline, t, out var position, out var tangent, out var up);
-                var right = Vector3.Cross(tangent, up).normalized;
-                t += 1f / m_SegmentCount;
-
-                // define the vertex positions around the spline at each segmentPosition along the spline
-                for (int j = 0; j < m_FacesAroundRadiusCount; j++)
-                {
-                    var angleInRadians = 2 * Mathf.PI / m_FacesAroundRadiusCount * j;
-                    var verticalPos = Mathf.Sin(angleInRadians);
-                    var horizontalPos = Mathf.Cos(angleInRadians);
-                    var vertexDirection = horizontalPos * right + verticalPos * (Vector3) up;
-                    var vertexPosition = (Vector3)position + vertexDirection * m_Radius;
-                    vertexPositions.Add(vertexPosition);
-                }
-
-                // define faces from vertices
-                if (i < m_SegmentCount)
-                {
-                    for (int j = 0; j < m_FacesAroundRadiusCount; j++)
-                    {
-                        int[] face1 = new int[]
-                        {
-                            vertexPositionCount + 1, vertexPositionCount, vertexPositionCount + 3,
-                            vertexPositionCount + 1, vertexPositionCount + 3, vertexPositionCount + 4
-                        };
-
-                        int[] face2 = new int[]
-                        {
-                            vertexPositionCount + 1, vertexPositionCount + 4, vertexPositionCount + 2,
-                            vertexPositionCount + 2, vertexPositionCount + 4, vertexPositionCount + 5
-                        };
-
-                        faces.Add(new Face(face1));
-                        faces.Add(new Face(face2));
-                
-                        vertexPositionCount += m_FacesAroundRadiusCount;
-                    }
-                }
-            }
-
-            mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
-        }
-
-        private void OnDrawGizmos()
-        {
-            foreach (var pos in vertexPositions)
-            {
-                Gizmos.DrawSphere(pos, 0.05f);
-            }
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     int i = 0;
+        //     foreach (var pos in vertexPositions)
+        //     {
+        //         Gizmos.DrawSphere(pos, 0.05f);
+        //         Handles.Label(pos, $"{i}");
+        //         i++;
+        //     }
+        // }
     }
 }
