@@ -9,7 +9,9 @@ upm-ci~/**
 .DS_Store
 
 # VCS
-.gitignore/**
+.buginfo
+.gitattributes
+.gitignore
 .github/**
 .git/**
 .repoconfig

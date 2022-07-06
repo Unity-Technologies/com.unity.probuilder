@@ -75,8 +75,8 @@ namespace UnityEngine.ProBuilder
         /// Returns the value of the specified `success` value.
         /// </summary>
         /// <param name="success">Boolean value to check.</param>
-        /// <returns>Generic <see cref="ActionResult.Status.Success"/> with an empty notification string if `success` was true; otherwise, returns <see cref="ActionResult.Status.Failure"/> with the "Failure" notification string.</returns>
-        public static ActionResult FromBool(bool success)
+        /// <returns>Generic boolean value corresponding to the success parameter.</returns>
+        public static bool FromBool(bool success)
         {
             return success ? ActionResult.Success : new ActionResult(ActionResult.Status.Failure, "Failure");
         }
