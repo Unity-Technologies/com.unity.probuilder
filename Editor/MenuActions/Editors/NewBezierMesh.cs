@@ -80,9 +80,8 @@ namespace UnityEditor.ProBuilder.Actions
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
-            // bezier.Extrude2DMesh();
-            // bezier.Extrude2DMeshOptimized();
             bezier.Extrude3DMesh();
+            bezier.isEditing = true;
         }
 
         private void CreateProBuilderMeshCube()

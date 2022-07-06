@@ -1,13 +1,15 @@
 {
     "name": "Unity.ProBuilder.Editor",
+    "rootNamespace": "",
     "references": [
         "Unity.ProBuilder",
         "Unity.ProBuilder.AssetIdRemapUtility",
         "Unity.ProBuilder.Stl",
         "Unity.Settings.Editor",
-        "Unity.ProBuilder.Csg"
+        "Unity.ProBuilder.Csg",
+        "Unity.Splines",
+        "Unity.Mathematics"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -16,5 +18,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -17,25 +17,7 @@ namespace UnityEditor.ProBuilder
         const string k_MenuPrefix = "Tools/ProBuilder/";
         const string k_ShortcutPrefix = "ProBuilder/";
 
-        [MenuItem(k_MenuPrefix + "Editors/New Bezier Mesh", true, PreferenceKeys.menuEditor + 1)]
-        static bool MenuVerify_NewBezierMesh()
-        {
-            var instance = EditorToolbarLoader.GetInstance<NewBezierMesh>();
-            return instance != null && instance.enabled;
-        }
-
-        [MenuItem(k_MenuPrefix + "Editors/New Bezier Mesh", false, PreferenceKeys.menuEditor + 1)]
-        static void MenuPerform_NewBezierMesh()
-        {
-            var instance = EditorToolbarLoader.GetInstance<NewBezierMesh>();
-            if(instance != null && instance.enabled)
-            {
-                EditorUtility.ShowNotification(instance.PerformAction().notification);
-                ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
-            }
-        }
-
-		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", true, PreferenceKeys.menuEditor + 1)]
+        [MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewBezierShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();

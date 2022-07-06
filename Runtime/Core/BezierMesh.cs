@@ -8,8 +8,7 @@ namespace UnityEngine.ProBuilder
     [RequireComponent(typeof(ProBuilderMesh))]
     sealed class BezierMesh : MonoBehaviour, ISplineContainer
     {
-        [SerializeField] private Splines.Spline m_Spline;
-
+        [SerializeField] public Splines.Spline m_Spline;
         public IReadOnlyList<Splines.Spline> Splines
         {
             get => new Splines.Spline[] { m_Spline };
@@ -25,12 +24,10 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        [SerializeField] private KnotLinkCollection m_Knots = new KnotLinkCollection();
-
+        [SerializeField] public KnotLinkCollection m_Knots = new KnotLinkCollection();
         public KnotLinkCollection KnotLinkCollection => m_Knots;
 
         ProBuilderMesh m_Mesh;
-
         public ProBuilderMesh mesh
         {
             get
@@ -44,32 +41,42 @@ namespace UnityEngine.ProBuilder
             set { m_Mesh = value; }
         }
 
-        [SerializeField] private float m_Radius = 0.5f; // min 0.01f
+        [SerializeField] private bool m_IsEditing;
+        public bool isEditing
+        {
+            get { return m_IsEditing; }
+            set { m_IsEditing = value; }
+        }
 
-        [SerializeField] private int m_SegmentsPerUnit = 1; // min 1
+        [SerializeField] public float m_Radius = 0.5f; // min 0.01f
 
-        [SerializeField] private int m_FaceCount = 10; // min 3
+        [SerializeField] public int m_SegmentsPerUnit = 1; // min 1
+
+        [SerializeField] public int m_FaceCountPerSegment = 5; // min 3
+
+        private List<Vector3> m_VertexPositions;
+
+        private List<Face> m_Faces;
+
 
         public void Init()
         {
             float3 tan = new float3(0f, 0f, 2f);
-            float3 p1 = new float3(20f, 0f, 0f);
+            float3 p1 = new float3(3f, 0f, 0f);
 
             Splines = new Splines.Spline[] { new Splines.Spline() };
             m_Spline.Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
         }
 
-        private List<Vector3> vertexPositions;
-
         public void Extrude3DMesh()
         {
-            int segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
-            vertexPositions = new List<Vector3>(segmentsCount * m_FaceCount);
-            List<Face> faces = new List<Face>(segmentsCount * m_FaceCount);
+            var segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
+            m_VertexPositions = new List<Vector3>(segmentsCount * m_FaceCountPerSegment);
+            m_Faces = new List<Face>(segmentsCount * m_FaceCountPerSegment);
 
-            float t = 0f;
-            int vertexIndex = 0;
+            var t = 0f;
+            var vertexIndex = 0;
 
             // define the positions of each segment, and the vertex positions at each segment
             for (int i = 0; i < segmentsCount + 1; i++)
@@ -78,45 +85,54 @@ namespace UnityEngine.ProBuilder
                 var right = Vector3.Cross(tangent, up).normalized;
                 t += 1f / segmentsCount;
 
-                // define the vertex positions around the spline at each segmentPosition along the spline
-                for (int j = 0; j < m_FaceCount; j++)
+                // define the vertex positions
+                for (int j = 0; j < m_FaceCountPerSegment; j++)
                 {
-                    var angleInRadians = 2 * Mathf.PI / m_FaceCount * j;
+                    var angleInRadians = 2 * Mathf.PI / m_FaceCountPerSegment * j;
                     var verticalPos = Mathf.Sin(angleInRadians);
                     var horizontalPos = Mathf.Cos(angleInRadians);
                     var vertexDirection = horizontalPos * right + verticalPos * (Vector3)up;
                     var vertexPosition = (Vector3)position + vertexDirection * m_Radius;
-                    vertexPositions.Add(vertexPosition);
+                    m_VertexPositions.Add(vertexPosition);
                 }
 
                 // define faces
                 if (i > 0)
                 {
-                    for (int j = 0; j < m_FaceCount; j++)
+                    for (int j = 0; j < m_FaceCountPerSegment; j++)
                     {
                         int[] face = new int[]
                         {
                             vertexIndex + j,
-                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount,
-                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount + m_FaceCount,
+                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment,
+                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment + m_FaceCountPerSegment,
                             vertexIndex + j,
-                            vertexIndex + (j + m_FaceCount - 1) % m_FaceCount + m_FaceCount,
-                            vertexIndex + j + m_FaceCount
+                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment + m_FaceCountPerSegment,
+                            vertexIndex + j + m_FaceCountPerSegment
                         };
 
-                        faces.Add(new Face(face));
+                        m_Faces.Add(new Face(face));
                     }
-                    vertexIndex += m_FaceCount;
+                    vertexIndex += m_FaceCountPerSegment;
                 }
             }
-            mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
+            mesh.RebuildWithPositionsAndFaces(m_VertexPositions, m_Faces);
+        }
+
+        public void Refresh()
+        {
+            if(mesh != null)
+            {
+                Debug.Log($"update radius {m_Radius} segments {m_SegmentsPerUnit} faces {m_FaceCountPerSegment}");
+                Extrude3DMesh();
+            }
         }
 
         public void Extrude2DMesh()
         {
             List<Vector3> segmentPositions = new List<Vector3>(m_SegmentsPerUnit + 1);
             int verticesAtSegment = 3;
-            vertexPositions = new List<Vector3>(segmentPositions.Count * verticesAtSegment);
+            m_VertexPositions = new List<Vector3>(segmentPositions.Count * verticesAtSegment);
             List<Face> faces = new List<Face>(m_SegmentsPerUnit * verticesAtSegment);
 
             float t = 0f;
@@ -138,15 +154,15 @@ namespace UnityEngine.ProBuilder
                 var pos2 = position;
                 var pos3 = position - normal.normalized * m_Radius;
 
-                vertexPositions.Add(pos1);
-                vertexPositions.Add(pos2);
-                vertexPositions.Add(pos3);
+                m_VertexPositions.Add(pos1);
+                m_VertexPositions.Add(pos2);
+                m_VertexPositions.Add(pos3);
 
                 t += 1f / m_SegmentsPerUnit;
             }
 
             // define faces
-            for (int i = 0; i < vertexPositions.Count - 3; i += 3)
+            for (int i = 0; i < m_VertexPositions.Count - 3; i += 3)
             {
                 int[] face1 = new int[6]
                 {
@@ -164,13 +180,13 @@ namespace UnityEngine.ProBuilder
                 faces.Add(new Face(face2));
             }
 
-            mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
+            mesh.RebuildWithPositionsAndFaces(m_VertexPositions, faces);
         }
 
         public void Extrude2DMeshOptimized()
         {
             int verticesAtSegment = 3;
-            vertexPositions = new List<Vector3>(m_SegmentsPerUnit * verticesAtSegment);
+            m_VertexPositions = new List<Vector3>(m_SegmentsPerUnit * verticesAtSegment);
             List<Face> faces = new List<Face>(m_SegmentsPerUnit * verticesAtSegment);
 
             float t = 0f;
@@ -187,9 +203,9 @@ namespace UnityEngine.ProBuilder
                 var pos2 = position;
                 var pos3 = position - math.normalize(normal) * m_Radius;
 
-                vertexPositions.Add(pos1);
-                vertexPositions.Add(pos2);
-                vertexPositions.Add(pos3);
+                m_VertexPositions.Add(pos1);
+                m_VertexPositions.Add(pos2);
+                m_VertexPositions.Add(pos3);
 
                 // define faces
                 if (i > 0)
@@ -213,18 +229,7 @@ namespace UnityEngine.ProBuilder
                 }
             }
 
-            mesh.RebuildWithPositionsAndFaces(vertexPositions, faces);
+            mesh.RebuildWithPositionsAndFaces(m_VertexPositions, faces);
         }
-
-        // private void OnDrawGizmos()
-        // {
-        //     int i = 0;
-        //     foreach (var pos in vertexPositions)
-        //     {
-        //         Gizmos.DrawSphere(pos, 0.05f);
-        //         Handles.Label(pos, $"{i}");
-        //         i++;
-        //     }
-        // }
     }
 }
