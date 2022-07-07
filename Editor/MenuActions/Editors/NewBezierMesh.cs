@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.ProBuilder.Shapes;
+
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -81,7 +77,6 @@ namespace UnityEditor.ProBuilder.Actions
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
             bezier.Extrude3DMesh();
-            bezier.isEditing = true;
         }
 
         private void CreateProBuilderMeshCube()

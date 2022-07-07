@@ -1,14 +1,15 @@
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine.Splines;
 
 namespace UnityEngine.ProBuilder
 {
-    [DisallowMultipleComponent, ExcludeFromPreset, ExcludeFromObjectFactory]
     [RequireComponent(typeof(ProBuilderMesh))]
     sealed class BezierMesh : MonoBehaviour, ISplineContainer
     {
         [SerializeField] public Splines.Spline m_Spline;
+
         public IReadOnlyList<Splines.Spline> Splines
         {
             get => new Splines.Spline[] { m_Spline };
@@ -28,6 +29,7 @@ namespace UnityEngine.ProBuilder
         public KnotLinkCollection KnotLinkCollection => m_Knots;
 
         ProBuilderMesh m_Mesh;
+
         public ProBuilderMesh mesh
         {
             get
@@ -41,23 +43,48 @@ namespace UnityEngine.ProBuilder
             set { m_Mesh = value; }
         }
 
-        [SerializeField] private bool m_IsEditing;
-        public bool isEditing
-        {
-            get { return m_IsEditing; }
-            set { m_IsEditing = value; }
-        }
+        [SerializeField] [Range(0.001f, 64f)]
+        public float m_Radius = 0.5f;
 
-        [SerializeField] public float m_Radius = 0.5f; // min 0.01f
+        [SerializeField] [Range(1, 128)]
+        public int m_SegmentsPerUnit = 2;
 
-        [SerializeField] public int m_SegmentsPerUnit = 2; // min 1
-
-        [SerializeField] public int m_FaceCountPerSegment = 8; // min 3
+        [SerializeField] [Range(3, 128)]
+        public int m_FaceCountPerSegment = 8;
 
         private List<Vector3> m_VertexPositions;
 
         private List<Face> m_Faces;
 
+         void OnValidate()
+        {
+            Extrude3DMesh();
+        }
+
+        //  void OnEnable()
+        // {
+        //     Debug.Log("enable");
+        //     UnityEngine.Splines.Spline.Changed += UpdateMesh;
+        // }
+        //
+        // void OnDisable()
+        // {
+        //     Debug.Log("disable");
+        //     UnityEngine.Splines.Spline.Changed -= UpdateMesh;
+        // }
+        //
+        // void OnDestroy()
+        // {
+        //     Debug.Log("destroy");
+        //     UnityEngine.Splines.Spline.Changed -= UpdateMesh;
+        // }
+
+        public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
+        {
+            Debug.Log($"update mesh");
+            if(spline == m_Spline)
+                Extrude3DMesh();
+        }
 
         public void Init()
         {
@@ -67,11 +94,19 @@ namespace UnityEngine.ProBuilder
             Splines = new Splines.Spline[] { new Splines.Spline() };
             m_Spline.Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
+
+            UnityEngine.Splines.Spline.Changed += UpdateMesh;
         }
 
         public void Extrude3DMesh()
         {
-            var segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
+            if (m_Spline == null) return;
+
+            mesh.Clear();
+            mesh.ToMesh();
+            mesh.Refresh();
+
+            var segmentsCount = (int)m_Spline.GetLength() * m_SegmentsPerUnit;
             m_VertexPositions = new List<Vector3>(segmentsCount * m_FaceCountPerSegment);
             m_Faces = new List<Face>(segmentsCount * m_FaceCountPerSegment);
 
@@ -105,26 +140,22 @@ namespace UnityEngine.ProBuilder
                         {
                             vertexIndex + j,
                             vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment,
-                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment + m_FaceCountPerSegment,
+                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment +
+                            m_FaceCountPerSegment,
                             vertexIndex + j,
-                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment + m_FaceCountPerSegment,
+                            vertexIndex + (j + m_FaceCountPerSegment - 1) % m_FaceCountPerSegment +
+                            m_FaceCountPerSegment,
                             vertexIndex + j + m_FaceCountPerSegment
                         };
 
                         m_Faces.Add(new Face(face));
                     }
+
                     vertexIndex += m_FaceCountPerSegment;
                 }
             }
-            mesh.RebuildWithPositionsAndFaces(m_VertexPositions, m_Faces);
-        }
 
-        public void Refresh()
-        {
-            if(mesh != null)
-            {
-                Extrude3DMesh();
-            }
+            mesh.RebuildWithPositionsAndFaces(m_VertexPositions, m_Faces);
         }
 
         public void Extrude2DMesh()
