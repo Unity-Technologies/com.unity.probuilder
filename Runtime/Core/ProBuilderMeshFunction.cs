@@ -287,20 +287,6 @@ namespace UnityEngine.ProBuilder
         /// <param name="faces">New faces array to use.</param>
         public void RebuildWithPositionsAndFaces(IEnumerable<Vector3> vertices, IEnumerable<Face> faces)
         {
-            string s = "";
-            foreach (var vec in vertices)
-            {
-                s += vec + "\n";
-            }
-
-            s += "\n faces \n";
-
-            foreach (var vec in faces)
-            {
-                s += vec + "\n";
-            }
-            Debug.Log(s);
-
             if (vertices == null)
                 throw new ArgumentNullException("vertices");
 

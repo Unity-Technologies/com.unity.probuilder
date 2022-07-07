@@ -21,14 +21,12 @@ namespace UnityEditor.ProBuilder
         static Color bezierPositionHandleColor = new Color(.01f, .8f, .99f, 1f);
         static Color bezierTangentHandleColor = new Color(.6f, .6f, .6f, .8f);
 
-        [SerializeField]
-        BezierHandle m_currentHandle = new BezierHandle(-1, false);
+        [SerializeField] BezierHandle m_currentHandle = new BezierHandle(-1, false);
 
-        [SerializeField]
-        BezierTangentMode m_TangentMode = BezierTangentMode.Mirrored;
+        [SerializeField] BezierTangentMode m_TangentMode = BezierTangentMode.Mirrored;
 
-        BezierMesh m_Target = null;
-        bool m_IsMoving = false;
+        BezierMesh m_Target;
+        bool m_IsMoving;
         List<Vector3> m_ControlPoints;
 
         ProBuilderMesh m_CurrentObject
@@ -42,6 +40,60 @@ namespace UnityEditor.ProBuilder
                 }
 
                 return m_Target.mesh;
+            }
+        }
+
+        List<BezierKnot> m_Knots
+        {
+            get { return m_Target.m_Spline.Knots as List<BezierKnot>; }
+            set
+            {
+                foreach (var val in value)
+                {
+                    m_Target.m_Spline.Add(val);
+                }
+            }
+        }
+
+        bool m_IsEditing
+        {
+            get { return m_Target.isEditing; }
+            set { m_Target.isEditing = value; }
+        }
+
+        float m_Radius
+        {
+            get { return m_Target.m_Radius; }
+
+            set
+            {
+                if (m_Target.m_Radius != value)
+                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Radius");
+                m_Target.m_Radius = value;
+            }
+        }
+
+        int m_FaceCountPerSegment
+        {
+            get { return m_Target.m_FaceCountPerSegment; }
+
+            set
+            {
+                if (m_Target.m_FaceCountPerSegment != value)
+                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Face Count for each segment");
+                m_Target.m_FaceCountPerSegment = value;
+            }
+        }
+
+        int m_SegmentsPerUnit
+        {
+            get { return m_Target.m_SegmentsPerUnit; }
+
+            set
+            {
+                if (m_Target.m_FaceCountPerSegment != value)
+                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Segments Per Unit Count");
+                m_Target.m_SegmentsPerUnit = value;
             }
         }
 
@@ -88,76 +140,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        List<BezierKnot> m_Points
-        {
-            get
-            {
-                return m_Target.m_Spline.Knots as List<BezierKnot>;
-            }
-            set
-            {
-                m_Target.m_Spline.Clear();
-                foreach (var val in value)
-                {
-                    m_Target.m_Spline.Add(val);
-                }
-            }
-        }
-
-        bool m_IsEditing
-        {
-            get { return m_Target.isEditing; }
-            set { m_Target.isEditing = value; }
-        }
-
-        float m_Radius
-        {
-            get { return m_Target.m_Radius; }
-
-            set
-            {
-               // Debug.Log($"{m_Target.m_Radius} {value}");
-                if (m_Target.m_Radius != value)
-                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Radius");
-                m_Target.m_Radius = value;
-            }
-        }
-
-        int m_FaceCountPerSegment
-        {
-            get
-            {
-                Debug.Log($"GET face {m_Target.m_FaceCountPerSegment}");
-                return m_Target.m_FaceCountPerSegment;
-            }
-
-            set
-            {
-                Debug.Log($"SET face {m_Target.m_FaceCountPerSegment} value {value}");
-                if (m_Target.m_FaceCountPerSegment != value)
-                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Face Count for each segment");
-                m_Target.m_FaceCountPerSegment = value;
-            }
-        }
-
-        int m_SegmentsPerUnit
-        {
-            get
-            {
-                Debug.Log($"GET segments {m_Target.m_SegmentsPerUnit}");
-                return m_Target.m_SegmentsPerUnit;
-            }
-
-            set
-            {
-                Debug.Log($"SET segments {m_Target.m_SegmentsPerUnit} value {value}");
-
-                if (m_Target.m_FaceCountPerSegment != value)
-                    UndoUtility.RecordObject(m_Target, "Set Bezier Shape Segments Per Unit Count");
-                m_Target.m_FaceCountPerSegment = value;
-            }
-        }
-
         private GUIStyle _commandStyle = null;
 
         public GUIStyle commandStyle
@@ -166,7 +148,8 @@ namespace UnityEditor.ProBuilder
             {
                 if (_commandStyle == null)
                 {
-                    _commandStyle = new GUIStyle(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command"));
+                    _commandStyle =
+                        new GUIStyle(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command"));
                     _commandStyle.alignment = TextAnchor.MiddleCenter;
                 }
 
@@ -181,8 +164,10 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed += this.UndoRedoPerformed;
 
             s_TangentModeIcons[0] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Free"), "Tangent Mode: Free");
-            s_TangentModeIcons[1] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
-            s_TangentModeIcons[2] = new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
+            s_TangentModeIcons[1] =
+                new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Aligned"), "Tangent Mode: Aligned");
+            s_TangentModeIcons[2] =
+                new GUIContent(IconUtility.GetIcon("Toolbar/Bezier_Mirrored"), "Tangent Mode: Mirrored");
 
             if (m_Target != null)
                 SetIsEditing(m_Target.isEditing);
@@ -242,7 +227,7 @@ namespace UnityEditor.ProBuilder
             GUI.color = Color.white;
 
             /*
-             * check this
+             * check for conversion of quaternion to euler
              */
             Vector4 euler = knot.Rotation.value;
             euler = EditorGUILayout.Vector4Field("Rotation", euler);
@@ -263,8 +248,8 @@ namespace UnityEditor.ProBuilder
                 if (ProBuilderEditor.instance != null)
                     ProBuilderEditor.instance.ClearElementSelection();
 
-                UndoUtility.RecordObject(m_Target, "Edit Bezier Shape");
-                UndoUtility.RecordObject(m_Target.mesh, "Edit Bezier Shape");
+                UndoUtility.RecordObject(m_Target, "Edit Bezier Spline");
+                UndoUtility.RecordObject(m_Target.mesh, "Edit Bezier Spline");
 
                 UpdateMesh(true);
             }
@@ -290,7 +275,9 @@ namespace UnityEditor.ProBuilder
                 if (GUILayout.Button("Edit Bezier Shape"))
                     SetIsEditing(true);
 
-                EditorGUILayout.HelpBox("Editing a Bezier Shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.", MessageType.Warning);
+                EditorGUILayout.HelpBox(
+                    "Editing a Bezier Shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.",
+                    MessageType.Warning);
 
                 return;
             }
@@ -309,11 +296,11 @@ namespace UnityEditor.ProBuilder
 
             EditorGUI.BeginChangeCheck();
 
-            bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Points.Count());
+            bool handleIsValid = (m_currentHandle > -1 && m_currentHandle < m_Knots.Count());
 
-            BezierKnot inspectorPoint = handleIsValid ?
-                m_Points[m_currentHandle] :
-                new BezierKnot(Float3_Zero, Float3_Backward, Float3_Forward, Quaternion.identity);
+            BezierKnot inspectorPoint = handleIsValid
+                ? m_Knots[m_currentHandle]
+                : new BezierKnot(Float3_Zero, Float3_Backward, Float3_Forward, Quaternion.identity);
 
             inspectorPoint = DoBezierKnotGUI(inspectorPoint);
 
@@ -322,7 +309,7 @@ namespace UnityEditor.ProBuilder
                 if (!m_IsMoving)
                     OnBeginVertexModification();
 
-                m_Points[m_currentHandle] = inspectorPoint;
+                m_Knots[m_currentHandle] = inspectorPoint;
                 UpdateMesh(false);
             }
 
@@ -331,7 +318,7 @@ namespace UnityEditor.ProBuilder
             if (GUILayout.Button("Clear Points"))
             {
                 UndoUtility.RecordObject(m_Target, "Clear Bezier Spline Points");
-                m_Points.Clear();
+                m_Knots.Clear();
                 UpdateMesh(true);
             }
 
@@ -339,12 +326,12 @@ namespace UnityEditor.ProBuilder
             {
                 UndoUtility.RecordObject(m_Target, "Add Bezier Spline Point");
 
-                if (m_Points.Count > 0)
+                if (m_Knots.Count > 0)
                 {
-                    m_Points.Add(new BezierKnot(m_Points[m_Points.Count - 1].Position,
-                            m_Points[m_Points.Count - 1].TangentIn,
-                            m_Points[m_Points.Count - 1].TangentOut,
-                            Quaternion.identity));
+                    m_Knots.Add(new BezierKnot(m_Knots[m_Knots.Count - 1].Position,
+                        m_Knots[m_Knots.Count - 1].TangentIn,
+                        m_Knots[m_Knots.Count - 1].TangentOut,
+                        Quaternion.identity));
                     UpdateMesh(true);
                 }
                 else
@@ -352,7 +339,7 @@ namespace UnityEditor.ProBuilder
                     m_Target.Init();
                 }
 
-                m_currentHandle = (BezierHandle)(m_Points.Count - 1);
+                m_currentHandle = (BezierHandle)(m_Knots.Count - 1);
 
                 SceneView.RepaintAll();
             }
@@ -365,11 +352,11 @@ namespace UnityEditor.ProBuilder
 
             m_Radius = Mathf.Max(.001f, EditorGUILayout.FloatField("Radius", m_Radius));
             m_SegmentsPerUnit = Math.Clamp(EditorGUILayout.IntField("Segments Per Unit", m_SegmentsPerUnit), 1, 512);
-            m_FaceCountPerSegment = Math.Clamp(EditorGUILayout.IntField("Faces Per Segment", m_FaceCountPerSegment), 3, 512);
+            m_FaceCountPerSegment =
+                Math.Clamp(EditorGUILayout.IntField("Faces Per Segment", m_FaceCountPerSegment), 3, 512);
 
             if (EditorGUI.EndChangeCheck())
             {
-                Debug.Log($"here radius {m_Radius} segments {m_SegmentsPerUnit} faces {m_FaceCountPerSegment}");
                 UpdateMesh(true);
             }
         }
@@ -386,7 +373,7 @@ namespace UnityEditor.ProBuilder
 
         void UpdateControlPoints()
         {
-             //m_ControlPoints = Spline.GetControlPoints(m_Points, m_SegmentsPerUnit, m_CloseLoop, null);
+            //m_ControlPoints = Spline.GetControlPoints(m_Points, m_SegmentsPerUnit, m_CloseLoop, null);
         }
 
         void OnSceneGUI()
@@ -409,7 +396,7 @@ namespace UnityEditor.ProBuilder
 
             if (e.type == EventType.KeyDown)
             {
-                if (e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Points.Count)
+                if (e.keyCode == KeyCode.Backspace && m_currentHandle > -1 && m_currentHandle < m_Knots.Count)
                 {
                     UndoUtility.RecordObject(m_Target, "Delete Bezier Knot");
                     m_Target.m_Spline.RemoveAt(m_currentHandle);
@@ -421,7 +408,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            int count = m_Points.Count;
+            int count = m_Knots.Count;
 
             Matrix4x4 handleMatrix = Handles.matrix;
             Handles.matrix = m_Target.transform.localToWorldMatrix;
@@ -430,16 +417,16 @@ namespace UnityEditor.ProBuilder
 
             for (int index = 0; index < count; index++)
             {
-                if (index < count - 1)
-                {
-                    Handles.DrawBezier(m_Points[index].Position,
-                        m_Points[(index + 1) % count].Position,
-                        m_Points[index].TangentOut,
-                        m_Points[(index + 1) % count].TangentIn,
-                        Color.green,
-                        EditorGUIUtility.whiteTexture,
-                        1f);
-                }
+                // if (index < count - 1)
+                // {
+                //     Handles.DrawBezier(m_Knots[index].Position,
+                //         m_Knots[(index + 1) % count].Position,
+                //         m_Knots[index].TangentOut,
+                //         m_Knots[(index + 1) % count].TangentIn,
+                //         Color.green,
+                //         EditorGUIUtility.whiteTexture,
+                //         1f);
+                // }
 
                 if (!m_IsEditing)
                     continue;
@@ -447,7 +434,7 @@ namespace UnityEditor.ProBuilder
                 // If the index is selected show the full transform gizmo, otherwise use free move handles
                 if (m_currentHandle == index)
                 {
-                    BezierKnot knot = m_Points[index];
+                    BezierKnot knot = m_Knots[index];
 
                     if (!m_currentHandle.isTangent)
                     {
@@ -462,16 +449,16 @@ namespace UnityEditor.ProBuilder
 
                             prev = EditorSnapping.MoveSnap(prev);
 
-                            Vector3 dir = prev - (Vector3) knot.Position;
+                            Vector3 dir = prev - (Vector3)knot.Position;
                             knot.Position = prev;
-                            knot.TangentIn += (float3) dir;
-                            knot.TangentOut += (float3) dir;
+                            knot.TangentIn += (float3)dir;
+                            knot.TangentOut += (float3)dir;
                         }
 
                         // rotation
                         int prev_index = index > 0 ? index - 1 : (-1);
                         int next_index = index < count - 1 ? index + 1 : (-1);
-                        Vector3 rd = SplineUtility.EvaluateTangent(m_Target.m_Spline, ((float) index) /m_Points.Count);
+                        Vector3 rd = SplineUtility.EvaluateTangent(m_Target.m_Spline, ((float)index) / m_Knots.Count);
 
                         Quaternion look = Quaternion.LookRotation(rd);
                         float size = HandleUtility.GetHandleSize(knot.Position);
@@ -484,7 +471,7 @@ namespace UnityEditor.ProBuilder
                     {
                         Handles.color = bezierTangentHandleColor;
 
-                        if (m_currentHandle.tangent == BezierTangentDirection.In && ( index > 0))
+                        if (m_currentHandle.tangent == BezierTangentDirection.In && (index > 0))
                         {
                             EditorGUI.BeginChangeCheck();
                             knot.TangentIn = Handles.PositionHandle(knot.TangentIn, Quaternion.identity);
@@ -496,8 +483,9 @@ namespace UnityEditor.ProBuilder
                                 knot.TangentIn = EditorSnapping.MoveSnap(knot.TangentIn);
                                 // knot.EnforceTangentMode(BezierTangentDirection.In, m_TangentMode);
                             }
+
                             Handles.color = Color.blue;
-                            Handles.DrawLine(m_Points[index].Position, m_Points[index].TangentIn);
+                            Handles.DrawLine(m_Knots[index].Position, m_Knots[index].TangentIn);
                         }
 
                         if (m_currentHandle.tangent == BezierTangentDirection.Out && (index < count - 1))
@@ -512,12 +500,13 @@ namespace UnityEditor.ProBuilder
                                 knot.TangentOut = EditorSnapping.MoveSnap(knot.TangentOut);
                                 //knot.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
                             }
+
                             Handles.color = Color.red;
-                            Handles.DrawLine(m_Points[index].Position, m_Points[index].TangentOut);
+                            Handles.DrawLine(m_Knots[index].Position, m_Knots[index].TangentOut);
                         }
                     }
 
-                    m_Points[index] = knot;
+                    m_Knots[index] = knot;
                 }
             }
 
@@ -532,7 +521,7 @@ namespace UnityEditor.ProBuilder
             for (int index = 0; index < count; index++)
             {
                 Vector3 prev;
-                BezierKnot knot = m_Points[index];
+                BezierKnot knot = m_Knots[index];
 
                 // Position Handle
                 float size = HandleUtility.GetHandleSize(knot.Position) * k_HandleSize;
@@ -571,7 +560,8 @@ namespace UnityEditor.ProBuilder
                     size = HandleUtility.GetHandleSize(knot.TangentIn) * k_HandleSize;
                     Handles.DrawLine(knot.Position, knot.TangentIn);
 
-                    if (index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.In)
+                    if (index == m_currentHandle && m_currentHandle.isTangent &&
+                        m_currentHandle.tangent == BezierTangentDirection.In)
                     {
                         Handles.DotHandleCap(0, knot.TangentIn, Quaternion.identity, size, e.type);
                     }
@@ -603,7 +593,8 @@ namespace UnityEditor.ProBuilder
                     size = HandleUtility.GetHandleSize(knot.TangentOut) * k_HandleSize;
                     Handles.DrawLine(knot.Position, knot.TangentOut);
 
-                    if (index == m_currentHandle && m_currentHandle.isTangent && m_currentHandle.tangent == BezierTangentDirection.Out)
+                    if (index == m_currentHandle && m_currentHandle.isTangent &&
+                        m_currentHandle.tangent == BezierTangentDirection.Out)
                     {
                         Handles.DotHandleCap(0, knot.TangentOut, Quaternion.identity, size, e.type);
                     }
@@ -624,12 +615,12 @@ namespace UnityEditor.ProBuilder
                             if (!m_IsMoving)
                                 OnBeginVertexModification();
                             knot.TangentOut = EditorSnapping.MoveSnap(prev);
-                           // knot.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
+                            // knot.EnforceTangentMode(BezierTangentDirection.Out, m_TangentMode);
                         }
                     }
                 }
 
-                m_Points[index] = knot;
+                m_Knots[index] = knot;
             }
 
             // Do control point insertion
@@ -638,9 +629,11 @@ namespace UnityEditor.ProBuilder
                 int index = -1;
                 float distanceToLine;
 
-                Vector3 p = EditorHandleUtility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine, false, null);
+                Vector3 p = EditorHandleUtility.ClosestPointToPolyLine(m_ControlPoints, out index, out distanceToLine,
+                    false, null);
 
-                if (!IsHoveringHandlePoint(e.mousePosition) && distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
+                if (!IsHoveringHandlePoint(e.mousePosition) &&
+                    distanceToLine < PreferenceKeys.k_MaxPointDistanceFromControl)
                 {
                     Handles.color = Color.green;
                     Handles.DotHandleCap(-1, p, Quaternion.identity, HandleUtility.GetHandleSize(p) * .05f, e.type);
@@ -650,7 +643,8 @@ namespace UnityEditor.ProBuilder
                     {
                         UndoUtility.RecordObject(m_Target, "Add Point");
                         Vector3 dir = m_ControlPoints[(index + 1) % m_ControlPoints.Count] - m_ControlPoints[index];
-                        m_Points.Insert((index / m_SegmentsPerUnit) + 1, new BezierKnot(p, p - dir, p + dir, Quaternion.identity));
+                        m_Knots.Insert((index / m_SegmentsPerUnit) + 1,
+                            new BezierKnot(p, p - dir, p + dir, Quaternion.identity));
                         UpdateMesh(true);
                         e.Use();
                     }
@@ -682,18 +676,21 @@ namespace UnityEditor.ProBuilder
             if (m_Target == null)
                 return false;
 
-            int count = m_Points.Count;
+            int count = m_Knots.Count;
 
             for (int i = 0; i < count; i++)
             {
-                BezierKnot knot = m_Points[i];
+                BezierKnot knot = m_Knots[i];
 
                 bool ti = i > 0;
                 bool to = i < (count - 1);
 
-                if (Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.Position)) < PreferenceKeys.k_MaxPointDistanceFromControl ||
-                    (ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.TangentIn)) < PreferenceKeys.k_MaxPointDistanceFromControl) ||
-                    (to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.TangentOut)) < PreferenceKeys.k_MaxPointDistanceFromControl))
+                if (Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.Position)) <
+                    PreferenceKeys.k_MaxPointDistanceFromControl ||
+                    (ti && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.TangentIn)) <
+                        PreferenceKeys.k_MaxPointDistanceFromControl) ||
+                    (to && Vector2.Distance(mpos, HandleUtility.WorldToGUIPoint(knot.TangentOut)) <
+                        PreferenceKeys.k_MaxPointDistanceFromControl))
                     return true;
             }
 

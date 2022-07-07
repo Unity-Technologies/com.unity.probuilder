@@ -50,9 +50,9 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField] public float m_Radius = 0.5f; // min 0.01f
 
-        [SerializeField] public int m_SegmentsPerUnit = 1; // min 1
+        [SerializeField] public int m_SegmentsPerUnit = 2; // min 1
 
-        [SerializeField] public int m_FaceCountPerSegment = 5; // min 3
+        [SerializeField] public int m_FaceCountPerSegment = 8; // min 3
 
         private List<Vector3> m_VertexPositions;
 
@@ -123,7 +123,6 @@ namespace UnityEngine.ProBuilder
         {
             if(mesh != null)
             {
-                Debug.Log($"update radius {m_Radius} segments {m_SegmentsPerUnit} faces {m_FaceCountPerSegment}");
                 Extrude3DMesh();
             }
         }
