@@ -61,27 +61,26 @@ namespace UnityEngine.ProBuilder
             Extrude3DMesh();
         }
 
-        //  void OnEnable()
-        // {
-        //     Debug.Log("enable");
-        //     UnityEngine.Splines.Spline.Changed += UpdateMesh;
-        // }
-        //
-        // void OnDisable()
-        // {
-        //     Debug.Log("disable");
-        //     UnityEngine.Splines.Spline.Changed -= UpdateMesh;
-        // }
-        //
-        // void OnDestroy()
-        // {
-        //     Debug.Log("destroy");
-        //     UnityEngine.Splines.Spline.Changed -= UpdateMesh;
-        // }
+         void OnEnable()
+        {
+            Debug.Log("enable");
+            UnityEngine.Splines.Spline.Changed += UpdateMesh;
+        }
+
+        void OnDisable()
+        {
+            Debug.Log("disable");
+            UnityEngine.Splines.Spline.Changed -= UpdateMesh;
+        }
+
+        void OnDestroy()
+        {
+            Debug.Log("destroy");
+            UnityEngine.Splines.Spline.Changed -= UpdateMesh;
+        }
 
         public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
         {
-            Debug.Log($"update mesh");
             if(spline == m_Spline)
                 Extrude3DMesh();
         }
