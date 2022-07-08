@@ -5,8 +5,8 @@ using UnityEngine.Splines;
 
 namespace UnityEngine.ProBuilder
 {
-    [RequireComponent(typeof(ProBuilderMesh))]
-    sealed class BezierMesh : MonoBehaviour, ISplineContainer
+    [RequireComponent(typeof(ProBuilderMesh))] [ExecuteInEditMode]
+    public sealed class BezierMesh : MonoBehaviour, ISplineContainer
     {
         [SerializeField] public Splines.Spline m_Spline;
 
@@ -43,7 +43,7 @@ namespace UnityEngine.ProBuilder
             set { m_Mesh = value; }
         }
 
-        [SerializeField] [Range(0.001f, 64f)]
+        [SerializeField] [Range(0.01f, 64f)]
         public float m_Radius = 0.5f;
 
         [SerializeField] [Range(1, 128)]
@@ -63,26 +63,20 @@ namespace UnityEngine.ProBuilder
 
          void OnEnable()
         {
-            Debug.Log("enable");
             UnityEngine.Splines.Spline.Changed += UpdateMesh;
         }
 
         void OnDisable()
         {
-            Debug.Log("disable");
-            UnityEngine.Splines.Spline.Changed -= UpdateMesh;
-        }
-
-        void OnDestroy()
-        {
-            Debug.Log("destroy");
             UnityEngine.Splines.Spline.Changed -= UpdateMesh;
         }
 
         public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
         {
             if(spline == m_Spline)
+            {
                 Extrude3DMesh();
+            }
         }
 
         public void Init()
@@ -93,8 +87,6 @@ namespace UnityEngine.ProBuilder
             Splines = new Splines.Spline[] { new Splines.Spline() };
             m_Spline.Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
-
-            UnityEngine.Splines.Spline.Changed += UpdateMesh;
         }
 
         public void Extrude3DMesh()
