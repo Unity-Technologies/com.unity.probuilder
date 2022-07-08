@@ -71,11 +71,7 @@ namespace UnityEditor.ProBuilder
                         Vector3 heightPoint = Math.GetNearestPointRayRay(tool.m_BB_OppositeCorner, tool.m_Plane.normal, ray.origin, ray.direction);
                         var dot = Vector3.Dot(tool.m_Plane.normal, ray.direction);
                         var isHeightPointNaN = float.IsNaN(heightPoint.x) || float.IsNaN(heightPoint.y) || float.IsNaN(heightPoint.z);
-                        if (isHeightPointNaN)
-                        {
-                            tool.m_BB_HeightCorner = tool.m_PlaneRotation * Vector3.zero + tool.m_BB_OppositeCorner;
-                        }
-                        else
+                        if (!isHeightPointNaN)
                         {
                             var deltaPoint = (dot == 0 ? ray.origin - tool.m_Plane.ClosestPointOnPlane(ray.origin) : heightPoint - tool.m_BB_OppositeCorner);
                             deltaPoint = Quaternion.Inverse(tool.m_PlaneRotation) * deltaPoint;
