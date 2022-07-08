@@ -77,8 +77,9 @@ namespace UnityEditor.ProBuilder
                             deltaPoint = Quaternion.Inverse(tool.m_PlaneRotation) * deltaPoint;
                             deltaPoint = tool.GetPoint(deltaPoint, evt.control);
                             tool.m_BB_HeightCorner = tool.m_PlaneRotation * deltaPoint + tool.m_BB_OppositeCorner;
+                            tool.RebuildShape();
                         }
-                        tool.RebuildShape();
+
                         break;
 
                     case EventType.MouseUp:
