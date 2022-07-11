@@ -21,9 +21,9 @@ namespace UnityEngine.ProBuilder
 
         private const int k_OverlayWidth = 350;
 
-        private SliderAndInputField segments;
-        private SliderAndInputField radius;
-        private SliderAndInputField faces;
+        private SliderAndInputField m_SegmentSliderAndInputField;
+        private SliderAndInputField m_RadiusSliderAndInputField;
+        private SliderAndInputField m_FacesSliderAndInputField;
 
         public override VisualElement CreatePanelContent()
         {
@@ -32,6 +32,7 @@ namespace UnityEngine.ProBuilder
                 name = "Bezier Mesh Overlay",
                 style =
                 {
+                    // LengthUnit.Pixel or LengthUnit.Percent ?
                     width = new StyleLength(new Length(k_OverlayWidth, LengthUnit.Pixel)),
                 }
             };
@@ -40,38 +41,41 @@ namespace UnityEngine.ProBuilder
             CreateRadiusElement();
             CreateFacesElement();
 
-            root.Add(segments);
-            root.Add(radius);
-            root.Add(faces);
+            root.Add(m_SegmentSliderAndInputField);
+            root.Add(m_RadiusSliderAndInputField);
+            root.Add(m_FacesSliderAndInputField);
 
             return root;
         }
 
         private void CreateSegmentsElement()
         {
-            segments = new SliderAndInputField("Segments per Unit", k_SegmentsMin, k_SegmentsMax, true);
-            segments.tooltip = "Number of length-wise segments of the mesh per unit length";
-            segments.m_SliderInt.value = segments.m_IntField.value = k_SegmentsMin;
+            m_SegmentSliderAndInputField =
+                new SliderAndInputField("Segments per Unit", k_SegmentsMin, k_SegmentsMax, true)
+                {
+                    tooltip = "Number of length-wise segments of the mesh per unit length"
+                };
+            m_SegmentSliderAndInputField.m_SliderInt.value = m_SegmentSliderAndInputField.m_IntField.value = k_SegmentsMin;
 
-            segments.m_IntField.RegisterValueChangedCallback(evt =>
+            m_SegmentSliderAndInputField.m_IntField.RegisterValueChangedCallback(evt =>
             {
-                segments.m_IntField.value = Mathf.Clamp(segments.m_IntField.value, k_SegmentsMin, k_SegmentsMax);
-                segments.m_SliderInt.value = segments.m_IntField.value;
+                m_SegmentSliderAndInputField.m_IntField.value = Mathf.Clamp(m_SegmentSliderAndInputField.m_IntField.value, k_SegmentsMin, k_SegmentsMax);
+                m_SegmentSliderAndInputField.m_SliderInt.value = m_SegmentSliderAndInputField.m_IntField.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_SegmentsPerUnit = segments.m_IntField.value;
+                    mesh.m_SegmentsPerUnit = m_SegmentSliderAndInputField.m_IntField.value;
                     mesh.Extrude3DMesh();
                 }
             });
 
-            segments.m_SliderInt.RegisterValueChangedCallback(evt =>
+            m_SegmentSliderAndInputField.m_SliderInt.RegisterValueChangedCallback(evt =>
             {
-                segments.m_IntField.value = segments.m_SliderInt.value;
+                m_SegmentSliderAndInputField.m_IntField.value = m_SegmentSliderAndInputField.m_SliderInt.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_SegmentsPerUnit = segments.m_SliderInt.value;
+                    mesh.m_SegmentsPerUnit = m_SegmentSliderAndInputField.m_SliderInt.value;
                     mesh.Extrude3DMesh();
                 }
             });
@@ -79,29 +83,31 @@ namespace UnityEngine.ProBuilder
 
         private void CreateRadiusElement()
         {
-            radius = new SliderAndInputField("Radius", k_RadiusMin, k_RadiusMax);
-            radius.tooltip = "The distance of the mesh from the center of the spline";
-            radius.m_Slider.value = radius.m_FloatField.value = k_RadiusMin;
-
-            radius.m_FloatField.RegisterValueChangedCallback(evt =>
+            m_RadiusSliderAndInputField = new SliderAndInputField("Radius", k_RadiusMin, k_RadiusMax)
             {
-                radius.m_FloatField.value = Mathf.Clamp(radius.m_FloatField.value, k_RadiusMin, k_RadiusMax);
-                radius.m_Slider.value = radius.m_FloatField.value;
+                tooltip = "The distance of the mesh from the center of the spline"
+            };
+            m_RadiusSliderAndInputField.m_Slider.value = m_RadiusSliderAndInputField.m_FloatField.value = k_RadiusMin;
+
+            m_RadiusSliderAndInputField.m_FloatField.RegisterValueChangedCallback(evt =>
+            {
+                m_RadiusSliderAndInputField.m_FloatField.value = Mathf.Clamp(m_RadiusSliderAndInputField.m_FloatField.value, k_RadiusMin, k_RadiusMax);
+                m_RadiusSliderAndInputField.m_Slider.value = m_RadiusSliderAndInputField.m_FloatField.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_Radius = radius.m_FloatField.value;
+                    mesh.m_Radius = m_RadiusSliderAndInputField.m_FloatField.value;
                     mesh.Extrude3DMesh();
                 }
             });
 
-            radius.m_Slider.RegisterValueChangedCallback(evt =>
+            m_RadiusSliderAndInputField.m_Slider.RegisterValueChangedCallback(evt =>
             {
-                radius.m_FloatField.value = radius.m_Slider.value;
+                m_RadiusSliderAndInputField.m_FloatField.value = m_RadiusSliderAndInputField.m_Slider.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_Radius = radius.m_Slider.value;
+                    mesh.m_Radius = m_RadiusSliderAndInputField.m_Slider.value;
                     mesh.Extrude3DMesh();
                 }
             });
@@ -109,29 +115,31 @@ namespace UnityEngine.ProBuilder
 
         private void CreateFacesElement()
         {
-            faces = new SliderAndInputField("Faces per Segment", k_FacesMin, k_FacesMax, true);
-            faces.tooltip = "The number of faces around the bezier mesh at each segment";
-            faces.m_SliderInt.value = faces.m_IntField.value = k_FacesMin;
-
-            faces.m_IntField.RegisterValueChangedCallback(evt =>
+            m_FacesSliderAndInputField = new SliderAndInputField("Faces per Segment", k_FacesMin, k_FacesMax, true)
             {
-                faces.m_IntField.value = Mathf.Clamp(faces.m_IntField.value, k_FacesMin, k_FacesMax);
-                faces.m_SliderInt.value = faces.m_IntField.value;
+                tooltip = "The number of faces around the bezier mesh at each segment"
+            };
+            m_FacesSliderAndInputField.m_SliderInt.value = m_FacesSliderAndInputField.m_IntField.value = k_FacesMin;
+
+            m_FacesSliderAndInputField.m_IntField.RegisterValueChangedCallback(evt =>
+            {
+                m_FacesSliderAndInputField.m_IntField.value = Mathf.Clamp(m_FacesSliderAndInputField.m_IntField.value, k_FacesMin, k_FacesMax);
+                m_FacesSliderAndInputField.m_SliderInt.value = m_FacesSliderAndInputField.m_IntField.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_FaceCountPerSegment = faces.m_IntField.value;
+                    mesh.m_FaceCountPerSegment = m_FacesSliderAndInputField.m_IntField.value;
                     mesh.Extrude3DMesh();
                 }
             });
 
-            faces.m_SliderInt.RegisterValueChangedCallback(evt =>
+            m_FacesSliderAndInputField.m_SliderInt.RegisterValueChangedCallback(evt =>
             {
-                faces.m_IntField.value = faces.m_SliderInt.value;
+                m_FacesSliderAndInputField.m_IntField.value = m_FacesSliderAndInputField.m_SliderInt.value;
 
                 foreach (var mesh in meshes)
                 {
-                    mesh.m_FaceCountPerSegment = faces.m_SliderInt.value;
+                    mesh.m_FaceCountPerSegment = m_FacesSliderAndInputField.m_SliderInt.value;
                     mesh.Extrude3DMesh();
                 }
             });
@@ -169,9 +177,9 @@ namespace UnityEngine.ProBuilder
             // If only one bezier mesh is selected set overlay parameters to its parameters
             if (meshes.Count == 1)
             {
-                radius.m_Slider.value = radius.m_FloatField.value = meshes[0].m_Radius;
-                segments.m_SliderInt.value = segments.m_IntField.value = meshes[0].m_SegmentsPerUnit;
-                faces.m_SliderInt.value = faces.m_IntField.value = meshes[0].m_FaceCountPerSegment;
+                m_RadiusSliderAndInputField.m_Slider.value = m_RadiusSliderAndInputField.m_FloatField.value = meshes[0].m_Radius;
+                m_SegmentSliderAndInputField.m_SliderInt.value = m_SegmentSliderAndInputField.m_IntField.value = meshes[0].m_SegmentsPerUnit;
+                m_FacesSliderAndInputField.m_SliderInt.value = m_FacesSliderAndInputField.m_IntField.value = meshes[0].m_FaceCountPerSegment;
             }
         }
 
@@ -187,7 +195,7 @@ namespace UnityEngine.ProBuilder
                 if (useIntField)
                 {
                     m_SliderInt = new SliderInt(val, (int)min, (int)max);
-                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .86f);
+                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .85f);
                     Add(m_SliderInt);
 
                     m_IntField = new IntegerField();
@@ -196,7 +204,7 @@ namespace UnityEngine.ProBuilder
                 else
                 {
                     m_Slider = new Slider(val, min, max);
-                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .86f);
+                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .85f);
                     Add(m_Slider);
 
                     m_FloatField = new FloatField();
