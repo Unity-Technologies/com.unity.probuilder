@@ -10,6 +10,13 @@ namespace UnityEngine.ProBuilder
     {
         [SerializeField] public Splines.Spline m_Spline;
 
+        public const float k_RadiusMin = 0.01f;
+        public const float k_RadiusMax = 128f;
+        public const int k_FacesMin = 3;
+        public const int k_FacesMax = 32;
+        public const int k_SegmentsMin = 1;
+        public const int k_SegmentsMax = 32;
+
         public IReadOnlyList<Splines.Spline> Splines
         {
             get => new Splines.Spline[] { m_Spline };
@@ -43,13 +50,13 @@ namespace UnityEngine.ProBuilder
             set { m_Mesh = value; }
         }
 
-        [SerializeField] [Range(0.01f, 64f)]
+        [SerializeField] [Range(k_RadiusMin, k_RadiusMax)]
         public float m_Radius = 0.5f;
 
-        [SerializeField] [Range(1, 128)]
+        [SerializeField] [Range(k_SegmentsMin, k_SegmentsMax)]
         public int m_SegmentsPerUnit = 2;
 
-        [SerializeField] [Range(3, 128)]
+        [SerializeField] [Range(k_FacesMin, k_FacesMax)]
         public int m_FaceCountPerSegment = 8;
 
         private List<Vector3> m_VertexPositions;
