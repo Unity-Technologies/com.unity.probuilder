@@ -21,9 +21,9 @@ namespace UnityEngine.ProBuilder
 
         private const int k_OverlayWidth = 350;
 
-        private SliderAndFloatField segments;
-        private SliderAndFloatField radius;
-        private SliderAndFloatField faces;
+        private SliderAndInputField segments;
+        private SliderAndInputField radius;
+        private SliderAndInputField faces;
 
         public override VisualElement CreatePanelContent()
         {
@@ -49,7 +49,7 @@ namespace UnityEngine.ProBuilder
 
         private void CreateSegmentsElement()
         {
-            segments = new SliderAndFloatField("Segments per Unit", k_SegmentsMin, k_SegmentsMax, true);
+            segments = new SliderAndInputField("Segments per Unit", k_SegmentsMin, k_SegmentsMax, true);
             segments.tooltip = "Number of length-wise segments of the mesh per unit length";
             segments.m_SliderInt.value = segments.m_IntField.value = k_SegmentsMin;
 
@@ -79,7 +79,7 @@ namespace UnityEngine.ProBuilder
 
         private void CreateRadiusElement()
         {
-            radius = new SliderAndFloatField("Radius", k_RadiusMin, k_RadiusMax);
+            radius = new SliderAndInputField("Radius", k_RadiusMin, k_RadiusMax);
             radius.tooltip = "The distance of the mesh from the center of the spline";
             radius.m_Slider.value = radius.m_FloatField.value = k_RadiusMin;
 
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 
         private void CreateFacesElement()
         {
-            faces = new SliderAndFloatField("Faces per Segment", k_FacesMin, k_FacesMax, true);
+            faces = new SliderAndInputField("Faces per Segment", k_FacesMin, k_FacesMax, true);
             faces.tooltip = "The number of faces around the bezier mesh at each segment";
             faces.m_SliderInt.value = faces.m_IntField.value = k_FacesMin;
 
@@ -163,6 +163,7 @@ namespace UnityEngine.ProBuilder
                     hasBezierMesh = true;
                 }
             }
+
             displayed = hasBezierMesh;
 
             // If only one bezier mesh is selected set overlay parameters to its parameters
@@ -174,19 +175,19 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        public class SliderAndFloatField : VisualElement
+        public class SliderAndInputField : VisualElement
         {
             public Slider m_Slider;
             public SliderInt m_SliderInt;
             public FloatField m_FloatField;
             public IntegerField m_IntField;
 
-            public SliderAndFloatField(string val, float min, float max, bool useIntField = false)
+            public SliderAndInputField(string val, float min, float max, bool useIntField = false)
             {
                 if (useIntField)
                 {
-                    m_SliderInt = new SliderInt(val, (int) min, (int) max);
-                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .87f);
+                    m_SliderInt = new SliderInt(val, (int)min, (int)max);
+                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .86f);
                     Add(m_SliderInt);
 
                     m_IntField = new IntegerField();
@@ -195,10 +196,11 @@ namespace UnityEngine.ProBuilder
                 else
                 {
                     m_Slider = new Slider(val, min, max);
-                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .87f);
+                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .86f);
                     Add(m_Slider);
 
                     m_FloatField = new FloatField();
+                    m_FloatField.style.maxWidth = new StyleLength(k_OverlayWidth * .13f);
                     Add(m_FloatField);
                 }
 
