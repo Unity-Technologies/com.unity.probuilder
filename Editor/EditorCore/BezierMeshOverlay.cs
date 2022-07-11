@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
-    [Overlay(typeof(SceneView), overlayID, "Bezier Spline Overlay")]
-    public class BezierSplineOverlay : Overlay
+    [Overlay(typeof(SceneView), overlayID, "Bezier Mesh Overlay")]
+    public class BezierMeshOverlay : Overlay
     {
-        private const string overlayID = "Bezier Spline Overlay";
+        private const string overlayID = "Bezier Mesh Overlay";
         private static List<BezierMesh> meshes = new List<BezierMesh>();
 
         private const float k_RadiusMin = BezierMesh.k_RadiusMin;
@@ -19,6 +19,8 @@ namespace UnityEngine.ProBuilder
         private const int k_SegmentsMin = BezierMesh.k_SegmentsMin;
         private const int k_SegmentsMax = BezierMesh.k_SegmentsMax;
 
+        private const int k_OverlayWidth = 350;
+
         private SliderAndFloatField segments;
         private SliderAndFloatField radius;
         private SliderAndFloatField faces;
@@ -27,14 +29,16 @@ namespace UnityEngine.ProBuilder
         {
             var root = new VisualElement
             {
-                name = "Bezier Spline Overlay",
+                name = "Bezier Mesh Overlay",
                 style =
                 {
-                    width = new StyleLength(new Length(350, LengthUnit.Pixel))
+                    width = new StyleLength(new Length(k_OverlayWidth, LengthUnit.Pixel)),
                 }
             };
 
-            CreateVisualElements();
+            CreateSegmentsElement();
+            CreateRadiusElement();
+            CreateFacesElement();
 
             root.Add(segments);
             root.Add(radius);
@@ -43,16 +47,10 @@ namespace UnityEngine.ProBuilder
             return root;
         }
 
-        void CreateVisualElements()
-        {
-            CreateSegmentsElement();
-            CreateFacesElement();
-            CreateRadiusElement();
-        }
-
-        void CreateSegmentsElement()
+        private void CreateSegmentsElement()
         {
             segments = new SliderAndFloatField("Segments per Unit", k_SegmentsMin, k_SegmentsMax, true);
+            segments.tooltip = "Number of length-wise segments of the mesh per unit length";
             segments.m_SliderInt.value = segments.m_IntField.value = k_SegmentsMin;
 
             segments.m_IntField.RegisterValueChangedCallback(evt =>
@@ -79,9 +77,10 @@ namespace UnityEngine.ProBuilder
             });
         }
 
-        void CreateRadiusElement()
+        private void CreateRadiusElement()
         {
             radius = new SliderAndFloatField("Radius", k_RadiusMin, k_RadiusMax);
+            radius.tooltip = "The distance of the mesh from the center of the spline";
             radius.m_Slider.value = radius.m_FloatField.value = k_RadiusMin;
 
             radius.m_FloatField.RegisterValueChangedCallback(evt =>
@@ -108,9 +107,10 @@ namespace UnityEngine.ProBuilder
             });
         }
 
-        void CreateFacesElement()
+        private void CreateFacesElement()
         {
             faces = new SliderAndFloatField("Faces per Segment", k_FacesMin, k_FacesMax, true);
+            faces.tooltip = "The number of faces around the bezier mesh at each segment";
             faces.m_SliderInt.value = faces.m_IntField.value = k_FacesMin;
 
             faces.m_IntField.RegisterValueChangedCallback(evt =>
@@ -165,7 +165,7 @@ namespace UnityEngine.ProBuilder
             }
             displayed = hasBezierMesh;
 
-            // If only one bezier spline is selected set overlay parameters to its parameters
+            // If only one bezier mesh is selected set overlay parameters to its parameters
             if (meshes.Count == 1)
             {
                 radius.m_Slider.value = radius.m_FloatField.value = meshes[0].m_Radius;
@@ -186,19 +186,23 @@ namespace UnityEngine.ProBuilder
                 if (useIntField)
                 {
                     m_SliderInt = new SliderInt(val, (int) min, (int) max);
-                    this.Add(m_SliderInt);
+                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .87f);
+                    Add(m_SliderInt);
 
-                    m_IntField = new IntegerField(val);
-                    this.Add(m_IntField);
+                    m_IntField = new IntegerField();
+                    Add(m_IntField);
                 }
                 else
                 {
                     m_Slider = new Slider(val, min, max);
-                    this.Add(m_Slider);
+                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .87f);
+                    Add(m_Slider);
 
-                    m_FloatField = new FloatField(val);
-                    this.Add(m_FloatField);
+                    m_FloatField = new FloatField();
+                    Add(m_FloatField);
                 }
+
+                style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
             }
         }
     }
