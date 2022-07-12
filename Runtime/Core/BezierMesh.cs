@@ -67,7 +67,7 @@ namespace UnityEngine.ProBuilder
 
         void OnValidate()
         {
-            Extrude3DMesh();
+            ExtrudeMesh();
         }
 
         void OnEnable()
@@ -84,7 +84,7 @@ namespace UnityEngine.ProBuilder
         {
             if (spline == m_Spline)
             {
-                Extrude3DMesh();
+                ExtrudeMesh();
             }
         }
 
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
         }
 
-        public void Extrude3DMesh()
+        public void ExtrudeMesh()
         {
             if (m_Spline == null) return;
 

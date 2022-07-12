@@ -19,23 +19,23 @@ namespace UnityEngine.ProBuilder
         private const int k_SegmentsMin = BezierMesh.k_SegmentsMin;
         private const int k_SegmentsMax = BezierMesh.k_SegmentsMax;
 
-        private const int k_OverlayWidth = 350;
-
         private SliderAndInputField m_SegmentSliderAndInputField;
         private SliderAndInputField m_RadiusSliderAndInputField;
         private SliderAndInputField m_FacesSliderAndInputField;
 
+        static StyleSheet s_StyleSheet;
+
         public override VisualElement CreatePanelContent()
         {
+
             var root = new VisualElement
             {
-                name = "Bezier Mesh Overlay",
-                style =
-                {
-                    // LengthUnit.Pixel or LengthUnit.Percent ?
-                    width = new StyleLength(new Length(k_OverlayWidth, LengthUnit.Pixel)),
-                }
+                name = "Bezier Mesh Overlay"
             };
+
+            if (s_StyleSheet == null)
+                s_StyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.unity.probuilder/Editor/Stylesheets/BezierMeshOverlayStyle.uss");
+            root.styleSheets.Add(s_StyleSheet);
 
             CreateSegmentsElement();
             CreateRadiusElement();
@@ -55,6 +55,7 @@ namespace UnityEngine.ProBuilder
                 {
                     tooltip = "Number of length-wise segments of the mesh per unit length"
                 };
+
             m_SegmentSliderAndInputField.m_SliderInt.value = m_SegmentSliderAndInputField.m_IntField.value = k_SegmentsMin;
 
             m_SegmentSliderAndInputField.m_IntField.RegisterValueChangedCallback(evt =>
@@ -65,7 +66,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_SegmentsPerUnit = m_SegmentSliderAndInputField.m_IntField.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
 
@@ -76,7 +77,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_SegmentsPerUnit = m_SegmentSliderAndInputField.m_SliderInt.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
         }
@@ -97,7 +98,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_Radius = m_RadiusSliderAndInputField.m_FloatField.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
 
@@ -108,7 +109,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_Radius = m_RadiusSliderAndInputField.m_Slider.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
         }
@@ -129,7 +130,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_FaceCountPerSegment = m_FacesSliderAndInputField.m_IntField.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
 
@@ -140,7 +141,7 @@ namespace UnityEngine.ProBuilder
                 foreach (var mesh in meshes)
                 {
                     mesh.m_FaceCountPerSegment = m_FacesSliderAndInputField.m_SliderInt.value;
-                    mesh.Extrude3DMesh();
+                    mesh.ExtrudeMesh();
                 }
             });
         }
@@ -171,8 +172,20 @@ namespace UnityEngine.ProBuilder
                     hasBezierMesh = true;
                 }
             }
-
             displayed = hasBezierMesh;
+
+            if (m_FacesSliderAndInputField == null || m_RadiusSliderAndInputField == null || m_SegmentSliderAndInputField == null)
+                return;
+
+            SetParameterValues();
+        }
+
+        private void SetParameterValues()
+        {
+            bool isRadiusEqual = false, isSegmentsEqual = false, isFacesEqual = false;
+            var radius = -1f;
+            var segment = -1;
+            var face = -1;
 
             // If only one bezier mesh is selected set overlay parameters to its parameters
             if (meshes.Count == 1)
@@ -180,6 +193,32 @@ namespace UnityEngine.ProBuilder
                 m_RadiusSliderAndInputField.m_Slider.value = m_RadiusSliderAndInputField.m_FloatField.value = meshes[0].m_Radius;
                 m_SegmentSliderAndInputField.m_SliderInt.value = m_SegmentSliderAndInputField.m_IntField.value = meshes[0].m_SegmentsPerUnit;
                 m_FacesSliderAndInputField.m_SliderInt.value = m_FacesSliderAndInputField.m_IntField.value = meshes[0].m_FaceCountPerSegment;
+
+                m_RadiusSliderAndInputField.m_FloatField.showMixedValue = false;
+                m_SegmentSliderAndInputField.m_IntField.showMixedValue = false;
+                m_FacesSliderAndInputField.m_IntField.showMixedValue = false;
+            }
+            // Show parameters that are equal across all selected bezier meshes, and blank out those that arent
+            else
+            {
+                for (int i = 0; i < meshes.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        radius = meshes[i].m_Radius;
+                        face = meshes[i].m_FaceCountPerSegment;
+                        segment = meshes[i].m_SegmentsPerUnit;
+                        continue;
+                    }
+
+                    isRadiusEqual = Mathf.Approximately(radius, meshes[i].m_Radius);
+                    isSegmentsEqual = Mathf.Approximately(segment, meshes[i].m_SegmentsPerUnit);
+                    isFacesEqual = Mathf.Approximately(face, meshes[i].m_FaceCountPerSegment);
+                }
+
+                m_RadiusSliderAndInputField.m_FloatField.showMixedValue = !isRadiusEqual;
+                m_SegmentSliderAndInputField.m_IntField.showMixedValue = !isSegmentsEqual;
+                m_FacesSliderAndInputField.m_IntField.showMixedValue = !isFacesEqual;
             }
         }
 
@@ -190,29 +229,34 @@ namespace UnityEngine.ProBuilder
             public FloatField m_FloatField;
             public IntegerField m_IntField;
 
+            const string k_ElementStyle = "slider-and-input-field";
+            const string k_SliderStyle = "slider";
+            const string k_InputFieldStyle = "input-field";
+
             public SliderAndInputField(string val, float min, float max, bool useIntField = false)
             {
+                AddToClassList(k_ElementStyle);
+
                 if (useIntField)
                 {
                     m_SliderInt = new SliderInt(val, (int)min, (int)max);
-                    m_SliderInt.style.width = new StyleLength(k_OverlayWidth * .85f);
+                    m_SliderInt.AddToClassList(k_SliderStyle);
                     Add(m_SliderInt);
 
                     m_IntField = new IntegerField();
+                    m_IntField.AddToClassList(k_InputFieldStyle);
                     Add(m_IntField);
                 }
                 else
                 {
                     m_Slider = new Slider(val, min, max);
-                    m_Slider.style.width = new StyleLength(k_OverlayWidth * .85f);
+                    m_Slider.AddToClassList(k_SliderStyle);
                     Add(m_Slider);
 
                     m_FloatField = new FloatField();
-                    m_FloatField.style.maxWidth = new StyleLength(k_OverlayWidth * .13f);
+                    m_FloatField.AddToClassList(k_InputFieldStyle);
                     Add(m_FloatField);
                 }
-
-                style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
             }
         }
     }

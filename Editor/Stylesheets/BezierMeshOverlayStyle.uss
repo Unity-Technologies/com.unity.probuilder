@@ -1,0 +1,17 @@
+.slider-and-input-field
+{
+    flex-direction: row;
+    width: 100%;
+}
+
+.slider
+{
+    min-width: 325px;
+    max-width: 325px;
+}
+
+.input-field
+{
+    min-width: 50px;
+    max-width: 50px;
+}

@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
-            bezier.Extrude3DMesh();
+            bezier.ExtrudeMesh();
             return new ActionResult(ActionResult.Status.Success, "Created Bezier Mesh using Splines");
         }
     }
