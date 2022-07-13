@@ -131,8 +131,6 @@ namespace UnityEngine.ProBuilder
 
                 mesh.ExtrudeMesh();
             }
-
-            ProBuilderEditor.Refresh();
         }
 
         private void OnSelectionChanged()

@@ -161,21 +161,5 @@ namespace UnityEngine.ProBuilder
 
             BezierMeshModified?.Invoke();
         }
-
-        /*
-         * need to use system.action
-         */
-        public class BezierMeshUpdateEvent : MonoBehaviour
-        {
-            public delegate void MeshUpdated();
-
-            public static event MeshUpdated OnMeshUpdated;
-
-            private void OnGUI()
-            {
-                if (OnMeshUpdated != null)
-                    OnMeshUpdated();
-            }
-        }
     }
 }
