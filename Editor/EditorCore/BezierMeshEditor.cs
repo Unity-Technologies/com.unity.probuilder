@@ -3,6 +3,7 @@ using UnityEngine.ProBuilder;
 namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(BezierMesh))]
+    [CanEditMultipleObjects]
     sealed class BezierSplineChanged : Editor
     {
         private void OnEnable()
