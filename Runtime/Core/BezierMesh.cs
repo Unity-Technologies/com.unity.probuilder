@@ -10,15 +10,6 @@ namespace UnityEngine.ProBuilder
     [ExecuteInEditMode]
     public sealed class BezierMesh : MonoBehaviour, ISplineContainer
     {
-        public static Action BezierMeshModified;
-
-        public const float k_RadiusMin = 0.01f;
-        public const float k_RadiusMax = 128f;
-        public const int k_FacesMin = 3;
-        public const int k_FacesMax = 32;
-        public const int k_SegmentsMin = 1;
-        public const int k_SegmentsMax = 32;
-
         [SerializeField] private Splines.Spline m_Spline;
 
         public IReadOnlyList<Splines.Spline> Splines
@@ -54,6 +45,13 @@ namespace UnityEngine.ProBuilder
             set { m_Mesh = value; }
         }
 
+        public const float k_RadiusMin = 0.01f;
+        public const float k_RadiusMax = 128f;
+        public const int k_FacesMin = 3;
+        public const int k_FacesMax = 32;
+        public const int k_SegmentsMin = 1;
+        public const int k_SegmentsMax = 32;
+
         [SerializeField] [Range(k_SegmentsMin, k_SegmentsMax)]
         public int m_SegmentsPerUnit = 2;
 
@@ -62,6 +60,8 @@ namespace UnityEngine.ProBuilder
 
         [SerializeField] [Range(k_FacesMin, k_FacesMax)]
         public int m_FaceCountPerSegment = 8;
+
+        public static Action BezierMeshModified;
 
         List<Vector3> m_VertexPositions = new List<Vector3>();
 
@@ -100,11 +100,20 @@ namespace UnityEngine.ProBuilder
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
         }
 
+        public void SetParameters(float radius, int faceCount, int segmentCount)
+        {
+            Undo.RecordObject(this, "Bezier Mesh Creation");
+
+            m_FaceCountPerSegment = faceCount;
+            m_SegmentsPerUnit = segmentCount;
+            m_Radius = radius;
+
+            ExtrudeMesh();
+        }
+
         public void ExtrudeMesh()
         {
             if (m_Spline == null) return;
-
-            Undo.RecordObject(this, "Bezier Mesh Creation");
 
             mesh.Clear();
             mesh.ToMesh();
@@ -158,7 +167,6 @@ namespace UnityEngine.ProBuilder
             }
 
             mesh.RebuildWithPositionsAndFaces(m_VertexPositions, m_Faces);
-
             BezierMeshModified?.Invoke();
         }
     }

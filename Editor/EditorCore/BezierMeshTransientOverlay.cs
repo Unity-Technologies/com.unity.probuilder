@@ -1,9 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditor.Overlays;
-using UnityEditor.ProBuilder;
-using UnityEngine;
 
 namespace UnityEngine.ProBuilder
 {
@@ -125,11 +124,8 @@ namespace UnityEngine.ProBuilder
         {
             foreach (var mesh in meshes)
             {
-                mesh.m_SegmentsPerUnit = m_SegmentSliderAndInputField.m_IntField.value;
-                mesh.m_Radius = m_RadiusSliderAndInputField.m_FloatField.value;
-                mesh.m_FaceCountPerSegment = m_FacesSliderAndInputField.m_IntField.value;
-
-                mesh.ExtrudeMesh();
+                mesh.SetParameters(m_RadiusSliderAndInputField.m_FloatField.value,m_FacesSliderAndInputField.m_IntField.value,
+                    m_SegmentSliderAndInputField.m_IntField.value);
             }
         }
 
@@ -204,12 +200,14 @@ namespace UnityEngine.ProBuilder
         {
             base.OnCreated();
             Selection.selectionChanged += OnSelectionChanged;
+            Undo.undoRedoPerformed += SetParameterValues;
         }
 
         public override void OnWillBeDestroyed()
         {
             base.OnWillBeDestroyed();
             Selection.selectionChanged -= OnSelectionChanged;
+            Undo.undoRedoPerformed -= SetParameterValues;
         }
 
         public class SliderAndInputField : VisualElement
