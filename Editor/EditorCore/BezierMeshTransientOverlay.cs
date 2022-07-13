@@ -222,8 +222,7 @@ namespace UnityEngine.ProBuilder
             public IntegerField m_IntField;
 
             const string k_ElementStyle = "slider-and-input-field";
-            const string k_SliderStyle = "slider";
-            const string k_InputFieldStyle = "input-field";
+
 
             public SliderAndInputField(string val, float min, float max, bool useIntField = false)
             {
@@ -232,21 +231,17 @@ namespace UnityEngine.ProBuilder
                 if (useIntField)
                 {
                     m_SliderInt = new SliderInt(val, (int)min, (int)max);
-                    m_SliderInt.AddToClassList(k_SliderStyle);
                     Add(m_SliderInt);
 
                     m_IntField = new IntegerField();
-                    m_IntField.AddToClassList(k_InputFieldStyle);
                     Add(m_IntField);
                 }
                 else
                 {
                     m_Slider = new Slider(val, min, max);
-                    m_Slider.AddToClassList(k_SliderStyle);
                     Add(m_Slider);
 
                     m_FloatField = new FloatField();
-                    m_FloatField.AddToClassList(k_InputFieldStyle);
                     Add(m_FloatField);
                 }
             }

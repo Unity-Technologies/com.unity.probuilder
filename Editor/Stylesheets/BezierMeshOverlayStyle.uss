@@ -4,14 +4,12 @@
     width: 100%;
 }
 
-.slider
+.slider-and-input-field .unity-base-slider
 {
-    min-width: 325px;
-    max-width: 325px;
+    width: 250px;
 }
 
-.input-field
+.slider-and-input-field .unity-base-text-field
 {
-    min-width: 50px;
-    max-width: 50px;
+    width: 40px;
 }
