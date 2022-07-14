@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine.Splines;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 namespace UnityEngine.ProBuilder
 {
@@ -102,8 +106,9 @@ namespace UnityEngine.ProBuilder
 
         public void SetParameters(float radius, int faceCount, int segmentCount)
         {
+#if UNITY_EDITOR
             Undo.RecordObject(this, "Bezier Mesh Creation");
-
+#endif
             m_FaceCountPerSegment = faceCount;
             m_SegmentsPerUnit = segmentCount;
             m_Radius = radius;
@@ -119,7 +124,7 @@ namespace UnityEngine.ProBuilder
             mesh.ToMesh();
             mesh.Refresh();
 
-            var segmentsCount = (int)m_Spline.GetLength() * m_SegmentsPerUnit;
+            var segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
             m_VertexPositions.Clear();
             m_Faces.Clear();
 

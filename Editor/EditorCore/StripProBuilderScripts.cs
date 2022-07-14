@@ -46,6 +46,9 @@ namespace UnityEditor.ProBuilder.Actions
             MeshSelection.OnObjectSelectionChanged();
         }
 
+        /*
+         * error - Probuilder MeshFlter is removed before bezier mesh script - error is because bezier mesh script has require Probuilder MeshFilter
+         */
         public static void Strip(ProBuilderMesh[] all)
         {
             for (int i = 0; i < all.Length; i++)
@@ -133,6 +136,14 @@ namespace UnityEditor.ProBuilder.Actions
                     Undo.DestroyObjectImmediate(bezierShape);
                 else
                     DestroyImmediate(bezierShape);
+            }
+
+            if (go.TryGetComponent(out BezierMesh bezierMesh))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(bezierMesh);
+                else
+                    DestroyImmediate(bezierMesh);
             }
 
             if (go.TryGetComponent(out ProBuilderShape shape))
