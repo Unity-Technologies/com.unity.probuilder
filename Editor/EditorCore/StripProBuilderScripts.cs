@@ -45,10 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
             MeshSelection.OnObjectSelectionChanged();
         }
-
-        /*
-         * error - Probuilder MeshFlter is removed before bezier mesh script - error is because bezier mesh script has require Probuilder MeshFilter
-         */
+        
         public static void Strip(ProBuilderMesh[] all)
         {
             for (int i = 0; i < all.Length; i++)
