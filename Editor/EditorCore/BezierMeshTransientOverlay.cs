@@ -5,12 +5,12 @@ using UnityEditor.Overlays;
 
 namespace UnityEngine.ProBuilder
 {
-    // skip on the attribute, instantiate it in BezierMeshEditor -> ping @karl for more info on this
+    // TODO: skip on the attribute, instantiate it in BezierMeshEditor -> ping @karl for more info on this
     [Overlay(typeof(SceneView), overlayID, "Bezier Mesh Overlay")]
     public class BezierMeshTransientOverlay : Overlay, ITransientOverlay
     {
         private const string overlayID = "Bezier Mesh Overlay";
-        private static List<BezierMesh> meshes = new List<BezierMesh>();
+        private static List<BezierMesh> s_Meshes = new List<BezierMesh>();
 
         private SliderAndIntegerField m_SegmentSliderAndIntegerField;
         private SliderAndFloatField m_RadiusSliderAndFloatField;
@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder
 
         void UpdateMesh()
         {
-            foreach (var mesh in meshes)
+            foreach (var mesh in s_Meshes)
             {
                 mesh.SetParameters(m_RadiusSliderAndFloatField.m_FloatField.value,
                     m_FacesSliderAndIntegerField.m_IntField.value,
@@ -87,14 +87,14 @@ namespace UnityEngine.ProBuilder
         void OnSelectionChanged()
         {
             var hasBezierMesh = false;
-            meshes.Clear();
+            s_Meshes.Clear();
 
             foreach (var obj in Selection.gameObjects)
             {
-                // use generic method instead -> avoids the explicit cast
+                // TODO: use generic method instead -> avoids the explicit cast
                 if (obj.TryGetComponent(typeof(BezierMesh), out Component mesh))
                 {
-                    meshes.Add((BezierMesh)mesh);
+                    s_Meshes.Add((BezierMesh)mesh);
                     hasBezierMesh = true;
                 }
             }
@@ -113,16 +113,16 @@ namespace UnityEngine.ProBuilder
         void SetParameterValues()
         {
             bool isRadiusEqual = true, isSegmentsEqual = true, isFacesEqual = true;
-            var count = meshes.Count;
-            var radius = count > 0 ? meshes[0].m_Radius : -1f;
-            var segments = count > 0 ? meshes[0].m_SegmentsPerUnit : -1;
-            var faces = count > 0 ? meshes[0].m_FaceCountPerSegment : -1;
+            var count = s_Meshes.Count;
+            var radius = count > 0 ? s_Meshes[0].m_Radius : -1f;
+            var segments = count > 0 ? s_Meshes[0].m_SegmentsPerUnit : -1;
+            var faces = count > 0 ? s_Meshes[0].m_FaceCountPerSegment : -1;
 
             for (int i = 1; i < count; ++i)
             {
-                isRadiusEqual = Mathf.Approximately(radius, meshes[i].m_Radius);
-                isSegmentsEqual = Mathf.Approximately(segments, meshes[i].m_SegmentsPerUnit);
-                isFacesEqual = Mathf.Approximately(faces, meshes[i].m_FaceCountPerSegment);
+                isRadiusEqual = Mathf.Approximately(radius, s_Meshes[i].m_Radius);
+                isSegmentsEqual = Mathf.Approximately(segments, s_Meshes[i].m_SegmentsPerUnit);
+                isFacesEqual = Mathf.Approximately(faces, s_Meshes[i].m_FaceCountPerSegment);
             }
 
             if (isSegmentsEqual)

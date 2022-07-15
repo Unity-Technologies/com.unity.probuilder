@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            // investigate IconSkin.Pro
+            // TODO: investigate IconSkin.Pro
             get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); }
         }
 
@@ -51,12 +51,13 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            GameObject go = new GameObject();
+            GameObject go = new GameObject("BezierMesh");
+            UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
+
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
             bezier.ExtrudeMesh();
-            UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
 
             return new ActionResult(ActionResult.Status.Success, "Created Bezier Mesh using Splines");
         }
