@@ -7,7 +7,6 @@ using UnityEngine.Splines;
 using UnityEditor;
 #endif
 
-
 namespace UnityEngine.ProBuilder
 {
     [RequireComponent(typeof(ProBuilderMesh))]
@@ -16,6 +15,7 @@ namespace UnityEngine.ProBuilder
     {
         [SerializeField] private Splines.Spline m_Spline;
 
+        // support multiple splines in the container
         public IReadOnlyList<Splines.Spline> Splines
         {
             get => new Splines.Spline[] { m_Spline };
@@ -104,6 +104,9 @@ namespace UnityEngine.ProBuilder
             m_Spline.Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
         }
 
+        // move the undo, dont mix editor side stuff in runtime
+        // use properties instead of fields
+        // add documentation
         public void SetParameters(float radius, int faceCount, int segmentCount)
         {
 #if UNITY_EDITOR
@@ -120,16 +123,12 @@ namespace UnityEngine.ProBuilder
         {
             if (m_Spline == null) return;
 
-            mesh.Clear();
-            mesh.ToMesh();
-            mesh.Refresh();
-
-            var segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
             m_VertexPositions.Clear();
             m_Faces.Clear();
 
             var t = 0f;
             var vertexIndex = 0;
+            var segmentsCount = (int) m_Spline.GetLength() * m_SegmentsPerUnit;
 
             // define the positions of each segment, and the vertex positions at each segment
             for (int i = 0; i < segmentsCount + 1; i++)

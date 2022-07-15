@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
-
 namespace UnityEditor.ProBuilder.Actions
 {
-    [ProBuilderMenuAction]
     sealed class NewBezierMesh : MenuAction
     {
         const string k_IconPath = "Toolbar/NewBezierSpline";
@@ -12,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
             "New Bezier Mesh",
-            "Create a new shape that is built by extruding along a spline."
+            "Create a new shape that is built by extruding along a Splines package Spline."
         );
 
         public override ToolbarGroup group
@@ -22,6 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
+            // investigate IconSkin.Pro
             get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); }
         }
 
