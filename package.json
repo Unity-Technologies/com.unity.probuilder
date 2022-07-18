@@ -28,15 +28,23 @@
   ],
   "samples": [
     {
+      "displayName": "Universal Render Pipeline Support",
+      "description": "Shaders and materials for the Light Weight Render Pipeline.",
       "path": "Samples~/UniversalRenderPipeline"
     },
     {
+      "displayName": "High Definition Render Pipeline Support",
+      "description": "Shaders and materials for the High Definition Render Pipeline.",
       "path": "Samples~/HDRP"
     },
     {
+      "displayName": "Editor Examples",
+      "description": "Scripts demonstrating how to integrate new functionality into the ProBuilder editor window.",
       "path": "Samples~/Editor"
     },
     {
+      "displayName": "Runtime Examples",
+      "description": "Scripts showing how to create and modify meshes at runtime.",
       "path": "Samples~/Runtime"
     }
   ],
