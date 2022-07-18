@@ -19,10 +19,10 @@ namespace UnityEngine.ProBuilder
             m_FloatField = new FloatField();
             Add(m_FloatField);
 
-            InitSliderAndFloatValues();
+            InitSliderAndFloatFields();
         }
 
-        void InitSliderAndFloatValues()
+        void InitSliderAndFloatFields()
         {
             var lowVal = m_Slider.lowValue;
             var highVal = m_Slider.highValue;

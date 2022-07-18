@@ -19,10 +19,10 @@ namespace UnityEngine.ProBuilder
             m_IntField = new IntegerField();
             Add(m_IntField);
 
-            InitSliderAndIntegerValues();
+            InitSliderAndIntegerFields();
         }
 
-        void InitSliderAndIntegerValues()
+        void InitSliderAndIntegerFields()
         {
             var lowVal = m_SliderInt.lowValue;
             var highVal = m_SliderInt.highValue;

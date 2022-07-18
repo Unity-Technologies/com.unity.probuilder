@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditor.Overlays;
 
+// TODO: add documentation
 namespace UnityEngine.ProBuilder
 {
     // TODO: skip on the attribute, instantiate it in BezierMeshEditor -> ping @karl for more info on this
@@ -17,6 +18,7 @@ namespace UnityEngine.ProBuilder
         private SliderAndIntegerField m_FacesSliderAndIntegerField;
 
         static StyleSheet s_StyleSheet;
+
         private const string k_PathToStyleSheet =
             "Packages/com.unity.probuilder/Editor/Stylesheets/BezierMeshOverlayStyle.uss";
 
@@ -54,33 +56,59 @@ namespace UnityEngine.ProBuilder
             {
                 tooltip = L10n.Tr("Number of length-wise segments of the mesh per unit length")
             };
-            m_SegmentSliderAndIntegerField.m_IntField.RegisterValueChangedCallback(evt => UpdateMesh());
-            m_SegmentSliderAndIntegerField.m_SliderInt.RegisterValueChangedCallback(evt => UpdateMesh());
+            m_SegmentSliderAndIntegerField.m_IntField.RegisterValueChangedCallback(evt => UpdateMeshSegments());
+            m_SegmentSliderAndIntegerField.m_SliderInt.RegisterValueChangedCallback(evt => UpdateMeshSegments());
 
             m_RadiusSliderAndFloatField =
                 new SliderAndFloatField("Radius", BezierMesh.k_RadiusMin, BezierMesh.k_RadiusMax)
                 {
                     tooltip = L10n.Tr("The distance of the mesh from the center of the spline")
                 };
-            m_RadiusSliderAndFloatField.m_Slider.RegisterValueChangedCallback(evt => UpdateMesh());
-            m_RadiusSliderAndFloatField.m_FloatField.RegisterValueChangedCallback(evt => UpdateMesh());
+            m_RadiusSliderAndFloatField.m_Slider.RegisterValueChangedCallback(evt => UpdateMeshRadius());
+            m_RadiusSliderAndFloatField.m_FloatField.RegisterValueChangedCallback(evt => UpdateMeshRadius());
 
             m_FacesSliderAndIntegerField =
                 new SliderAndIntegerField("Faces per Segment", BezierMesh.k_FacesMin, BezierMesh.k_FacesMax)
                 {
                     tooltip = L10n.Tr("The number of faces around the bezier mesh at each segment")
                 };
-            m_FacesSliderAndIntegerField.m_SliderInt.RegisterValueChangedCallback(evt => UpdateMesh());
-            m_FacesSliderAndIntegerField.m_IntField.RegisterValueChangedCallback(evt => UpdateMesh());
+            m_FacesSliderAndIntegerField.m_SliderInt.RegisterValueChangedCallback(evt => UpdateMeshFaces());
+            m_FacesSliderAndIntegerField.m_IntField.RegisterValueChangedCallback(evt => UpdateMeshFaces());
         }
 
-        void UpdateMesh()
+        void UpdateMeshFaces()
         {
             foreach (var mesh in s_Meshes)
             {
-                mesh.SetParameters(m_RadiusSliderAndFloatField.m_FloatField.value,
-                    m_FacesSliderAndIntegerField.m_IntField.value,
-                    m_SegmentSliderAndIntegerField.m_IntField.value);
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Faces Updated");
+#endif
+                mesh.FaceCountPerSegment = m_FacesSliderAndIntegerField.m_IntField.value;
+                mesh.ExtrudeMesh();
+            }
+        }
+
+        void UpdateMeshSegments()
+        {
+            foreach (var mesh in s_Meshes)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Segments per Unit Count Updated");
+#endif
+                mesh.SegmentsPerUnit = m_SegmentSliderAndIntegerField.m_IntField.value;
+                mesh.ExtrudeMesh();
+            }
+        }
+
+        void UpdateMeshRadius()
+        {
+            foreach (var mesh in s_Meshes)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Radius Updated");
+#endif
+                mesh.Radius = m_RadiusSliderAndFloatField.m_FloatField.value;
+                mesh.ExtrudeMesh();
             }
         }
 
@@ -91,10 +119,9 @@ namespace UnityEngine.ProBuilder
 
             foreach (var obj in Selection.gameObjects)
             {
-                // TODO: use generic method instead -> avoids the explicit cast
-                if (obj.TryGetComponent(typeof(BezierMesh), out Component mesh))
+                if (obj.TryGetComponent(out BezierMesh mesh))
                 {
-                    s_Meshes.Add((BezierMesh)mesh);
+                    s_Meshes.Add(mesh);
                     hasBezierMesh = true;
                 }
             }
@@ -102,8 +129,7 @@ namespace UnityEngine.ProBuilder
             m_Visisble = hasBezierMesh;
 
             if (m_FacesSliderAndIntegerField == null || m_RadiusSliderAndFloatField == null ||
-                m_SegmentSliderAndIntegerField == null
-                || Selection.gameObjects.Length == 0)
+                m_SegmentSliderAndIntegerField == null || Selection.gameObjects.Length == 0)
                 return;
 
             SetParameterValues();
@@ -114,33 +140,33 @@ namespace UnityEngine.ProBuilder
         {
             bool isRadiusEqual = true, isSegmentsEqual = true, isFacesEqual = true;
             var count = s_Meshes.Count;
-            var radius = count > 0 ? s_Meshes[0].m_Radius : -1f;
-            var segments = count > 0 ? s_Meshes[0].m_SegmentsPerUnit : -1;
-            var faces = count > 0 ? s_Meshes[0].m_FaceCountPerSegment : -1;
+            var radius = count > 0 ? s_Meshes[0].Radius : -1f;
+            var segments = count > 0 ? s_Meshes[0].SegmentsPerUnit : -1;
+            var faces = count > 0 ? s_Meshes[0].FaceCountPerSegment : -1;
 
             for (int i = 1; i < count; ++i)
             {
-                isRadiusEqual = Mathf.Approximately(radius, s_Meshes[i].m_Radius);
-                isSegmentsEqual = Mathf.Approximately(segments, s_Meshes[i].m_SegmentsPerUnit);
-                isFacesEqual = Mathf.Approximately(faces, s_Meshes[i].m_FaceCountPerSegment);
+                isRadiusEqual = Mathf.Approximately(radius, s_Meshes[i].Radius);
+                isSegmentsEqual = Mathf.Approximately(segments, s_Meshes[i].SegmentsPerUnit);
+                isFacesEqual = Mathf.Approximately(faces, s_Meshes[i].FaceCountPerSegment);
             }
 
             if (isSegmentsEqual)
             {
-                m_SegmentSliderAndIntegerField.m_SliderInt.SetValueWithoutNotify(segments);
-                m_SegmentSliderAndIntegerField.m_IntField.SetValueWithoutNotify(segments);
+                m_SegmentSliderAndIntegerField.m_SliderInt.value = segments;
+                m_SegmentSliderAndIntegerField.m_IntField.value = segments;
             }
 
             if (isRadiusEqual)
             {
-                m_RadiusSliderAndFloatField.m_Slider.SetValueWithoutNotify(radius);
-                m_RadiusSliderAndFloatField.m_FloatField.SetValueWithoutNotify(radius);
+                m_RadiusSliderAndFloatField.m_Slider.value = radius;
+                m_RadiusSliderAndFloatField.m_FloatField.value = radius;
             }
 
             if (isFacesEqual)
             {
-                m_FacesSliderAndIntegerField.m_SliderInt.SetValueWithoutNotify(faces);
-                m_FacesSliderAndIntegerField.m_IntField.SetValueWithoutNotify(faces);
+                m_FacesSliderAndIntegerField.m_SliderInt.value = faces;
+                m_FacesSliderAndIntegerField.m_IntField.value = faces;
             }
 
             m_RadiusSliderAndFloatField.m_FloatField.showMixedValue = !isRadiusEqual;

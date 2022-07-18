@@ -57,13 +57,31 @@ namespace UnityEngine.ProBuilder
         public const int k_SegmentsMax = 32;
 
         [SerializeField] [Range(k_SegmentsMin, k_SegmentsMax)]
-        public int m_SegmentsPerUnit = 2;
+        private int m_SegmentsPerUnit = 2;
 
         [SerializeField] [Range(k_RadiusMin, k_RadiusMax)]
-        public float m_Radius = 0.5f;
+        private float m_Radius = 0.5f;
 
         [SerializeField] [Range(k_FacesMin, k_FacesMax)]
-        public int m_FaceCountPerSegment = 8;
+        private int m_FaceCountPerSegment = 8;
+
+        public int SegmentsPerUnit
+        {
+            get => m_SegmentsPerUnit;
+            set => m_SegmentsPerUnit = value;
+        }
+
+        public float Radius
+        {
+            get => m_Radius;
+            set => m_Radius = value;
+        }
+
+        public int FaceCountPerSegment
+        {
+            get => m_FaceCountPerSegment;
+            set => m_FaceCountPerSegment = value;
+        }
 
         public static Action BezierMeshModified;
 
