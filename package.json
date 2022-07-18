@@ -26,6 +26,20 @@
     "prototype",
     "probuilder"
   ],
+  "samples": [
+    {
+      "path": "Samples~/UniversalRenderPipeline"
+    },
+    {
+      "path": "Samples~/HDRP"
+    },
+    {
+      "path": "Samples~/Editor"
+    },
+    {
+      "path": "Samples~/Runtime"
+    }
+  ],
   "dependencies": {
     "com.unity.settings-manager": "1.0.3",
     "com.unity.modules.physics": "1.0.0",
