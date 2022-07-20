@@ -51,12 +51,11 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            GameObject go = new GameObject("BezierMesh");
+            GameObject go = new GameObject("New Bezier Mesh");
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
 
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-            bezier.Init();
             bezier.ExtrudeMesh();
 
             return new ActionResult(ActionResult.Status.Success, "Created Bezier Mesh using Splines");

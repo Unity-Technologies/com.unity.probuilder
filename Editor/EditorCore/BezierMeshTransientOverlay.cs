@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
     public class BezierMeshTransientOverlay : Overlay, ITransientOverlay
     {
         private const string overlayID = "Bezier Mesh Overlay";
-        private static List<BezierMesh> s_Meshes = new List<BezierMesh>();
+        private List<BezierMesh> m_SelectedMeshes;
 
         private SliderAndIntegerField m_SegmentSliderAndIntegerField;
         private SliderAndFloatField m_RadiusSliderAndFloatField;
@@ -27,6 +27,7 @@ namespace UnityEngine.ProBuilder
 
         public BezierMeshTransientOverlay()
         {
+            m_SelectedMeshes = new List<BezierMesh>();
             InitSliderAndInputFields();
         }
 
@@ -78,7 +79,7 @@ namespace UnityEngine.ProBuilder
 
         void UpdateMeshFaces()
         {
-            foreach (var mesh in s_Meshes)
+            foreach (var mesh in m_SelectedMeshes)
             {
 #if UNITY_EDITOR
                 Undo.RecordObject(mesh, "Bezier Mesh Faces Updated");
@@ -90,7 +91,7 @@ namespace UnityEngine.ProBuilder
 
         void UpdateMeshSegments()
         {
-            foreach (var mesh in s_Meshes)
+            foreach (var mesh in m_SelectedMeshes)
             {
 #if UNITY_EDITOR
                 Undo.RecordObject(mesh, "Bezier Mesh Segments per Unit Count Updated");
@@ -102,7 +103,7 @@ namespace UnityEngine.ProBuilder
 
         void UpdateMeshRadius()
         {
-            foreach (var mesh in s_Meshes)
+            foreach (var mesh in m_SelectedMeshes)
             {
 #if UNITY_EDITOR
                 Undo.RecordObject(mesh, "Bezier Mesh Radius Updated");
@@ -115,13 +116,13 @@ namespace UnityEngine.ProBuilder
         void OnSelectionChanged()
         {
             var hasBezierMesh = false;
-            s_Meshes.Clear();
+            m_SelectedMeshes.Clear();
 
             foreach (var obj in Selection.gameObjects)
             {
                 if (obj.TryGetComponent(out BezierMesh mesh))
                 {
-                    s_Meshes.Add(mesh);
+                    m_SelectedMeshes.Add(mesh);
                     hasBezierMesh = true;
                 }
             }
@@ -135,21 +136,24 @@ namespace UnityEngine.ProBuilder
             SetParameterValues();
         }
 
-        // Show parameters that are equal across all selected bezier meshes, and blank out those that arent
         void SetParameterValues()
         {
             bool isRadiusEqual = true, isSegmentsEqual = true, isFacesEqual = true;
-            var count = s_Meshes.Count;
-            var radius = count > 0 ? s_Meshes[0].Radius : -1f;
-            var segments = count > 0 ? s_Meshes[0].SegmentsPerUnit : -1;
-            var faces = count > 0 ? s_Meshes[0].FaceCountPerSegment : -1;
+            var count = m_SelectedMeshes.Count;
+            var radius = count > 0 ? m_SelectedMeshes[0].Radius : -1f;
+            var segments = count > 0 ? m_SelectedMeshes[0].SegmentsPerUnit : -1;
+            var faces = count > 0 ? m_SelectedMeshes[0].FaceCountPerSegment : -1;
 
             for (int i = 1; i < count; ++i)
             {
-                isRadiusEqual = Mathf.Approximately(radius, s_Meshes[i].Radius);
-                isSegmentsEqual = Mathf.Approximately(segments, s_Meshes[i].SegmentsPerUnit);
-                isFacesEqual = Mathf.Approximately(faces, s_Meshes[i].FaceCountPerSegment);
+                isRadiusEqual = Mathf.Approximately(radius, m_SelectedMeshes[i].Radius);
+                isSegmentsEqual = Mathf.Approximately(segments, m_SelectedMeshes[i].SegmentsPerUnit);
+                isFacesEqual = Mathf.Approximately(faces, m_SelectedMeshes[i].FaceCountPerSegment);
             }
+
+            m_RadiusSliderAndFloatField.m_FloatField.showMixedValue = !isRadiusEqual;
+            m_SegmentSliderAndIntegerField.m_IntField.showMixedValue = !isSegmentsEqual;
+            m_FacesSliderAndIntegerField.m_IntField.showMixedValue = !isFacesEqual;
 
             if (isSegmentsEqual)
             {
@@ -168,10 +172,6 @@ namespace UnityEngine.ProBuilder
                 m_FacesSliderAndIntegerField.m_SliderInt.value = faces;
                 m_FacesSliderAndIntegerField.m_IntField.value = faces;
             }
-
-            m_RadiusSliderAndFloatField.m_FloatField.showMixedValue = !isRadiusEqual;
-            m_SegmentSliderAndIntegerField.m_IntField.showMixedValue = !isSegmentsEqual;
-            m_FacesSliderAndIntegerField.m_IntField.showMixedValue = !isFacesEqual;
         }
 
         public override void OnCreated()
