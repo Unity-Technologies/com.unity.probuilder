@@ -52,10 +52,5 @@
     "com.unity.settings-manager": "1.0.3",
     "com.unity.modules.physics": "1.0.0",
     "com.unity.modules.imgui": "1.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Unity-Technologies/com.unity.probuilder.git",
-    "revision": "9754fff959cb431b2161f8cab02162717c396446"
   }
 }
