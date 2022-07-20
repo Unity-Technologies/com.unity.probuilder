@@ -25,6 +25,37 @@ namespace UnityEngine.ProBuilder
             InvalidateCaches();
         }
 
+        void OnEnable()
+        {
+            if (m_Mesh == null)
+            {
+                mesh = mesh;
+            }
+            
+            Rebuild(false);
+
+            PrefabUtility.prefabInstanceUpdated += OnPrefabInstanceUpdated;
+        }
+
+        void OnDisable()
+        {
+            if (m_Mesh != null)
+            {
+                ProbuilderMeshDatabase.ReleaseMesh(m_MeshId);
+                mesh = null;
+            }
+
+            PrefabUtility.prefabInstanceUpdated -= OnPrefabInstanceUpdated;
+        }
+
+        void OnPrefabInstanceUpdated(GameObject go)
+        {
+            if (go.TryGetComponent(out ProBuilderMesh mesh))
+            {
+                mesh.Rebuild(false);
+            }
+        }
+
 #if ENABLE_DRIVEN_PROPERTIES
         // Using the internal callbacks here to avoid registering this component as "enable-able"
         void OnEnableINTERNAL()
@@ -124,10 +155,13 @@ namespace UnityEngine.ProBuilder
         /// Increments the mesh version's index. This helps ProBuilder track
         /// when the mesh changes.
         /// </summary>
-        void IncrementVersionIndex()
+        void IncrementVersionIndex(bool regenMeshId = false)
         {
             // it doesn't matter if the version index wraps. the important thing is that it is changed.
             unchecked { m_VersionIndex++; }
+
+            if (regenMeshId)
+                UpdateMeshId();
         }
 
         /// <summary>
@@ -303,9 +337,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Wraps <see cref="ToMesh"/> and <see cref="Refresh"/>.
         /// </summary>
-        internal void Rebuild()
+        internal void Rebuild(bool regenMeshId = true)
         {
-            ToMesh();
+            ToMesh(regenMeshId);
             Refresh();
         }
 
@@ -318,17 +352,15 @@ namespace UnityEngine.ProBuilder
         /// <param name="preferredTopology">You can specify MeshTopology.Quads if you don't want to use the default MeshTopology.Triangles. </param>
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
+            ToMesh(true, preferredTopology);
+        }
+
+        void ToMesh(bool regenMeshId, MeshTopology preferredTopology = MeshTopology.Triangles)
+        {
             bool usedInParticleSystem = false;
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
-            if (mesh == null)
-            {
-#if ENABLE_DRIVEN_PROPERTIES
-                SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
-#endif
-                mesh = new Mesh();
-            }
-            else if (mesh.vertexCount != vertexCount)
+            if (mesh.vertexCount != vertexCount)
             {
                 usedInParticleSystem = MeshUtility.IsUsedInParticleSystem(this);
                 mesh.Clear();
@@ -370,10 +402,10 @@ namespace UnityEngine.ProBuilder
 
             EnsureMeshFilterIsAssigned();
 
-            if(usedInParticleSystem)
+            if (usedInParticleSystem)
                 MeshUtility.RestoreParticleSystem(this);
 
-            IncrementVersionIndex();
+            IncrementVersionIndex(regenMeshId);
         }
 
         /// <summary>
@@ -382,9 +414,7 @@ namespace UnityEngine.ProBuilder
         internal void MakeUnique()
         {
             // set a new UnityEngine.Mesh instance
-            mesh = new Mesh();
-            ToMesh();
-            Refresh();
+            UpdateMeshId();
         }
 
         /// <summary>
@@ -446,7 +476,7 @@ namespace UnityEngine.ProBuilder
             if ((mask & RefreshMask.Bounds) > 0 && mesh != null)
                 mesh.RecalculateBounds();
 
-            IncrementVersionIndex();
+            IncrementVersionIndex(false);
         }
 
         internal void EnsureMeshColliderIsAssigned()

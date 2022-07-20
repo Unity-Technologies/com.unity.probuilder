@@ -226,7 +226,6 @@ namespace UnityEditor.ProBuilder
                         if (!meshesAreAssets || !(IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
                         {
                             // deep copy arrays & ToMesh/Refresh
-                            mesh.MakeUnique();
                             mesh.Optimize();
                         }
                     }

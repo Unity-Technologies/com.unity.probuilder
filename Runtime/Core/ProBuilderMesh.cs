@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder
         [SerializeField]
         internal string assetGuid;
 
-        [SerializeField]
+        [NonSerialized]
         Mesh m_Mesh;
 
         [NonSerialized]
@@ -178,6 +178,23 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         [SerializeField]
         ushort m_VersionIndex = 0;
+
+        [SerializeField]
+        string m_MeshId;
+
+        string GenerateNewMeshId()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        void UpdateMeshId()
+        {
+            ProbuilderMeshDatabase.ReleaseMesh(m_MeshId);
+            m_MeshId = GenerateNewMeshId();
+            mesh = ProbuilderMeshDatabase.GetOrCreateMesh(m_MeshId);
+            Rebuild(false);
+        }
+
         internal ushort versionIndex => m_VersionIndex;
 
         internal struct NonVersionedEditScope : IDisposable
@@ -243,6 +260,7 @@ namespace UnityEngine.ProBuilder
 
             return !missing;
         }
+
 
         internal Face[] facesInternal
         {
@@ -953,17 +971,28 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedVertices"/>
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
-
+        
         internal Mesh mesh
         {
             get
             {
                 if (m_Mesh == null && filter != null)
-                    m_Mesh = filter.sharedMesh;
+                {
+                    if (string.IsNullOrEmpty(m_MeshId))
+                        m_MeshId = GenerateNewMeshId();
+
+                    mesh = ProbuilderMeshDatabase.GetOrCreateMesh(m_MeshId);
+                }
+
                 return m_Mesh;
             }
 
-            set { m_Mesh = value; }
+            //TODO export is using this but it will cause issues with mesh database
+            set
+            {
+                m_Mesh = value;
+                filter.sharedMesh = value;
+            }
         }
 
         internal int id

@@ -12,7 +12,7 @@ namespace UnityEngine.ProBuilder
 
         static Dictionary<string, MeshCache> s_MeshCache = new Dictionary<string, MeshCache>();
 
-        public static Mesh GetOrCreateMesh(string id, ProBuilderMesh mesh)
+        public static Mesh GetOrCreateMesh(string id)
         {
             if (!s_MeshCache.TryGetValue(id, out MeshCache cache))
             {
@@ -21,7 +21,7 @@ namespace UnityEngine.ProBuilder
                     instanceCount = 1,
                     mesh = new Mesh()
                 };
-                PopulateMesh(mesh, cache.mesh);
+                s_MeshCache.Add(id, cache);
             }
             else
             {
@@ -30,21 +30,6 @@ namespace UnityEngine.ProBuilder
 
             return cache.mesh;
         }
-
-        static void PopulateMesh(ProBuilderMesh pbMesh, Mesh mesh)
-        {
-            mesh.Clear();
-            //Rebuild mesh
-        }
-
-        public static void UpdateMesh(string id, ProBuilderMesh mesh)
-        {
-            if (s_MeshCache.TryGetValue(id, out MeshCache cache))
-            {
-                PopulateMesh(mesh, cache.mesh);
-            }
-        }
-
         public static void ReleaseMesh(string id)
         {
             if (s_MeshCache.TryGetValue(id, out MeshCache cache))
