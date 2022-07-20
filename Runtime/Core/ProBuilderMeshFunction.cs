@@ -146,8 +146,12 @@ namespace UnityEngine.ProBuilder
             {
                 if (meshWillBeDestroyed != null)
                     meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+            }
+
+            if (m_Mesh != null)
+            {
+                ProbuilderMeshDatabase.ReleaseMesh(m_MeshId);
+                mesh = null;
             }
         }
 

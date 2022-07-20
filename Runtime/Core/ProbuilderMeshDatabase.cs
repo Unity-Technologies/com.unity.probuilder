@@ -37,8 +37,8 @@ namespace UnityEngine.ProBuilder
                 cache.instanceCount--;
                 if (cache.instanceCount <= 0)
                 {
-                    Object.DestroyImmediate(cache.mesh);
                     s_MeshCache.Remove(id);
+                    Object.DestroyImmediate(cache.mesh);
                 }
             }
         }

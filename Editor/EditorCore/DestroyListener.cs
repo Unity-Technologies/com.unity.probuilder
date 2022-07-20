@@ -43,19 +43,7 @@ namespace UnityEditor.ProBuilder
                         SelectionUtility.Remove(mesh);
                         AssetDatabase.DeleteAsset(cache_path);
                     }
-                    else
-                    {
-                        Object.DestroyImmediate(mesh.mesh);
-                    }
                 }
-            }
-            else
-            {
-                string path = AssetDatabase.GetAssetPath(mesh.mesh);
-
-                // If the pb_Object is backed by a Mesh asset don't destroy it.
-                if (string.IsNullOrEmpty(path))
-                    Object.DestroyImmediate(mesh.mesh);
             }
         }
     }
