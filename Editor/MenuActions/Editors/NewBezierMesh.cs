@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             GameObject go = new GameObject("New Bezier Mesh");
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
-
+            
             var bezier = go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.ExtrudeMesh();

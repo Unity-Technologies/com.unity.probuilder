@@ -3,35 +3,33 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine.Splines;
 
+
 namespace UnityEngine.ProBuilder
 {
     [RequireComponent(typeof(ProBuilderMesh))]
+    [RequireComponent(typeof(SplineContainer))]
     [ExecuteInEditMode]
-    public sealed class BezierMesh : MonoBehaviour, ISplineContainer
+    public sealed class BezierMesh : MonoBehaviour
     {
-        [SerializeField] private List<Splines.Spline> m_Splines;
+        SplineContainer m_SplineContainer;
 
-        // TODO: support multiple splines in the container
-        public IReadOnlyList<Splines.Spline> Splines
+        public SplineContainer _SplineContainer
         {
-            get => m_Splines;
+            get => m_SplineContainer;
             set
             {
                 if (value == null)
                 {
-                    m_Splines = new List<Splines.Spline>() { new Splines.Spline() };
+                    m_SplineContainer = GetComponent<SplineContainer>();
                     return;
                 }
 
-                // should I add to m_Spline, or clear previous content ?
-                foreach (var spline in value) m_Splines.Add(spline);
+                m_SplineContainer = value;
             }
         }
 
-        [SerializeField] public KnotLinkCollection m_Knots = new KnotLinkCollection();
-        public KnotLinkCollection KnotLinkCollection => m_Knots;
-
         ProBuilderMesh m_Mesh;
+
         public ProBuilderMesh mesh
         {
             get
@@ -87,16 +85,22 @@ namespace UnityEngine.ProBuilder
             float3 p1 = new float3(3f, 0f, 0f);
             float3 p2 = new float3(-3f, 0f, 0f);
 
-            m_Splines = new List<Splines.Spline>() { new Splines.Spline(), new Splines.Spline(), new Splines.Spline()};
 
-            m_Splines[0].Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
-            m_Splines[0].Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
+            List<Splines.Spline> splines = new List<Splines.Spline>()
+                { new Splines.Spline(), new Splines.Spline(), new Splines.Spline() };
 
-            m_Splines[1].Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
-            m_Splines[1].Add(new BezierKnot(p2, p2 + tan, p2 + -tan, Quaternion.identity));
+            m_SplineContainer = GetComponent<SplineContainer>();
+            // m_SplineContainer.Splines = splines;
+            m_SplineContainer.AddSpline();
 
-            m_Splines[2].Add(new BezierKnot(float3.zero, -tan, -tan, Quaternion.identity));
-            m_Splines[2].Add(new BezierKnot(-p2, -p2 + -tan, -p2 + tan, Quaternion.identity));
+            // m_SplineContainer.Splines[0].Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
+            // m_SplineContainer.Splines[0].Add(new BezierKnot(p1, p1 + tan, p1 + -tan, Quaternion.identity));
+            //
+            // m_SplineContainer.Splines[1].Add(new BezierKnot(float3.zero, -tan, tan, Quaternion.identity));
+            // m_SplineContainer.Splines[1].Add(new BezierKnot(p2, p2 + tan, p2 + -tan, Quaternion.identity));
+            //
+            // m_SplineContainer.Splines[2].Add(new BezierKnot(float3.zero, -tan, -tan, Quaternion.identity));
+            // m_SplineContainer.Splines[2].Add(new BezierKnot(-p2, -p2 + -tan, -p2 + tan, Quaternion.identity));
         }
 
         public void ExtrudeMesh()
@@ -104,20 +108,20 @@ namespace UnityEngine.ProBuilder
             if (mesh == null)
                 throw new ArgumentNullException("mesh");
 
-            if (Splines == null)
+            if (m_SplineContainer == null)
                 InitSpline();
 
             List<Vector3> vertexPositions = new List<Vector3>();
             List<Face> faces = new List<Face>();
             var vertexIndex = 0;
 
-            foreach (var spline in m_Splines)
+            foreach (var spline in m_SplineContainer.Splines)
             {
-                if(vertexIndex > 0)
+                if (vertexIndex > 0)
                     vertexIndex += FaceCountPerSegment;
 
                 var t = 0f;
-                var segmentsCount = (int) spline.GetLength() * m_SegmentsPerUnit;
+                var segmentsCount = (int)spline.GetLength() * m_SegmentsPerUnit;
 
                 // define the positions of each segment, and the vertex positions at each segment
                 for (int i = 0; i < segmentsCount + 1; i++)
@@ -176,12 +180,12 @@ namespace UnityEngine.ProBuilder
 
         void OnEnable()
         {
-            UnityEngine.Splines.Spline.Changed += UpdateMesh;
+            Splines.Spline.Changed += UpdateMesh;
         }
 
         void OnDisable()
         {
-            UnityEngine.Splines.Spline.Changed -= UpdateMesh;
+            Splines.Spline.Changed -= UpdateMesh;
         }
 
         public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
