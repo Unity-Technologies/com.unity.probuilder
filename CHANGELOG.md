@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+### Features
+
+- Added a `New Bezier Mesh` tool that allows users to create a spline(s) and have a `ProbuilderMesh` extruded along the spline(s).
+
 
 ## [5.0.6] - 2022-06-30
 
