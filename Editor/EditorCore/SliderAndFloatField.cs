@@ -2,7 +2,11 @@ using UnityEngine.UIElements;
 
 namespace UnityEngine.ProBuilder
 {
-    public class SliderAndFloatField : VisualElement
+    /// <summary>
+    ///  A custom <see cref="VisualElement"/> implementation that houses an <see cref="Slider"/> and
+    /// <see cref="IntegerField"/>. Used in <see cref="BezierMeshTransientOverlay"/> to display parameters.
+    /// </summary>
+    sealed class SliderAndFloatField : VisualElement
     {
         public Slider m_Slider;
         public FloatField m_FloatField;

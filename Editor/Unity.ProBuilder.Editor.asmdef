@@ -8,7 +8,8 @@
         "Unity.Settings.Editor",
         "Unity.ProBuilder.Csg",
         "Unity.Splines",
-        "Unity.Mathematics"
+        "Unity.Mathematics",
+        "Unity.Splines.Editor"
     ],
     "includePlatforms": [
         "Editor"

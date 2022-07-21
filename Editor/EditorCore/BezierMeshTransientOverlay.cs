@@ -3,14 +3,14 @@ using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditor.Overlays;
 
-// TODO: add documentation
 namespace UnityEngine.ProBuilder
 {
-    // TODO: skip on the attribute, instantiate it in BezierMeshEditor -> ping @karl for more info on this
-    [Overlay(typeof(SceneView), overlayID, "Bezier Mesh Overlay")]
-    public class BezierMeshTransientOverlay : Overlay, ITransientOverlay
+    /// <summary>
+    /// An overlay that is responsible of displaying the parameters of the <see cref="BezierMesh"/> it is linked to.
+    /// </summary>
+    sealed class BezierMeshTransientOverlay : Overlay, ITransientOverlay
     {
-        private const string overlayID = "Bezier Mesh Overlay";
+        private const string k_OverlayName = "Bezier Mesh Inspector";
         private List<BezierMesh> m_SelectedMeshes;
 
         private SliderAndIntegerField m_SegmentSliderAndIntegerField;
@@ -27,6 +27,7 @@ namespace UnityEngine.ProBuilder
 
         public BezierMeshTransientOverlay()
         {
+            displayName = k_OverlayName;
             m_SelectedMeshes = new List<BezierMesh>();
             InitSliderAndInputFields();
         }
@@ -50,6 +51,10 @@ namespace UnityEngine.ProBuilder
             return root;
         }
 
+        /// <summary>
+        /// Initializes the slider and input fields, as well as registering to the callbacks to update their respective
+        /// parameters in the <see cref="BezierMesh"/> that they are linked to.
+        /// </summary>
         void InitSliderAndInputFields()
         {
             m_SegmentSliderAndIntegerField = new SliderAndIntegerField("Segments per Unit", BezierMesh.k_SegmentsMin,
@@ -77,42 +82,10 @@ namespace UnityEngine.ProBuilder
             m_FacesSliderAndIntegerField.m_IntField.RegisterValueChangedCallback(evt => UpdateMeshFaces());
         }
 
-        void UpdateMeshFaces()
-        {
-            foreach (var mesh in m_SelectedMeshes)
-            {
-#if UNITY_EDITOR
-                Undo.RecordObject(mesh, "Bezier Mesh Faces Updated");
-#endif
-                mesh.FaceCountPerSegment = m_FacesSliderAndIntegerField.m_IntField.value;
-                mesh.ExtrudeMesh();
-            }
-        }
-
-        void UpdateMeshSegments()
-        {
-            foreach (var mesh in m_SelectedMeshes)
-            {
-#if UNITY_EDITOR
-                Undo.RecordObject(mesh, "Bezier Mesh Segments per Unit Count Updated");
-#endif
-                mesh.SegmentsPerUnit = m_SegmentSliderAndIntegerField.m_IntField.value;
-                mesh.ExtrudeMesh();
-            }
-        }
-
-        void UpdateMeshRadius()
-        {
-            foreach (var mesh in m_SelectedMeshes)
-            {
-#if UNITY_EDITOR
-                Undo.RecordObject(mesh, "Bezier Mesh Radius Updated");
-#endif
-                mesh.Radius = m_RadiusSliderAndFloatField.m_FloatField.value;
-                mesh.ExtrudeMesh();
-            }
-        }
-
+        /// <summary>
+        /// Updated the visibility of the overlay based on if at least one GameObject with a <see cref="BezierMesh"/>
+        /// is currently selected.
+        /// </summary>
         void OnSelectionChanged()
         {
             var hasBezierMesh = false;
@@ -136,6 +109,10 @@ namespace UnityEngine.ProBuilder
             SetParameterValues();
         }
 
+        /// <summary>
+        /// Handles setting the parameters in the overlay to the selected Bezier Meshes' values if they are all equal,
+        /// otherwise blanks out the parameters that aren't equal.
+        /// </summary>
         void SetParameterValues()
         {
             bool isRadiusEqual = true, isSegmentsEqual = true, isFacesEqual = true;
@@ -171,6 +148,42 @@ namespace UnityEngine.ProBuilder
             {
                 m_FacesSliderAndIntegerField.m_SliderInt.value = faces;
                 m_FacesSliderAndIntegerField.m_IntField.value = faces;
+            }
+        }
+
+        void UpdateMeshFaces()
+        {
+            foreach (var mesh in m_SelectedMeshes)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Faces Updated");
+#endif
+                mesh.FaceCountPerSegment = m_FacesSliderAndIntegerField.m_IntField.value;
+                mesh.ExtrudeMesh();
+            }
+        }
+
+        void UpdateMeshSegments()
+        {
+            foreach (var mesh in m_SelectedMeshes)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Segments per Unit Count Updated");
+#endif
+                mesh.SegmentsPerUnit = m_SegmentSliderAndIntegerField.m_IntField.value;
+                mesh.ExtrudeMesh();
+            }
+        }
+
+        void UpdateMeshRadius()
+        {
+            foreach (var mesh in m_SelectedMeshes)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(mesh, "Bezier Mesh Radius Updated");
+#endif
+                mesh.Radius = m_RadiusSliderAndFloatField.m_FloatField.value;
+                mesh.ExtrudeMesh();
             }
         }
 
