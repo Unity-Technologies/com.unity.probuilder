@@ -21,8 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            // TODO: investigate IconSkin.Pro
-            get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); }
+            get { return IconUtility.GetIcon(k_IconPath); }
         }
 
         public override TooltipContent tooltip
