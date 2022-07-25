@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.Splines;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -8,17 +10,35 @@ namespace UnityEditor.ProBuilder
     [CanEditMultipleObjects]
     sealed class BezierMeshEditor : Editor
     {
-        private BezierMeshTransientOverlay m_overlay;
+        BezierMeshOverlay m_Overlay;
+        List<BezierMesh> m_SelectedMeshes;
+        bool m_isOverlayVisible;
+
+        void BuildSelection()
+        {
+            m_SelectedMeshes = new List<BezierMesh>();
+
+            foreach (var obj in Selection.gameObjects)
+            {
+                if (obj.TryGetComponent(out BezierMesh mesh))
+                {
+                    m_SelectedMeshes.Add(mesh);
+                }
+            }
+
+            m_isOverlayVisible = m_SelectedMeshes.Count > 0;
+        }
 
         void OnEnable()
         {
-            SceneView.AddOverlayToActiveView(m_overlay = new BezierMeshTransientOverlay());
+            BuildSelection();
+            SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_isOverlayVisible));
             BezierMesh.BezierMeshModified += RefreshEditor;
         }
 
         void OnDisable()
         {
-            SceneView.RemoveOverlayFromActiveView(m_overlay);
+            SceneView.RemoveOverlayFromActiveView(m_Overlay);
             BezierMesh.BezierMeshModified -= RefreshEditor;
         }
 

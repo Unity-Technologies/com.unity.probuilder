@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
     sealed class BezierMesh : MonoBehaviour
     {
         SplineContainer m_SplineContainer;
-        public SplineContainer _SplineContainer
+        public SplineContainer splineContainer
         {
             get => m_SplineContainer;
             set
@@ -56,19 +56,19 @@ namespace UnityEngine.ProBuilder
         [SerializeField] [Range(k_FacesMin, k_FacesMax)]
         int m_FaceCountPerSegment = 8;
 
-        public int SegmentsPerUnit
+        public int segmentsPerUnit
         {
             get => m_SegmentsPerUnit;
             set => m_SegmentsPerUnit = Math.Clamp(value, k_SegmentsMin, k_SegmentsMax);
         }
 
-        public float Radius
+        public float radius
         {
             get => m_Radius;
             set => m_Radius = Mathf.Clamp(value, k_RadiusMin, k_RadiusMax);
         }
 
-        public int FaceCountPerSegment
+        public int faceCountPerSegment
         {
             get => m_FaceCountPerSegment;
             set => m_FaceCountPerSegment = Mathf.Clamp(value, k_FacesMin, k_FacesMax);
@@ -83,22 +83,22 @@ namespace UnityEngine.ProBuilder
         public void ExtrudeMesh()
         {
             if (mesh == null)
-                throw new ArgumentNullException("mesh");
+                throw new ArgumentNullException(nameof(mesh));
 
-            if (m_SplineContainer == null)
-                m_SplineContainer = GetComponent<SplineContainer>();
+            if (splineContainer == null)
+                splineContainer = GetComponent<SplineContainer>();
 
             List<Vector3> vertexPositions = new List<Vector3>();
             List<Face> faces = new List<Face>();
             var vertexIndex = 0;
 
-            foreach (var spline in m_SplineContainer.Splines)
+            foreach (var spline in splineContainer.Splines)
             {
                 if (spline.Knots.Count() < 2)
                     continue;
 
                 if (vertexIndex > 0)
-                    vertexIndex += FaceCountPerSegment;
+                    vertexIndex += faceCountPerSegment;
 
                 var t = 0f;
                 var segmentsCount = (int)spline.GetLength() * m_SegmentsPerUnit;

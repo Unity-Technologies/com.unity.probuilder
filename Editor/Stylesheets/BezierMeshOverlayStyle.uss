@@ -6,7 +6,7 @@
 
 .slider-and-input-field .unity-base-slider
 {
-    width: 250px;
+    width: 300px;
 }
 
 .slider-and-input-field .unity-base-text-field
