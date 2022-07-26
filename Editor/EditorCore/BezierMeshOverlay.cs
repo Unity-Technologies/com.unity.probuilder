@@ -1,3 +1,5 @@
+//#if USING_SPLINES
+
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 using UnityEditor;
@@ -112,7 +114,6 @@ namespace UnityEngine.ProBuilder
                 isFacesEqual = Mathf.Approximately(faces, m_SelectedMeshes[i].faceCountPerSegment);
             }
 
-            // sort out bug here
             m_RadiusFloatSlider.slider.showMixedValue = !isRadiusEqual;
             m_SegmentIntSlider.slider.showMixedValue = !isSegmentsEqual;
             m_FacesIntSlider.slider.showMixedValue = !isFacesEqual;
@@ -178,3 +179,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+//#endif

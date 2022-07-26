@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
             MeshSelection.OnObjectSelectionChanged();
         }
-        
+
         public static void Strip(ProBuilderMesh[] all)
         {
             for (int i = 0; i < all.Length; i++)
@@ -135,6 +135,7 @@ namespace UnityEditor.ProBuilder.Actions
                     DestroyImmediate(bezierShape);
             }
 
+//#if USING_SPLINES
             if (go.TryGetComponent(out BezierMesh bezierMesh))
             {
                 if(useUndoDestroy)
@@ -142,6 +143,7 @@ namespace UnityEditor.ProBuilder.Actions
                 else
                     DestroyImmediate(bezierMesh);
             }
+//#endif
 
             if (go.TryGetComponent(out ProBuilderShape shape))
             {

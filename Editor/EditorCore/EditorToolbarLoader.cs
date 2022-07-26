@@ -44,7 +44,9 @@ namespace UnityEditor.ProBuilder
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
                 new Actions.OpenSmoothingEditor(),
+//#if USING_SPLINES
                 new Actions.NewBezierMesh(),
+//#endif
 
                 new Actions.ToggleSelectBackFaces(),
                 new Actions.ToggleHandleOrientation(),

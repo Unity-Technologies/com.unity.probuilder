@@ -1,3 +1,5 @@
+//#if USING_SPLINES
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -174,3 +176,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+//#endif

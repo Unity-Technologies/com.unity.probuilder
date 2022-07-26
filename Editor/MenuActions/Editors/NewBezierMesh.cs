@@ -1,3 +1,5 @@
+//#if USING_SPLINES
+
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -11,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
             "New Bezier Mesh",
-            "Create a new shape that is built by extruding along a Splines package Spline."
+            "Create a new shape that is built by extruding along a Spline."
         );
 
         public override ToolbarGroup group
@@ -66,3 +68,4 @@ namespace UnityEditor.ProBuilder.Actions
         }
     }
 }
+//#endif

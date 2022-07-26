@@ -29,7 +29,7 @@ public class StripProBuilderScriptsTest
     }
 
     [Test]
-    public void StripProBuilderScripts_RemovesMeshAndBezierComponents()
+    public void StripProBuilderScripts_RemovesMeshAndBezierShapeComponents()
     {
         var go = new GameObject();
         go.AddComponent<ProBuilderMesh>();
@@ -44,6 +44,25 @@ public class StripProBuilderScriptsTest
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
         Assert.That(go.GetComponent<BezierShape>() == null);
+
+        UObject.DestroyImmediate(go);
+    }
+
+    [Test]
+    public void StripProBuilderScripts_RemovesMeshAndBezierMeshComponents()
+    {
+        var go = new GameObject();
+        go.AddComponent<ProBuilderMesh>();
+        var bezier = go.AddComponent<BezierMesh>();
+        bezier.ExtrudeMesh();
+
+        Assume.That(go.GetComponent<ProBuilderMesh>() != null);
+        Assume.That(go.GetComponent<BezierMesh>() != null);
+
+        StripProBuilderScripts.DoStrip(go.GetComponent<ProBuilderMesh>());
+
+        Assert.That(go.GetComponent<ProBuilderMesh>() == null);
+        Assert.That(go.GetComponent<BezierMesh>() == null);
 
         UObject.DestroyImmediate(go);
     }

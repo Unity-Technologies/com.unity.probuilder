@@ -1,3 +1,5 @@
+//#if USING_SPLINES
+
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.Splines;
@@ -33,18 +35,13 @@ namespace UnityEditor.ProBuilder
         {
             BuildSelection();
             SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_isOverlayVisible));
-            BezierMesh.BezierMeshModified += RefreshEditor;
+            BezierMesh.BezierMeshModified += () => ProBuilderEditor.Refresh();
         }
 
         void OnDisable()
         {
             SceneView.RemoveOverlayFromActiveView(m_Overlay);
-            BezierMesh.BezierMeshModified -= RefreshEditor;
-        }
-
-        void RefreshEditor()
-        {
-            ProBuilderEditor.Refresh();
+            BezierMesh.BezierMeshModified -= () => ProBuilderEditor.Refresh();
         }
 
         /// <summary>
@@ -58,3 +55,4 @@ namespace UnityEditor.ProBuilder
         }
     }
 }
+//#endif

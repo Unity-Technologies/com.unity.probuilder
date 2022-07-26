@@ -25,6 +25,11 @@
             "name": "com.unity.modules.particlesystem",
             "expression": "1.0.0",
             "define": "USING_PARTICLE_SYSTEM"
+        },
+        {
+            "name": "com.unity.splines",
+            "expression": "2.0.0",
+            "define": "USING_SPLINES"
         }
     ],
     "noEngineReferences": false
