@@ -55,14 +55,11 @@ namespace UnityEditor.ProBuilder.Actions
         {
             GameObject go = new GameObject("New Bezier Mesh");
             UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Mesh");
-
-            var bezier = go.AddComponent<BezierMesh>();
+            go.AddComponent<BezierMesh>();
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-            bezier.ExtrudeMesh();
             Selection.activeObject = go;
 
             EditorApplication.delayCall += BezierMeshEditor.SetSplineToolContext;
-            //BezierMeshEditor.SetSplineToolContext();
 
             return new ActionResult(ActionResult.Status.Success, "Created Bezier Mesh using Splines");
         }

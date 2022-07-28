@@ -10,7 +10,8 @@
         "Unity.PerformanceTesting",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Unity.ProBuilder.Csg"
+        "Unity.ProBuilder.Csg",
+        "Unity.Splines"
     ],
     "includePlatforms": [
         "Editor"

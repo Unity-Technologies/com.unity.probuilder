@@ -13,6 +13,7 @@ namespace UnityEngine.ProBuilder
     sealed class BezierMesh : MonoBehaviour
     {
         SplineContainer m_SplineContainer;
+
         public SplineContainer splineContainer
         {
             get => m_SplineContainer;
@@ -29,6 +30,7 @@ namespace UnityEngine.ProBuilder
         }
 
         ProBuilderMesh m_Mesh;
+
         public ProBuilderMesh mesh
         {
             get
@@ -172,7 +174,8 @@ namespace UnityEngine.ProBuilder
 
         public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
         {
-            ExtrudeMesh();
+            if(splineContainer.Splines.Contains(spline))
+                ExtrudeMesh();
         }
     }
 }

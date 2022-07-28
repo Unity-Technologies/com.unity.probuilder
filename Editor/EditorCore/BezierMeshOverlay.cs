@@ -119,19 +119,13 @@ namespace UnityEngine.ProBuilder
             m_FacesIntSlider.slider.showMixedValue = !isFacesEqual;
 
             if (isSegmentsEqual)
-            {
-                m_SegmentIntSlider.slider.value = segments;
-            }
+                m_SegmentIntSlider.slider.SetValueWithoutNotify(segments);
 
             if (isRadiusEqual)
-            {
-                m_RadiusFloatSlider.slider.value = radius;
-            }
+                m_RadiusFloatSlider.slider.SetValueWithoutNotify(radius);
 
             if (isFacesEqual)
-            {
-                m_FacesIntSlider.slider.value = faces;
-            }
+                m_FacesIntSlider.slider.SetValueWithoutNotify(faces);
         }
 
         void UpdateMeshFaces()

@@ -1,13 +1,25 @@
 {
     "name": "Unity.ProBuilder.Tests",
+    "rootNamespace": "",
     "references": [
         "Unity.ProBuilder",
-        "Unity.ProBuilder.Tests.Framework"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Unity.ProBuilder.Tests.Framework",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.Splines",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
