@@ -1,4 +1,4 @@
-//#if USING_SPLINES
+#if USING_SPLINES
 
 using UnityEditor.EditorTools;
 using UnityEngine;
@@ -65,4 +65,4 @@ namespace UnityEditor.ProBuilder.Actions
         }
     }
 }
-//#endif
+#endif

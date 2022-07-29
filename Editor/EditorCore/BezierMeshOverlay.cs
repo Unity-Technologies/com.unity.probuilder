@@ -1,4 +1,4 @@
-//#if USING_SPLINES
+#if USING_SPLINES
 
 using System.Collections.Generic;
 using UnityEngine.UIElements;
@@ -173,4 +173,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
-//#endif
+#endif

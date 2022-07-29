@@ -38,15 +38,15 @@ namespace UnityEditor.ProBuilder
             {
                 // tools
                 new Actions.NewShapeToggle(),
-                new Actions.NewBezierShape(),
+#if USING_SPLINES
+                new Actions.NewBezierMesh(),
+#endif
                 new Actions.NewPolyShapeToggle(),
                 new Actions.OpenMaterialEditor(),
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
                 new Actions.OpenSmoothingEditor(),
-//#if USING_SPLINES
-                new Actions.NewBezierMesh(),
-//#endif
+
 
                 new Actions.ToggleSelectBackFaces(),
                 new Actions.ToggleHandleOrientation(),

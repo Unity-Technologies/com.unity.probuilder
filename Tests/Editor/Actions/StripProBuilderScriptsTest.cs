@@ -28,26 +28,7 @@ public class StripProBuilderScriptsTest
         UObject.DestroyImmediate(go);
     }
 
-    [Test]
-    public void StripProBuilderScripts_RemovesMeshAndBezierShapeComponents()
-    {
-        var go = new GameObject();
-        go.AddComponent<ProBuilderMesh>();
-        var bezier = go.AddComponent<BezierShape>();
-        bezier.Init();
-        bezier.Refresh();
-
-        Assume.That(go.GetComponent<ProBuilderMesh>() != null);
-        Assume.That(go.GetComponent<BezierShape>() != null);
-
-        StripProBuilderScripts.DoStrip(go.GetComponent<ProBuilderMesh>());
-
-        Assert.That(go.GetComponent<ProBuilderMesh>() == null);
-        Assert.That(go.GetComponent<BezierShape>() == null);
-
-        UObject.DestroyImmediate(go);
-    }
-
+#if USING_SPLINES
     [Test]
     public void StripProBuilderScripts_RemovesMeshAndBezierMeshComponents()
     {
@@ -66,6 +47,7 @@ public class StripProBuilderScriptsTest
 
         UObject.DestroyImmediate(go);
     }
+#endif
 
     [Test]
     public void StripProBuilderScripts_RemovesMeshAndShapeComponents()

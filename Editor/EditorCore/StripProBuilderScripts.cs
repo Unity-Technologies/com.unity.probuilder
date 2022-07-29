@@ -127,15 +127,7 @@ namespace UnityEditor.ProBuilder.Actions
                     DestroyImmediate(polyShape);
             }
 
-            if (go.TryGetComponent(out BezierShape bezierShape))
-            {
-                if(useUndoDestroy)
-                    Undo.DestroyObjectImmediate(bezierShape);
-                else
-                    DestroyImmediate(bezierShape);
-            }
-
-//#if USING_SPLINES
+#if USING_SPLINES
             if (go.TryGetComponent(out BezierMesh bezierMesh))
             {
                 if(useUndoDestroy)
@@ -143,7 +135,7 @@ namespace UnityEditor.ProBuilder.Actions
                 else
                     DestroyImmediate(bezierMesh);
             }
-//#endif
+#endif
 
             if (go.TryGetComponent(out ProBuilderShape shape))
             {
