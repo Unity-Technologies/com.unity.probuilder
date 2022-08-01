@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class NewBezierMesh : MenuAction
     {
-        const string k_IconPath = "Toolbar/NewBezierSpline";
+        const string k_IconPath = "Toolbar/NewBezierMesh";
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return Experimental.experimentalFeaturesEnabled && ProBuilderEditor.instance != null; }
+            get { ProBuilderEditor.instance != null; }
         }
 
         public override SelectMode validSelectModes
