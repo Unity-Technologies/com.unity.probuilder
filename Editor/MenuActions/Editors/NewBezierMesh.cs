@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { ProBuilderEditor.instance != null; }
+            get { return ProBuilderEditor.instance != null; }
         }
 
         public override SelectMode validSelectModes
