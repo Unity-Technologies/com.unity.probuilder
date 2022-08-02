@@ -10,6 +10,9 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// An overlay that is responsible of displaying the parameters of the <see cref="BezierMesh"/> it is linked to.
     /// </summary>
+#if !(UNITY_2022_2_OR_NEWER)
+    [Overlay(typeof(SceneView), k_OverlayName, k_OverlayName)]
+#endif
     sealed class BezierMeshOverlay : Overlay, ITransientOverlay
     {
         const string k_OverlayName = "Bezier Mesh Inspector";
@@ -26,6 +29,13 @@ namespace UnityEngine.ProBuilder
 
         bool m_Visible;
         public bool visible => m_Visible;
+
+        public BezierMeshOverlay()
+        {
+            m_SelectedMeshes = new List<BezierMesh>();
+            displayName = k_OverlayName;
+            InitSliderAndInputFields();
+        }
 
         public BezierMeshOverlay(List<BezierMesh> meshes, bool isVisible)
         {
@@ -88,6 +98,21 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         void OnSelectionChanged()
         {
+#if !UNITY_2022_2_OR_NEWER
+            var hasBezierMesh = false;
+            m_SelectedMeshes.Clear();
+            foreach (var selected in Selection.gameObjects)
+            {
+                if (selected.TryGetComponent(out BezierMesh mesh))
+                {
+                    m_SelectedMeshes.Add(mesh);
+                    hasBezierMesh = true;
+                }
+            }
+
+            m_Visible = hasBezierMesh;
+#endif
+
             if (m_FacesIntSlider == null || m_RadiusFloatSlider == null ||
                 m_SegmentIntSlider == null || m_SelectedMeshes.Count == 0)
                 return;
