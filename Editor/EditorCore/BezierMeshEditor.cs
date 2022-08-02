@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             BuildSelection();
-#if UNITY_2022_2_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
             SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_isOverlayVisible));
 #endif
             BezierMesh.BezierMeshModified += () => ProBuilderEditor.Refresh();
@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-#if UNITY_2022_2_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
             SceneView.RemoveOverlayFromActiveView(m_Overlay);
 #endif
             BezierMesh.BezierMeshModified -= () => ProBuilderEditor.Refresh();

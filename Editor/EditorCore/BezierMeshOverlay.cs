@@ -10,7 +10,7 @@ namespace UnityEngine.ProBuilder
     /// <summary>
     /// An overlay that is responsible of displaying the parameters of the <see cref="BezierMesh"/> it is linked to.
     /// </summary>
-#if !(UNITY_2022_2_OR_NEWER)
+#if !UNITY_2022_1_OR_NEWER
     [Overlay(typeof(SceneView), k_OverlayName, k_OverlayName)]
 #endif
     sealed class BezierMeshOverlay : Overlay, ITransientOverlay
@@ -98,7 +98,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         void OnSelectionChanged()
         {
-#if !UNITY_2022_2_OR_NEWER
+#if !UNITY_2022_1_OR_NEWER
             var hasBezierMesh = false;
             m_SelectedMeshes.Clear();
             foreach (var selected in Selection.gameObjects)
