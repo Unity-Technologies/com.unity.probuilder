@@ -93,7 +93,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Updated the visibility of the overlay based on if at least one GameObject with a <see cref="BezierMesh"/>
+        /// Updates the visibility of the overlay if at least one GameObject with a <see cref="BezierMesh"/>
         /// is currently selected.
         /// </summary>
         void OnSelectionChanged()
