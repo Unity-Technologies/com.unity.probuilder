@@ -51,13 +51,16 @@ namespace UnityEngine.ProBuilder
         public const int k_SegmentsMin = 1;
         public const int k_SegmentsMax = 32;
 
-        [SerializeField] [Range(k_SegmentsMin, k_SegmentsMax)]
+        [SerializeField, Tooltip("Number of length-wise segments of the mesh per unit length")]
+        [Range(k_SegmentsMin, k_SegmentsMax)]
         int m_SegmentsPerUnit = 2;
 
-        [SerializeField] [Range(k_RadiusMin, k_RadiusMax)]
+        [SerializeField, Tooltip("The distance of the mesh from the center of the spline")]
+        [Range(k_RadiusMin, k_RadiusMax)]
         float m_Radius = 0.5f;
 
-        [SerializeField] [Range(k_FacesMin, k_FacesMax)]
+        [SerializeField, Tooltip("The number of faces around the bezier mesh at each segment")]
+        [Range(k_FacesMin, k_FacesMax)]
         int m_FaceCountPerSegment = 8;
 
         public int segmentsPerUnit
@@ -174,7 +177,7 @@ namespace UnityEngine.ProBuilder
 
         public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
         {
-            if(splineContainer.Splines.Contains(spline))
+            if (splineContainer.Splines.Contains(spline))
                 ExtrudeMesh();
         }
     }
