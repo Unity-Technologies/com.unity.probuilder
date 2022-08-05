@@ -45,22 +45,21 @@ class BezierMeshTests
 
         var newKnot = new BezierKnot(new float3(6f, 0f, 0f));
         m_Mesh.splineContainer.Splines[0].Add(newKnot);
+
+        Assert.That(m_Mesh.splineContainer.Splines[0].Knots.Count(), Is.EqualTo(3));
+
         var vertices = m_Mesh.mesh.GetVertices();
+        var vertexCountAtPosition = 0;
 
-        var isVertexAtExpectedPosition = false;
-
-        // If a knot is added at x = 6f, and the mesh is extruded, then we expect to have at least one vertex at that position
+        // If a knot is added at x = 6f and the mesh is extruded, then we expect to have n number of vertices at
+        // x = 6f, where n is the number of faces per segment on the mesh
         foreach (var vertex in vertices)
         {
             if (Mathf.Approximately(vertex.position.x, 6f))
-            {
-                isVertexAtExpectedPosition = true;
-                break;
-            }
+                vertexCountAtPosition++;
         }
 
-        Assert.That(m_Mesh.splineContainer.Splines[0].Knots.Count(), Is.EqualTo(3));
-        Assert.That(isVertexAtExpectedPosition, Is.True);
+        Assert.That(m_Mesh.faceCountPerSegment, Is.EqualTo(vertexCountAtPosition));
     }
 
     [Test]
@@ -92,12 +91,12 @@ class BezierMeshTests
 
         Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
 
-        var newSegmentsPerUnit = m_Mesh.segmentsPerUnit = 2;
+        segmentsPerUnit = m_Mesh.segmentsPerUnit = 2;
         m_Mesh.ExtrudeMesh();
-        var newExpectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * newSegmentsPerUnit *
+        expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * segmentsPerUnit *
             m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
-        Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(newExpectedVertexCount));
+        Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
     }
 
     [Test]
@@ -113,11 +112,11 @@ class BezierMeshTests
 
         m_Mesh.faceCountPerSegment = 10;
         m_Mesh.ExtrudeMesh();
-        var newTotalSegmentCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit;
-        var newFaceCount = m_Mesh.faceCountPerSegment * totalSegmentCount;
-        var newExpectedFaceCount = m_Mesh.faceCountPerSegment * newTotalSegmentCount;
+        totalSegmentCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit;
+        faceCount = m_Mesh.faceCountPerSegment * totalSegmentCount;
+        expectedFaceCount = m_Mesh.faceCountPerSegment * totalSegmentCount;
 
-        Assert.That(newFaceCount, Is.EqualTo(newExpectedFaceCount));
+        Assert.That(faceCount, Is.EqualTo(expectedFaceCount));
     }
 
     [Test]
@@ -165,9 +164,13 @@ class BezierMeshTests
         var isVertexFoundAtP3 = false;
         var isVertexFoundAtP4 = false;
 
+        // Debug.Log(vertices.Length);
+        // Assert.That(Mathf.Approximately(vertices[0].position.x, p1.x), Is.True);
+
         foreach (var vertex in vertices)
         {
             var pos = vertex.position;
+
 
             if (Mathf.Approximately(pos.x, p1.x))
                 isVertexFoundAtP1 = true;

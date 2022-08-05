@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder
 {
     [CustomEditor(typeof(BezierMesh))]
     [CanEditMultipleObjects]
-    sealed class BezierMeshEditor : Editor
+    class BezierMeshEditor : Editor
     {
         BezierMeshOverlay m_Overlay;
         List<BezierMesh> m_SelectedMeshes;

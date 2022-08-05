@@ -13,14 +13,15 @@ namespace UnityEngine.ProBuilder
 #if !UNITY_2022_1_OR_NEWER
     [Overlay(typeof(SceneView), k_OverlayName, k_OverlayName)]
 #endif
-    sealed class BezierMeshOverlay : Overlay, ITransientOverlay
+    class BezierMeshOverlay : Overlay, ITransientOverlay
     {
         const string k_OverlayName = "Bezier Mesh Inspector";
         List<BezierMesh> m_SelectedMeshes;
 
-        IntSlider m_SegmentIntSlider;
-        FloatSlider m_RadiusFloatSlider;
-        IntSlider m_FacesIntSlider;
+        SliderInt m_SegmentsSlider;
+        Slider m_RadiusSlider;
+        SliderInt m_FacesSlider;
+        private const string k_SliderStyle = "slider-and-input-field";
 
         static StyleSheet s_StyleSheet;
 
@@ -57,9 +58,9 @@ namespace UnityEngine.ProBuilder
 
             root.styleSheets.Add(s_StyleSheet);
 
-            root.Add(m_SegmentIntSlider);
-            root.Add(m_RadiusFloatSlider);
-            root.Add(m_FacesIntSlider);
+            root.Add(m_SegmentsSlider);
+            root.Add(m_RadiusSlider);
+            root.Add(m_FacesSlider);
 
             return root;
         }
@@ -70,26 +71,35 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         void InitSliderAndInputFields()
         {
-            m_SegmentIntSlider = new IntSlider("Segments per Unit", BezierMesh.k_SegmentsMin,
+            m_SegmentsSlider = new SliderInt("Segments per Unit", BezierMesh.k_SegmentsMin,
                 BezierMesh.k_SegmentsMax)
             {
-                tooltip = L10n.Tr("Number of length-wise segments of the mesh per unit length")
+                tooltip = L10n.Tr("Number of length-wise segments of the mesh per unit length"),
+                showInputField = true,
+                value = BezierMesh.k_SegmentsMin
             };
-            m_SegmentIntSlider.slider.RegisterValueChangedCallback(evt => UpdateMeshSegments());
+            m_SegmentsSlider.AddToClassList(k_SliderStyle);
+            m_SegmentsSlider.RegisterValueChangedCallback(evt => UpdateMeshSegments());
 
-            m_RadiusFloatSlider =
-                new FloatSlider("Radius", BezierMesh.k_RadiusMin, BezierMesh.k_RadiusMax)
+            m_RadiusSlider =
+                new Slider("Radius", BezierMesh.k_RadiusMin, BezierMesh.k_RadiusMax)
                 {
-                    tooltip = L10n.Tr("The distance of the mesh from the center of the spline")
+                    tooltip = L10n.Tr("The distance of the mesh from the center of the spline"),
+                    showInputField = true,
+                    value = BezierMesh.k_RadiusMin
                 };
-            m_RadiusFloatSlider.slider.RegisterValueChangedCallback(evt => UpdateMeshRadius());
+            m_RadiusSlider.AddToClassList(k_SliderStyle);
+            m_RadiusSlider.RegisterValueChangedCallback(evt => UpdateMeshRadius());
 
-            m_FacesIntSlider =
-                new IntSlider("Faces per Segment", BezierMesh.k_FacesMin, BezierMesh.k_FacesMax)
+            m_FacesSlider =
+                new SliderInt("Faces per Segment", BezierMesh.k_FacesMin, BezierMesh.k_FacesMax)
                 {
-                    tooltip = L10n.Tr("The number of faces around the bezier mesh at each segment")
+                    tooltip = L10n.Tr("The number of faces around the bezier mesh at each segment"),
+                    showInputField = true,
+                    value = BezierMesh.k_FacesMin
                 };
-            m_FacesIntSlider.slider.RegisterValueChangedCallback(evt => UpdateMeshFaces());
+            m_FacesSlider.AddToClassList(k_SliderStyle);
+            m_FacesSlider.RegisterValueChangedCallback(evt => UpdateMeshFaces());
         }
 
         /// <summary>
@@ -113,8 +123,8 @@ namespace UnityEngine.ProBuilder
             m_Visible = hasBezierMesh;
 #endif
 
-            if (m_FacesIntSlider == null || m_RadiusFloatSlider == null ||
-                m_SegmentIntSlider == null || m_SelectedMeshes.Count == 0)
+            if (m_FacesSlider == null || m_RadiusSlider == null ||
+                m_SegmentsSlider == null || m_SelectedMeshes.Count == 0)
                 return;
 
             SetParameterValues();
@@ -139,18 +149,18 @@ namespace UnityEngine.ProBuilder
                 isFacesEqual = Mathf.Approximately(faces, m_SelectedMeshes[i].faceCountPerSegment);
             }
 
-            m_RadiusFloatSlider.slider.showMixedValue = !isRadiusEqual;
-            m_SegmentIntSlider.slider.showMixedValue = !isSegmentsEqual;
-            m_FacesIntSlider.slider.showMixedValue = !isFacesEqual;
+            m_RadiusSlider.showMixedValue = !isRadiusEqual;
+            m_SegmentsSlider.showMixedValue = !isSegmentsEqual;
+            m_FacesSlider.showMixedValue = !isFacesEqual;
 
             if (isSegmentsEqual)
-                m_SegmentIntSlider.slider.SetValueWithoutNotify(segments);
+                m_SegmentsSlider.SetValueWithoutNotify(segments);
 
             if (isRadiusEqual)
-                m_RadiusFloatSlider.slider.SetValueWithoutNotify(radius);
+                m_RadiusSlider.SetValueWithoutNotify(radius);
 
             if (isFacesEqual)
-                m_FacesIntSlider.slider.SetValueWithoutNotify(faces);
+                m_FacesSlider.SetValueWithoutNotify(faces);
         }
 
         void UpdateMeshFaces()
@@ -158,7 +168,7 @@ namespace UnityEngine.ProBuilder
             foreach (var mesh in m_SelectedMeshes)
             {
                 Undo.RecordObject(mesh, "Bezier Mesh Faces Updated");
-                mesh.faceCountPerSegment = m_FacesIntSlider.slider.value;
+                mesh.faceCountPerSegment = m_FacesSlider.value;
                 mesh.ExtrudeMesh();
             }
         }
@@ -168,7 +178,7 @@ namespace UnityEngine.ProBuilder
             foreach (var mesh in m_SelectedMeshes)
             {
                 Undo.RecordObject(mesh, "Bezier Mesh Segments per Unit Count Updated");
-                mesh.segmentsPerUnit = m_SegmentIntSlider.slider.value;
+                mesh.segmentsPerUnit = m_SegmentsSlider.value;
                 mesh.ExtrudeMesh();
             }
         }
@@ -178,7 +188,7 @@ namespace UnityEngine.ProBuilder
             foreach (var mesh in m_SelectedMeshes)
             {
                 Undo.RecordObject(mesh, "Bezier Mesh Radius Updated");
-                mesh.radius = m_RadiusFloatSlider.slider.value;
+                mesh.radius = m_RadiusSlider.value;
                 mesh.ExtrudeMesh();
             }
         }
