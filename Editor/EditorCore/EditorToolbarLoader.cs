@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
             {
                 // tools
                 new Actions.NewShapeToggle(),
-#if USING_SPLINES
+#if USING_SPLINES && UNITY_2021_3_OR_NEWER
                 new Actions.NewBezierMesh(),
 #endif
                 new Actions.NewPolyShapeToggle(),

@@ -1,3 +1,4 @@
+#if UNITY_2021_3_OR_NEWER
 using UnityEngine.UIElements;
 
 namespace UnityEngine.ProBuilder
@@ -26,3 +27,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif

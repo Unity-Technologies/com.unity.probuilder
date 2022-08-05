@@ -1,4 +1,4 @@
-#if USING_SPLINES
+#if USING_SPLINES && UNITY_2021_3_OR_NEWER
 
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
@@ -54,8 +54,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void SetSplineToolContext()
         {
-            ToolManager.SetActiveContext<SplineToolContext>();
-            ToolManager.SetActiveTool<KnotPlacementTool>();
+            EditorSplineUtility.SetKnotPlacementTool();
         }
     }
 }

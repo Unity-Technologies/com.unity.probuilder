@@ -28,7 +28,7 @@ public class StripProBuilderScriptsTest
         UObject.DestroyImmediate(go);
     }
 
-#if USING_SPLINES
+#if USING_SPLINES && UNITY_2021_3_OR_NEWER
     [Test]
     public void StripProBuilderScripts_RemovesMeshAndBezierMeshComponents()
     {

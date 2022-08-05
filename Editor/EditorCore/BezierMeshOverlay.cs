@@ -1,4 +1,4 @@
-#if USING_SPLINES
+#if USING_SPLINES && UNITY_2021_3_OR_NEWER
 
 using System.Collections.Generic;
 using UnityEngine.UIElements;
