@@ -126,6 +126,16 @@ namespace UnityEditor.ProBuilder.Actions
                 else
                     DestroyImmediate(polyShape);
             }
+            
+#if !UNITY_2021_3_OR_NEWER
+            if (go.TryGetComponent(out BezierShape bezierShape))
+            {
+                if(useUndoDestroy)
+                    Undo.DestroyObjectImmediate(bezierShape);
+                else
+                    DestroyImmediate(bezierShape);
+            }
+#endif
 
 #if USING_SPLINES && UNITY_2021_3_OR_NEWER
             if (go.TryGetComponent(out BezierMesh bezierMesh))

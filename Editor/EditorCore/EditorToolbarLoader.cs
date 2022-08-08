@@ -38,6 +38,10 @@ namespace UnityEditor.ProBuilder
             {
                 // tools
                 new Actions.NewShapeToggle(),
+#if !UNITY_2021_3_OR_NEWER
+                new Actions.NewBezierShape(),
+#endif
+
 #if USING_SPLINES && UNITY_2021_3_OR_NEWER
                 new Actions.NewBezierMesh(),
 #endif
