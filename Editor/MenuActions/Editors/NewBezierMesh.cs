@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool hidden
         {
-            get { return !Experimental.experimentalFeaturesEnabled; }
+            get { return false; }
         }
 
         public override bool enabled

@@ -1,12 +1,12 @@
 .slider-and-input-field
 {
     flex-direction: row;
-    width: 100%;
+    width: 320px;
 }
 
 .slider-and-input-field .unity-base-slider
 {
-    width: 300px;
+    width: 320px;
 }
 
 .slider-and-input-field .unity-base-text-field
