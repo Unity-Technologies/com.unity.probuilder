@@ -131,7 +131,7 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Handles setting the parameters in the overlay to the selected Bezier Meshes' values if they are all equal,
+        /// Sets the parameters in the overlay to the selected Bezier Meshes' values if they are all equal,
         /// otherwise blanks out the parameters that aren't equal.
         /// </summary>
         void SetParameterValues()
