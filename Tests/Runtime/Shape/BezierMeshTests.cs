@@ -53,13 +53,17 @@ class BezierMeshTests
 
         // If a knot is added at x = 6f and the mesh is extruded, then we expect to have n number of vertices at
         // x = 6f, where n is the number of faces per segment on the mesh
-        foreach (var vertex in vertices)
+        for (int i = 0; i < m_Mesh.faceCountPerSegment; i++)
         {
-            if (Mathf.Approximately(vertex.position.x, 6f))
+            if (Mathf.Approximately(vertices[i].position.x, 6f))
+                vertexCountAtPosition++;
+            else if(Mathf.Approximately(vertices[i].position.y, 0f))
+                vertexCountAtPosition++;
+            else if(Mathf.Approximately(vertices[i].position.z, 0f))
                 vertexCountAtPosition++;
         }
 
-        Assert.That(m_Mesh.faceCountPerSegment, Is.EqualTo(vertexCountAtPosition));
+        Assert.That(vertexCountAtPosition, Is.EqualTo(m_Mesh.faceCountPerSegment));
     }
 
     [Test]
@@ -76,7 +80,7 @@ class BezierMeshTests
         m_Mesh.ExtrudeMesh();
 
         positionOfFirstVertex = m_Mesh.mesh.GetVertices()[0].position;
-        Assert.That(m_Mesh.radius, Is.EqualTo((startOfSplinePos - positionOfFirstVertex).magnitude));
+        Assert.That((startOfSplinePos - positionOfFirstVertex).magnitude, Is.EqualTo(m_Mesh.radius));
     }
 
     [Test]
@@ -87,14 +91,14 @@ class BezierMeshTests
         var expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit *
             m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
-        Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
+        Assert.That(expectedVertexCount, Is.EqualTo(m_Mesh.mesh.vertexCount));
 
         m_Mesh.segmentsPerUnit = 2;
         m_Mesh.ExtrudeMesh();
         expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit *
             m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
-        Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
+        Assert.That(expectedVertexCount, Is.EqualTo(m_Mesh.mesh.vertexCount));
     }
 
     [Test]
@@ -114,7 +118,7 @@ class BezierMeshTests
         faceCount = m_Mesh.faceCountPerSegment * totalSegmentCount;
         expectedFaceCount = m_Mesh.faceCountPerSegment * totalSegmentCount;
 
-        Assert.That(faceCount, Is.EqualTo(expectedFaceCount));
+        Assert.That(expectedFaceCount, Is.EqualTo(faceCount));
     }
 
     [Test]
