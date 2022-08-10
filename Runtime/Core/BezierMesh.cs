@@ -7,13 +7,20 @@ using UnityEngine.Splines;
 
 namespace UnityEngine.ProBuilder
 {
+    /// <summary>
+    /// Responsible for extruding a mesh around all the <see cref="Splines.Spline"/>s in its <see cref="SplineContainer"/>
+    /// </summary>
     [RequireComponent(typeof(ProBuilderMesh))]
     [RequireComponent(typeof(SplineContainer))]
     [ExecuteInEditMode]
-    sealed class BezierMesh : MonoBehaviour
+    public sealed class BezierMesh : MonoBehaviour
     {
         SplineContainer m_SplineContainer;
 
+        /// <summary>
+        /// This <see cref="SplineContainer"/> contains all the <see cref="Splines.Spline"/>(s). The <see cref="ProBuilderMesh"/>
+        /// mesh is extruded along all the Splines in the container.
+        /// </summary>
         public SplineContainer splineContainer
         {
             get => m_SplineContainer;
@@ -31,6 +38,9 @@ namespace UnityEngine.ProBuilder
 
         ProBuilderMesh m_Mesh;
 
+        /// <summary>
+        /// The <see cref="ProBuilderMesh"/> that is extruded along all the Splines in the <see cref="SplineContainer"/>.
+        /// </summary>
         public ProBuilderMesh mesh
         {
             get
@@ -63,24 +73,38 @@ namespace UnityEngine.ProBuilder
         [Range(k_FacesMin, k_FacesMax)]
         int m_FaceCountPerSegment = 8;
 
+        /// <summary>
+        /// The number of length-wise segments of the mesh per unit length.
+        /// The total number of segments in the mesh is <see cref="segmentsPerUnit"/> * the length of the Spline.
+        /// </summary>
         public int segmentsPerUnit
         {
             get => m_SegmentsPerUnit;
             set => m_SegmentsPerUnit = Math.Clamp(value, k_SegmentsMin, k_SegmentsMax);
         }
 
+        /// <summary>
+        /// The distance of the mesh from the center of the <see cref="Splines.Spline"/>.
+        /// </summary>
         public float radius
         {
             get => m_Radius;
             set => m_Radius = Mathf.Clamp(value, k_RadiusMin, k_RadiusMax);
         }
 
+        /// <summary>
+        /// The number of faces around the bezier mesh at each segment.
+        /// </summary>
         public int faceCountPerSegment
         {
             get => m_FaceCountPerSegment;
             set => m_FaceCountPerSegment = Mathf.Clamp(value, k_FacesMin, k_FacesMax);
         }
 
+        /// <summary>
+        /// Callback for when the <see cref="ProBuilderMesh"/> is modified. Used to refresh the ProbuilderEditor
+        /// when the mesh is modified.
+        /// </summary>
         public static Action BezierMeshModified;
 
         /// <summary>
@@ -175,7 +199,7 @@ namespace UnityEngine.ProBuilder
             Splines.Spline.Changed -= UpdateMesh;
         }
 
-        public void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
+        void UpdateMesh(Splines.Spline spline, int index, SplineModification mod)
         {
             if (splineContainer.Splines.Contains(spline))
                 ExtrudeMesh();

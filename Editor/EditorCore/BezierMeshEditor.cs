@@ -1,9 +1,8 @@
 #if USING_SPLINES && UNITY_2021_3_OR_NEWER
 
+using System;
 using System.Collections.Generic;
-using UnityEditor.EditorTools;
 using UnityEditor.Splines;
-using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -15,6 +14,7 @@ namespace UnityEditor.ProBuilder
         BezierMeshOverlay m_Overlay;
         List<BezierMesh> m_SelectedMeshes;
         bool m_isOverlayVisible;
+        Action RefreshProBuilderEditor = delegate { ProBuilderEditor.Refresh(); };
 
         void BuildSelection()
         {
@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2022_1_OR_NEWER
             SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_isOverlayVisible));
 #endif
-            BezierMesh.BezierMeshModified += () => ProBuilderEditor.Refresh();
+            BezierMesh.BezierMeshModified += RefreshProBuilderEditor;
         }
 
         void OnDisable()
@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2022_1_OR_NEWER
             SceneView.RemoveOverlayFromActiveView(m_Overlay);
 #endif
-            BezierMesh.BezierMeshModified -= () => ProBuilderEditor.Refresh();
+            BezierMesh.BezierMeshModified -= RefreshProBuilderEditor;
         }
 
         /// <summary>

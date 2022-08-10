@@ -67,17 +67,16 @@ class BezierMeshTests
     {
         Assert.That(m_Mesh, Is.Not.Null);
 
-        var radius = m_Mesh.radius;
         var startOfSplinePos = (Vector3)m_Mesh.splineContainer.Splines[0].EvaluatePosition(0f);
         var positionOfFirstVertex = m_Mesh.mesh.GetVertices()[0].position;
 
-        Assert.That(radius, Is.EqualTo((startOfSplinePos - positionOfFirstVertex).magnitude));
+        Assert.That(m_Mesh.radius, Is.EqualTo((startOfSplinePos - positionOfFirstVertex).magnitude));
 
-        var newRadius = m_Mesh.radius = 10f;
+        m_Mesh.radius = 10f;
         m_Mesh.ExtrudeMesh();
 
         positionOfFirstVertex = m_Mesh.mesh.GetVertices()[0].position;
-        Assert.That(newRadius, Is.EqualTo((startOfSplinePos - positionOfFirstVertex).magnitude));
+        Assert.That(m_Mesh.radius, Is.EqualTo((startOfSplinePos - positionOfFirstVertex).magnitude));
     }
 
     [Test]
@@ -85,15 +84,14 @@ class BezierMeshTests
     {
         Assert.That(m_Mesh, Is.Not.Null);
 
-        var segmentsPerUnit = m_Mesh.segmentsPerUnit;
-        var expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * segmentsPerUnit *
+        var expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit *
             m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
         Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
 
-        segmentsPerUnit = m_Mesh.segmentsPerUnit = 2;
+        m_Mesh.segmentsPerUnit = 2;
         m_Mesh.ExtrudeMesh();
-        expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * segmentsPerUnit *
+        expectedVertexCount = (int)m_Mesh.splineContainer.Splines[0].GetLength() * m_Mesh.segmentsPerUnit *
             m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
         Assert.That(m_Mesh.mesh.vertexCount, Is.EqualTo(expectedVertexCount));
@@ -159,33 +157,17 @@ class BezierMeshTests
         m_Mesh.ExtrudeMesh();
 
         var vertices = m_Mesh.mesh.GetVertices();
-        var isVertexFoundAtP1 = false;
-        var isVertexFoundAtP2 = false;
-        var isVertexFoundAtP3 = false;
-        var isVertexFoundAtP4 = false;
 
-        // Debug.Log(vertices.Length);
-        // Assert.That(Mathf.Approximately(vertices[0].position.x, p1.x), Is.True);
+        var spline1VertexCount = (int) splines[0].GetLength() * m_Mesh.segmentsPerUnit * m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
+        var spline2VertexCount = (int) splines[1].GetLength() * m_Mesh.segmentsPerUnit * m_Mesh.faceCountPerSegment + m_Mesh.faceCountPerSegment;
 
-        foreach (var vertex in vertices)
-        {
-            var pos = vertex.position;
+        Assume.That(spline1VertexCount + spline2VertexCount, Is.EqualTo(m_Mesh.mesh.GetVertices().Length));
 
+        Assert.That(Mathf.Approximately(vertices[0].position.x, p1.x), Is.True);
+        Assert.That(Mathf.Approximately(vertices[spline1VertexCount - 1].position.x, p2.x), Is.True);
 
-            if (Mathf.Approximately(pos.x, p1.x))
-                isVertexFoundAtP1 = true;
-            if (Mathf.Approximately(pos.x, p2.x))
-                isVertexFoundAtP2 = true;
-            if (Mathf.Approximately(pos.x, p3.x))
-                isVertexFoundAtP3 = true;
-            if (Mathf.Approximately(pos.x, p4.x))
-                isVertexFoundAtP4 = true;
-        }
-
-        Assert.That(isVertexFoundAtP1, Is.True);
-        Assert.That(isVertexFoundAtP2, Is.True);
-        Assert.That(isVertexFoundAtP3, Is.True);
-        Assert.That(isVertexFoundAtP4, Is.True);
+        Assert.That(Mathf.Approximately(vertices[spline1VertexCount - 1 + m_Mesh.faceCountPerSegment].position.x, p3.x), Is.True);
+        Assert.That(Mathf.Approximately(vertices[spline1VertexCount - 1 + spline2VertexCount].position.x, p4.x), Is.True);
     }
 }
 #endif
