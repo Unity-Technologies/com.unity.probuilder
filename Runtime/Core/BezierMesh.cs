@@ -144,7 +144,7 @@ namespace UnityEngine.ProBuilder
                     // vertex positions on the start and end of the mesh
                     // solution - use the vector between the current and next (if at the start, previous if at the end)
                     // segment position as a "fake" tangent to do the calculations
-                    if((tangent == float3.zero)[0])
+                    if((tangent == float3.zero)[0] || (tangent == float3.zero)[1] || (tangent == float3.zero)[2])
                     {
                         var isOtherTGreaterThanOne = t + 1f / segmentsPerUnit > 1;
                         var otherT = isOtherTGreaterThanOne ? t - 1f / segmentsPerUnit : t + 1f / segmentsPerUnit;
