@@ -51,8 +51,8 @@ class BezierMeshTests
         var vertices = m_Mesh.mesh.GetVertices();
         var vertexCountAtPosition = 0;
 
-        // If a knot is added at x = 6f and the mesh is extruded, then we expect to have n number of vertices at
-        // x = 6f, where n is the number of faces per segment on the mesh
+        // If a knot is added at (6f, 0f, 0f) and the mesh is extruded, then we expect to have n number of vertices at
+        // (6f, 0f, 0f), where n is the number of faces per segment on the mesh
         for (int i = 0; i < m_Mesh.faceCountPerSegment; i++)
         {
             if (Mathf.Approximately(vertices[i].position.x, 6f))
