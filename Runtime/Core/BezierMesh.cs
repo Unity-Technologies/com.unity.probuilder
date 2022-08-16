@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine.Splines;
 
 namespace UnityEngine.ProBuilder
@@ -137,8 +138,22 @@ namespace UnityEngine.ProBuilder
                 // define the positions of each segment, and the vertex positions at each segment
                 for (int i = 0; i < segmentsCount + 1; i++)
                 {
-                    SplineUtility.Evaluate(spline, t, out var position, out var tangent, out var up);
+                    spline.Evaluate(t, out var position, out var tangent, out var up);
+
+                    // if the tangent is zero this causes the cross product (tangent * up = 0) which causes incorrect
+                    // vertex positions on the start and end of the mesh
+                    // solution - use the vector between the current and next (if at the start, previous if at the end)
+                    // segment position as a "fake" tangent to do the calculations
+                    if((tangent == float3.zero)[0])
+                    {
+                        var isOtherTGreaterThanOne = t + 1f / segmentsPerUnit > 1;
+                        var otherT = isOtherTGreaterThanOne ? t - 1f / segmentsPerUnit : t + 1f / segmentsPerUnit;
+                        spline.Evaluate(otherT, out var otherPosition, out var _, out var _);
+                        tangent = isOtherTGreaterThanOne ? position - otherPosition : otherPosition - position;
+                    }
+
                     var right = Vector3.Cross(tangent, up).normalized;
+
                     t += 1f / segmentsCount;
 
                     // define the vertex positions
