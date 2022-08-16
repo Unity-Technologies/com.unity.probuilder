@@ -13,7 +13,6 @@ namespace UnityEditor.ProBuilder
     {
         BezierMeshOverlay m_Overlay;
         List<BezierMesh> m_SelectedMeshes;
-        bool m_isOverlayVisible;
         Action RefreshProBuilderEditor = delegate { ProBuilderEditor.Refresh(); };
 
         void BuildSelection()
@@ -27,15 +26,13 @@ namespace UnityEditor.ProBuilder
                     m_SelectedMeshes.Add(mesh);
                 }
             }
-
-            m_isOverlayVisible = m_SelectedMeshes.Count > 0;
         }
 
         void OnEnable()
         {
             BuildSelection();
 #if UNITY_2022_1_OR_NEWER
-            SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_isOverlayVisible));
+            SceneView.AddOverlayToActiveView(m_Overlay = new BezierMeshOverlay(m_SelectedMeshes, m_SelectedMeshes.Count > 0));
 #endif
             BezierMesh.BezierMeshModified += RefreshProBuilderEditor;
         }

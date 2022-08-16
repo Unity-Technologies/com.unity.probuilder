@@ -8,12 +8,12 @@ namespace UnityEditor.ProBuilder.Actions
 {
     sealed class NewBezierMesh : MenuAction
     {
-        const string k_IconPath = "Toolbar/NewBezierMesh";
+        const string k_IconPath = "Toolbar/NewBezierSpline";
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (
             "New Bezier Mesh",
-            "Create a new shape that is built by extruding along a Spline."
+            "Creates a new shape that is built by extruding along a Spline."
         );
 
         public override ToolbarGroup group
