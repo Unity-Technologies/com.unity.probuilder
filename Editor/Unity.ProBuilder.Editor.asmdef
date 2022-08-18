@@ -22,7 +22,7 @@
     "versionDefines": [
         {
             "name": "com.unity.splines",
-            "expression": "2.0.0-pre.2",
+            "expression": "2.0.0-pre.3",
             "define": "USING_SPLINES"
         }
     ],
