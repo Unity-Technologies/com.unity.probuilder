@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
+- [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
+
+### Changes
 
 ## [5.0.6] - 2022-06-30
 
