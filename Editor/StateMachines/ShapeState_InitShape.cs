@@ -53,7 +53,7 @@ namespace UnityEditor.ProBuilder
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 float hit;
 
-                if(res.item1.Raycast(ray, out hit))
+                if(evt.button == 0 && res.item1.Raycast(ray, out hit))
                 {
                     //Plane init
                     tool.m_Plane = res.item1;
@@ -94,9 +94,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
                 else
-                {
-                    m_HitPosition = Vector3.negativeInfinity;
-                }
+                    m_HitPosition = Vector3.positiveInfinity;
             }
 
             if (!Math.IsNumber(m_HitPosition))
