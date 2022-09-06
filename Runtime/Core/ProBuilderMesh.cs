@@ -963,7 +963,14 @@ namespace UnityEngine.ProBuilder
                 return m_Mesh;
             }
 
-            set { m_Mesh = value; }
+            set
+            { 
+                m_Mesh = value;
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+                UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
+            }
         }
 
         internal int id
