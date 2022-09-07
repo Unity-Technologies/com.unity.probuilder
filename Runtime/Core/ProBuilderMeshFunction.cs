@@ -381,6 +381,14 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal void MakeUnique()
         {
+            // if a mesh already exists, it can be instantiated
+            if (mesh != null)
+            {
+                mesh = Instantiate(mesh);
+                mesh.name = $"pb_Mesh{id}";
+                return;
+            }
+
             // set a new UnityEngine.Mesh instance
             mesh = new Mesh();
             ToMesh();
