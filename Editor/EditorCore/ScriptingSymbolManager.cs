@@ -7,19 +7,7 @@ namespace UnityEditor.ProBuilder
 {
     static class ScriptingSymbolManager
     {
-#if UNITY_2021_2_OR_NEWER
-        static BuildPlatform[] k_ValidPlatforms = null;
-        static BuildPlatform[] ValidPlatforms
-        {
-            get
-            {
-                if (k_ValidPlatforms == null)
-                    k_ValidPlatforms = BuildPlatforms.instance.GetValidPlatforms(true).ToArray();
-
-                return k_ValidPlatforms;
-            }
-        }
-#else
+#if !UNITY_2021_2_OR_NEWER
         static bool IsObsolete(BuildTargetGroup group)
         {
             var attrs = typeof(BuildTargetGroup).GetField(group.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), false);
@@ -30,7 +18,8 @@ namespace UnityEditor.ProBuilder
         internal static bool ContainsDefine(string define)
         {
 #if UNITY_2021_2_OR_NEWER
-            foreach (BuildPlatform targetPlatform in ValidPlatforms)
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
                     continue;
@@ -65,7 +54,8 @@ namespace UnityEditor.ProBuilder
         public static void AddScriptingDefine(string define)
         {
 #if UNITY_2021_2_OR_NEWER
-            foreach (BuildPlatform targetPlatform in ValidPlatforms)
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
                     continue;
@@ -114,7 +104,8 @@ namespace UnityEditor.ProBuilder
         public static void RemoveScriptingDefine(string define)
         {
 #if UNITY_2021_2_OR_NEWER
-            foreach (BuildPlatform targetPlatform in ValidPlatforms)
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
                     continue;
