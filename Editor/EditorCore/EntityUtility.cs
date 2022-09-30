@@ -18,8 +18,10 @@ namespace UnityEditor.ProBuilder
             StaticEditorFlags.OccluderStatic |
             StaticEditorFlags.BatchingStatic |
             StaticEditorFlags.OccludeeStatic |
+#if !UNITY_2022_2_OR_NEWER
             StaticEditorFlags.NavigationStatic |
             StaticEditorFlags.OffMeshLinkGeneration |
+#endif
             StaticEditorFlags.ReflectionProbeStatic;
 
         /// <summary>

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
+- [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
+
+### Changes
+
+## [5.0.6] - 2022-06-30
+
 ### Bug Fixes
 
 - [case: 1407518] Fixed issue where 'Detach Faces' action would not undo correctly.
@@ -19,7 +28,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1348434] Added more detailed instructions in the missing UV2 warning log.
 - Fix some styling issues with Overlays in 21.2
 - [case: 1350635] Fixed crash when using CSG operations.
+- [case: 1405226] Fixed tooltips inconsistently showing and hiding.
 - [case: 1407039] Fixed stair creation tool missing the inner radius parameter.
+- [case: PBLD-3] Fixed vertex manipulation tools locking grid snapping settings on activation.
+- [case: PBLD-9] Fixed issue where adding and then removing Collider or Trigger behaviours would cause meshes to not render in builds.
+- [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
+- [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
+- [case: PBLD-11] Fixed Poly Shape Tool missing an undo step after setting height.
+- [case: PBLD-13] Fixed a bug where a newly created shape would not be redrawn with Redo. 
+- [case: PBLD-15] Fixed a bug with URP that prevented some items from being selectable in the Game view. 
 
 ### Changes
 

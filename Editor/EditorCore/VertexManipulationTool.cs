@@ -43,6 +43,10 @@ namespace UnityEditor.ProBuilder
             get { return s_ShowHandleSettingsInScene; }
         }
 
+#if UNITY_2021_1_OR_NEWER
+        public override bool gridSnapEnabled => Tools.pivotRotation == PivotRotation.Global;
+#endif
+
         // Store PivotRotation so that we can detect changes and update our handles appropriately
         static PivotRotation s_PivotRotation;
 

@@ -50,11 +50,6 @@ namespace UnityEditor.ProBuilder
                 else
                     s_Instance.ShowPopup();
 #endif
-
-                object parent = ReflectionUtility.GetValue(s_Instance, s_Instance.GetType(), "m_Parent");
-                object window = ReflectionUtility.GetValue(parent, parent.GetType(), "window");
-                ReflectionUtility.SetValue(parent, "mouseRayInvisible", true);
-                ReflectionUtility.SetValue(window, "m_DontSaveToLayout", true);
             }
 
             return s_Instance;
@@ -69,6 +64,11 @@ namespace UnityEditor.ProBuilder
                 if (s_Instance != null)
                     s_Instance.Close();
             }
+        }
+
+        public static bool IsFocused()
+        {
+            return s_Instance != null && mouseOverWindow == s_Instance;
         }
 
         public static void Show(Rect rect, TooltipContent content)

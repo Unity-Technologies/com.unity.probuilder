@@ -371,7 +371,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The mesh to test.</param>
         /// <param name="removedVertices">If fixes were made, this will be set to the number of vertices removed during that process.</param>
         /// <returns>Returns true if no problems were found, false if topology issues were discovered and fixed.</returns>
-        public static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
+        internal static bool EnsureMeshIsValid(ProBuilderMesh mesh, out int removedVertices)
         {
             removedVertices = 0;
 
