@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 
 - [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
+- [case: PBLD-38] Fixed asset export unnecessarily using UInt32 mesh index format.
 
 ### Changes
 
