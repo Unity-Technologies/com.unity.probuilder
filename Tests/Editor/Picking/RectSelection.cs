@@ -121,8 +121,7 @@ class RectSelection
     {
         // Create a parent container with -90 degree rotation around Z
         var parent = new GameObject("Parent");
-        parent.transform.position = new Vector3(0f, 0f, 0f);
-        parent.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+        parent.transform.SetPositionAndRotation(new Vector3(0f, 0f, 0f), Quaternion.Euler(0f, 0f, -90f));
 
         // Create a Cube such that when parented to the container has (6f, 0f, 0f) world position
         var cube = ShapeFactory.Instantiate<UnityEngine.ProBuilder.Shapes.Cube>();
@@ -159,7 +158,7 @@ class RectSelection
         var selection = vertices.FirstOrDefault();
         Assert.IsNotNull(selection);
         HashSet<int> selectedElements = selection.Value;
-        Assert.Less(selectedElements.Count, selection.Key.sharedVertices.Count());
+        Assert.Less(selectedElements.Count, selection.Key.sharedVertices.Count);
         Assert.Greater(selectedElements.Count, 0);
         Cleanup();
     }
@@ -172,7 +171,7 @@ class RectSelection
         var selection = vertices.FirstOrDefault();
         Assert.IsNotNull(selection);
         HashSet<int> selectedElements = selection.Value;
-        Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertices.Count());
+        Assert.AreEqual(selectedElements.Count, selection.Key.sharedVertices.Count);
         Cleanup();
     }
 

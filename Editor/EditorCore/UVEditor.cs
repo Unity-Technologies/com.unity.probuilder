@@ -489,7 +489,7 @@ namespace UnityEditor.ProBuilder
             RefreshUVCoordinates();
 
             // get incompletely selected texture groups
-            int len = selection == null ? 0 : selection.Count();
+            int len = selection == null ? 0 : selection.Length;
 
             incompleteTextureGroupsInSelection = new List<Face[]>[len];
             incompleteTextureGroupsInSelection_CoordCache.Clear();
@@ -2070,7 +2070,7 @@ namespace UnityEditor.ProBuilder
         void ResetCanvas()
         {
             uvGraphScale = 1f;
-            SetCanvasCenter(new Vector2(.5f, -.5f) * uvGridSize * uvGraphScale);
+            SetCanvasCenter(uvGraphScale * uvGridSize * new Vector2(.5f, -.5f));
             uvGraphOffset = Vector2.zero;
         }
 
@@ -2108,7 +2108,7 @@ namespace UnityEditor.ProBuilder
         Vector2 UVToGUIPoint(Vector2 v)
         {
             Vector2 p = new Vector2(v.x, -v.y);
-            return UVGraphCenter + (p * uvGridSize * uvGraphScale) + uvGraphOffset;
+            return UVGraphCenter + (uvGraphScale * uvGridSize * p) + uvGraphOffset;
         }
 
         Vector2 GUIToUVPoint(Vector2 v)
@@ -2144,7 +2144,7 @@ namespace UnityEditor.ProBuilder
             {
                 Bounds2D uvBounds = UVSelectionBounds();
                 _selected_gui_bounds.center = UVToGUIPoint(uvBounds.center);
-                _selected_gui_bounds.size = uvBounds.size * uvGridSize * uvGraphScale;
+                _selected_gui_bounds.size = uvGraphScale * uvGridSize * uvBounds.size;
                 return _selected_gui_bounds;
             }
         }
@@ -3271,7 +3271,7 @@ namespace UnityEditor.ProBuilder
         Color screenshot_backgroundColor = Color.black;
         string screenShotPath = "";
 
-        readonly Color UV_FILL_COLOR = new Color(.192f, .192f, .192f, 1f);
+        readonly Color32 UV_FILL_COLOR = new Color32(49, 49, 49, 255);
 
         // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
@@ -3404,15 +3404,15 @@ namespace UnityEditor.ProBuilder
 
                     if (screenshot_transparentBackground)
                     {
-                        Color[] px = screenshot.GetPixels(0);
+                        Color32[] px = screenshot.GetPixels32(0);
 
                         for (int i = 0; i < px.Length; i++)
-                            if (Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < .01f &&
-                                Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < .01f &&
-                                Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < .01f)
+                            if (Mathf.Abs(px[i].r - UV_FILL_COLOR.r) < 2 &&
+                                Mathf.Abs(px[i].g - UV_FILL_COLOR.g) < 2 &&
+                                Mathf.Abs(px[i].b - UV_FILL_COLOR.b) < 2)
                                 px[i] = Color.clear;
 
-                        screenshot.SetPixels(px);
+                        screenshot.SetPixels32(px);
                         screenshot.Apply();
                     }
 

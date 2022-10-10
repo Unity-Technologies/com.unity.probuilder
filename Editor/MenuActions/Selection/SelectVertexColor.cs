@@ -112,10 +112,7 @@ namespace UnityEditor.ProBuilder.Actions
                         List<Face> matches = new List<Face>();
                         Face[] faces = pb.facesInternal;
 
-                        foreach(var face in faces)
-                        {
-                            matches.Add(face);
-                        }
+                        matches.AddRange(faces);
 
                         if (matches.Count > 0)
                         {

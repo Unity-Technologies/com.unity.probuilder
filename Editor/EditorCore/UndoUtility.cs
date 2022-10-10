@@ -120,9 +120,9 @@ namespace UnityEditor.ProBuilder
                 return;
 
             Object[] obj = objs.Where(x => !(x is ProBuilderMesh)).ToArray();
-            ProBuilderMesh[] pb = objs.Where(x => x is ProBuilderMesh).Cast<ProBuilderMesh>().ToArray();
+            ProBuilderMesh[] pb = objs.OfType<ProBuilderMesh>().ToArray();
 
-            if (obj.Any())
+            if (obj.Length > 0)
                 Undo.RecordObjects(obj, msg);
 
             RecordSelection(pb, msg);

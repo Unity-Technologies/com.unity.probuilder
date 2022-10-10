@@ -41,8 +41,7 @@ namespace UnityEditor.ProBuilder
             foreach (var entity in Object.FindObjectsOfType<Entity>())
                 if (entity.entityType == entityType)
                 {
-                    var mr = entity.GetComponent<MeshRenderer>();
-                    if (mr != null) mr.enabled = isVisible;
+                    if (entity.TryGetComponent<MeshRenderer>(out var mr)) mr.enabled = isVisible;
                 }
         }
 

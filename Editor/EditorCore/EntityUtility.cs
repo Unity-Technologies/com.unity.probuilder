@@ -32,9 +32,7 @@ namespace UnityEditor.ProBuilder
         [Obsolete("pb_Entity is deprecated. Manage static flags manually or use Set Trigger/Set Collider actions.")]
         public static void SetEntityType(EntityType newEntityType, GameObject target)
         {
-            Entity ent = target.GetComponent<Entity>();
-
-            if (ent == null)
+            if (!target.TryGetComponent<Entity>(out var ent))
                 ent = target.AddComponent<Entity>();
 
             ProBuilderMesh pb = target.GetComponent<ProBuilderMesh>();

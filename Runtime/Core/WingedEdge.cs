@@ -318,7 +318,7 @@ namespace UnityEngine.ProBuilder
                 return null;
 
             SortEdgesByAdjacency(matches);
-            return matches.Select(x => x.a).ToList();
+            return matches.ConvertAll(x => x.a);
         }
 
         /// <summary>

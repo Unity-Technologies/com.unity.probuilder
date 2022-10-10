@@ -1019,7 +1019,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
 
-            int originalSharedIndexesCount = lookup.Count();
+            int originalSharedIndexesCount = lookup.Count;
             int sharedIndexesCount = originalSharedIndexesCount;
 
             foreach (Edge edge in distinctEdges)
@@ -1368,7 +1368,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             List<int> indexesToDelete = new List<int>();
             Dictionary<Face, FaceRebuildData> modifiedFaces = new Dictionary<Face, FaceRebuildData>();
 
-            int originalSharedIndexesCount = lookup.Count();
+            int originalSharedIndexesCount = lookup.Count;
 
             //Ensure the new point is on the edge
             //Using Scalar projection
@@ -1519,7 +1519,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Dictionary<int, int> lookupUV = null;
 
             // List<int> indexesToDelete = new List<int>();
-            int originalSharedIndexesCount = lookup.Count();
+            int originalSharedIndexesCount = lookup.Count;
 
             if (mesh.sharedTextures != null)
             {

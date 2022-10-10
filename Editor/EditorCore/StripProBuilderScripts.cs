@@ -72,9 +72,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 GameObject go = pb.gameObject;
 
-                Renderer ren = go.GetComponent<Renderer>();
-
-                if (ren != null)
+                if (go.TryGetComponent<Renderer>(out var ren))
                     EditorUtility.SetSelectionRenderState(ren, EditorSelectedRenderState.Highlight | EditorSelectedRenderState.Wireframe);
 
                 if (EditorUtility.IsPrefabAsset(go))

@@ -254,19 +254,19 @@ namespace UnityEditor.ProBuilder
             if (evt.type == EventType.Repaint)
             {
                 Handles.color = k_HandleColorUp;
-                Handles.DrawLine(position, position - Vector2.up * size * scale.y);
+                Handles.DrawLine(position, position - scale.y * size * Vector2.up);
 
                 if (position.y - size > 0f)
                     Handles.CubeHandleCap(0,
-                        ((Vector3) ((position - Vector2.up * scale.y * size))) - Vector3.forward * 16, QuaternionUp,
+                        ((Vector3) ((position - scale.y * size * Vector2.up))) - Vector3.forward * 16, QuaternionUp,
                         width / 3, evt.type);
 
                 Handles.color = k_HandleColorRight;
-                Handles.DrawLine(position, position + Vector2.right * size * scale.x);
+                Handles.DrawLine(position, position + scale.x * size * Vector2.right);
 
                 if (position.y > 0f)
                     Handles.CubeHandleCap(0,
-                        ((Vector3) ((position + Vector2.right * scale.x * size))) - Vector3.forward * 16,
+                        ((Vector3) ((position + scale.x * size * Vector2.right))) - Vector3.forward * 16,
                         Quaternion.Euler(Vector3.up * 90f),
                         width / 3f,
                         evt.type);

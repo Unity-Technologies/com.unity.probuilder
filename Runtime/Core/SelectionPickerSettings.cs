@@ -172,12 +172,9 @@ namespace UnityEngine.ProBuilder
             dst.faces.Clear();
             dst.edges.Clear();
             dst.vertexes.Clear();
-            foreach (var x in faces)
-                dst.faces.Add(x);
-            foreach (var x in edges)
-                dst.edges.Add(x);
-            foreach (var x in vertexes)
-                dst.vertexes.Add(x);
+            dst.faces.AddRange(faces);
+            dst.edges.AddRange(edges);
+            dst.vertexes.AddRange(vertexes);
         }
 
         /// <summary>

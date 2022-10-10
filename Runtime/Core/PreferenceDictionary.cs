@@ -311,10 +311,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetBool(string key, bool value)
         {
-            if (m_Bool.ContainsKey(key))
-                m_Bool[key] = value;
-            else
-                m_Bool.Add(key, value);
+            m_Bool[key] = value;
         }
 
         /// <summary>
@@ -322,10 +319,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetInt(string key, int value)
         {
-            if (m_Int.ContainsKey(key))
-                m_Int[key] = value;
-            else
-                m_Int.Add(key, value);
+            m_Int[key] = value;
         }
 
         /// <summary>
@@ -333,10 +327,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetFloat(string key, float value)
         {
-            if (m_Float.ContainsKey(key))
-                m_Float[key] = value;
-            else
-                m_Float.Add(key, value);
+            m_Float[key] = value;
         }
 
         /// <summary>
@@ -344,10 +335,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetString(string key, string value)
         {
-            if (m_String.ContainsKey(key))
-                m_String[key] = value;
-            else
-                m_String.Add(key, value);
+            m_String[key] = value;
         }
 
         /// <summary>
@@ -355,10 +343,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetColor(string key, Color value)
         {
-            if (m_Color.ContainsKey(key))
-                m_Color[key] = value;
-            else
-                m_Color.Add(key, value);
+            m_Color[key] = value;
         }
 
         /// <summary>
@@ -366,10 +351,7 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void SetMaterial(string key, Material value)
         {
-            if (m_Material.ContainsKey(key))
-                m_Material[key] = value;
-            else
-                m_Material.Add(key, value);
+            m_Material[key] = value;
         }
 
         /// <summary>

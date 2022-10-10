@@ -453,14 +453,14 @@ namespace UnityEngine.ProBuilder
             GetUVs(2, uv3s);
             GetUVs(3, uv4s);
 
-            bool _hasPositions = positions != null && positions.Count() == meshVertexCount;
-            bool _hasColors = colors != null && colors.Count() == meshVertexCount;
-            bool _hasNormals = normals != null && normals.Count() == meshVertexCount;
-            bool _hasTangents = tangents != null && tangents.Count() == meshVertexCount;
-            bool _hasUv0 = uv0s != null && uv0s.Count() == meshVertexCount;
-            bool _hasUv2 = uv2s != null && uv2s.Count() == meshVertexCount;
-            bool _hasUv3 = uv3s.Count() == meshVertexCount;
-            bool _hasUv4 = uv4s.Count() == meshVertexCount;
+            bool _hasPositions = positions != null && positions.Length == meshVertexCount;
+            bool _hasColors = colors != null && colors.Length == meshVertexCount;
+            bool _hasNormals = normals != null && normals.Length == meshVertexCount;
+            bool _hasTangents = tangents != null && tangents.Length == meshVertexCount;
+            bool _hasUv0 = uv0s != null && uv0s.Length == meshVertexCount;
+            bool _hasUv2 = uv2s != null && uv2s.Length == meshVertexCount;
+            bool _hasUv3 = uv3s.Count == meshVertexCount;
+            bool _hasUv4 = uv4s.Count == meshVertexCount;
 
             for (int i = 0; i < vc; i++)
             {
@@ -519,14 +519,14 @@ namespace UnityEngine.ProBuilder
             GetUVs(2, uv3s);
             GetUVs(3, uv4s);
 
-            bool _hasPositions = positions != null && positions.Count() == vc;
-            bool _hasColors = colors != null && colors.Count() == vc;
-            bool _hasNormals = normals != null && normals.Count() == vc;
-            bool _hasTangents = tangents != null && tangents.Count() == vc;
-            bool _hasUv0 = uv0s != null && uv0s.Count() == vc;
-            bool _hasUv2 = uv2s != null && uv2s.Count() == vc;
-            bool _hasUv3 = uv3s.Count() == vc;
-            bool _hasUv4 = uv4s.Count() == vc;
+            bool _hasPositions = positions != null && positions.Length == vc;
+            bool _hasColors = colors != null && colors.Length == vc;
+            bool _hasNormals = normals != null && normals.Length == vc;
+            bool _hasTangents = tangents != null && tangents.Length == vc;
+            bool _hasUv0 = uv0s != null && uv0s.Length == vc;
+            bool _hasUv2 = uv2s != null && uv2s.Length == vc;
+            bool _hasUv3 = uv3s.Count == vc;
+            bool _hasUv4 = uv4s.Count == vc;
 
             for (int i = 0; i < vc; i++)
             {
@@ -671,9 +671,9 @@ namespace UnityEngine.ProBuilder
 
             set
             {
-                if (value == null || value.Count() == 0)
+                if (value == null || value.Count == 0)
                     m_Colors = null;
-                else if (value.Count() != vertexCount)
+                else if (value.Count != vertexCount)
                     throw new ArgumentOutOfRangeException("value", "Array length must match vertex count.");
                 else
                     m_Colors = value.ToArray();
@@ -715,7 +715,7 @@ namespace UnityEngine.ProBuilder
             {
                 if (value == null)
                     m_Tangents = null;
-                else if (value.Count() != vertexCount)
+                else if (value.Count != vertexCount)
                     throw new ArgumentOutOfRangeException("value", "Tangent array length must match vertex count");
                 else
                     m_Tangents = value.ToArray();
@@ -773,7 +773,7 @@ namespace UnityEngine.ProBuilder
             {
                 if (value == null)
                     m_Textures0 = null;
-                else if (value.Count() != vertexCount)
+                else if (value.Count != vertexCount)
                     throw new ArgumentOutOfRangeException("value");
                 else
                     m_Textures0 = value.ToArray();

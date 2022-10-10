@@ -240,7 +240,7 @@ namespace UnityEngine.ProBuilder
 
             float dist = Mathf.Sin(Vector2.Angle(line, point - lineStart) * Mathf.Deg2Rad) * Vector2.Distance(point, lineStart);
 
-            return point + perp * (dist * 2f) * (Vector2.Dot(point - lineStart, perp) > 0 ? -1f : 1f);
+            return point + (dist * 2f) * (Vector2.Dot(point - lineStart, perp) > 0 ? -1f : 1f) * perp;
         }
 
         internal static float SqrDistanceRayPoint(Ray ray, Vector3 point)

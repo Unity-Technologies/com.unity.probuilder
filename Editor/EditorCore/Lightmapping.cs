@@ -156,12 +156,9 @@ namespace UnityEditor.ProBuilder
                 {
                     var gameObject = modification.currentValue.target as GameObject;
 
-                    if (gameObject != null)
+                    if (gameObject != null && gameObject.TryGetComponent<ProBuilderMesh>(out var mesh))
                     {
-                        var mesh = gameObject.GetComponent<ProBuilderMesh>();
-
-                        if (mesh != null)
-                            mesh.Optimize();
+                        mesh.Optimize();
                     }
                 }
             }

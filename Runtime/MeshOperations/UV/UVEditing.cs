@@ -101,10 +101,10 @@ namespace UnityEngine.ProBuilder.MeshOperations
                     int a, b;
 
                     if (!lookup.TryGetValue(indexes[i], out a))
-                        lookup.Add(indexes[i], a = lookup.Count());
+                        lookup.Add(indexes[i], a = lookup.Count);
 
                     if (!lookup.TryGetValue(indexes[n], out b))
-                        lookup.Add(indexes[n], b = lookup.Count());
+                        lookup.Add(indexes[n], b = lookup.Count);
 
                     if (a == b)
                         continue;

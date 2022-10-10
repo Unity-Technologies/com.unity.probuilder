@@ -24,8 +24,7 @@ class RectSelectionPicker
     public void Setup()
     {
         camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
-        camera.transform.position = Vector3.zero;
-        camera.transform.rotation = Quaternion.identity;
+        camera.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = new Vector3(0, 0, 5f);
@@ -53,7 +52,7 @@ class RectSelectionPicker
     {
         for (int i = 0; i < sceneObjects.Length; ++i)
         {
-            UObject.DestroyImmediate(sceneObjects[i].gameObject);
+            UObject.DestroyImmediate(sceneObjects[i]);
         }
 
         for (int i = 0; i < selectables.Length; i++)
