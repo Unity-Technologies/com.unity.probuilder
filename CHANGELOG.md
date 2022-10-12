@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-34] Fixed a bug where `Experimental Features Enabled` was not activating when using `Dedicated Server` platform. 
 - [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
 - [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
-- Improved CPU performance
+- Minor performance improvements and reduced allocations when querying for components.
 
 ### Changes
 
