@@ -765,6 +765,7 @@ namespace UnityEngine.ProBuilder
                 if (uv4s != null)
                     mesh.SetUVs(3, uv4s);
 #endif
+            mesh.indexFormat = mesh.vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
         }
 
         /// <summary>
