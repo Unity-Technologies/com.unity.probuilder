@@ -50,10 +50,5 @@
   ],
   "dependencies": {
     "com.unity.settings-manager": "1.0.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Unity-Technologies/com.unity.probuilder.git",
-    "revision": "ea0bd0c969779f359c7ca6e065338ac39a93c86a"
   }
 }
