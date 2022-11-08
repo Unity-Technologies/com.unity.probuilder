@@ -158,7 +158,7 @@ namespace UnityEditor.ProBuilder
 
         public void ResetToLastSelectMode()
         {
-            if(ProBuilderToolManager.activeTool != Tool.Custom)
+            if(ProBuilderToolManager.activeTool != Tool.Custom && ProBuilderToolManager.IsAnyProBuilderContextActive())
                 ProBuilderEditor.ResetToLastSelectMode();
         }
 #endif

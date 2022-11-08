@@ -182,6 +182,13 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
+#if TOOL_CONTEXTS_ENABLED
+        internal static bool IsAnyProBuilderContextActive()
+        {
+            return (ToolManager.activeContextType == typeof(PositionToolContext) || ToolManager.activeContextType == typeof(TextureToolContext));
+        }
+#endif
+
 #if !TOOL_CONTEXTS_ENABLED
         bool GetBuiltinToolType(Type type, out Type builtin)
         {
