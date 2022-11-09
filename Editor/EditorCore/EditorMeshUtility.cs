@@ -49,6 +49,7 @@ namespace UnityEditor.ProBuilder
                 if (umesh.GetTopology(i) != MeshTopology.Triangles)
                     skipMeshProcessing = true;
 
+            bool uv2Built = false;
             if (!skipMeshProcessing)
             {
                 bool autoLightmap = Lightmapping.autoUnwrapLightmapUV;
@@ -82,6 +83,8 @@ namespace UnityEditor.ProBuilder
                     {
                         for (int i = 0; i < uv2.Length; i++)
                             vertices[i].uv2 = uv2[i];
+
+                        uv2Built = true;
                     }
                     else
                     {
@@ -107,6 +110,10 @@ namespace UnityEditor.ProBuilder
 
             if (Experimental.meshesAreAssets)
                 TryCacheMesh(mesh);
+
+            umesh.RecalculateUVDistributionMetric(0);
+            if (uv2Built)
+                umesh.RecalculateUVDistributionMetric(1);
 
             UnityEditor.EditorUtility.SetDirty(mesh);
         }
