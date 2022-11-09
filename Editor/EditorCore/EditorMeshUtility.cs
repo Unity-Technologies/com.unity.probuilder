@@ -49,7 +49,9 @@ namespace UnityEditor.ProBuilder
                 if (umesh.GetTopology(i) != MeshTopology.Triangles)
                     skipMeshProcessing = true;
 
+#pragma warning disable 0219
             bool uv2Built = false;
+#pragma warning restore 0219
             if (!skipMeshProcessing)
             {
                 bool autoLightmap = Lightmapping.autoUnwrapLightmapUV;
@@ -111,9 +113,11 @@ namespace UnityEditor.ProBuilder
             if (Experimental.meshesAreAssets)
                 TryCacheMesh(mesh);
 
+#if UNITY_2020_2_OR_NEWER
             umesh.RecalculateUVDistributionMetric(0);
             if (uv2Built)
                 umesh.RecalculateUVDistributionMetric(1);
+#endif
 
             UnityEditor.EditorUtility.SetDirty(mesh);
         }
