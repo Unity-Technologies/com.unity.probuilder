@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
 - [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
 - [case: PBLD-38] Fixed an issue where exported assets would incorrectly use the UInt32 mesh index format.
-- [case: PBLD-43] Fixed an issue where activating the Edit Shape tool would prevent the next switch of editor tool context from properly executing. 
+- [case: PBLD-43] Fixed an issue where activating the **Edit Shape** tool would prevent the Editor tool context from switching. 
 
 ### Changes
 
