@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
-    ///     Responsible for managing the visibility of entity types in the scene.
+    /// Responsible for managing the visibility of entity types in the scene.
     /// </summary>
     [InitializeOnLoad]
     internal static class EntityVisibility
@@ -38,12 +38,14 @@ namespace UnityEditor.ProBuilder
         /// <param name="isVisible"></param>
         public static void SetEntityVisibility(EntityType entityType, bool isVisible)
         {
-            foreach (var entity in Object.FindObjectsOfType<Entity>())
+            foreach (var entity in EditorUtility.FindObjectsByType<Entity>())
+            {
                 if (entity.entityType == entityType)
                 {
                     var mr = entity.GetComponent<MeshRenderer>();
                     if (mr != null) mr.enabled = isVisible;
                 }
+            }
         }
 
         /// <summary>

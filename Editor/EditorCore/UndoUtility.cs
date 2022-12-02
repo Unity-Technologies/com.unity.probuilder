@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder
 
             // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
             // for the FindObjectsOfType call.
-            foreach (var mesh in Object.FindObjectsOfType<ProBuilderMesh>())
+            foreach (var mesh in EditorUtility.FindObjectsByType<ProBuilderMesh>())
             {
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
                 mesh.InvalidateCaches();

@@ -174,7 +174,7 @@ namespace UnityEditor.ProBuilder
             if (!s_ShowMissingLightmapUVWarning)
                 return;
 
-            var missingUv2 = Object.FindObjectsOfType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(k_ContributeGI));
+            var missingUv2 = EditorUtility.FindObjectsByType<ProBuilderMesh>().Where(x => !x.HasArrays(MeshArrays.Lightmap) && x.gameObject.HasStaticFlag(k_ContributeGI));
 
             int count = missingUv2.Count();
 
