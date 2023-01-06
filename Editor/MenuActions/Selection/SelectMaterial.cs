@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (m_RestrictToSelectedObjects)
                 selection = MeshSelection.topInternal;
             else
-                selection = Object.FindObjectsOfType<ProBuilderMesh>();
+                selection = EditorUtility.FindObjectsByType<ProBuilderMesh>();
 
             UndoUtility.RecordSelection("Select Faces with Material");
 

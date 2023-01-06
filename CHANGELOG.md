@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Updated `Object.FindObjectsOfType` to use the new `Objects.FindObjectsByType` in Unity 2023.1.
+
+
 ## [5.0.6] - 2022-06-30
 
 ### Bug Fixes

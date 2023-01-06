@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder
 
         static List<ProBuilderMesh> FindMissingLightmaps()
         {
-            return FindObjectsOfType<ProBuilderMesh>().Where(IsMissingLightmaps).ToList();
+            return EditorUtility.FindObjectsByType<ProBuilderMesh>().Where(IsMissingLightmaps).ToList();
         }
     }
 }

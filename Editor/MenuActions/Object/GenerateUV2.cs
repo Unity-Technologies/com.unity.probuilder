@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            var res = Lightmapping.RebuildMissingLightmapUVs(Object.FindObjectsOfType<ProBuilderMesh>(), true);
+            var res = Lightmapping.RebuildMissingLightmapUVs(EditorUtility.FindObjectsByType<ProBuilderMesh>(), true);
 
             if (res < 1)
                 return new ActionResult(ActionResult.Status.Success, "No Missing Lightmap UVs Found");
