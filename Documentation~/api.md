@@ -72,8 +72,11 @@ quad.Refresh();
 // If in editor, generate UV2 and collapse duplicate vertices with
 EditorMeshUtility.Optimize(quad, true);
 
-// If at runtime, collapse duplicate vertices with
-MeshUtility.CollapseSharedVertices(quad);
+// At runtime, `EditorMeshUtility` is not available. To collapse duplicate
+// vertices in runtime, modify the MeshFilter.sharedMesh directly.
+// Note that any subsequent changes to `quad` will overwrite the sharedMesh.
+var umesh = quad.GetComponent<MeshFilter>().sharedMesh;
+MeshUtility.CollapseSharedVertices(umesh);
 ```
 
 Note that you should never directly modify the `MeshFilter.sharedMesh`. ProBuilder controls updating the Unity Mesh with [ProBuilderMesh::ToMesh](xref:UnityEngine.ProBuilder.ProBuilderMesh.ToMesh(UnityEngine.MeshTopology)) and [ProBuilderMesh::Refresh](xref:UnityEngine.ProBuilder.ProBuilderMesh.Refresh(UnityEngine.ProBuilder.RefreshMask)) functions.

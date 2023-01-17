@@ -100,7 +100,7 @@ namespace UnityEditor.ProBuilder.Actions
             if (selectionOnly)
                 pool = MeshSelection.topInternal;
             else
-                pool = Object.FindObjectsOfType<ProBuilderMesh>();
+                pool = EditorUtility.FindObjectsByType<ProBuilderMesh>();
 
             //If the original selection does not have colors assigned we will select faces without colors
             if (colors.Count == 0)

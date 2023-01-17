@@ -12,15 +12,6 @@ namespace UnityEngine.ProBuilder
 {
     static class InternalUtility
     {
-        [Obsolete]
-        public static T[] GetComponents<T>(this IEnumerable<GameObject> gameObjects) where T : Component
-        {
-            List<T> c = new List<T>();
-            foreach (GameObject go in gameObjects)
-                c.AddRange(go.transform.GetComponentsInChildren<T>());
-            return c.ToArray();
-        }
-
         // @todo
         public static T[] GetComponents<T>(GameObject go) where T : Component
         {
@@ -127,42 +118,6 @@ namespace UnityEngine.ProBuilder
             }
 
             return true;
-        }
-
-        /**
-         *  \brief Convert a string to a Vector3 array.
-         ()
-         *  @param str A string formatted like so: (x, y, z)\n(x2, y2, z2).
-         *  \sa #StringWithArray
-         *  \returns A Vector3[] array.
-         */
-        public static Vector3[] StringToVector3Array(string str)
-        {
-            List<Vector3> v = new List<Vector3>();
-
-            str = str.Replace(" ", "");             // Remove white space
-            string[] lines = str.Split('\n');       // split into vector lines
-
-            foreach (string vec in lines)
-            {
-                if (vec.Contains("//"))
-                    continue;
-
-                string[] values = vec.Split(',');
-
-                if (values.Length < 3)
-                    continue;
-
-                float v0, v1, v2;
-                if (!float.TryParse(values[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out v0))
-                    continue;
-                if (!float.TryParse(values[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out v1))
-                    continue;
-                if (!float.TryParse(values[2], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out v2))
-                    continue;
-                v.Add(new Vector3(v0, v1, v2));
-            }
-            return v.ToArray();
         }
 
 #if !UNITY_2019_2_OR_NEWER

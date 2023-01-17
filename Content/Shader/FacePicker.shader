@@ -20,8 +20,6 @@ Shader "Hidden/ProBuilder/FacePicker"
             #pragma fragment frag
             #include "UnityCG.cginc"
 
-            float4 _Tint;
-
             struct appdata
             {
                 float4 vertex : POSITION;

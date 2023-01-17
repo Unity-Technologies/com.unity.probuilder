@@ -592,5 +592,14 @@ namespace UnityEditor.ProBuilder
             setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
 #endif
         }
+        
+        internal static T[] FindObjectsByType<T>() where T : UObject
+        {
+#if UNITY_2023_1_OR_NEWER
+            return UObject.FindObjectsByType<T>(FindObjectsSortMode.None);
+#else
+            return UObject.FindObjectsOfType<T>();
+#endif
+        }
     }
 }

@@ -18,9 +18,6 @@ namespace UnityEngine.ProBuilder
                 collision = gameObject.AddComponent<MeshCollider>();
             collision.isTrigger = false;
             SetMaterial(BuiltinMaterials.colliderMaterial);
-            var r = GetComponent<Renderer>();
-            if (r != null)
-                r.hideFlags = HideFlags.DontSaveInBuild;
         }
 
         public override void OnEnterPlayMode()

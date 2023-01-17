@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
         public static void MenuForceSceneRefresh()
         {
             StringBuilder sb = new StringBuilder();
-            ProBuilderMesh[] all = Object.FindObjectsOfType<ProBuilderMesh>();
+            ProBuilderMesh[] all = EditorUtility.FindObjectsByType<ProBuilderMesh>();
 
             for (int i = 0, l = all.Length; i < l; i++)
             {

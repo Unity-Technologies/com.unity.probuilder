@@ -7,8 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- [case: PBLD-34] Fixed a bug where `Experimental Features Enabled` was not activating when using `Dedicated Server` platform.
+- [case: PBLD-41] Fixed an issue where UV distribution metric would not recalculate after the mesh optimization step.
+- [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
+- [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
+- [case: PBLD-38] Fixed an issue where exported assets would incorrectly use the UInt32 mesh index format.
+- [case: PBLD-43] Fixed an issue where activating the **Edit Shape** tool would prevent the Editor tool context from switching. 
+
+### Changes
+
+- Updated `Object.FindObjectsOfType` to use the new `Objects.FindObjectsByType` in Unity 2023.1.
+
+
+## [5.0.6] - 2022-06-30
+
 ### Bug Fixes
 
+- [case: 1407518] Fixed issue where 'Detach Faces' action would not undo correctly.
+- [case: 1393809] Fixed move tool when working with small scales.
 - [case: 1395936] Fixed Editor crash when opening a EditorWindow dropdown (MacOS).
 - [case: 1389642] Fixed Grid snapping not working properly with EditShape Tool.
 - [case: 1368465] Fixed issue where extruding an element orthogonally to their normal would result in some additional extrusion along the normal.
@@ -17,6 +35,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: 1348434] Added more detailed instructions in the missing UV2 warning log.
 - Fix some styling issues with Overlays in 21.2
 - [case: 1350635] Fixed crash when using CSG operations.
+- [case: 1405226] Fixed tooltips inconsistently showing and hiding.
+- [case: 1407039] Fixed stair creation tool missing the inner radius parameter.
+- [case: PBLD-3] Fixed vertex manipulation tools locking grid snapping settings on activation.
+- [case: PBLD-9] Fixed issue where adding and then removing Collider or Trigger behaviours would cause meshes to not render in builds.
+- [case: PBLD-7] Fixed ProBuilderize action not handling redo operation correctly.
+- [case: PBLD-6] Fixed unnecessary reimport of all project textures on package install.
+- [case: PBLD-11] Fixed Poly Shape Tool missing an undo step after setting height.
+- [case: PBLD-13] Fixed a bug where a newly created shape would not be redrawn with Redo. 
+- [case: PBLD-15] Fixed a bug with URP that prevented some items from being selectable in the Game view. 
 
 ### Changes
 
