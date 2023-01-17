@@ -230,7 +230,9 @@ namespace UnityEngine.ProBuilder
                     submeshes.RemoveAt(index);
             }
 
-            mesh.SetSubMeshes(submeshes);
+            mesh.subMeshCount = submeshes.Count;
+            for (int i = 0; i < submeshes.Count; ++i)
+                mesh.SetSubMesh(i, submeshes[i]);
         }
         
         internal static void GetEmptySubmeshes(int materialCount, IList<Face> faces, List<int> emptySubMeshes)
