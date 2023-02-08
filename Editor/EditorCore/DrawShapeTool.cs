@@ -78,6 +78,26 @@ namespace UnityEditor.ProBuilder
         internal static Pref<Quaternion> s_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation", Quaternion.identity);
 
         int m_ControlID;
+
+        internal float minSnapSize
+        {
+            get
+            {
+                if (m_IsOnGrid)
+                {
+                    return Mathf.Min(EditorSnapping.activeMoveSnapValue.x,
+                        Mathf.Min(EditorSnapping.activeMoveSnapValue.y,
+                            EditorSnapping.activeMoveSnapValue.z));
+                }
+
+                return Mathf.Min(EditorSnapping.incrementalSnapMoveValue.x,
+                    Mathf.Min(EditorSnapping.incrementalSnapMoveValue.y,
+                        EditorSnapping.incrementalSnapMoveValue.z));
+            }
+        }
+
+        const float k_MinBoundLength = 0.001f; // 1mm
+
         // ideally this would be owned by the state machine
         public int controlID => m_ControlID;
 
@@ -358,9 +378,9 @@ namespace UnityEditor.ProBuilder
         {
             RecalculateBounds();
 
-            if(m_Bounds.size.sqrMagnitude < .01f
-               || Mathf.Abs(m_Bounds.extents.x) < 0.001f
-               || Mathf.Abs(m_Bounds.extents.z) < 0.001f)
+            if(m_Bounds.size.sqrMagnitude <= Mathf.Min(.01f , minSnapSize*minSnapSize)
+               || Mathf.Abs(m_Bounds.extents.x) < k_MinBoundLength
+               || Mathf.Abs(m_Bounds.extents.z) < k_MinBoundLength)
             {
                 if(m_ProBuilderShape != null
                    && m_ProBuilderShape.mesh.vertexCount > 0)

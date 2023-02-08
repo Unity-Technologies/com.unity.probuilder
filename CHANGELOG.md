@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [case: PBLD-48] Fixed a bug where the minimum size of a shape did not take into account snap and grid sizes.
 - [case: PBLD-34] Fixed a bug where `Experimental Features Enabled` was not activating when using `Dedicated Server` platform.
 - [case: PBLD-41] Fixed an issue where UV distribution metric would not recalculate after the mesh optimization step.
 - [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.

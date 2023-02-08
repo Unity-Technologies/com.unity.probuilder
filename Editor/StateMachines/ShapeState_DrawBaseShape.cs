@@ -58,7 +58,7 @@ namespace UnityEditor.ProBuilder
                                 return ResetState();
                             }
 
-                            if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) < .1f)
+                            if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) <= Mathf.Min(0.01f, tool.minSnapSize))
                                 return ResetState();
 
                             return NextState();
