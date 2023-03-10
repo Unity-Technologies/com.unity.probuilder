@@ -991,6 +991,11 @@ namespace UnityEngine.ProBuilder
             set
             {
                 m_Mesh = value;
+                if (m_Mesh != null)
+                {
+                    m_Mesh.hideFlags = HideFlags.DontSave;
+                }
+
                 filter.sharedMesh = value;
             }
         }
