@@ -17,24 +17,18 @@ namespace UnityEngine.ProBuilder
     {
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
 
-#if UNITY_EDITOR
-        public void OnBeforeSerialize() {}
-
-        public void OnAfterDeserialize()
-        {
-            InvalidateCaches();
-        }
-
         void OnEnable()
         {
             if (m_Mesh == null)
             {
                 mesh = mesh;
             }
-            
+
             Rebuild(false);
 
+#if UNITY_EDITOR
             PrefabUtility.prefabInstanceUpdated += OnPrefabInstanceUpdated;
+#endif
         }
 
         void OnDisable()
@@ -44,9 +38,20 @@ namespace UnityEngine.ProBuilder
                 ProbuilderMeshDatabase.ReleaseMesh(m_MeshId);
                 mesh = null;
             }
-
+#if UNITY_EDITOR
             PrefabUtility.prefabInstanceUpdated -= OnPrefabInstanceUpdated;
+#endif
         }
+
+#if UNITY_EDITOR
+        public void OnBeforeSerialize() {}
+
+        public void OnAfterDeserialize()
+        {
+            InvalidateCaches();
+        }
+
+
 
         void OnPrefabInstanceUpdated(GameObject go)
         {
