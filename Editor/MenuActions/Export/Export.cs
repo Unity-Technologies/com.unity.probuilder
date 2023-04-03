@@ -177,7 +177,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             List<ProBuilderMesh> meshes = m_ExportRecursive ? MeshSelection.deep.ToList() : MeshSelection.topInternal;
 
-            if (meshes == null || !meshes.Any())
+            if (meshes == null || meshes.Count == 0)
                 return new ActionResult(ActionResult.Status.Canceled, "No ProBuilder Mesh");
 
             if (m_ExportFormat == ExportFormat.Obj)

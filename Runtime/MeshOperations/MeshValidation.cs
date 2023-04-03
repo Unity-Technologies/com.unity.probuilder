@@ -119,7 +119,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 {
                     var groups = CollectFaceGroups(mesh, face);
 
-                    if (groups.Count() < 2)
+                    if (groups.Count < 2)
                         continue;
 
                     face.SetIndexes(groups[0].SelectMany(x=>x.indices));
@@ -295,7 +295,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             mesh.DeleteVertices(del);
 
-            return del.Any();
+            return del.Count > 0;
         }
 
         /// <summary>

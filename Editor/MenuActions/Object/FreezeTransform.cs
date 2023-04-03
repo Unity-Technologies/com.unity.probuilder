@@ -60,8 +60,7 @@ namespace UnityEditor.ProBuilder.Actions
                 ProBuilderMesh pb = selection[i];
                 bool flipFaces = ShouldFlipFaces(pb.transform.localScale);
 
-                pb.transform.position = Vector3.zero;
-                pb.transform.rotation = Quaternion.identity;
+                pb.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
                 pb.transform.localScale = Vector3.one;
 
                 foreach(Face face in pb.facesInternal)

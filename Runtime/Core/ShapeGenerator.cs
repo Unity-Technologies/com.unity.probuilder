@@ -1562,7 +1562,7 @@ namespace UnityEngine.ProBuilder
 
             int col = clampedColumns - 1;
 
-            Vector3[] cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, Quaternion.Euler(Vector3.up * 0f * clampedHorizontalCircumference), clampedRadius);
+            Vector3[] cir = GetCirclePoints(clampedRows, clampedTubeRadius, clampedVerticalCircumference, Quaternion.Euler(Vector3.zero), clampedRadius);
 
             for (int i = 1; i < clampedColumns; i++)
             {

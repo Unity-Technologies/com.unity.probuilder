@@ -169,14 +169,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             mesh.GetUVs(2, uv3s);
             mesh.GetUVs(3, uv4s);
 
-            bool _hasPositions = positions != null && positions.Count() == vertexCount;
-            bool _hasColors = colors != null && colors.Count() == vertexCount;
-            bool _hasNormals = normals != null && normals.Count() == vertexCount;
-            bool _hasTangents = tangents != null && tangents.Count() == vertexCount;
-            bool _hasUv0 = uv0s != null && uv0s.Count() == vertexCount;
-            bool _hasUv2 = uv2s != null && uv2s.Count() == vertexCount;
-            bool _hasUv3 = uv3s.Count() == vertexCount;
-            bool _hasUv4 = uv4s.Count() == vertexCount;
+            bool _hasPositions = positions != null && positions.Length == vertexCount;
+            bool _hasColors = colors != null && colors.Length == vertexCount;
+            bool _hasNormals = normals != null && normals.Length == vertexCount;
+            bool _hasTangents = tangents != null && tangents.Length == vertexCount;
+            bool _hasUv0 = uv0s != null && uv0s.Length == vertexCount;
+            bool _hasUv2 = uv2s != null && uv2s.Length == vertexCount;
+            bool _hasUv3 = uv3s.Count == vertexCount;
+            bool _hasUv4 = uv4s.Count == vertexCount;
 
             for (int i = 0; i < vertexCount; i++)
             {

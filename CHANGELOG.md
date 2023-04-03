@@ -1,4 +1,4 @@
-# Changelog
+Nu# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-41] Fixed an issue where UV distribution metric would not recalculate after the mesh optimization step.
 - [case: PBLD-32] Fixed `New Shape` start location being incorrect after using right mouse button.
 - [case: PBLD-19] Fixed shape creation when the camera perspective is set to Top.
+- Made minor performance improvements and reduced allocations when querying for components.
 - [case: PBLD-38] Fixed an issue where exported assets would incorrectly use the UInt32 mesh index format.
 - [case: PBLD-43] Fixed an issue where activating the **Edit Shape** tool would prevent the Editor tool context from switching. 
 
