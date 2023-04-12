@@ -390,9 +390,11 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Ensures that the UnityEngine.Mesh associated with this object is unique.
+        /// Ensures that the UnityEngine.Mesh associated with this object is unique. When instantiating a ProBuilderMesh,
+        /// the mesh asset will reference the original instance. If you are making a copy to edit, you must call
+        /// MakeUnique to avoid modifying a shared mesh asset.
         /// </summary>
-        internal void MakeUnique()
+        public void MakeUnique()
         {
             mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
             // Debug.Log($"<color=red>mesh alloc <b>MakeUnique</b> {name} {GetInstanceID()}</color>");
