@@ -132,6 +132,7 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
+            PrefabUtility.prefabInstanceReverted += PrefabInstanceReverted;
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
@@ -142,6 +143,12 @@ namespace UnityEditor.ProBuilder
 #endif
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
             OnObjectSelectionChanged();
+        }
+
+        static void PrefabInstanceReverted(GameObject obj)
+        {
+            if(obj.TryGetComponent<ProBuilderMesh>(out _))
+                OnObjectSelectionChanged();
         }
 
         /// <summary>
@@ -218,10 +225,7 @@ namespace UnityEditor.ProBuilder
             {
                 // don't add prefabs or assets to the mesh selection
                 if (string.IsNullOrEmpty(AssetDatabase.GetAssetPath(mesh.gameObject)))
-                {
-                    EditorUtility.SynchronizeWithMeshFilter(mesh);
                     s_TopSelection.Add(mesh);
-                }
             }
 
             InvalidateCaches();

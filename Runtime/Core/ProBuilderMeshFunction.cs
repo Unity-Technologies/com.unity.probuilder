@@ -72,6 +72,9 @@ namespace UnityEngine.ProBuilder
                     Rebuild();
                     meshWasInitialized?.Invoke(this);
                 }
+
+                // only sync instance version index when a new mesh is created
+                m_InstanceVersionIndex = m_VersionIndex;
             }
         }
 
@@ -83,7 +86,7 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="Refresh"/>
         void Reset()
         {
-            if (meshSyncState != MeshSyncState.Null && meshSyncState != MeshSyncState.InstanceIDMismatch)
+            if (meshSyncState != MeshSyncState.Null)
             {
                 Rebuild();
                 if (componentHasBeenReset != null)
@@ -121,13 +124,17 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Increments the mesh version's index. This helps ProBuilder track
+        /// Increments the mesh version index. This helps ProBuilder track
         /// when the mesh changes.
         /// </summary>
         void IncrementVersionIndex()
         {
             // it doesn't matter if the version index wraps. the important thing is that it is changed.
-            unchecked { m_VersionIndex++; }
+            unchecked
+            {
+                m_VersionIndex++;
+                m_InstanceVersionIndex = m_VersionIndex;
+            }
         }
 
         /// <summary>
@@ -319,6 +326,7 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             bool usedInParticleSystem = false;
+            Debug.Log($"ToMesh {name} {GetInstanceID()} version {versionIndex} local {m_InstanceVersionIndex} -> {versionIndex+1}");
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
@@ -326,7 +334,8 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
-                mesh = new Mesh();
+                mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+                Debug.Log($"<color=red>mesh alloc <b>ToMesh</b> {name} {GetInstanceID()}</color>");
             }
             else if (mesh.vertexCount != vertexCount)
             {
@@ -366,8 +375,6 @@ namespace UnityEngine.ProBuilder
                 mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            mesh.name = string.Format("pb_Mesh{0}", id);
-
             EnsureMeshFilterIsAssigned();
 
             if(usedInParticleSystem)
@@ -381,8 +388,8 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         internal void MakeUnique()
         {
-            // set a new UnityEngine.Mesh instance
-            mesh = new Mesh();
+            mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+            Debug.Log($"<color=red>mesh alloc <b>MakeUnique</b> {name} {GetInstanceID()}</color>");
             ToMesh();
             Refresh();
         }
@@ -394,7 +401,7 @@ namespace UnityEngine.ProBuilder
         public void CopyFrom(ProBuilderMesh other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             Clear();
             positions = other.positions;

@@ -172,6 +172,8 @@ namespace UnityEngine.ProBuilder
         }
 #pragma warning restore 109
 
+        const ushort k_NewMeshVersionIndex = 0;
+
         /// <summary>
         /// Tracks each time the ToMesh() and Refresh() functions are called to modify the mesh.
         /// This is a simple uint number used to check whether two versions of the ProBuilderMesh are the same or not.
@@ -180,20 +182,27 @@ namespace UnityEngine.ProBuilder
         ushort m_VersionIndex = 0;
         internal ushort versionIndex => m_VersionIndex;
 
+        // k_NewMeshVersionIndex is a reserved value indicating that this is a new mesh instance. It is used to
+        // differentiate between mesh creation and duplication.
+        [NonSerialized]
+        ushort m_InstanceVersionIndex = k_NewMeshVersionIndex;
+
         internal struct NonVersionedEditScope : IDisposable
         {
-            ProBuilderMesh m_Mesh;
-            ushort m_VersionIndex;
+            readonly ProBuilderMesh m_Mesh;
+            readonly ushort m_VersionIndex, m_InstanceVersionIndex;
 
             public NonVersionedEditScope(ProBuilderMesh mesh)
             {
                 m_Mesh = mesh;
                 m_VersionIndex = mesh.versionIndex;
+                m_InstanceVersionIndex = mesh.m_InstanceVersionIndex;
             }
 
             public void Dispose()
             {
                 m_Mesh.m_VersionIndex = m_VersionIndex;
+                m_Mesh.m_InstanceVersionIndex = m_InstanceVersionIndex;
             }
         }
 
@@ -964,7 +973,7 @@ namespace UnityEngine.ProBuilder
             }
 
             set
-            { 
+            {
                 m_Mesh = value;
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(this);
@@ -973,9 +982,17 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-        internal int id
+        [Obsolete("InstanceID is not used to track mesh references as of 2023/04/12")]
+        internal long id
         {
-            get { return gameObject.GetInstanceID(); }
+            get
+            {
+                #if UNITY_EDITOR
+                if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(this, out _, out long id))
+                    return id;
+                #endif
+                return gameObject.GetInstanceID();
+            }
         }
 
         /// <summary>
@@ -992,12 +1009,11 @@ namespace UnityEngine.ProBuilder
                 if (mesh == null)
                     return MeshSyncState.Null;
 
-                int meshNo;
+                if (m_VersionIndex > 0 && m_InstanceVersionIndex == k_NewMeshVersionIndex)
+                    return MeshSyncState.MeshNotUnique;
 
-                int.TryParse(mesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-                if (meshNo != id)
-                    return MeshSyncState.InstanceIDMismatch;
+                if (m_VersionIndex != m_InstanceVersionIndex)
+                    return MeshSyncState.NeedsRebuild;
 
                 return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;
             }
