@@ -1,7 +1,11 @@
+using System.Collections;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.ProBuilder;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
@@ -20,8 +24,18 @@ class MeshSyncTests : TemporaryAssetTest
         OpenScene(copyPasteTestScene);
     }
 
+    static IEnumerable CopyPasteDuplicate
+    {
+        get
+        {
+            yield return new TestCaseData(new object[]{new [] { "Edit/Duplicate" }}) { TestName = "Duplicate"};
+            yield return new TestCaseData(new object[]{new [] { "Edit/Copy", "Edit/Paste" }}) { TestName = "Copy/Paste"};
+        }
+    }
+
     [Test]
-    public void Duplicate_CreatesNewMesh()
+    [TestCaseSource(nameof(CopyPasteDuplicate))]
+    public void ExecuteCopyPasteDuplicate_CreatesUniqueMesh(string[] commands)
     {
         var parent = new GameObject().transform;
         var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstCorner);
@@ -30,28 +44,10 @@ class MeshSyncTests : TemporaryAssetTest
         int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
 
         Selection.objects = new[] { cube.gameObject };
-        Assume.That(EditorApplication.ExecuteMenuItem("Edit/Duplicate"), Is.True);
-        Assume.That(parent.transform.childCount, Is.EqualTo(2));
 
-        var copy = parent.GetChild(1).GetComponent<ProBuilderMesh>();
-        // EditorUtility.SynchronizeWithMeshFilter(copy);
+        foreach(var command in commands)
+            Assume.That(EditorApplication.ExecuteMenuItem(command), Is.True);
 
-        Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
-    }
-
-    [Test]
-    public void CopyPaste_CreatesNewMesh()
-    {
-        var parent = new GameObject().transform;
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstCorner);
-        cube.transform.parent = parent;
-        Assume.That(parent.childCount, Is.EqualTo(1));
-        var source = cube.GetComponent<MeshFilter>().sharedMesh;
-
-        Selection.objects = new[] { cube.gameObject };
-        Assume.That(EditorApplication.ExecuteMenuItem("Edit/Copy"), Is.True);
-        Assume.That(EditorApplication.ExecuteMenuItem("Edit/Paste"), Is.True);
         Assume.That(parent.transform.childCount, Is.EqualTo(2));
 
         var copy = parent.GetChild(1).GetComponent<ProBuilderMesh>();
@@ -59,23 +55,41 @@ class MeshSyncTests : TemporaryAssetTest
         // this is called by ObjectChangeKind.CreateGameObjectHierarchy in HierarchyListener. for the sake of the test
         // we'll assume that the callback is working as intended. this way we avoid waiting til end of frame for the
         // events to flush.
-        EditorUtility.SynchronizeWithMeshFilter(copy);
+        HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh, Is.Not.EqualTo(source));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
     }
 
     [Test]
-    public void OpenScene_DoesNot_DirtyMeshSync()
+    public void OpenSceneDoesNotDirtyScene()
     {
         var cube = GameObject.Find("Cube");
         Assume.That(cube, Is.Not.Null);
         var mesh = cube.GetComponent<ProBuilderMesh>();
-        var id = mesh.id;
-        OpenScene(copyPasteTestScene);
+        EditorUtility.SynchronizeWithMeshFilter(mesh);
+        Debug.Log(EditorSceneManager.GetActiveScene().name);
+        Assert.That(EditorSceneManager.GetActiveScene().isDirty, Is.False);
+    }
 
-        var second = GameObject.Find("Cube");
-        Assume.That(second, Is.Not.Null);
-        Assert.That(second.GetComponent<ProBuilderMesh>().id, Is.EqualTo(id));
+    // Instantiating a ProBuilderMesh component should not automatically create a new mesh asset. In the editor, this
+    // is handled by HierarchyListener. At runtime, it is the responsibility of the caller to invoke
+    // ProBuilderMesh.MakeUnique if editing is required.
+    [Test]
+    public static void InstantiateReferencesOriginalMesh()
+    {
+        var original = ShapeFactory.Instantiate<Cube>();
+        var copy = Object.Instantiate(original);
+
+        try
+        {
+            Assert.AreNotEqual(copy, original, "GameObject references are equal");
+            Assert.IsTrue(ReferenceEquals(copy.mesh, original.mesh), "Mesh references are equal");
+        }
+        finally
+        {
+            Object.DestroyImmediate(original.gameObject);
+            Object.DestroyImmediate(copy.gameObject);
+        }
     }
 }

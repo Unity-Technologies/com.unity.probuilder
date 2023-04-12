@@ -335,11 +335,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// The component data is not up to date with the compiled mesh.
         /// </summary>
-        NeedsRebuild,
-        /// <summary>
-        /// Component is referencing a mesh asset already in use by another component.
-        /// </summary>
-        MeshNotUnique
+        NeedsRebuild
     }
 
     /// <summary>

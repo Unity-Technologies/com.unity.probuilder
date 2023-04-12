@@ -116,11 +116,16 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
-                if (meshWillBeDestroyed != null)
-                    meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+                DestroyUnityMesh();
             }
+        }
+
+        internal void DestroyUnityMesh()
+        {
+            if (meshWillBeDestroyed != null)
+                meshWillBeDestroyed(this);
+            else
+                DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
         }
 
         /// <summary>
@@ -132,7 +137,8 @@ namespace UnityEngine.ProBuilder
             // it doesn't matter if the version index wraps. the important thing is that it is changed.
             unchecked
             {
-                m_VersionIndex++;
+                if (++m_VersionIndex == 0)
+                    m_VersionIndex = 1;
                 m_InstanceVersionIndex = m_VersionIndex;
             }
         }
@@ -326,7 +332,7 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             bool usedInParticleSystem = false;
-            Debug.Log($"ToMesh {name} {GetInstanceID()} version {versionIndex} local {m_InstanceVersionIndex} -> {versionIndex+1}");
+            // Debug.Log($"ToMesh {name} {GetInstanceID()} version {versionIndex} local {m_InstanceVersionIndex} -> {versionIndex+1}");
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
@@ -335,7 +341,7 @@ namespace UnityEngine.ProBuilder
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
                 mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
-                Debug.Log($"<color=red>mesh alloc <b>ToMesh</b> {name} {GetInstanceID()}</color>");
+                // Debug.Log($"<color=red>mesh alloc <b>ToMesh</b> {name} {GetInstanceID()}</color>");
             }
             else if (mesh.vertexCount != vertexCount)
             {
@@ -389,7 +395,7 @@ namespace UnityEngine.ProBuilder
         internal void MakeUnique()
         {
             mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
-            Debug.Log($"<color=red>mesh alloc <b>MakeUnique</b> {name} {GetInstanceID()}</color>");
+            // Debug.Log($"<color=red>mesh alloc <b>MakeUnique</b> {name} {GetInstanceID()}</color>");
             ToMesh();
             Refresh();
         }

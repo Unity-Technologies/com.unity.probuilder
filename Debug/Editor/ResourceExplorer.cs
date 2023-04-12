@@ -23,11 +23,14 @@ namespace UnityEditor.ProBuilder.Debug
         void OnEnable()
         {
             ScanResources();
+            Undo.undoRedoPerformed += () => { EditorApplication.delayCall += ScanResources; };
+            Selection.selectionChanged += () => { EditorApplication.delayCall += ScanResources; };
         }
 
         void ScanResources()
         {
             m_Loaded = Resources.FindObjectsOfTypeAll<Mesh>();
+            Repaint();
         }
 
         void OnFocus()

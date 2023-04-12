@@ -172,20 +172,22 @@ namespace UnityEngine.ProBuilder
         }
 #pragma warning restore 109
 
-        const ushort k_NewMeshVersionIndex = 0;
+        internal const ushort k_UnitializedVersionIndex = 0;
 
         /// <summary>
         /// Tracks each time the ToMesh() and Refresh() functions are called to modify the mesh.
         /// This is a simple uint number used to check whether two versions of the ProBuilderMesh are the same or not.
         /// </summary>
         [SerializeField]
-        ushort m_VersionIndex = 0;
-        internal ushort versionIndex => m_VersionIndex;
+        ushort m_VersionIndex = k_UnitializedVersionIndex;
 
         // k_NewMeshVersionIndex is a reserved value indicating that this is a new mesh instance. It is used to
         // differentiate between mesh creation and duplication.
         [NonSerialized]
-        ushort m_InstanceVersionIndex = k_NewMeshVersionIndex;
+        ushort m_InstanceVersionIndex = k_UnitializedVersionIndex;
+
+        internal ushort versionIndex => m_VersionIndex;
+        internal ushort nonSerializedVersionIndex => m_InstanceVersionIndex;
 
         internal struct NonVersionedEditScope : IDisposable
         {
@@ -1009,10 +1011,12 @@ namespace UnityEngine.ProBuilder
                 if (mesh == null)
                     return MeshSyncState.Null;
 
-                if (m_VersionIndex > 0 && m_InstanceVersionIndex == k_NewMeshVersionIndex)
-                    return MeshSyncState.MeshNotUnique;
-
-                if (m_VersionIndex != m_InstanceVersionIndex)
+                // if the local version index is uninitialized, that means no edits have occurred since loading this
+                // mesh. it could mean a new mesh was created and ToMesh has not been called yet, or that this mesh was
+                // copy/pasted from an existing instance.
+                // in the latter case, it is handled by listening to the ObjectChangeEvent stream in HierarchyListener.
+                // this function only cares about the case where modifications have been made during the current session.
+                if (m_VersionIndex != m_InstanceVersionIndex && m_InstanceVersionIndex != k_UnitializedVersionIndex)
                     return MeshSyncState.NeedsRebuild;
 
                 return mesh.uv2 == null ? MeshSyncState.Lightmap : MeshSyncState.InSync;

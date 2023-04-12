@@ -20,28 +20,8 @@ namespace UnityEditor.ProBuilder
             if (SceneDragAndDropListener.isDragging)
                 return;
 
-            // // Two passes
-            // // 1. Ensure every ProBuilderMesh in the scene has a valid mesh
-            // // 2. Rebuild every ProBuilderMesh in the selection to reflect undone changes.
-            //
-            // // Synchronize just checks that the mesh is not null, and UV2 is still valid. This should be very cheap except
-            // // for the FindObjectsOfType call.
-            // foreach (var mesh in EditorUtility.FindObjectsByType<ProBuilderMesh>())
-            // {
-            //     EditorUtility.SynchronizeWithMeshFilter(mesh);
-            //     mesh.InvalidateCaches();
-            // }
-            //
-            // foreach (var mesh in InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms))
-            // {
-            //     mesh.InvalidateCaches();
-            //
-            //     using (new ProBuilderMesh.NonVersionedEditScope(mesh))
-            //     {
-            //         mesh.Rebuild();
-            //         mesh.Optimize();
-            //     }
-            // }
+            foreach(var mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
         }

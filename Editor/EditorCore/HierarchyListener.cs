@@ -15,6 +15,7 @@ namespace UnityEditor.ProBuilder
             AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
             PrefabUtility.prefabInstanceReverted += PrefabInstanceUpdated;
+            PrefabUtility.prefabInstanceReverting += PrefabInstanceReverting;
             ProBuilderMesh.meshWasInitialized += OnMeshInitialized;
             ObjectChangeEvents.changesPublished += ObjectEventChangesPublished;
         }
@@ -29,12 +30,13 @@ namespace UnityEditor.ProBuilder
                 if (stream.GetEventType(i) == ObjectChangeKind.CreateGameObjectHierarchy)
                 {
                     stream.GetCreateGameObjectHierarchyEvent(i, out CreateGameObjectHierarchyEventArgs data);
+                    // Debug.Log($"CreateGameObjectHierarchy {UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId)} {data.instanceId}");
 
-                    Debug.Log($"CreateGameObjectHierarchy {UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId)} {data.instanceId}");
-
+                    // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
+                    // if so, we need to create a new mesh asset.
                     if (UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go
                         && go.TryGetComponent<ProBuilderMesh>(out var mesh))
-                        EditorUtility.SynchronizeWithMeshFilter(mesh);
+                        OnObjectCreated(mesh);
                 }
                 // ProBuilderMesh was created by adding from component menu or pasting component
                 else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructure)
@@ -42,6 +44,18 @@ namespace UnityEditor.ProBuilder
                     stream.GetChangeGameObjectStructureEvent(i, out var data);
                     Debug.Log($"ChangeGameObjectStructure {UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId)} {data.instanceId}");
                 }
+            }
+        }
+
+        // used by tests
+        internal static void OnObjectCreated(ProBuilderMesh mesh)
+        {
+            if (mesh.versionIndex != ProBuilderMesh.k_UnitializedVersionIndex &&
+                mesh.nonSerializedVersionIndex == ProBuilderMesh.k_UnitializedVersionIndex)
+            {
+                mesh.MakeUnique();
+                Undo.RegisterCreatedObjectUndo(mesh.mesh, "Paste ProBuilderMesh");
+                mesh.Optimize();
             }
         }
 
@@ -61,13 +75,20 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => EditorUtility.SetGizmoIconEnabled(typeof(ProBuilderMesh), false);
         }
 
+        static void PrefabInstanceReverting(GameObject go)
+        {
+            // revert will leak meshes unless we clean up before ProBuilderMesh.m_Mesh is set to null
+            foreach(var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
+                mesh.DestroyUnityMesh();
+        }
+
         static void PrefabInstanceUpdated(GameObject go)
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
 
-            foreach (ProBuilderMesh pb in go.GetComponentsInChildren<ProBuilderMesh>())
-                EditorUtility.SynchronizeWithMeshFilter(pb);
+            foreach (var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
         }

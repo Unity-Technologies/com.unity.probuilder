@@ -1,4 +1,4 @@
-#define DEBUG_MESH_SYNC
+// #define DEBUG_MESH_SYNC
 #pragma warning disable 0168
 
 using UnityEngine;
@@ -210,12 +210,6 @@ namespace UnityEditor.ProBuilder
                     LogMeshSyncEvent(mesh, state, "Rebuild");
                     mesh.Rebuild();
                     mesh.Optimize();
-                }
-                else if (state == MeshSyncState.MeshNotUnique)
-                {
-                    LogMeshSyncEvent(mesh, state, "MakeUnique");
-                    mesh.MakeUnique();
-                    Undo.RegisterCreatedObjectUndo(mesh.mesh, Undo.GetCurrentGroupName());
                 }
                 else
                 {
