@@ -985,17 +985,7 @@ namespace UnityEngine.ProBuilder
         }
 
         [Obsolete("InstanceID is not used to track mesh references as of 2023/04/12")]
-        internal long id
-        {
-            get
-            {
-                #if UNITY_EDITOR
-                if (UnityEditor.AssetDatabase.TryGetGUIDAndLocalFileIdentifier(this, out _, out long id))
-                    return id;
-                #endif
-                return gameObject.GetInstanceID();
-            }
-        }
+        internal int id => gameObject.GetInstanceID();
 
         /// <summary>
         /// Gets a flag that indicates whether the <see cref="UnityEngine.Mesh" /> is in sync with the ProBuilderMesh.

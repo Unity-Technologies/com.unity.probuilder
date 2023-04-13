@@ -332,7 +332,6 @@ namespace UnityEngine.ProBuilder
         public void ToMesh(MeshTopology preferredTopology = MeshTopology.Triangles)
         {
             bool usedInParticleSystem = false;
-            // Debug.Log($"ToMesh {name} {GetInstanceID()} version {versionIndex} local {m_InstanceVersionIndex} -> {versionIndex+1}");
 
             // if the mesh vertex count hasn't been modified, we can keep most of the mesh elements around
             if (mesh == null)
@@ -341,7 +340,6 @@ namespace UnityEngine.ProBuilder
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
                 mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
-                // Debug.Log($"<color=red>mesh alloc <b>ToMesh</b> {name} {GetInstanceID()}</color>");
             }
             else if (mesh.vertexCount != vertexCount)
             {
