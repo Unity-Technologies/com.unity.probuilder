@@ -28,17 +28,13 @@ namespace UnityEngine.ProBuilder
 
         public override void OnEnterPlayMode()
         {
-            var r = GetComponent<Renderer>();
-
-            if (r != null)
+            if (TryGetComponent<Renderer>(out var r))
                 r.enabled = false;
         }
 
         public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            var r = GetComponent<Renderer>();
-
-            if (r != null)
+            if (TryGetComponent<Renderer>(out var r))
                 r.enabled = false;
         }
     }

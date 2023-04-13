@@ -25,6 +25,7 @@ namespace UnityEditor.ProBuilder
             var invisibleFaceMaterial = Resources.Load<Material>("Materials/InvisibleFace");
 
             var pbMeshes = (ProBuilderMesh[]) Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh));
+
             // Hide nodraw faces if present.
             foreach (var pb in pbMeshes)
             {
@@ -49,12 +50,15 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var renderersToStrip = new List<Renderer>();
+
             foreach (var entity in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
             {
                 if (entity.manageVisibility)
                     entity.OnEnterPlayMode();
 
-                if ((entity is TriggerBehaviour || entity is ColliderBehaviour) && entity.gameObject.TryGetComponent(out MeshRenderer renderer))
+                if ((entity is TriggerBehaviour || entity is ColliderBehaviour)
+                    && entity.gameObject.TryGetComponent(out MeshRenderer renderer)
+                    && !UnityEditor.EditorUtility.IsPersistent(entity))
                     renderersToStrip.Add(renderer);
             }
 

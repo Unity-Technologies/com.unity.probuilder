@@ -70,12 +70,8 @@ namespace UnityEditor.ProBuilder
             }
 
             var allNames = Enum.GetNames(typeof(EventName));
-            if (allNames.Any(eventName => !RegisterEvent(eventName)))
-            {
-                return false;
-            }
 
-            return true;
+            return !allNames.Any(eventName => !RegisterEvent(eventName));
         }
 
 

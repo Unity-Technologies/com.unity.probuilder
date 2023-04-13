@@ -42,9 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
                 for (int i = 0, c = existing.Length; i < c; i++)
                     Undo.DestroyObjectImmediate(existing[i]);
 
-                var entity = pb.GetComponent<Entity>();
-
-                if (entity != null)
+                if (pb.TryGetComponent<Entity>(out var entity))
                     Undo.DestroyObjectImmediate(entity);
 
                 if (!pb.GetComponent<Collider>())

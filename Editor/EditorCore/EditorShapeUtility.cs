@@ -121,10 +121,7 @@ namespace UnityEditor.ProBuilder
                     if(pref == null)
                         pref = (Shape) Activator.CreateInstance(type);
 
-                    if(s_Prefs.ContainsKey(name))
-                        s_Prefs[name] = pref;
-                    else
-                        s_Prefs.Add(name, pref);
+                    s_Prefs[name] = pref;
                 }
             }
 

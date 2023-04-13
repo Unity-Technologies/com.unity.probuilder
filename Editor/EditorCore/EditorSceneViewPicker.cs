@@ -311,7 +311,7 @@ namespace UnityEditor.ProBuilder
                             common = kvp.Value;
                         }
 
-                        elementsInDragRect |= kvp.Value.Any();
+                        elementsInDragRect |= kvp.Value.Count > 0;
                         mesh.SetSelectedVertices(common.SelectMany(x => sharedIndexes[x]));
                     }
 
@@ -348,7 +348,7 @@ namespace UnityEditor.ProBuilder
                             current = kvp.Value;
                         }
 
-                        elementsInDragRect |= kvp.Value.Any();
+                        elementsInDragRect |= kvp.Value.Count > 0;
                         kvp.Key.SetSelectedFaces(current);
                     }
 
@@ -388,7 +388,7 @@ namespace UnityEditor.ProBuilder
                             current = selectedEdges;
                         }
 
-                        elementsInDragRect |= kvp.Value.Any();
+                        elementsInDragRect |= kvp.Value.Count > 0;
                         mesh.SetSelectedEdges(current.Select(x => x.local));
                     }
 

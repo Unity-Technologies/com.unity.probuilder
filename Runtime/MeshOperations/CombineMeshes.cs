@@ -278,7 +278,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 vertices,
                 faces,
                 SharedVertex.ToSharedVertices(sv),
-                st.Any() ? SharedVertex.ToSharedVertices(st) : null,
+                st.Count > 0 ? SharedVertex.ToSharedVertices(st) : null,
                 materials);
         }
 
@@ -326,7 +326,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                 mf.Add(face);
             }
 
-            if (mv.Any())
+            if (mv.Count > 0)
                 meshes.Add(CreateMeshFromSplit(mv, mf, sharedVertexLookup, sharedTextureLookup, remap, new Material[submeshCount]));
 
             return meshes;

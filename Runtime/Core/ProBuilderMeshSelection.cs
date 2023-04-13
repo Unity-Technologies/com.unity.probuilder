@@ -123,8 +123,7 @@ namespace UnityEngine.ProBuilder
                             m_SelectedSharedVerticesCount++;
                             m_SelectedCoincidentVertexCount += coincident.Count;
 
-                            foreach (var n in coincident)
-                                m_SelectedCoincidentVertices.Add(n);
+                            m_SelectedCoincidentVertices.AddRange(coincident);
                         }
                     }
                 }

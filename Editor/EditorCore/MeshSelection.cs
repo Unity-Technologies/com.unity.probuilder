@@ -601,7 +601,7 @@ namespace UnityEditor.ProBuilder
             {
                 case PivotPoint.ActiveElement:
                 case PivotPoint.IndividualOrigins:
-                    if (!active.elementGroups.Any())
+                    if (active.elementGroups.Count == 0)
                         goto case default;
                     return active.elementGroups.Last().position;
 
@@ -624,7 +624,7 @@ namespace UnityEditor.ProBuilder
                     return active.mesh.transform.rotation;
 
                 case HandleOrientation.ActiveElement:
-                    if (!active.elementGroups.Any())
+                    if (active.elementGroups.Count == 0)
                         goto case HandleOrientation.ActiveObject;
                     return active.elementGroups.Last().rotation;
 

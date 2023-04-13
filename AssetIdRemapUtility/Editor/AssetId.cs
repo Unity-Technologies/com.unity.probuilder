@@ -105,7 +105,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             var src = arr.Where(x => AssetId.IsValid(x.source) && !AssetId.IsValid(x.destination)).ToArray();
             var dst = arr.Where(x => AssetId.IsValid(x.destination)).ToArray();
 
-            if (dst.Count() != 1)
+            if (dst.Length != 1)
             {
                 Debug.LogError("Merging AssetId entries requires only one valid destination entry be selected.");
                 return;

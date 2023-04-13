@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder
         public EditorToolbar(EditorWindow parent)
         {
             m_Actions = EditorToolbarLoader.GetActions(true);
-            m_ActionsLength = m_Actions.Count();
+            m_ActionsLength = m_Actions.Count;
 
             EditorApplication.update -= Update;
             EditorApplication.update += Update;

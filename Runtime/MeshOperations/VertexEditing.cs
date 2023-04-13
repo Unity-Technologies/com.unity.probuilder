@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             Vertex cen = collapseToFirst ? vertices[indexes[0]] : Vertex.Average(vertices, indexes);
             mesh.SetVerticesCoincident(indexes);
             UVEditing.SplitUVs(mesh, indexes);
-            int sharedVertexHandle = mesh.GetSharedVertexHandle(indexes.First());
+            int sharedVertexHandle = mesh.GetSharedVertexHandle(indexes[0]);
             mesh.SetSharedVertexValues(sharedVertexHandle, cen);
 
             SharedVertex merged = mesh.sharedVerticesInternal[sharedVertexHandle];
@@ -95,7 +95,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
 
             // ToDictionary always sets the universal indexes in ascending order from 0+.
             Dictionary<int, int> lookup = mesh.sharedVertexLookup;
-            int max = lookup.Count();
+            int max = lookup.Count;
             foreach (int i in vertices)
                 lookup[i] = ++max;
             mesh.SetSharedVertices(lookup);
@@ -129,7 +129,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
             // If a radial search returns neighbors matching the max count, the search is re-done and maxNearestNeighbors
             // is set to the resulting length. This will be slow, but in most cases shouldn't happen ever, or if it does,
             // should only happen once or twice.
-            int maxNearestNeighbors = System.Math.Min(32, common.Count());
+            int maxNearestNeighbors = System.Math.Min(32, common.Count);
 
             // 3 dimensions, duplicate entries allowed
             KdTree<float, int> tree = new KdTree<float, int>(3, new FloatMath(), AddDuplicateBehavior.Collect);

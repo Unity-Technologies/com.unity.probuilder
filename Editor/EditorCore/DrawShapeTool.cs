@@ -343,10 +343,9 @@ namespace UnityEditor.ProBuilder
 
             var pivot = GetPoint(position);
             if (pivotLocation == PivotLocation.Center)
-                pivot += m_Plane.normal * size.y * .5f;
+                pivot += .5f * size.y * m_Plane.normal;
 
-            m_DuplicateGO.transform.position = pivot;
-            m_DuplicateGO.transform.rotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+            m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
 
             DrawBoundingBox(false);
         }

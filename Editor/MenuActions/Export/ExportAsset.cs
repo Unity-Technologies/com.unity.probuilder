@@ -61,12 +61,12 @@ namespace UnityEditor.ProBuilder.Actions
         /// <returns></returns>
         public static string ExportWithFileDialog(IList<ProBuilderMesh> meshes, ExportAssetOptions options)
         {
-            if (meshes == null || !meshes.Any())
+            if (meshes == null || meshes.Count == 0)
                 return "";
 
             string res = null;
 
-            if (meshes.Count() < 2)
+            if (meshes.Count < 2)
             {
                 ProBuilderMesh first = meshes.FirstOrDefault();
 

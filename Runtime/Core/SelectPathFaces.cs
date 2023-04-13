@@ -150,11 +150,11 @@ namespace UnityEngine.ProBuilder
             Vector3 p2 = Vector3.zero;
             foreach (var point in mesh.facesInternal[face1].indexesInternal)
             {
-                p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Count();
+                p1 += mesh.positionsInternal[point] / mesh.facesInternal[face1].indexesInternal.Length;
             }
             foreach (var point in mesh.facesInternal[face2].indexesInternal)
             {
-                p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Count();
+                p2 += mesh.positionsInternal[point] / mesh.facesInternal[face2].indexesInternal.Length;
             }
 
             float distCost = (p2 - p1).magnitude * distMult;
