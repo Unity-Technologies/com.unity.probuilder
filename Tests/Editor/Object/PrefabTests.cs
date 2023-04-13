@@ -96,10 +96,6 @@ public class PrefabTests
         mesh1.Extrude(new [] { mesh1.faces[0] }, ExtrudeMethod.FaceNormal, .25f);
         PrefabUtility.ApplyPrefabInstance(instance1, InteractionMode.AutomatedAction);
 
-        // // rebuild is not necessary, but it prevents other failures from bleeding into the results of this test
-        // mesh1.Rebuild();
-        // mesh2.Rebuild();
-
         Assert.That(mesh1.mesh.vertexCount, Is.EqualTo(mesh2.mesh.vertexCount));
     }
 
