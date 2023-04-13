@@ -1,4 +1,4 @@
-Nu# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-38] Fixed an issue where exported assets would incorrectly use the UInt32 mesh index format.
 - [case: PBLD-43] Fixed an issue where activating the **Edit Shape** tool would prevent the Editor tool context from switching. 
 - [case: PBLD-57] Fixed error when building player with `EntityBehaviour` applied to prefabs.
+- [case: STO-2878] Fixed `ProBuilderMesh` renaming `Mesh` asset any time the component instance ID was modified.
+- [case: STO-2878] In Unit Editor 2023.1 and newer, fixed an issue where reverting a prefab instance containing a `ProBuilderMesh` component would leak a `Mesh` asset in the scene.
 
 ### Changes
 
