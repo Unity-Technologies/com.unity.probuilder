@@ -155,7 +155,6 @@ namespace UnityEditor.ProBuilder
 
             m_IconContent = new GUIContent()
             {
-                //image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
                 image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
                 text = "Shape Settings",
                 tooltip = "Shape Settings"
@@ -385,8 +384,10 @@ namespace UnityEditor.ProBuilder
                 if(m_ProBuilderShape != null
                    && m_ProBuilderShape.mesh.vertexCount > 0)
                 {
+                    m_ProBuilderShape.size = Vector3.zero;
                     m_ProBuilderShape.mesh.Clear();
                     m_ProBuilderShape.mesh.Rebuild();
+                    m_ProBuilderShape.Rebuild(new Bounds(m_BB_Origin, Vector3.zero), m_PlaneRotation, m_BB_Origin);
                     ProBuilderEditor.Refresh(true);
                 }
                 return;
