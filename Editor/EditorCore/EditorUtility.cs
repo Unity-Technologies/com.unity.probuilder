@@ -203,8 +203,6 @@ namespace UnityEditor.ProBuilder
 
             if (state != MeshSyncState.InSync)
             {
-                Mesh oldMesh;
-
                 if (state == MeshSyncState.Null || state == MeshSyncState.NeedsRebuild)
                 {
                     LogMeshSyncEvent(mesh, state, "Rebuild");

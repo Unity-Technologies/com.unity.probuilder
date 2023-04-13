@@ -132,7 +132,9 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
+#if UNITY_2023_1_OR_NEWER
             PrefabUtility.prefabInstanceReverted += PrefabInstanceReverted;
+#endif
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
