@@ -394,8 +394,16 @@ namespace UnityEngine.ProBuilder
         /// </summary>
         public void MakeUnique()
         {
-            mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
-            // Debug.Log($"<color=red>mesh alloc <b>MakeUnique</b> {name} {GetInstanceID()}</color>");
+            mesh = mesh != null
+                ? Instantiate(mesh)
+                : new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+
+            if (meshSyncState == MeshSyncState.InSync)
+            {
+                filter.mesh = mesh;
+                return;
+            }
+
             ToMesh();
             Refresh();
         }
