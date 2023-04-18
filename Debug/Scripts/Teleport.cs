@@ -1,13 +1,14 @@
-using UnityEngine;
-
-public class Teleport : MonoBehaviour
+namespace UnityEngine.ProBuilder.Debug
 {
-    [SerializeField]
-    Transform m_Destination;
-
-    void OnTriggerEnter(Collider collider)
+    public class Teleport : MonoBehaviour
     {
-        transform.position = m_Destination.position;
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        [SerializeField]
+        Transform m_Destination;
+
+        void OnTriggerEnter(Collider collider)
+        {
+            transform.position = m_Destination.position;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
     }
 }
