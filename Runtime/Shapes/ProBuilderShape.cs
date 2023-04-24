@@ -147,7 +147,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 return;
 
             m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
-            RebuildPivot(mesh, size, rotation);
+            RebuildPivot(size, rotation);
 
             Bounds bounds = m_ShapeBox;
             bounds.size = Math.Abs(m_ShapeBox.size);
@@ -213,9 +213,9 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        void RebuildPivot(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
+        internal void RebuildPivot(Vector3 size, Quaternion rotation)
         {
-            if(mesh != null && mesh.mesh != null)
+            if(mesh != null)
             {
                 var bbCenter = mesh.transform.TransformPoint(m_ShapeBox.center);
                 var pivotWorldPos = mesh.transform.TransformPoint(m_PivotPosition);
