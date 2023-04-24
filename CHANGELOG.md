@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [case: PBLD-61] Fixed a bug where drawing a shape of size zero was causing errors and incorrect values in ProBuilderShape.
+- [case: PBLD-65] Fixed stair shape "Inner Radius" parameter not being correctly applied when placing new stair shapes in scene.
 
 ## [5.0.7] - 2023-04-04
 
