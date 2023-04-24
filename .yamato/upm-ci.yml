@@ -9,7 +9,7 @@ test_platforms:
     flavor: b1.large
   - name: mac
     type: Unity::VM::osx
-    image: package-ci/mac:default
+    image: package-ci/macos-12:default
     flavor: b1.mac
 ---
 pack:
