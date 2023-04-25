@@ -407,8 +407,6 @@ namespace UnityEngine.ProBuilder
 
             for (int i = 0; i < targetMesh.subMeshCount; i++)
                 targetMesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
-
-            targetMesh.name = string.Format("pb_Mesh{0}", probuilderMesh.id);
         }
 
         /// <summary>

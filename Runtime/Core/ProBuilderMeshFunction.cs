@@ -72,6 +72,9 @@ namespace UnityEngine.ProBuilder
                     Rebuild();
                     meshWasInitialized?.Invoke(this);
                 }
+
+                // only sync instance version index when a new mesh is created
+                m_InstanceVersionIndex = m_VersionIndex;
             }
         }
 
@@ -83,7 +86,7 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="Refresh"/>
         void Reset()
         {
-            if (meshSyncState != MeshSyncState.Null && meshSyncState != MeshSyncState.InstanceIDMismatch)
+            if (meshSyncState != MeshSyncState.Null)
             {
                 Rebuild();
                 if (componentHasBeenReset != null)
@@ -113,21 +116,31 @@ namespace UnityEngine.ProBuilder
                 !Application.isPlaying &&
                 Time.frameCount > 0)
             {
-                if (meshWillBeDestroyed != null)
-                    meshWillBeDestroyed(this);
-                else
-                    DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+                DestroyUnityMesh();
             }
         }
 
+        internal void DestroyUnityMesh()
+        {
+            if (meshWillBeDestroyed != null)
+                meshWillBeDestroyed(this);
+            else
+                DestroyImmediate(gameObject.GetComponent<MeshFilter>().sharedMesh, true);
+        }
+
         /// <summary>
-        /// Increments the mesh version's index. This helps ProBuilder track
+        /// Increments the mesh version index. This helps ProBuilder track
         /// when the mesh changes.
         /// </summary>
         void IncrementVersionIndex()
         {
             // it doesn't matter if the version index wraps. the important thing is that it is changed.
-            unchecked { m_VersionIndex++; }
+            unchecked
+            {
+                if (++m_VersionIndex == 0)
+                    m_VersionIndex = 1;
+                m_InstanceVersionIndex = m_VersionIndex;
+            }
         }
 
         /// <summary>
@@ -326,7 +339,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
-                mesh = new Mesh();
+                mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
             }
             else if (mesh.vertexCount != vertexCount)
             {
@@ -366,8 +379,6 @@ namespace UnityEngine.ProBuilder
                 mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
             }
 
-            mesh.name = string.Format("pb_Mesh{0}", id);
-
             EnsureMeshFilterIsAssigned();
 
             if(usedInParticleSystem)
@@ -377,12 +388,22 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Ensures that the UnityEngine.Mesh associated with this object is unique.
+        /// Ensures that the UnityEngine.Mesh associated with this object is unique. When instantiating a ProBuilderMesh,
+        /// the mesh asset will reference the original instance. If you are making a copy to edit, you must call
+        /// MakeUnique to avoid modifying a shared mesh asset.
         /// </summary>
-        internal void MakeUnique()
+        public void MakeUnique()
         {
-            // set a new UnityEngine.Mesh instance
-            mesh = new Mesh();
+            mesh = mesh != null
+                ? Instantiate(mesh)
+                : new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+
+            if (meshSyncState == MeshSyncState.InSync)
+            {
+                filter.mesh = mesh;
+                return;
+            }
+
             ToMesh();
             Refresh();
         }
@@ -394,7 +415,7 @@ namespace UnityEngine.ProBuilder
         public void CopyFrom(ProBuilderMesh other)
         {
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             Clear();
             positions = other.positions;

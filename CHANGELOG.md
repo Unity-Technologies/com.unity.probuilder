@@ -1,4 +1,4 @@
-Nu# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [case: STO-2878] Fixed `ProBuilderMesh` renaming `Mesh` asset any time the component instance ID was modified.
+- [case: STO-2878] In Unit Editor 2023.1 and newer, fixed an issue where reverting a prefab instance containing a `ProBuilderMesh` component would leak a `Mesh` asset in the scene.
 - [case: PBLD-61] Fixed a bug where drawing a shape of size zero was causing errors and incorrect values in ProBuilderShape.
+
+### Changes
+
+- Added `ProBuilderMesh.MakeUnique` to ensure `Mesh` asset is distinct.
 
 ## [5.0.7] - 2023-04-04
 
@@ -28,7 +34,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Updated `Object.FindObjectsOfType` to use the new `Objects.FindObjectsByType` in Unity 2023.1.
-
 
 ## [5.0.6] - 2022-06-30
 
