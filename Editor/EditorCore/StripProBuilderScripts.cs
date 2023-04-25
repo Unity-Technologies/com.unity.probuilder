@@ -1,11 +1,6 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -26,13 +21,13 @@ namespace UnityEditor.ProBuilder.Actions
             Strip(all);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s", true, 0)]
         public static bool VerifyStripSelection()
         {
             return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s")]
         public static void StripAllSelected()
         {
             if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
@@ -64,6 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             ProBuilderEditor.Refresh();
             MeshSelection.OnObjectSelectionChanged();
+            AssetDatabase.Refresh();
         }
 
         public static void DoStrip(ProBuilderMesh pb)
@@ -86,23 +82,21 @@ namespace UnityEditor.ProBuilder.Actions
                     return;
                 }
 
-                string cachedMeshPath;
-                Mesh cachedMesh;
-
                 // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
-                if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh))
+                if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out _, out _))
                 {
                     DestroyProBuilderMeshAndDependencies(go, pb, true);
                 }
                 else
                 {
-                    Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
-
+                    Mesh instance = Instantiate(pb.mesh);
+                    var path = $"{EditorUtility.GetActiveSceneAssetsPath()}/{pb.mesh.name}.asset";
+                    AssetDatabase.CreateAsset(instance, AssetDatabase.GenerateUniqueAssetPath(path));
                     DestroyProBuilderMeshAndDependencies(go, pb);
 
-                    go.GetComponent<MeshFilter>().sharedMesh = m;
+                    go.GetComponent<MeshFilter>().sharedMesh = instance;
                     if (go.TryGetComponent(out MeshCollider meshCollider))
-                        meshCollider.sharedMesh = m;
+                        meshCollider.sharedMesh = instance;
                 }
             }
             catch {}

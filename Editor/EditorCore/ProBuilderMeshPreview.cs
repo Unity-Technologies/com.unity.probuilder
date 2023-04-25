@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
 
         public override bool HasPreviewGUI()
         {
-            if (!(target is ProBuilderMesh mesh))
+            if (target == null || !(target is ProBuilderMesh mesh) || mesh.gameObject == null)
                 return false;
             return PrefabUtility.IsPartOfPrefabAsset(mesh.gameObject);
         }

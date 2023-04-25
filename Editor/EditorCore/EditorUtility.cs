@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using System;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
@@ -581,6 +582,17 @@ namespace UnityEditor.ProBuilder
 #else
             return UObject.FindObjectsOfType<T>();
 #endif
+        }
+
+        internal static string GetActiveSceneAssetsPath()
+        {
+            const string k_SavedMeshPath = "Assets/ProBuilder Data/Saved Meshes";
+            var scene = SceneManager.GetActiveScene();
+            var path = string.IsNullOrEmpty(scene.path)
+                ? k_SavedMeshPath
+                : $"{Path.GetDirectoryName(scene.path)}/{scene.name}/ProBuilder Meshes";
+            Directory.CreateDirectory(path);
+            return path;
         }
     }
 }

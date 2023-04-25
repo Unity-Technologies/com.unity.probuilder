@@ -1,9 +1,11 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.VersionControl;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 
@@ -26,6 +28,21 @@ public class StripProBuilderScriptsTest
         Assert.That(go.GetComponent<PolyShape>() == null);
 
         UObject.DestroyImmediate(go);
+    }
+
+    [Test]
+    public void StripProBuilderScripts_CreatesMeshAsset()
+    {
+        var cube = ShapeFactory.Instantiate<Cube>();
+        Assume.That(cube != null);
+        var gameObject = cube.gameObject;
+        StripProBuilderScripts.DoStrip(cube);
+        var copy = gameObject.GetComponent<MeshFilter>();
+        Assert.That(copy, Is.Not.Null);
+        var asset = AssetDatabase.GetAssetPath(copy);
+        Assert.That(asset, Is.Not.Null.Or.Empty);
+        UObject.DestroyImmediate(gameObject);
+        AssetDatabase.DeleteAsset(asset);
     }
 
     [Test]
