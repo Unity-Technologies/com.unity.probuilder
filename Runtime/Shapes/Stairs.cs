@@ -105,6 +105,7 @@ namespace UnityEngine.ProBuilder.Shapes
                 m_HomogeneousSteps = stairs.m_HomogeneousSteps;
                 m_Circumference = stairs.m_Circumference;
                 m_Sides = stairs.m_Sides;
+                m_InnerRadius = stairs.m_InnerRadius;
             }
         }
 
