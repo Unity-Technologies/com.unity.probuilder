@@ -68,7 +68,6 @@ class MeshSyncTests : TemporaryAssetTest
         Assume.That(cube, Is.Not.Null);
         var mesh = cube.GetComponent<ProBuilderMesh>();
         EditorUtility.SynchronizeWithMeshFilter(mesh);
-        Debug.Log(EditorSceneManager.GetActiveScene().name);
         Assert.That(EditorSceneManager.GetActiveScene().isDirty, Is.False);
     }
 
