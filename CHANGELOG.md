@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [case: PBLD-70] Fixed a bug where unused materials were not removed from the mesh renderer when deleting faces.
+- [case: PBLD-52] Fixed a bug where unused materials were not removed from the mesh renderer when detaching faces.
 - [case: PBLD-61] Fixed a bug where drawing a shape of size zero was causing errors and incorrect values in ProBuilderShape.
 
 ## [5.0.7] - 2023-04-04
