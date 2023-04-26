@@ -17,6 +17,8 @@ namespace UnityEngine.ProBuilder
     {
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
 
+        private static List<Material> m_MeshMaterials = new List<Material>();
+
 #if UNITY_EDITOR
         public void OnBeforeSerialize() {}
 
@@ -355,6 +357,10 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
+            m_MeshMaterials.Clear();
+            renderer.GetSharedMaterials(m_MeshMaterials);
+
+            var currentSubmeshIndex = 0;
             for (int i = 0; i < mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
@@ -363,8 +369,31 @@ namespace UnityEngine.ProBuilder
                 if (submeshes[i] == null)
                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
 #endif
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+                if (submeshes[i].m_Indexes.Length == 0)
+                {
+                    m_MeshMaterials.RemoveAt(submeshes[i].submeshIndex);
+
+                    foreach (var face in facesInternal)
+                    {
+                        if (face.submeshIndex == submeshes[i].submeshIndex + 1)
+                            face.submeshIndex = submeshes[i].submeshIndex;
+                    }
+
+                    continue;
+                }
+
+                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, currentSubmeshIndex, false);
+                currentSubmeshIndex++;
             }
+
+            if (mesh.subMeshCount < materialCount)
+            {
+                var delta = materialCount - mesh.subMeshCount;
+                var start = m_MeshMaterials.Count - delta;
+                m_MeshMaterials.RemoveRange(start, delta);
+            }
+
+            renderer.sharedMaterials = m_MeshMaterials.ToArray();
 
             mesh.name = string.Format("pb_Mesh{0}", id);
 

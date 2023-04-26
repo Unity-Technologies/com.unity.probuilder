@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Detach Face Settings", EditorStyles.boldLabel);
-            
+
             EditorGUI.BeginChangeCheck();
 
             m_DetachSetting.value = EditorGUILayout.Toggle("Separate GameObject", m_DetachSetting.value == DetachSetting.GameObject)
@@ -126,6 +126,8 @@ namespace UnityEditor.ProBuilder.Actions
                     foreach (var child in mesh.transform.GetComponentsInChildren<ProBuilderMesh>())
                         EditorUtility.SynchronizeWithMeshFilter(child);
                 }
+
+                Undo.RecordObject(mesh.renderer, "Update Renderer");
 
                 mesh.DeleteFaces(primary);
                 copy.DeleteFaces(inverse);
