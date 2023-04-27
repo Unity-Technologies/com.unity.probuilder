@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added `ProBuilderMesh.MakeUnique` to ensure `Mesh` asset is distinct.
 
+### Internal
+
+- Fixed "Detach Faces" not creating unique mesh asset for duplicate objects.
+
 ## [5.0.7] - 2023-04-04
 
 ### Fixed
