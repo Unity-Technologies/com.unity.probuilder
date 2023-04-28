@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder
     [CustomEditor(typeof(BezierShape))]
     sealed class BezierShapeEditor : Editor
     {
-        static GUIContent[] s_TangentModeIcons = new GUIContent[3];
+        static readonly GUIContent[] s_TangentModeIcons = new GUIContent[3];
 
         const float k_HandleSize = .05f;
 
