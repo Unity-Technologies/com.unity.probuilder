@@ -1,15 +1,18 @@
+// #define DEBUG_MESH_SYNC
 #pragma warning disable 0168
 
 using UnityEngine;
 using System.Linq;
 using System;
-
+using System.Diagnostics;
+using System.IO;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
 using UnityEditorInternal;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 #if !UNITY_2019_1_OR_NEWER
 using System.Reflection;
 #endif
@@ -156,9 +159,9 @@ namespace UnityEditor.ProBuilder
         internal static bool IsPrefabInstance(GameObject go)
         {
             var status = PrefabUtility.GetPrefabInstanceStatus(go);
-            #pragma warning disable 612, 618 
+            #pragma warning disable 612, 618
             return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
-            #pragma warning restore 612, 618 
+            #pragma warning restore 612, 618
         }
 
         /**
@@ -177,16 +180,22 @@ namespace UnityEditor.ProBuilder
             return Resources.FindObjectsOfTypeAll<EditorWindow>().Any(x => x.GetType().ToString().Contains("AssetStoreWindow"));
         }
 
+        [Conditional("DEBUG_MESH_SYNC")]
+        static void LogMeshSyncEvent(ProBuilderMesh mesh, MeshSyncState state, string msg)
+        {
+            Debug.Log($"{mesh} {mesh.GetInstanceID()} {state} {msg}");
+        }
+
         /// <summary>
-        /// Checks whether this object has a valid mesh reference, and the geometry is current. If the check fails, this function
-        /// attempts to repair the sync state.
+        /// Checks whether this object has a valid mesh reference, and the geometry is current. If the check fails,
+        /// this function attempts to repair the sync state.
         /// </summary>
         /// <param name="mesh">The mesh component to test.</param>
         /// <seealso cref="ProBuilderMesh.meshSyncState"/>
         public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
         {
             if (mesh == null)
-                throw new ArgumentNullException("mesh");
+                throw new ArgumentNullException(nameof(mesh));
 
             mesh.EnsureMeshFilterIsAssigned();
             mesh.EnsureMeshColliderIsAssigned();
@@ -195,47 +204,20 @@ namespace UnityEditor.ProBuilder
 
             if (state != MeshSyncState.InSync)
             {
-                Mesh oldMesh;
-
-                if (state == MeshSyncState.Null)
+                if (state == MeshSyncState.Null || state == MeshSyncState.NeedsRebuild)
                 {
+                    LogMeshSyncEvent(mesh, state, "Rebuild");
                     mesh.Rebuild();
                     mesh.Optimize();
-                }
-                else
-                // If the mesh ID doesn't match the gameObject Id, it could mean two things:
-                //   1. The object was just duplicated, and then made unique
-                //   2. The scene was reloaded, and gameObject ids were recalculated.
-                // If (2) we need to clean up the old mesh. If the (1) the old mesh needs to *not* be destroyed.
-                if ((oldMesh = mesh.mesh) != null)
-                {
-                    int meshNo = -1;
-                    int.TryParse(oldMesh.name.Replace("pb_Mesh", ""), out meshNo);
-
-                    UnityEngine.Object dup = UnityEditor.EditorUtility.InstanceIDToObject(meshNo);
-                    GameObject go = dup as GameObject;
-
-                    // Scene reload, just rename the mesh to the correct ID
-                    if (go == null)
-                    {
-                        mesh.mesh.name = "pb_Mesh" + mesh.id;
-                    }
-                    else
-                    {
-                        // Mesh was duplicated, need to instantiate a unique mesh asset
-                        if (!meshesAreAssets || !(IsPrefabAsset(mesh.gameObject) || IsPrefabInstance(mesh.gameObject)))
-                        {
-                            // deep copy arrays & ToMesh/Refresh
-                            mesh.MakeUnique();
-                            mesh.Optimize();
-                        }
-                    }
                 }
                 else
                 {
                     // old mesh didn't exist, so this is probably a prefab being instanced
                     if (IsPrefabAsset(mesh.gameObject))
+                    {
                         mesh.mesh.hideFlags = (HideFlags)(1 | 2 | 4 | 8);
+                        LogMeshSyncEvent(mesh, state, "Prefab, set HideFlags");
+                    }
 
                     mesh.Optimize();
                 }
@@ -592,7 +574,7 @@ namespace UnityEditor.ProBuilder
             setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
 #endif
         }
-        
+
         internal static T[] FindObjectsByType<T>() where T : UObject
         {
 #if UNITY_2023_1_OR_NEWER
@@ -600,6 +582,17 @@ namespace UnityEditor.ProBuilder
 #else
             return UObject.FindObjectsOfType<T>();
 #endif
+        }
+
+        internal static string GetActiveSceneAssetsPath()
+        {
+            const string k_SavedMeshPath = "Assets/ProBuilder Data/Saved Meshes";
+            var scene = SceneManager.GetActiveScene();
+            var path = string.IsNullOrEmpty(scene.path)
+                ? k_SavedMeshPath
+                : $"{Path.GetDirectoryName(scene.path)}/{scene.name}/ProBuilder Meshes";
+            Directory.CreateDirectory(path);
+            return path;
         }
     }
 }

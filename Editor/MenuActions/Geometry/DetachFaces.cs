@@ -116,6 +116,7 @@ namespace UnityEditor.ProBuilder.Actions
                         inverse.Add(i);
 
                 ProBuilderMesh copy = Object.Instantiate(mesh.gameObject, mesh.transform.parent).GetComponent<ProBuilderMesh>();
+                copy.MakeUnique();
                 EditorUtility.SynchronizeWithMeshFilter(copy);
 
                 if (copy.transform.childCount > 0)

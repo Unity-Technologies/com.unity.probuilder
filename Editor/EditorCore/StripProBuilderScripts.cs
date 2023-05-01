@@ -1,41 +1,70 @@
+using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
+using UnityEngine.SceneManagement;
 
 namespace UnityEditor.ProBuilder.Actions
 {
     /// <summary>
     /// Menu items for stripping ProBuilder scripts from GameObjects.
     /// </summary>
-    /// @TODO MOVE TO ACTIONS
-    internal sealed class StripProBuilderScripts : Editor
+    sealed class StripProBuilderScripts : Editor
     {
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
-        public static void StripAllScenes()
+        const string k_UndoMessage = "Strip ProBuilder Scripts";
+        // return ProBuilderMesh components in loaded scenes only for the current stage
+        static List<ProBuilderMesh> GetMeshesInActiveScenes()
         {
-            if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
-                return;
-
-            ProBuilderMesh[] all = (ProBuilderMesh[])Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh));
-
-            Strip(all);
+            var stage = StageNavigationManager.instance.currentStage;
+            var c = stage.sceneCount;
+            var scenes = new HashSet<Scene>();
+            for (int i = 0; i < c; ++i)
+                scenes.Add(stage.GetSceneAt(i));
+            var filtered = new List<ProBuilderMesh>();
+            foreach(var mesh in Resources.FindObjectsOfTypeAll<ProBuilderMesh>())
+                if(scenes.Contains(mesh.gameObject.scene))
+                    filtered.Add(mesh);
+            return filtered;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene %&s")]
+        public static void StripAllScenes()
+        {
+            if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene. You will no longer be able to edit these objects.\n\nContinue?", "Okay", "Cancel"))
+                return;
+
+            var all = GetMeshesInActiveScenes();
+
+            for (int i = 0, c = all?.Count ?? 0; i < c; i++)
+            {
+                if (c > 32 && UnityEditor.EditorUtility.DisplayCancelableProgressBar(
+                        "Stripping ProBuilder Scripts",
+                        "Working over " + all[i].GetInstanceID() + ".",
+                        ((float)i / all.Count)))
+                    break;
+
+                DoStrip(all[i], true);
+            }
+
+            UnityEditor.EditorUtility.ClearProgressBar();
+            UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
+
+            ProBuilderEditor.Refresh();
+            MeshSelection.OnObjectSelectionChanged();
+            AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s", true, 0)]
         public static bool VerifyStripSelection()
         {
             return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s")]
         public static void StripAllSelected()
         {
-            if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects.  You will no longer be able to edit these objects.  There is no undo, please exercise caution!\n\nAre you sure you want to do this?", "Okay", "Cancel"))
+            if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects. You will no longer be able to edit these objects.\n\nContinue?", "Okay", "Cancel"))
                 return;
 
             foreach (Transform t in Selection.transforms)
@@ -46,66 +75,57 @@ namespace UnityEditor.ProBuilder.Actions
             MeshSelection.OnObjectSelectionChanged();
         }
 
-        public static void Strip(ProBuilderMesh[] all)
+        public static void DoStrip(ProBuilderMesh pb, bool undo = false)
         {
-            for (int i = 0; i < all.Length; i++)
-            {
-                if (UnityEditor.EditorUtility.DisplayCancelableProgressBar(
-                        "Stripping ProBuilder Scripts",
-                        "Working over " + all[i].id + ".",
-                        ((float)i / all.Length)))
-                    break;
+            GameObject go = pb.gameObject;
 
-                DoStrip(all[i]);
+            if (go.TryGetComponent<Renderer>(out var ren))
+                EditorUtility.SetSelectionRenderState(ren, EditorSelectedRenderState.Highlight | EditorSelectedRenderState.Wireframe);
+
+            EditorUtility.SynchronizeWithMeshFilter(pb);
+
+            if (pb.mesh == null)
+            {
+                DestroyProBuilderMeshAndDependencies(go, pb, false, undo);
+                return;
             }
 
-            UnityEditor.EditorUtility.ClearProgressBar();
-            UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "Successfully stripped out all ProBuilder components.", "Okay");
+            // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
+            if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out _, out _))
+            {
+                DestroyProBuilderMeshAndDependencies(go, pb, true, undo);
+            }
+            else
+            {
+                Mesh instance = Instantiate(pb.mesh);
+                var path = $"{EditorUtility.GetActiveSceneAssetsPath()}/{pb.mesh.name}.asset";
+                AssetDatabase.CreateAsset(instance, AssetDatabase.GenerateUniqueAssetPath(path));
+                DestroyProBuilderMeshAndDependencies(go, pb, false, undo);
 
-            ProBuilderEditor.Refresh();
-            MeshSelection.OnObjectSelectionChanged();
+                var filter = go.GetComponent<MeshFilter>();
+
+                if(undo)
+                    Undo.RecordObject(filter, k_UndoMessage);
+
+                filter.sharedMesh = instance;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(filter);
+
+                if (go.TryGetComponent(out MeshCollider collider))
+                {
+                    if(undo)
+                        Undo.RecordObject(collider, k_UndoMessage);
+                    collider.sharedMesh = instance;
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(collider);
+                }
+            }
         }
 
-        public static void DoStrip(ProBuilderMesh pb)
+        static void Destroy(Object o, bool undo)
         {
-            try
-            {
-                GameObject go = pb.gameObject;
-
-                if (go.TryGetComponent<Renderer>(out var ren))
-                    EditorUtility.SetSelectionRenderState(ren, EditorSelectedRenderState.Highlight | EditorSelectedRenderState.Wireframe);
-
-                if (EditorUtility.IsPrefabAsset(go))
-                    return;
-
-                EditorUtility.SynchronizeWithMeshFilter(pb);
-
-                if (pb.mesh == null)
-                {
-                    DestroyProBuilderMeshAndDependencies(go, pb, false);
-                    return;
-                }
-
-                string cachedMeshPath;
-                Mesh cachedMesh;
-
-                // if meshes are assets and the mesh cache is valid don't duplicate the mesh to an instance.
-                if (Experimental.meshesAreAssets && EditorMeshUtility.GetCachedMesh(pb, out cachedMeshPath, out cachedMesh))
-                {
-                    DestroyProBuilderMeshAndDependencies(go, pb, true);
-                }
-                else
-                {
-                    Mesh m = UnityEngine.ProBuilder.MeshUtility.DeepCopy(pb.mesh);
-
-                    DestroyProBuilderMeshAndDependencies(go, pb);
-
-                    go.GetComponent<MeshFilter>().sharedMesh = m;
-                    if (go.TryGetComponent(out MeshCollider meshCollider))
-                        meshCollider.sharedMesh = m;
-                }
-            }
-            catch {}
+            if(undo)
+                Undo.DestroyObjectImmediate(o);
+            else
+                DestroyImmediate(o);
         }
 
         internal static void DestroyProBuilderMeshAndDependencies(
@@ -115,45 +135,25 @@ namespace UnityEditor.ProBuilder.Actions
             bool useUndoDestroy = false)
         {
             if(useUndoDestroy)
-                Undo.RecordObject(pb, "Removing ProBuilderMesh during scripts striping");
+                Undo.RecordObject(pb, k_UndoMessage);
 
             if (go.TryGetComponent(out PolyShape polyShape))
-            {
-                if(useUndoDestroy)
-                    Undo.DestroyObjectImmediate(polyShape);
-                else
-                    DestroyImmediate(polyShape);
-            }
+                Destroy(polyShape, useUndoDestroy);
 
             if (go.TryGetComponent(out BezierShape bezierShape))
-            {
-                if(useUndoDestroy)
-                    Undo.DestroyObjectImmediate(bezierShape);
-                else
-                    DestroyImmediate(bezierShape);
-            }
+                Destroy(bezierShape, useUndoDestroy);
 
             if (go.TryGetComponent(out ProBuilderShape shape))
-            {
-                if(useUndoDestroy)
-                    Undo.DestroyObjectImmediate(shape);
-                else
-                    DestroyImmediate(shape);
-            }
+                Destroy(shape, useUndoDestroy);
 
             pb.preserveMeshAssetOnDestroy = preserveMeshAssets;
-            if(useUndoDestroy)
-                Undo.DestroyObjectImmediate(pb);
-            else
-                DestroyImmediate(pb);
+
+            Destroy(pb, useUndoDestroy);
 
             if(go.TryGetComponent(out Entity entity))
-            {
-                if(useUndoDestroy)
-                    Undo.DestroyObjectImmediate(entity);
-                else
-                    DestroyImmediate(entity);
-            }
+                Destroy(entity, useUndoDestroy);
+
+            PrefabUtility.RecordPrefabInstancePropertyModifications(go);
         }
     }
 }

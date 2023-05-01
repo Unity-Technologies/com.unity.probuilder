@@ -124,6 +124,10 @@ namespace UnityEditor.ProBuilder
             MeshFilter filter;
             Mesh sharedMesh = null;
 
+            EditorGUILayout.LabelField("Mesh Sync State", m_Mesh.meshSyncState.ToString());
+            EditorGUILayout.LabelField("m_MeshVersionIndex", m_Mesh.versionIndex.ToString());
+            EditorGUILayout.LabelField("m_NonSerializedMeshIndex", m_Mesh.nonSerializedVersionIndex.ToString());
+
             if (m_Mesh.TryGetComponent(out filter) && (sharedMesh = filter.sharedMesh) != null)
             {
                 GUILayout.Label("Vertex Count: " + sharedMesh.vertexCount);

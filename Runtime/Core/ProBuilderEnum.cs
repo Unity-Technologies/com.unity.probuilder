@@ -321,6 +321,7 @@ namespace UnityEngine.ProBuilder
         /// To fix this, use <see cref="ProBuilderMesh.MakeUnique"/>.
         /// </summary>
         /// <remarks>This is only used in the Editor.</remarks>
+        [Obsolete("InstanceIDMismatch is no longer used. Mesh references are not tracked by Instance ID.")]
         InstanceIDMismatch,
         /// <summary>
         /// The mesh is valid, but does not have a UV2 channel.
@@ -330,7 +331,11 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// The mesh is in sync.
         /// </summary>
-        InSync
+        InSync,
+        /// <summary>
+        /// The component data is not up to date with the compiled mesh.
+        /// </summary>
+        NeedsRebuild
     }
 
     /// <summary>

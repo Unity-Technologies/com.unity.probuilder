@@ -1,4 +1,4 @@
-Nu# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -11,7 +11,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [case: PBLD-70] Fixed a bug where unused materials were not removed from the mesh renderer when deleting faces.
 - [case: PBLD-52] Fixed a bug where unused materials were not removed from the mesh renderer when detaching faces.
+- [case: STO-2878] Fixed `ProBuilderMesh` renaming `Mesh` asset any time the component instance ID was modified.
+- [case: STO-2878] In Unit Editor 2023.1 and newer, fixed an issue where reverting a prefab instance containing a `ProBuilderMesh` component would leak a `Mesh` asset in the scene.
 - [case: PBLD-61] Fixed a bug where drawing a shape of size zero was causing errors and incorrect values in ProBuilderShape.
+- [case: PBLD-65] Fixed stair shape "Inner Radius" parameter not being correctly applied when placing new stair shapes in scene.
+- [case: PBLD-63] "Strip ProBuilder Scripts" now creates a mesh asset, fixing an issue where prefabs would no longer contain a valid mesh reference after stripping ProBuilder scripts.
+- [case: PBLD-64] Fixed "Strip ProBuilder Scripts" not correctly appyling changes when used in a prefab stage.
+
+### Changes
+
+- Added `ProBuilderMesh.MakeUnique` to ensure `Mesh` asset is distinct.
+
+### Internal
+
+- Fixed "Detach Faces" not creating unique mesh asset for duplicate objects.
 
 ## [5.0.7] - 2023-04-04
 
@@ -30,7 +43,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Updated `Object.FindObjectsOfType` to use the new `Objects.FindObjectsByType` in Unity 2023.1.
-
 
 ## [5.0.6] - 2022-06-30
 

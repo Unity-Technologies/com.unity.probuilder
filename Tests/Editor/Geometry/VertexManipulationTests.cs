@@ -12,7 +12,7 @@ using UObject = UnityEngine.Object;
 
 class VertexManipulationTests
 {
-    [UnityTest]
+    [UnityTest, Ignore("LINUX_EDITOR")]
     public static IEnumerator ExtrudeOrthogonally_OneElementManyTimes_NoYOffsetAccumulates()
     {
         // Generate single face plane

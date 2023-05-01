@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -12,14 +13,19 @@ using UnityEngine.TestTools;
 
 public class PrefabTests
 {
-    static GameObject CreatePrefab()
+    List<string> m_CreatedAssets = new List<string>();
+
+    GameObject CreatePrefab()
     {
         var prefabPath = AssetDatabase.GenerateUniqueAssetPath("Assets/PrefabTest.prefab");
         var mesh = ShapeFactory.Instantiate<Cube>();
+        Assume.That(mesh.meshSyncState == MeshSyncState.InSync);
         var prefab = PrefabUtility.SaveAsPrefabAsset(mesh.gameObject, prefabPath);
         Assume.That(prefab, Is.Not.Null);
         Assume.That(AssetDatabase.GetAssetPath(prefab), Is.EqualTo(prefabPath));
-        return prefab;
+        Object.DestroyImmediate(mesh.gameObject);
+        m_CreatedAssets.Add(prefabPath);
+        return AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
     }
 
     static void DestroyPrefab(GameObject prefab)
@@ -29,12 +35,74 @@ public class PrefabTests
         AssetDatabase.DeleteAsset(path);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        foreach (var asset in m_CreatedAssets)
+            AssetDatabase.DeleteAsset(asset);
+        m_CreatedAssets.Clear();
+    }
+
+    [Test]
+    public void CreateDoesNotSerializeMeshAsset()
+    {
+        var go = CreatePrefab();
+        Assert.That(go.GetComponent<ProBuilderMesh>().meshSyncState == MeshSyncState.Null);
+        DestroyPrefab(go);
+    }
+
+    [Test]
+    public void InstantiateCreatesUniqueMesh()
+    {
+        var go = CreatePrefab();
+        var instance1 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        var instance2 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        Assume.That(instance1, Is.Not.Null);
+        Assume.That(instance2, Is.Not.Null);
+        var mesh1 = instance1.GetComponent<ProBuilderMesh>().mesh;
+        var mesh2 = instance2.GetComponent<ProBuilderMesh>().mesh;
+        Assert.That(mesh1.GetInstanceID(), Is.Not.EqualTo(mesh2.GetInstanceID()));
+    }
+
+    [Test]
+    public void ModifyPrefabInstanceDoesNotAffectOtherInstances()
+    {
+        var go = CreatePrefab();
+        var instance1 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        var instance2 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        Assume.That(instance1, Is.Not.Null);
+        Assume.That(instance2, Is.Not.Null);
+        var mesh1 = instance1.GetComponent<ProBuilderMesh>();
+        var mesh2 = instance2.GetComponent<ProBuilderMesh>();
+        mesh1.Extrude(new [] { mesh1.faces[0] }, ExtrudeMethod.FaceNormal, .25f);
+
+        // rebuild is not necessary, but it prevents other failures from bleeding into the results of this test
+        mesh1.Rebuild();
+        mesh2.Rebuild();
+
+        Assert.That(mesh1.mesh.vertexCount, Is.GreaterThan(mesh2.mesh.vertexCount));
+    }
+
+    [Test]
+    public void ApplyPrefabInstanceModificationIsAppliedToUnmodifiedInstances()
+    {
+        var go = CreatePrefab();
+        var instance1 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        var instance2 = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        Assume.That(instance1, Is.Not.Null);
+        Assume.That(instance2, Is.Not.Null);
+        var mesh1 = instance1.GetComponent<ProBuilderMesh>();
+        var mesh2 = instance2.GetComponent<ProBuilderMesh>();
+        mesh1.Extrude(new [] { mesh1.faces[0] }, ExtrudeMethod.FaceNormal, .25f);
+        PrefabUtility.ApplyPrefabInstance(instance1, InteractionMode.AutomatedAction);
+
+        Assert.That(mesh1.mesh.vertexCount, Is.EqualTo(mesh2.mesh.vertexCount));
+    }
+
     [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
     public void CreatePrefab_DoesNot_SerializeMeshFilter()
     {
-        var prefab = CreatePrefab();
-        Assert.That(prefab.GetComponent<MeshFilter>(), Is.Null);
-        DestroyPrefab(prefab);
+        Assert.That(CreatePrefab().GetComponent<MeshFilter>(), Is.Null);
     }
 
     // this is just a smoke test to make sure that prefab behaviour hasn't changed. if this does not fail but
