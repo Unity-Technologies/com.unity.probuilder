@@ -116,6 +116,11 @@ static class DeleteElementsTests
             mesh.facesInternal.FirstOrDefault().submeshIndex = 1; // green
         }
 
+        mesh.ToMesh();
+        mesh.Refresh();
+
+        Assert.AreEqual(materialCount, mesh.mesh.subMeshCount);
+
         try
         {
             var face = mesh.facesInternal.FirstOrDefault();
@@ -128,6 +133,7 @@ static class DeleteElementsTests
             TestUtility.AssertMeshAttributesValid(mesh.mesh);
             Assert.AreEqual(mesh.vertexCount, vertexCount - faceVertexCount);
             Assert.AreEqual(materialCount - 1, mesh.renderer.sharedMaterials.Length);
+            Assert.AreEqual(materialCount - 1, mesh.mesh.subMeshCount);
         }
         catch (System.Exception e)
         {
