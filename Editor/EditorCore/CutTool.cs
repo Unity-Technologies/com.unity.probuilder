@@ -166,7 +166,6 @@ namespace UnityEditor.ProBuilder
         {
             m_IconContent = new GUIContent()
             {
-                //image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
                 image = IconUtility.GetIcon("Toolbar/CutTool"),
                 text = "Cut Tool",
                 tooltip = "Cut Tool"
@@ -179,8 +178,8 @@ namespace UnityEditor.ProBuilder
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
 
-            m_CutCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor");
-            m_CutAddCursorTexture = Resources.Load<Texture2D>("Cursors/cutCursor-add");
+            m_CutCursorTexture = IconUtility.GetIcon("Cursors/cutCursor");
+            m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
             if(MeshSelection.selectedObjectCount == 1)
