@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-65] Fixed stair shape "Inner Radius" parameter not being correctly applied when placing new stair shapes in scene.
 - [case: PBLD-63] "Strip ProBuilder Scripts" now creates a mesh asset, fixing an issue where prefabs would no longer contain a valid mesh reference after stripping ProBuilder scripts.
 - [case: PBLD-64] Fixed "Strip ProBuilder Scripts" not correctly appyling changes when used in a prefab stage.
+- [case: PBLD-54] Fixed a possible error when inserting edge loop.
 
 ### Changes
 

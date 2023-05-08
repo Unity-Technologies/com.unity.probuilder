@@ -382,7 +382,8 @@ namespace UnityEngine.ProBuilder.MeshOperations
             for (int i = 0; i < n_vertices.Length; i++)
             {
                 FaceRebuildData f = AppendElements.FaceWithVertices(n_vertices[i], false);
-                faces.Add(new ConnectFaceRebuildData(f, n_indexes[i]));
+                if(f != null)
+                    faces.Add(new ConnectFaceRebuildData(f, n_indexes[i]));
             }
 
             return faces;
