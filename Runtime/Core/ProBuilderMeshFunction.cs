@@ -17,8 +17,6 @@ namespace UnityEngine.ProBuilder
     {
         static HashSet<int> s_CachedHashSet = new HashSet<int>();
 
-        private static List<Material> m_MeshMaterials = new List<Material>();
-
 #if UNITY_EDITOR
         public void OnBeforeSerialize() {}
 
@@ -370,8 +368,8 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
-            m_MeshMaterials.Clear();
-            renderer.GetSharedMaterials(m_MeshMaterials);
+            MaterialUtility.s_MaterialArray.Clear();
+            renderer.GetSharedMaterials(MaterialUtility.s_MaterialArray);
 
             var currentSubmeshIndex = 0;
             for (int i = 0; i < mesh.subMeshCount; i++)
@@ -384,29 +382,31 @@ namespace UnityEngine.ProBuilder
 #endif
                 if (submeshes[i].m_Indexes.Length == 0)
                 {
-                    m_MeshMaterials.RemoveAt(submeshes[i].submeshIndex);
+                    submeshes[i].submeshIndex = -1;
+                    MaterialUtility.s_MaterialArray.RemoveAt(currentSubmeshIndex);
 
                     foreach (var face in facesInternal)
                     {
-                        if (face.submeshIndex == submeshes[i].submeshIndex + 1)
-                            face.submeshIndex = submeshes[i].submeshIndex;
+                        if (currentSubmeshIndex < face.submeshIndex)
+                            face.submeshIndex -= 1;
                     }
 
                     continue;
                 }
 
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, currentSubmeshIndex, false);
+                submeshes[i].submeshIndex = currentSubmeshIndex;
+                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
                 currentSubmeshIndex++;
             }
 
             if (mesh.subMeshCount < materialCount)
             {
                 var delta = materialCount - mesh.subMeshCount;
-                var start = m_MeshMaterials.Count - delta;
-                m_MeshMaterials.RemoveRange(start, delta);
+                var start = MaterialUtility.s_MaterialArray.Count - delta;
+                MaterialUtility.s_MaterialArray.RemoveRange(start, delta);
             }
 
-            renderer.sharedMaterials = m_MeshMaterials.ToArray();
+            renderer.sharedMaterials = MaterialUtility.s_MaterialArray.ToArray();
 
             EnsureMeshFilterIsAssigned();
 
