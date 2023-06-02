@@ -368,10 +368,8 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
-            MaterialUtility.s_MaterialArray.Clear();
-            renderer.GetSharedMaterials(MaterialUtility.s_MaterialArray);
-
             var currentSubmeshIndex = 0;
+            var shouldReassignMaterials = false;
             for (int i = 0; i < mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
@@ -382,6 +380,13 @@ namespace UnityEngine.ProBuilder
 #endif
                 if (submeshes[i].m_Indexes.Length == 0)
                 {
+                    if (!shouldReassignMaterials)
+                    {
+                        MaterialUtility.s_MaterialArray.Clear();
+                        renderer.GetSharedMaterials(MaterialUtility.s_MaterialArray);
+                        shouldReassignMaterials = true;
+                    }
+
                     submeshes[i].submeshIndex = -1;
                     MaterialUtility.s_MaterialArray.RemoveAt(currentSubmeshIndex);
 
@@ -404,9 +409,12 @@ namespace UnityEngine.ProBuilder
                 var delta = materialCount - mesh.subMeshCount;
                 var start = MaterialUtility.s_MaterialArray.Count - delta;
                 MaterialUtility.s_MaterialArray.RemoveRange(start, delta);
+
+                shouldReassignMaterials = true;
             }
 
-            renderer.sharedMaterials = MaterialUtility.s_MaterialArray.ToArray();
+            if (shouldReassignMaterials)
+                renderer.sharedMaterials = MaterialUtility.s_MaterialArray.ToArray();
 
             EnsureMeshFilterIsAssigned();
 
