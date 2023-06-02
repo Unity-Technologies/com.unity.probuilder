@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [case: PBLD-70] Fixed a bug where unused materials were not removed from the mesh renderer when deleting faces.
+- [case: PBLD-52] Fixed a bug where unused materials were not removed from the mesh renderer when detaching faces.
 - [case: STO-2878] Fixed `ProBuilderMesh` renaming `Mesh` asset any time the component instance ID was modified.
 - [case: STO-2878] In Unit Editor 2023.1 and newer, fixed an issue where reverting a prefab instance containing a `ProBuilderMesh` component would leak a `Mesh` asset in the scene.
 - [case: PBLD-61] Fixed a bug where drawing a shape of size zero was causing errors and incorrect values in ProBuilderShape.

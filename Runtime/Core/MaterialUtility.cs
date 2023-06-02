@@ -6,7 +6,7 @@ namespace UnityEngine.ProBuilder
 {
     static class MaterialUtility
     {
-        static List<Material> s_MaterialArray = new List<Material>();
+        internal static List<Material> s_MaterialArray = new List<Material>();
 
         internal static int GetMaterialCount(Renderer renderer)
         {

@@ -56,6 +56,8 @@ namespace UnityEditor.ProBuilder.Actions
                     continue;
                 }
 
+                Undo.RecordObject(pb.renderer, "Update Renderer");
+
                 pb.DeleteFaces(pb.selectedFacesInternal);
                 count += pb.selectedFaceCount;
 

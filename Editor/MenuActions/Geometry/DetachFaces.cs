@@ -128,6 +128,8 @@ namespace UnityEditor.ProBuilder.Actions
                         EditorUtility.SynchronizeWithMeshFilter(child);
                 }
 
+                Undo.RecordObject(mesh.renderer, "Update Renderer");
+
                 mesh.DeleteFaces(primary);
                 copy.DeleteFaces(inverse);
 

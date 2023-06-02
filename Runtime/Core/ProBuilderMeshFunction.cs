@@ -368,6 +368,8 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
+            var currentSubmeshIndex = 0;
+            var shouldReassignMaterials = false;
             for (int i = 0; i < mesh.subMeshCount; i++)
             {
 #if DEVELOPER_MODE
@@ -376,8 +378,43 @@ namespace UnityEngine.ProBuilder
                 if (submeshes[i] == null)
                     throw new Exception("Attempting to assign a null submesh. " + i + "/" + materialCount);
 #endif
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, i, false);
+                if (submeshes[i].m_Indexes.Length == 0)
+                {
+                    if (!shouldReassignMaterials)
+                    {
+                        MaterialUtility.s_MaterialArray.Clear();
+                        renderer.GetSharedMaterials(MaterialUtility.s_MaterialArray);
+                        shouldReassignMaterials = true;
+                    }
+
+                    submeshes[i].submeshIndex = -1;
+                    MaterialUtility.s_MaterialArray.RemoveAt(currentSubmeshIndex);
+
+                    foreach (var face in facesInternal)
+                    {
+                        if (currentSubmeshIndex < face.submeshIndex)
+                            face.submeshIndex -= 1;
+                    }
+
+                    continue;
+                }
+
+                submeshes[i].submeshIndex = currentSubmeshIndex;
+                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
+                currentSubmeshIndex++;
             }
+
+            if (mesh.subMeshCount < materialCount)
+            {
+                var delta = materialCount - mesh.subMeshCount;
+                var start = MaterialUtility.s_MaterialArray.Count - delta;
+                MaterialUtility.s_MaterialArray.RemoveRange(start, delta);
+
+                shouldReassignMaterials = true;
+            }
+
+            if (shouldReassignMaterials)
+                renderer.sharedMaterials = MaterialUtility.s_MaterialArray.ToArray();
 
             EnsureMeshFilterIsAssigned();
 
