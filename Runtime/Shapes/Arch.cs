@@ -19,9 +19,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         /// <summary>
         /// The number of sides for the arch. The more sides you use (relative to the size of the Radius), the smoother the arch becomes.
-        /// The default value is 5. Valid values range from 3 to 200.
+        /// The default value is 5. Valid values range from 2 to 200.
         /// </summary>
-        [Range(3, 200)]
+        [Range(2, 200)]
         [SerializeField]
         int m_NumberOfSides = 5;
 
