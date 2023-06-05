@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Moved cut tool cursor icon from runtime to editor resources.
 - Added `ProBuilderMesh.MakeUnique` to ensure `Mesh` asset is distinct.
+- Arch shape now allows 2 sides.
 
 ### Internal
 
