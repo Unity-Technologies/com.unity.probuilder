@@ -6,7 +6,6 @@
 
 ### Links
 
-**Fogbugz:**
 **Jira:**
 
 ### Comments to Reviewers
