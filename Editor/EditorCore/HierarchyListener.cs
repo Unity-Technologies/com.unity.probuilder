@@ -20,9 +20,15 @@ namespace UnityEditor.ProBuilder
             PrefabUtility.prefabInstanceReverting += PrefabInstanceReverting;
             #endif
             ProBuilderMesh.meshWasInitialized += OnMeshInitialized;
+
+            #if UNITY_2020_2_OR_NEWER
             ObjectChangeEvents.changesPublished += ObjectEventChangesPublished;
+            #else
+            EditorApplication.hierarchyChanged += HierarchyWindowChanged;
+            #endif
         }
 
+        #if UNITY_2020_2_OR_NEWER
         static void ObjectEventChangesPublished(ref ObjectChangeEventStream stream)
         {
             for (int i = 0, c = stream.length; i < c; ++i)
@@ -63,6 +69,30 @@ namespace UnityEditor.ProBuilder
                 #endif
             }
         }
+        #else
+        /**
+         * Used to catch prefab modifications that otherwise wouldn't be registered on the usual 'Awake' verify.
+         *  - Dragging prefabs out of Project
+         *  - 'Revert' prefab changes
+         *  - 'Apply' prefab changes
+         */
+        static void HierarchyWindowChanged()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                bool meshesAreAssets = Experimental.meshesAreAssets;
+
+                // on duplication, or copy paste, this rebuilds the mesh structures of the new objects
+                foreach (ProBuilderMesh pb in Selection.transforms.GetComponents<ProBuilderMesh>())
+                {
+                    if (!meshesAreAssets)
+                        EditorUtility.SynchronizeWithMeshFilter(pb);
+                }
+            }
+            
+            ProBuilderEditor.Refresh();
+        }
+        #endif
 
         static void GameObjectCreatedOrStructureModified(int instanceId)
         {
@@ -114,7 +144,14 @@ namespace UnityEditor.ProBuilder
                 return;
 
             foreach (var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
+            {
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
+                #if !UNITY_2020_2_OR_NEWER
+                mesh.ToMesh();
+                mesh.Refresh();
+                mesh.Optimize();
+                #endif
+            }
 
             ProBuilderEditor.Refresh();
         }

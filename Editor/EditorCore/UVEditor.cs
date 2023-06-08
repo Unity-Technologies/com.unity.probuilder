@@ -3271,7 +3271,11 @@ namespace UnityEditor.ProBuilder
         Color screenshot_backgroundColor = Color.black;
         string screenShotPath = "";
 
+        #if UNITY_2021_3_OR_NEWER
         readonly Color32 UV_FILL_COLOR = new Color32(49, 49, 49, 255);
+        #else
+        readonly Color UV_FILL_COLOR = (Color) new Color32(49, 49, 49, 255);
+        #endif
 
         // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)

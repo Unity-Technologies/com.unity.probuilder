@@ -13,6 +13,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class StripProBuilderScripts : Editor
     {
         const string k_UndoMessage = "Strip ProBuilder Scripts";
+
+        #if UNITY_2020_1_OR_NEWER
         // return ProBuilderMesh components in loaded scenes only for the current stage
         static List<ProBuilderMesh> GetMeshesInActiveScenes()
         {
@@ -27,6 +29,7 @@ namespace UnityEditor.ProBuilder.Actions
                     filtered.Add(mesh);
             return filtered;
         }
+        #endif
 
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene %&s")]
         public static void StripAllScenes()
@@ -34,7 +37,11 @@ namespace UnityEditor.ProBuilder.Actions
             if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene. You will no longer be able to edit these objects.\n\nContinue?", "Okay", "Cancel"))
                 return;
 
+            #if UNITY_2020_1_OR_NEWER
             var all = GetMeshesInActiveScenes();
+            #else
+            var all = new List<ProBuilderMesh>((ProBuilderMesh[])Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh)));
+            #endif
 
             for (int i = 0, c = all?.Count ?? 0; i < c; i++)
             {
