@@ -13,12 +13,24 @@ namespace UnityEditor.ProBuilder.UI
     /// </summary>
     static class EditorGUIUtility
     {
-        static class Styles
+        internal static class Styles
         {
             static bool s_Initialized;
 
             public static GUIStyle command = "command";
             public static GUIContent[] selectModeIcons;
+
+            static Texture2D s_ObjectIcon;
+            public static Texture2D ObjectIcon => s_ObjectIcon;
+
+            static Texture2D s_VertexIcon;
+            public static Texture2D VertexIcon => s_VertexIcon;
+
+            static Texture2D s_EdgeIcon;
+            public static Texture2D EdgeIcon => s_EdgeIcon;
+
+            static Texture2D s_FaceIcon;
+            public static Texture2D FaceIcon => s_FaceIcon;
 
             public static void Init()
             {
@@ -27,24 +39,24 @@ namespace UnityEditor.ProBuilder.UI
 
                 s_Initialized = true;
 
-                var object_Graphic_off = IconUtility.GetIcon("Modes/Mode_Object");
-                var face_Graphic_off = IconUtility.GetIcon("Modes/Mode_Face");
-                var vertex_Graphic_off = IconUtility.GetIcon("Modes/Mode_Vertex");
-                var edge_Graphic_off = IconUtility.GetIcon("Modes/Mode_Edge");
+                s_ObjectIcon = IconUtility.GetIcon("Modes/Mode_Object");
+                s_VertexIcon = IconUtility.GetIcon("Modes/Mode_Vertex");
+                s_EdgeIcon = IconUtility.GetIcon("Modes/Mode_Edge");
+                s_FaceIcon = IconUtility.GetIcon("Modes/Mode_Face");
 
                 selectModeIcons = new GUIContent[]
                 {
-                    object_Graphic_off != null
-                    ? new GUIContent(object_Graphic_off, "Object Selection")
+                    s_ObjectIcon != null
+                    ? new GUIContent(s_ObjectIcon, "Object Selection")
                     : new GUIContent("OBJ", "Object Selection"),
-                    vertex_Graphic_off != null
-                    ? new GUIContent(vertex_Graphic_off, "Vertex Selection")
+                    s_VertexIcon != null
+                    ? new GUIContent(s_VertexIcon, "Vertex Selection")
                     : new GUIContent("VRT", "Vertex Selection"),
-                    edge_Graphic_off != null
-                    ? new GUIContent(edge_Graphic_off, "Edge Selection")
+                    s_EdgeIcon != null
+                    ? new GUIContent(s_EdgeIcon, "Edge Selection")
                     : new GUIContent("EDG", "Edge Selection"),
-                    face_Graphic_off != null
-                    ? new GUIContent(face_Graphic_off, "Face Selection")
+                    s_FaceIcon != null
+                    ? new GUIContent(s_FaceIcon, "Face Selection")
                     : new GUIContent("FCE", "Face Selection"),
                 };
             }
@@ -277,7 +289,7 @@ namespace UnityEditor.ProBuilder.UI
             const float MIN_LABEL_WIDTH = 0f;
             const float MAX_LABEL_WIDTH = 128f;
             const float MIN_FIELD_WIDTH = 48f;
-            
+
             Rect rect = EditorGUILayout.GetSliderRect(true);
             float y = rect.y;
 
@@ -343,7 +355,7 @@ namespace UnityEditor.ProBuilder.UI
             Rect labelRect = new Rect(PAD, y + 2f, labelWidth, SLIDER_HEIGHT);
             Rect sliderRect = new Rect(labelRect.x + labelWidth + 2*PAD, y + 1f, sliderWidth, SLIDER_HEIGHT);
             Rect intRect = new Rect(sliderRect.x + sliderRect.width + PAD, y + 1f, intWidth, SLIDER_HEIGHT);
-            
+
             Rect totalRect = GUILayoutUtility.GetRect(1, UnityEditor.EditorGUIUtility.singleLineHeight);
             Rect foldoutRect = new Rect(labelRect.xMax - PAD, labelRect.y, 15, totalRect.height);
 
