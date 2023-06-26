@@ -3,6 +3,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -309,6 +312,16 @@ namespace UnityEditor.ProBuilder
         {
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
+
+#if UNITY_2023_2_OR_NEWER
+        /// <summary>
+        ///
+        /// </summary>
+        protected internal virtual VisualElement CreateSettingsContent()
+        {
+            return null;
+        }
+#endif
 
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.

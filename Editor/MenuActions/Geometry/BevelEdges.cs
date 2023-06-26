@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class BevelEdges : MenuAction
@@ -36,6 +40,35 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+            var title = new Label("Bevel Edge Settings");
+            title.AddToClassList("unity-bold");
+            root.Add(title);
+
+            var helpBox = new HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var floatfield = new FloatField(gc_BevelDistance.text);
+            floatfield.SetValueWithoutNotify(m_BevelSize.value);
+            floatfield.RegisterCallback<ChangeEvent<float>>(OnSizeChanged);
+            root.Add(floatfield);
+
+            return root;
+        }
+
+        void OnSizeChanged(ChangeEvent<float> evt)
+        {
+            if(m_BevelSize.value == evt.newValue)
+                return;
+
+            m_BevelSize.value = evt.newValue < k_MinBevelDistance ? k_MinBevelDistance : evt.newValue;
+            ProBuilderSettings.Save();
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {
