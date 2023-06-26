@@ -265,6 +265,11 @@ namespace UnityEditor.ProBuilder
             get { return MenuActionState.Hidden; }
         }
 
+        internal bool hasOptions
+        {
+            get => (optionsMenuState & MenuActionState.Visible) == MenuActionState.Visible;
+        }
+
         /// <summary>
         /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
         /// Calling this method triggers the <see cref="onPerformAction"/> event.
@@ -296,7 +301,7 @@ namespace UnityEditor.ProBuilder
         [Obsolete(obsoleteDoActionMsg, false)]
         public ActionResult DoAction() => PerformAction();
 
-
+        internal void OpenSettings() => DoAlternateAction();
         /// <summary>
         /// Performs the action for this menu item when in Text mode.
         /// </summary>

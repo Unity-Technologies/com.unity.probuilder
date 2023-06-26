@@ -10,7 +10,6 @@ using UnityEngine.UIElements;
 namespace UnityEditor.ProBuilder
 {
 #if UNITY_2020_2_OR_NEWER
-
     class PositionToolContext : EditorToolContext
     {
         PositionToolContext() { }
@@ -80,7 +79,13 @@ namespace UnityEditor.ProBuilder
                 if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
                     title = $"{action.group}/{action.menuTitle}";
 
-                menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action));
+                if (action.hasOptions)
+                {
+                    menu.AppendAction(title + $"/Execute", _ => action.PerformAction(), GetStatus(action));
+                    menu.AppendAction(title + $"/Open Settings", _ => action.OpenSettings(), GetStatus(action));
+                }
+                else
+                    menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action));
             }
         }
 #endif
