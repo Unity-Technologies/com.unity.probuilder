@@ -1,14 +1,17 @@
 //#define DEBUG_HANDLES
-
-using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Overlays;
 using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
+#if UNITY_2023_2_OR_NEWER
+using System.Collections.Generic;
+using UnityEditor.Overlays;
+#endif
+
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2023_2_OR_NEWER
     [CustomEditor(typeof(PositionTool), true)]
     class PositionToolEditor : Editor, ICreateToolbar
     {
@@ -24,6 +27,7 @@ namespace UnityEditor.ProBuilder
             }
         }
     }
+#endif
 
     abstract class PositionTool : VertexManipulationTool
     {

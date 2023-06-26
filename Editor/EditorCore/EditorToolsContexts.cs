@@ -1,8 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor.EditorTools;
+
+#if UNITY_2023_2_OR_NEWER
+using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -12,7 +15,7 @@ namespace UnityEditor.ProBuilder
     {
         PositionToolContext() { }
 
-
+#if UNITY_2023_2_OR_NEWER
         static DropdownMenuAction.Status GetStatus(MenuAction action)
         {
             if(action.hidden)
@@ -36,7 +39,6 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleXRay)
         };
 
-#if UNITY_2023_2_OR_NEWER
         public override void PopulateMenu(DropdownMenu menu)
         {
             //Headers area is for ProBuilder modes

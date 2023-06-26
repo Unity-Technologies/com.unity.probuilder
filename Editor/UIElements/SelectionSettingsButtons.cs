@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_2023_2_OR_NEWER
+using System;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine.ProBuilder;
@@ -78,3 +79,4 @@ namespace UnityEditor.ProBuilder.UI
     {
     }
 }
+#endif
