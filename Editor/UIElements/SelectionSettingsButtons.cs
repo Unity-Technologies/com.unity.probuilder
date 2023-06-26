@@ -1,5 +1,6 @@
 ﻿#if UNITY_2023_2_OR_NEWER
 using System;
+using UnityEditor.Overlays;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine.ProBuilder;
@@ -13,19 +14,42 @@ namespace UnityEditor.ProBuilder.UI
 
         static SettingsToggle<T> s_Instance;
 
+        const string k_ParentOverlayName = "Tool Settings";
+        Overlay m_ParentOverlay;
+        Overlay parentOverlay
+        {
+            get
+            {
+                if(m_ParentOverlay != null)
+                    return m_ParentOverlay;
+
+                foreach (var overlay in SceneView.lastActiveSceneView.overlayCanvas.overlays)
+                {
+                    if (overlay.displayName == k_ParentOverlayName)
+                    {
+                        m_ParentOverlay = overlay;
+                        break;
+                    }
+                }
+
+                return m_ParentOverlay;
+            }
+        }
+
         public SettingsToggle()
         {
             m_MenuAction = EditorToolbarLoader.GetInstance<T>();
-            UpdateContent(m_MenuAction);
             tooltip = m_MenuAction.tooltip.summary;
+
+            s_Instance = this;
+
+            UpdateContent(m_MenuAction);
+            style.display = m_MenuAction.hidden ? DisplayStyle.None : DisplayStyle.Flex;
 
             clicked += OnClick;
             ProBuilderEditor.instance.iconModeChanged += () => UpdateContent(m_MenuAction);
-            ProBuilderEditor.selectModeChanged += (s) => SelectModeUpdated(s);
+            ProBuilderEditor.selectModeChanged += (s) => SelectModeUpdated();
             MenuAction.onPerformAction += UpdateContent;
-
-            style.display = m_MenuAction.hidden ? DisplayStyle.None : DisplayStyle.Flex;
-            s_Instance = this;
         }
 
         void OnClick()
@@ -38,17 +62,19 @@ namespace UnityEditor.ProBuilder.UI
         {
             if (action is T)
             {
+                var useIcons = ProBuilderEditor.s_IsIconGui || parentOverlay.layout == Layout.VerticalToolbar;
+
                 // The action event is triggered before the value is changed, the delay call allows to change
                 // the button after the value is updated
                 EditorApplication.delayCall += () =>
                 {
-                    iconImage = ProBuilderEditor.s_IsIconGui ? m_MenuAction.icon : null;
-                    text = ProBuilderEditor.s_IsIconGui ? String.Empty : m_MenuAction.menuTitle;
+                    iconImage = useIcons ? m_MenuAction.icon : null;
+                    text = useIcons ? String.Empty : m_MenuAction.menuTitle;
                 };
             }
         }
 
-        static void SelectModeUpdated(SelectMode _)
+        static void SelectModeUpdated()
         {
             s_Instance.style.display = s_Instance.m_MenuAction.hidden ? DisplayStyle.None : DisplayStyle.Flex;
         }
