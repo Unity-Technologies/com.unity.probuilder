@@ -14,6 +14,7 @@ public class MenuActionSettingsOverlay : Overlay
 
     public MenuActionSettingsOverlay(MenuActionSettings owner, MenuAction action)
     {
+        displayName = action.menuTitle;
         m_Owner = owner;
         m_CurrentAction = action;
         maxSize = new Vector2(300, 300);
@@ -47,6 +48,8 @@ public class MenuActionSettings : EditorAction
 
     public MenuActionSettings(MenuAction action)
     {
+        m_Action = action;
+        // Creating the overlay based on the action to fill the settings
         m_Overlay = new MenuActionSettingsOverlay(this, action);
         SceneView.AddOverlayToActiveView(m_Overlay);
         m_Overlay.displayed = true;

@@ -45,9 +45,6 @@ namespace UnityEditor.ProBuilder.Actions
         protected internal override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
-            var title = new Label("Bevel Edge Settings");
-            title.AddToClassList("unity-bold");
-            root.Add(title);
 
             var helpBox = new HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", HelpBoxMessageType.Info);
             root.Add(helpBox);

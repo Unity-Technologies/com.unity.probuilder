@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -34,6 +37,48 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("Extrude Amount determines how far an edge will be moved along it's normal when extruding." +
+                " This value can be negative. Extrude as Group determines whether or not adjacent faces stay attached to one " +
+                "another when extruding.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var toggle = new Toggle("As Group");
+            toggle.SetValueWithoutNotify(VertexManipulationTool.s_ExtrudeEdgesAsGroup);
+            toggle.RegisterCallback<ChangeEvent<bool>>(OnEdgesAsGroupChanged);
+            root.Add(toggle);
+
+            var floatField = new FloatField("Distance");
+            floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
+            floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
+            root.Add(floatField);
+
+            return root;
+        }
+
+        void OnEdgesAsGroupChanged(ChangeEvent<bool> evt)
+        {
+            if(VertexManipulationTool.s_ExtrudeEdgesAsGroup.value == evt.newValue)
+                return;
+
+            VertexManipulationTool.s_ExtrudeEdgesAsGroup.value = evt.newValue;
+            ProBuilderSettings.Save();
+        }
+
+        void OnExtrudeChanged(ChangeEvent<float> evt)
+        {
+            if(m_ExtrudeEdgeDistance.value == evt.newValue)
+                return;
+
+            m_ExtrudeEdgeDistance.value = evt.newValue;
+            ProBuilderSettings.Save();
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {
