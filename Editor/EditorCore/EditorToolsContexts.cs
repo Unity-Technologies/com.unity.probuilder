@@ -3,6 +3,7 @@ using UnityEditor.EditorTools;
 
 #if UNITY_2023_2_OR_NEWER
 using System.Collections.Generic;
+using UnityEditor.Actions;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 #endif
@@ -80,17 +81,9 @@ namespace UnityEditor.ProBuilder
                     title = $"{action.group}/{action.menuTitle}";
 
                 if (action.hasOptions)
-                {
-                    //menu.AppendAction(title + $"/Execute", _ => action.PerformAction(), GetStatus(action));
-                    //menu.AppendAction(title + $"/Open Settings", _ => action.OpenSettings(), GetStatus(action));
-                    menu.AppendAction(title, _ => MenuActionSettings.Start(action), GetStatus(action));
-                }
+                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action));
                 else
-                    menu.AppendAction(title, _ =>
-                    {
-                        MenuActionSettings.End();
-                        action.PerformAction();
-                    }, GetStatus(action));
+                    menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action));
             }
         }
 #endif

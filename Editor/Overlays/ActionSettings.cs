@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_2023_2_OR_NEWER
+using System;
 using UnityEditor;
 using UnityEditor.Actions;
 using UnityEditor.Overlays;
@@ -8,11 +9,14 @@ using UnityEngine.UIElements;
 
 public class MenuActionSettingsOverlay : Overlay
 {
+    MenuActionSettings m_Owner;
     MenuAction m_CurrentAction;
 
-    public void Set(MenuAction action)
+    public MenuActionSettingsOverlay(MenuActionSettings owner, MenuAction action)
     {
+        m_Owner = owner;
         m_CurrentAction = action;
+        maxSize = new Vector2(300, 300);
     }
 
     public override VisualElement CreatePanelContent()
@@ -22,10 +26,10 @@ public class MenuActionSettingsOverlay : Overlay
         root.Add(m_CurrentAction.CreateSettingsContent());
         var lastLine = new VisualElement();
         lastLine.style.flexDirection = FlexDirection.Row;
-        var okButton = new Button(OkPerformed);
+        var okButton = new Button(() => m_Owner.Finish(EditorActionResult.Success));
         okButton.text = "Ok";
         okButton.style.flexGrow = 1;
-        var cancelButton = new Button(CancelPerformed);
+        var cancelButton = new Button(() => m_Owner.Finish(EditorActionResult.Canceled));
         cancelButton.text = "Cancel";
         cancelButton.style.flexGrow = 1;
         lastLine.Add(okButton);
@@ -34,61 +38,28 @@ public class MenuActionSettingsOverlay : Overlay
 
         return root;
     }
-
-    internal void OkPerformed()
-    {
-        m_CurrentAction.PerformAction();
-        MenuActionSettings.End();
-    }
-
-    void CancelPerformed()
-    {
-        MenuActionSettings.End();
-    }
 }
 
-public class MenuActionSettings
+public class MenuActionSettings : EditorAction
 {
-    static MenuActionSettingsOverlay s_Overlay;
-    static MenuActionSettingsOverlay overlayInstance => s_Overlay??=new MenuActionSettingsOverlay();
+    MenuActionSettingsOverlay m_Overlay;
+    MenuAction m_Action;
 
-    static MenuActionSettings s_Instance;
-    static MenuActionSettings instance => s_Instance??=new MenuActionSettings();
-
-    static bool isInUse = false;
-
-    [InitializeOnLoadMethod]
-    static void Initialize()
+    public MenuActionSettings(MenuAction action)
     {
-        s_Instance = new MenuActionSettings();
+        m_Overlay = new MenuActionSettingsOverlay(this, action);
+        SceneView.AddOverlayToActiveView(m_Overlay);
+        m_Overlay.displayed = true;
     }
 
-    MenuActionSettings()
+    protected override void OnFinish(EditorActionResult result)
     {
-        SceneView.onGUIStarted += OnSceneGUI;
+        SceneView.RemoveOverlayFromActiveView(m_Overlay);
+        if (result == EditorActionResult.Success)
+            m_Action.PerformAction();
     }
 
-    public static void Start(MenuAction action)
-    {
-        if(isInUse)
-            SceneView.RemoveOverlayFromActiveView(overlayInstance);
-
-        // Create the overlay when the action is created
-        overlayInstance.Set(action);
-        SceneView.AddOverlayToActiveView(overlayInstance);
-        overlayInstance.RebuildContent();
-        overlayInstance.displayed = true;
-
-        isInUse = true;
-    }
-
-    public static void End()
-    {
-        SceneView.RemoveOverlayFromActiveView(overlayInstance);
-        isInUse = false;
-    }
-
-    public void OnSceneGUI(SceneView sceneView)
+    public override void OnSceneGUI(SceneView sceneView)
     {
         var evt = Event.current;
         switch (evt.type)
@@ -96,18 +67,16 @@ public class MenuActionSettings
             case EventType.KeyDown:
                 if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
                 {
-                    Debug.Log($"Action Finished [{EditorActionResult.Success}]");
-                    overlayInstance.OkPerformed();
+                    Finish(EditorActionResult.Success);
                     evt.Use();
                 }
                 if (evt.keyCode == KeyCode.Escape)
                 {
-                    Debug.Log($"Action Finished [{EditorActionResult.Canceled}]");
-                    End();
+                    Finish(EditorActionResult.Canceled);
                     evt.Use();
                 }
                 break;
         }
     }
-
 }
+#endif
