@@ -9,6 +9,9 @@ using UnityEngine.ProBuilder.MeshOperations;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -51,6 +54,32 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges. If no elements are selected, the entire object will be scanned for holes.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var toggle = new Toggle("Fill Entire Hole");
+            toggle.SetValueWithoutNotify(m_SelectEntirePath);
+            toggle.RegisterCallback<ChangeEvent<bool>>(OnFillHoleToggleChanged);
+            root.Add(toggle);
+
+            return root;
+        }
+
+        void OnFillHoleToggleChanged(ChangeEvent<bool> evt)
+        {
+            if(m_SelectEntirePath.value == evt.newValue)
+                return;
+
+            m_SelectEntirePath.value = evt.newValue;
+            ProBuilderSettings.Save();
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

@@ -2,6 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using System;
+using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -39,6 +44,32 @@ namespace UnityEditor.ProBuilder.Actions
             GameObject,
             Submesh
         };
+
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var detachFace = new EnumField("Duplicate To", m_DetachSetting);
+            detachFace.RegisterCallback<ChangeEvent<string>>(evt =>
+            {
+                Enum.TryParse(evt.newValue, out DetachSetting newValue);
+                if (m_DetachSetting.value == newValue)
+                    return;
+
+                m_DetachSetting.value = newValue;
+                ProBuilderSettings.Save();
+            });
+            root.Add(detachFace);
+
+            return root;
+        }
+#endif
+
 
         protected override void OnSettingsGUI()
         {

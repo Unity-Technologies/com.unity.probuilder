@@ -1,7 +1,9 @@
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -78,6 +80,57 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("Extrude Amount determines how far a face will be moved along it's normal when " +
+                "extruding. This value can be negative. You may also choose to Extrude by Face Normal, Vertex Normal, or" +
+                " as Individual Faces.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+
+            var extrudeMethodLabel = new Label();
+            extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
+            extrudeMethodLabel.style.height = 22;
+            extrudeMethodLabel.style.width = 36;
+
+            var extrudeMethodField = new EnumField("Extrude By", extrudeMethod);
+            extrudeMethodField.RegisterCallback<ChangeEvent<string>>(evt =>
+            {
+                System.Enum.TryParse(evt.newValue, out ExtrudeMethod newValue);
+                if (extrudeMethod != newValue)
+                {
+                    extrudeMethod = newValue;
+                    extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
+                    ProBuilderSettings.Save();
+                }
+            });
+            extrudeMethodField.style.flexGrow = 1;
+            var line = new VisualElement();
+            line.style.flexDirection = FlexDirection.Row;
+            line.Add(extrudeMethodField);
+            line.Add(extrudeMethodLabel);
+            root.Add(line);
+
+            var distanceField = new FloatField("Distance");
+            distanceField.SetValueWithoutNotify(m_ExtrudeDistance.value);
+            distanceField.isDelayed = true;
+            distanceField.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                if (m_ExtrudeDistance.value != evt.newValue)
+                {
+                    m_ExtrudeDistance.value = evt.newValue;
+                    ProBuilderSettings.Save();
+                }
+            });
+            root.Add(distanceField);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {
