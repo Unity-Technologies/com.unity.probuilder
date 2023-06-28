@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -49,6 +51,38 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+            root.style.minWidth = 150;
+
+            var floatField = new FloatField(gc_weldDistance.text);
+            floatField.SetValueWithoutNotify(m_WeldDistance);
+            floatField.isDelayed = true;
+            floatField[1].style.minWidth = 50;
+            floatField.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                if (m_WeldDistance.value != evt.newValue)
+                {
+                    if (evt.newValue < k_MinWeldDistance)
+                    {
+                        m_WeldDistance.value = k_MinWeldDistance;
+                        floatField.SetValueWithoutNotify(m_WeldDistance);
+                    }
+                    else
+                        m_WeldDistance.value = evt.newValue;
+
+                    ProBuilderSettings.Save();
+                }
+            });
+            root.Add(floatField);
+
+            return root;
+        }
+
+#endif
 
         protected override void OnSettingsGUI()
         {

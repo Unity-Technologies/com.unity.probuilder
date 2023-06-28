@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class CollapseVertices : MenuAction
@@ -44,6 +48,32 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+            root.style.minWidth = 150;
+
+            var helpBox = new HelpBox("Collapse To First setting decides where the collapsed vertex will be placed. If True, the new vertex will be placed at the position of the first selected vertex. If false, the new vertex is placed at the average position of all selected vertices.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var toggle = new Toggle("Collapse to First");
+            toggle.SetValueWithoutNotify( m_CollapseToFirst);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                if (m_CollapseToFirst.value != evt.newValue)
+                {
+                    m_CollapseToFirst.value = evt.newValue;
+
+                    ProBuilderSettings.Save();
+                }
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

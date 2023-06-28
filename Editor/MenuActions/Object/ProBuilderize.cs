@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEditor.Actions;
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class ProBuilderize : MenuAction
@@ -12,6 +17,29 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<bool> m_Quads = new Pref<bool>("meshImporter.quads", true);
         Pref<bool> m_Smoothing = new Pref<bool>("meshImporter.smoothing", true);
         Pref<float> m_SmoothingAngle = new Pref<float>("meshImporter.smoothingAngle", 1f);
+
+#if UNITY_2023_2_OR_NEWER
+
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
+        static bool ValidateProBuilderizeMeshFilter()
+        {
+            var trs = Selection.transforms;
+            return (trs.GetComponents<MeshFilter>().Length > trs.GetComponents<ProBuilderMesh>().Length);
+        }
+
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize")]
+        static void ProBuilderizeMeshFilter(MenuCommand command)
+        {
+            var filter = (MeshFilter)command.context;
+
+            //Check if we are not trying to Probuilderize a PB mesh
+            if (filter.GetComponent<ProBuilderMesh>() != null)
+                return;
+
+            EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+        }
+
+#endif
 
         public ProBuilderize()
         {
@@ -66,6 +94,79 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            var quadsToggle = new Toggle(m_QuadsTooltip.text);
+            quadsToggle.SetValueWithoutNotify(m_Quads);
+            root.Add(quadsToggle);
+
+            var smoothingToggle = new Toggle(m_SmoothingTooltip.text);
+            smoothingToggle.SetValueWithoutNotify(m_Smoothing);
+            root.Add(smoothingToggle);
+
+            var line = new VisualElement();
+            line.style.flexDirection = FlexDirection.Row;
+            root.Add(line);
+
+            var smoothingSlider = new Slider(m_SmoothingThresholdTooltip.text, 0.0001f, 45f);
+            smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
+            smoothingSlider.style.flexGrow = 1;
+            smoothingSlider.SetEnabled(m_Smoothing);
+            line.Add(smoothingSlider);
+
+            var smoothingSliderValue = new FloatField();
+            smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
+            smoothingSliderValue.isDelayed = true;
+            smoothingSliderValue.style.width = 50;
+            line.Add(smoothingSliderValue);
+
+            quadsToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                if (m_Quads.value != evt.newValue)
+                {
+                    m_Quads.value = evt.newValue;
+                    ProBuilderSettings.Save();
+                }
+            });
+            smoothingToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                if (m_Smoothing.value != evt.newValue)
+                {
+                    m_Smoothing.value = evt.newValue;
+                    smoothingSlider.SetEnabled(m_Smoothing);
+                    ProBuilderSettings.Save();
+                }
+            });
+            smoothingSlider.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                if (m_SmoothingAngle.value != evt.newValue)
+                {
+                    m_SmoothingAngle.value = evt.newValue;
+                    smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
+                    ProBuilderSettings.Save();
+                }
+            });
+            smoothingSliderValue.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                if (m_SmoothingAngle.value != evt.newValue)
+                {
+                    m_SmoothingAngle.value = evt.newValue;
+                    smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
+                    ProBuilderSettings.Save();
+                }
+            });
+
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

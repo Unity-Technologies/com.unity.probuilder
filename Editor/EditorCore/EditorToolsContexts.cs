@@ -4,6 +4,7 @@ using UnityEditor.EditorTools;
 #if UNITY_2023_2_OR_NEWER
 using System.Collections.Generic;
 using UnityEditor.Actions;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 #endif
@@ -84,6 +85,13 @@ namespace UnityEditor.ProBuilder
                     menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action));
                 else
                     menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action));
+            }
+
+            var trs = Selection.transforms;
+            if (trs.GetComponents<MeshFilter>().Length > trs.GetComponents<ProBuilderMesh>().Length)
+            {
+                menu.AppendSeparator();
+                ContextMenuUtility.AddMenuItemsForType(menu, typeof(MeshFilter), targets, "Mesh Filter");
             }
         }
 #endif

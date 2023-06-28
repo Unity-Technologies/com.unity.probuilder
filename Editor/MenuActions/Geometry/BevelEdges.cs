@@ -49,21 +49,26 @@ namespace UnityEditor.ProBuilder.Actions
             var helpBox = new HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", HelpBoxMessageType.Info);
             root.Add(helpBox);
 
-            var floatfield = new FloatField(gc_BevelDistance.text);
-            floatfield.SetValueWithoutNotify(m_BevelSize.value);
-            floatfield.RegisterCallback<ChangeEvent<float>>(OnSizeChanged);
-            root.Add(floatfield);
+            var floatField = new FloatField(gc_BevelDistance.text);
+            floatField.SetValueWithoutNotify(m_BevelSize.value);
+            floatField.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                if (m_BevelSize.value != evt.newValue)
+                {
+                    if (evt.newValue < k_MinBevelDistance)
+                    {
+                        m_BevelSize.value = k_MinBevelDistance;
+                        floatField.SetValueWithoutNotify(m_BevelSize);
+                    }
+                    else
+                        m_BevelSize.value = evt.newValue;
+
+                    ProBuilderSettings.Save();
+                }
+            });
+            root.Add(floatField);
 
             return root;
-        }
-
-        void OnSizeChanged(ChangeEvent<float> evt)
-        {
-            if(m_BevelSize.value == evt.newValue)
-                return;
-
-            m_BevelSize.value = evt.newValue < k_MinBevelDistance ? k_MinBevelDistance : evt.newValue;
-            ProBuilderSettings.Save();
         }
 #endif
 

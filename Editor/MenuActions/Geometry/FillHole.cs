@@ -64,6 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(helpBox);
 
             var toggle = new Toggle("Fill Entire Hole");
+            toggle.style.flexGrow =1;
             toggle.SetValueWithoutNotify(m_SelectEntirePath);
             toggle.RegisterCallback<ChangeEvent<bool>>(OnFillHoleToggleChanged);
             root.Add(toggle);
