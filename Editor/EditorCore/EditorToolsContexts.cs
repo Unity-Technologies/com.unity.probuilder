@@ -82,9 +82,9 @@ namespace UnityEditor.ProBuilder
                     title = $"{action.group}/{action.menuTitle}";
 
                 if (action.hasOptions)
-                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action));
+                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
                 else
-                    menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action));
+                    menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action), action.icon);
             }
 
             var trs = Selection.transforms;
