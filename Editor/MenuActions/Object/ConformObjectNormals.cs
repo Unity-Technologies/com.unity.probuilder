@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
 #if UNITY_2023_2_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Object Normals", true)]
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", true)]
         static bool ValidateConformObjectNormalsAction()
         {
             return MeshSelection.selectedObjectCount > 0;
@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Object Normals")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals")]
         static void ConformObjectNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
