@@ -53,7 +53,11 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 s_ActionAlreadyTriggered = true;
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<ConformObjectNormals>().PerformAction();
+                EditorApplication.delayCall += () =>
+                {
+                    EditorToolbarLoader.GetInstance<ConformObjectNormals>().PerformAction();
+                    s_ActionAlreadyTriggered = false;
+                };
             }
         }
 #endif
@@ -74,9 +78,6 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
-#if UNITY_2023_2_OR_NEWER
-            s_ActionAlreadyTriggered = false;
-#endif
             return res;
         }
     }

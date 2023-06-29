@@ -50,7 +50,11 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 s_ActionAlreadyTriggered = true;
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<SetTrigger>().PerformAction();
+                EditorApplication.delayCall += () =>
+                {
+                    EditorToolbarLoader.GetInstance<SetTrigger>().PerformAction();
+                    s_ActionAlreadyTriggered = false;
+                };
             }
         }
 #endif
@@ -80,9 +84,6 @@ namespace UnityEditor.ProBuilder.Actions
                 Undo.AddComponent<TriggerBehaviour>(pb.gameObject).Initialize();
             }
 
-#if UNITY_2023_2_OR_NEWER
-            s_ActionAlreadyTriggered = false;
-#endif
             int selectionCount = MeshSelection.selectedObjectCount;
             if (selectionCount < 1)
                 return new ActionResult(ActionResult.Status.NoChange, "Set Trigger\nNo objects selected");

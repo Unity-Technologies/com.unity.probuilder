@@ -24,7 +24,7 @@ public class MenuActionSettingsOverlay : Overlay
     {
         var root = new VisualElement();
         root.style.flexDirection = FlexDirection.Column;
-        root.Add(m_CurrentAction.CreateSettingsContent());
+
         var lastLine = new VisualElement();
         lastLine.style.flexDirection = FlexDirection.Row;
         var okButton = new Button(() => m_Owner.Finish(EditorActionResult.Success));
@@ -35,6 +35,8 @@ public class MenuActionSettingsOverlay : Overlay
         cancelButton.style.flexGrow = 1;
         lastLine.Add(okButton);
         lastLine.Add(cancelButton);
+
+        root.Add(m_CurrentAction.CreateSettingsContent());
         root.Add(lastLine);
 
         return root;

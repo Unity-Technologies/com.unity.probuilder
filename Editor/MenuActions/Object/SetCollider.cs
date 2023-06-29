@@ -48,7 +48,11 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 s_ActionAlreadyTriggered = true;
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<SetCollider>().PerformAction();
+                EditorApplication.delayCall += () =>
+                {
+                    EditorToolbarLoader.GetInstance<SetCollider>().PerformAction();
+                    s_ActionAlreadyTriggered = false;
+                };
             }
         }
 #endif

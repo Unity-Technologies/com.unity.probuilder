@@ -2,6 +2,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using Object = UnityEngine.Object;
+
+#if UNITY_2023_2_OR_NEWER
+using System;
+using UnityEditor.Actions;
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -49,6 +56,73 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", true)]
+        static bool ValidateMirrorObjectAction()
+        {
+            return MeshSelection.selectedObjectCount > 0;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 11)]
+        static void MirrorObjectAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () =>
+                {
+                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<MirrorObjects>()));
+                    s_ActionAlreadyTriggered = false;
+                };
+            }
+        }
+
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var helpBox = new HelpBox("Mirror objects on the selected axes. If Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.", HelpBoxMessageType.Info);
+            root.Add(helpBox);
+
+            MirrorSettings scale = m_MirrorAxes;
+
+            bool x = (scale & MirrorSettings.X) != 0;
+            bool y = (scale & MirrorSettings.Y) != 0;
+            bool z = (scale & MirrorSettings.Z) != 0;
+            bool d = (scale & MirrorSettings.Duplicate) != 0;
+
+            var toggle = new Toggle("X");
+            toggle.SetValueWithoutNotify(x);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((evt.newValue ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+
+            root.Add(toggle);
+
+            toggle = new Toggle("Y");
+            toggle.SetValueWithoutNotify(y);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (evt.newValue ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            toggle = new Toggle("Z");
+            toggle.SetValueWithoutNotify(z);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (evt.newValue ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            toggle = new Toggle("Duplicate");
+            toggle.SetValueWithoutNotify(d);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (evt.newValue ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Mirror Settings", EditorStyles.boldLabel);

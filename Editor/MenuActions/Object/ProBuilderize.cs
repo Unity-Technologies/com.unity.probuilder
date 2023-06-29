@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder.Actions
 #if UNITY_2023_2_OR_NEWER
 
         [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
-        static bool ValidateProBuilderizeMeshFilter()
+        static bool ValidateProBuilderizeMeshAction()
         {
             return EditorToolbarLoader.GetInstance<ProBuilderize>().enabled;
         }
@@ -83,8 +83,8 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/MeshFilter/ProBuilderize")]
-        static void ProBuilderizeMeshFilter(MenuCommand command)
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", false, 11)]
+        static void ProBuilderizeMeshAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
             {
@@ -95,7 +95,11 @@ namespace UnityEditor.ProBuilder.Actions
 
                 s_ActionAlreadyTriggered = true;
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () => EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+                EditorApplication.delayCall += () =>
+                {
+                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+                    s_ActionAlreadyTriggered = false;
+                };
             }
         }
 
@@ -165,7 +169,6 @@ namespace UnityEditor.ProBuilder.Actions
                     ProBuilderSettings.Save();
                 }
             });
-
 
             return root;
         }
