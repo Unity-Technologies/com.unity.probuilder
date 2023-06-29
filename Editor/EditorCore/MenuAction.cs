@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Determines whether the menu item is visible, and if visible, whether it is enabled.
         /// </summary>
-        [System.Flags]
+        [Flags]
         public enum MenuActionState
         {
             /// <summary>

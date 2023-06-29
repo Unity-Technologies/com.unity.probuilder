@@ -33,6 +33,28 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [MenuItem("CONTEXT/ProBuilderMesh/Set Trigger", true)]
+        static bool ValidateSetTriggerAction()
+        {
+            return MeshSelection.selectedObjectCount > 0;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/ProBuilderMesh/Set Trigger")]
+        static void SetTriggerAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<SetTrigger>().PerformAction();
+            }
+        }
+#endif
+
         protected override ActionResult PerformActionImplementation()
         {
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
@@ -58,8 +80,10 @@ namespace UnityEditor.ProBuilder.Actions
                 Undo.AddComponent<TriggerBehaviour>(pb.gameObject).Initialize();
             }
 
+#if UNITY_2023_2_OR_NEWER
+            s_ActionAlreadyTriggered = false;
+#endif
             int selectionCount = MeshSelection.selectedObjectCount;
-
             if (selectionCount < 1)
                 return new ActionResult(ActionResult.Status.NoChange, "Set Trigger\nNo objects selected");
 

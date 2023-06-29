@@ -42,6 +42,28 @@ namespace UnityEditor.ProBuilder.Actions
             return globalSign < 0;
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", true)]
+        static bool ValidateFreezeTransformAction()
+        {
+            return MeshSelection.selectedObjectCount > 0;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform")]
+        static void FreezeTransformAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<FreezeTransform>().PerformAction();
+            }
+        }
+#endif
+
         protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
@@ -78,8 +100,10 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
-
             SceneView.RepaintAll();
+#if UNITY_2023_2_OR_NEWER
+            s_ActionAlreadyTriggered = false;
+#endif
 
             return new ActionResult(ActionResult.Status.Success, "Freeze Transforms");
         }

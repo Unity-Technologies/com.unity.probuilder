@@ -18,29 +18,6 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<bool> m_Smoothing = new Pref<bool>("meshImporter.smoothing", true);
         Pref<float> m_SmoothingAngle = new Pref<float>("meshImporter.smoothingAngle", 1f);
 
-#if UNITY_2023_2_OR_NEWER
-
-        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
-        static bool ValidateProBuilderizeMeshFilter()
-        {
-            var trs = Selection.transforms;
-            return (trs.GetComponents<MeshFilter>().Length > trs.GetComponents<ProBuilderMesh>().Length);
-        }
-
-        [MenuItem("CONTEXT/MeshFilter/ProBuilderize")]
-        static void ProBuilderizeMeshFilter(MenuCommand command)
-        {
-            var filter = (MeshFilter)command.context;
-
-            //Check if we are not trying to Probuilderize a PB mesh
-            if (filter.GetComponent<ProBuilderMesh>() != null)
-                return;
-
-            EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
-        }
-
-#endif
-
         public ProBuilderize()
         {
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
@@ -96,6 +73,32 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
 #if UNITY_2023_2_OR_NEWER
+
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
+        static bool ValidateProBuilderizeMeshFilter()
+        {
+            return EditorToolbarLoader.GetInstance<ProBuilderize>().enabled;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize")]
+        static void ProBuilderizeMeshFilter(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                var filter = (MeshFilter)command.context;
+                //Check if we are not trying to Probuilderize a PB mesh
+                if (filter.GetComponent<ProBuilderMesh>() != null)
+                    return;
+
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () => EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+            }
+        }
+
         protected internal override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();

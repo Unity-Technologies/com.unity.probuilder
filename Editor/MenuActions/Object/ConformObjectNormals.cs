@@ -36,6 +36,28 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Object Normals", true)]
+        static bool ValidateConformObjectNormalsAction()
+        {
+            return MeshSelection.selectedObjectCount > 0;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Object Normals")]
+        static void ConformObjectNormalsAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<ConformObjectNormals>().PerformAction();
+            }
+        }
+#endif
+
         protected override ActionResult PerformActionImplementation()
         {
             UndoUtility.RecordSelection("Conform Object Normals");
@@ -52,7 +74,9 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
-
+#if UNITY_2023_2_OR_NEWER
+            s_ActionAlreadyTriggered = false;
+#endif
             return res;
         }
     }

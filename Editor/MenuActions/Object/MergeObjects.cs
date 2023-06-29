@@ -37,6 +37,28 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 1 && MeshSelection.activeMesh != null; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", true)]
+        static bool ValidateMergeObjectsAction()
+        {
+            return MeshSelection.selectedObjectCount > 1 && MeshSelection.activeMesh != null;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects")]
+        static void MergeObjectsAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () => EditorToolbarLoader.GetInstance<MergeObjects>().PerformAction();
+            }
+        }
+#endif
+
         protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 2)
@@ -69,6 +91,9 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
+#if UNITY_2023_2_OR_NEWER
+            s_ActionAlreadyTriggered = false;
+#endif
 
             return new ActionResult(ActionResult.Status.Success, "Merged Objects");
         }
