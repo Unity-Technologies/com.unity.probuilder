@@ -315,7 +315,9 @@ namespace UnityEditor.ProBuilder
 
 #if UNITY_2023_2_OR_NEWER
         /// <summary>
-        ///
+        /// Replaces OnSettingsGUI for 2023.2 and newer to display settings in a SceneView overlay.
+        /// Creates a custom settings window for this action. Populate a root visual element in that method with
+        /// the settings content.
         /// </summary>
         protected internal virtual VisualElement CreateSettingsContent()
         {
@@ -323,7 +325,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        ///
+        /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
         protected internal virtual void DoSceneGUI(SceneView sceneView) {}
 #endif
