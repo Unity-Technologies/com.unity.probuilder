@@ -321,6 +321,11 @@ namespace UnityEditor.ProBuilder
         {
             return null;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        protected internal virtual void DoSceneGUI(SceneView sceneView) {}
 #endif
 
         /// <summary>

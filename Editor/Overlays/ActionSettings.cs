@@ -95,8 +95,9 @@ public class MenuActionSettings : EditorAction
                     Finish(EditorActionResult.Canceled);
                     evt.Use();
                 }
-                break;
+                return;
         }
+        m_Action.DoSceneGUI(sceneView);
     }
 }
 #endif

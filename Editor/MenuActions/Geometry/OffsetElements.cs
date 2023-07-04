@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.Rendering;
 using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
-using Math = UnityEngine.ProBuilder.Math;
+
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -58,6 +60,41 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var dist = s_Translation.value;
+            var coord = s_CoordinateSpace.value;
+
+            var spaceField = new EnumField("Coordinate Space", coord);
+            root.Add(spaceField);
+            spaceField.RegisterCallback<ChangeEvent<string>>(evt =>
+            {
+                Enum.TryParse(evt.newValue, out CoordinateSpace newValue);
+                if (s_CoordinateSpace.value == newValue)
+                    return;
+                s_CoordinateSpace.SetValue(newValue);
+                ProBuilderSettings.Save();
+            });
+
+            var distField = new Vector3Field("Translate");
+            distField.SetValueWithoutNotify(dist);
+            root.Add(distField);
+            distField.RegisterCallback<ChangeEvent<Vector3>>(evt =>
+            {
+                s_Translation.SetValue(evt.newValue, true);
+            });
+
+            return root;
+        }
+
+        protected internal override void DoSceneGUI(SceneView sceneView)
+            => MoveElementsSettings.OnSceneGUI(sceneView);
+#endif
+
 
         protected override void DoAlternateAction()
         {
@@ -137,7 +174,6 @@ namespace UnityEditor.ProBuilder.Actions
         void OnEnable()
         {
             titleContent.text = L10n.Tr("Offset Element Settings");
-
             SceneView.duringSceneGui += OnSceneGUI;
         }
 
@@ -180,7 +216,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         static List<Vector3> s_Points = new List<Vector3>();
 
-        void OnSceneGUI(SceneView view)
+        internal static void OnSceneGUI(SceneView view)
         {
             s_Points.Clear();
 
