@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Set Trigger")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Set Trigger", false, 20)]
         static void SetTriggerAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)

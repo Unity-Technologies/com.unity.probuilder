@@ -42,7 +42,7 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15)]
         static void SubdivideObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)

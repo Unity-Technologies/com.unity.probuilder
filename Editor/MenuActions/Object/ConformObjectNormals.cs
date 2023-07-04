@@ -46,7 +46,7 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11)]
         static void ConformObjectNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
