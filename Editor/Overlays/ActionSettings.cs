@@ -55,10 +55,25 @@ public class MenuActionSettings : EditorAction
         m_Overlay = new MenuActionSettingsOverlay(this, action);
         SceneView.AddOverlayToActiveView(m_Overlay);
         m_Overlay.displayed = true;
+        // Pressing esc should escape the current action without applying, however, pressing ESC in PB is
+        // returning from vert/edge/face mode to object mode, so when select mode is changed, we cancel the
+        // action to mimic the behavior of EditorAction.
+        ProBuilderEditor.selectModeChanged += (_) => Finish(EditorActionResult.Canceled);
+
+        // Ensure that if a MenuActionSettings is currently active, starting this one will not call
+        // OnMenuActionPerformed when the other is deactivated
+        EditorApplication.delayCall += () => MenuAction.onPerformAction += OnMenuActionPerformed;
+    }
+
+    void OnMenuActionPerformed(MenuAction action)
+    {
+        if (action != m_Action)
+            Finish(EditorActionResult.Success);
     }
 
     protected override void OnFinish(EditorActionResult result)
     {
+        MenuAction.onPerformAction -= OnMenuActionPerformed;
         SceneView.RemoveOverlayFromActiveView(m_Overlay);
         if (result == EditorActionResult.Success)
             m_Action.PerformAction();
