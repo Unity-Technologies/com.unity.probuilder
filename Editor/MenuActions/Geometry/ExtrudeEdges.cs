@@ -54,6 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(toggle);
 
             var floatField = new FloatField("Distance");
+            floatField.isDelayed = true;
             floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
             floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
             root.Add(floatField);

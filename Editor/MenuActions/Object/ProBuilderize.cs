@@ -111,10 +111,12 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(helpBox);
 
             var quadsToggle = new Toggle(m_QuadsTooltip.text);
+            quadsToggle.tooltip = m_QuadsTooltip.tooltip;
             quadsToggle.SetValueWithoutNotify(m_Quads);
             root.Add(quadsToggle);
 
             var smoothingToggle = new Toggle(m_SmoothingTooltip.text);
+            smoothingToggle.tooltip = m_SmoothingTooltip.tooltip;
             smoothingToggle.SetValueWithoutNotify(m_Smoothing);
             root.Add(smoothingToggle);
 
@@ -123,6 +125,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(line);
 
             var smoothingSlider = new Slider(m_SmoothingThresholdTooltip.text, 0.0001f, 45f);
+            smoothingSlider.tooltip = m_SmoothingThresholdTooltip.tooltip;
             smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
             smoothingSlider.style.flexGrow = 1;
             smoothingSlider.SetEnabled(m_Smoothing);

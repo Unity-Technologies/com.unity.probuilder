@@ -59,13 +59,12 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(helpBox);
 
             var toggle = new Toggle("Collapse to First");
-            toggle.SetValueWithoutNotify( m_CollapseToFirst);
+            toggle.SetValueWithoutNotify(m_CollapseToFirst);
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 if (m_CollapseToFirst.value != evt.newValue)
                 {
                     m_CollapseToFirst.value = evt.newValue;
-
                     ProBuilderSettings.Save();
                 }
             });

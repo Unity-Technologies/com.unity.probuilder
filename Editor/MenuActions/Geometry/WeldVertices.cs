@@ -59,8 +59,9 @@ namespace UnityEditor.ProBuilder.Actions
             root.style.minWidth = 150;
 
             var floatField = new FloatField(gc_weldDistance.text);
-            floatField.SetValueWithoutNotify(m_WeldDistance);
             floatField.isDelayed = true;
+            floatField.tooltip = gc_weldDistance.tooltip;
+            floatField.SetValueWithoutNotify(m_WeldDistance);
             floatField[1].style.minWidth = 50;
             floatField.RegisterCallback<ChangeEvent<float>>(evt =>
             {

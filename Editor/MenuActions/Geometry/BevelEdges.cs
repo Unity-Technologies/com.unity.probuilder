@@ -50,6 +50,8 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(helpBox);
 
             var floatField = new FloatField(gc_BevelDistance.text);
+            floatField.tooltip = gc_BevelDistance.tooltip;
+            floatField.isDelayed = true;
             floatField.SetValueWithoutNotify(m_BevelSize.value);
             floatField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
