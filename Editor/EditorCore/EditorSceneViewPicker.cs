@@ -15,7 +15,9 @@ namespace UnityEditor.ProBuilder
         public const float offPointerMultiplier = 1.2f;
 
         public CullingMode cullMode;
+#if !UNITY_2023_2_OR_NEWER
         public SelectionModifierBehavior selectionModifierBehavior;
+#endif
         public RectSelectMode rectSelectMode;
     }
 
@@ -299,12 +301,19 @@ namespace UnityEditor.ProBuilder
                         {
                             common = mesh.GetSharedVertexHandles(mesh.selectedIndexesInternal);
 
+#if UNITY_2023_2_OR_NEWER
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                                common.UnionWith(kvp.Value);
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                                common.RemoveWhere(x => kvp.Value.Contains(x));
+#else
                             if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
                                 common.UnionWith(kvp.Value);
                             else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Subtract)
                                 common.RemoveWhere(x => kvp.Value.Contains(x));
                             else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Difference)
                                 common.SymmetricExceptWith(kvp.Value);
+#endif
                         }
                         else
                         {
@@ -335,13 +344,19 @@ namespace UnityEditor.ProBuilder
                         if (isAppendModifier)
                         {
                             current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
-
+#if UNITY_2023_2_OR_NEWER
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                                current.UnionWith(kvp.Value);
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                                current.RemoveWhere(x => kvp.Value.Contains(x));
+#else
                             if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
                                 current.UnionWith(kvp.Value);
                             else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
                                 current.RemoveWhere(x => kvp.Value.Contains(x));
                             else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
                                 current.SymmetricExceptWith(kvp.Value);
+#endif
                         }
                         else
                         {
@@ -375,13 +390,19 @@ namespace UnityEditor.ProBuilder
                         if (isAppendModifier)
                         {
                             current = EdgeLookup.GetEdgeLookupHashSet(mesh.selectedEdges, common);
-
+#if UNITY_2023_2_OR_NEWER
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                                current.UnionWith(selectedEdges);
+                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                                current.RemoveWhere(x => selectedEdges.Contains(x));
+#else
                             if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
                                 current.UnionWith(selectedEdges);
                             else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
                                 current.RemoveWhere(x => selectedEdges.Contains(x));
                             else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
                                 current.SymmetricExceptWith(selectedEdges);
+#endif
                         }
                         else
                         {

@@ -81,8 +81,10 @@ namespace UnityEditor.ProBuilder
         static Pref<RectSelectMode> m_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
+#if !UNITY_2023_2_OR_NEWER
         static Pref<SelectionModifierBehavior> m_SelectModifierBehavior =
             new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
+#endif
 
         internal static RectSelectMode rectSelectMode
         {
@@ -100,6 +102,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if !UNITY_2023_2_OR_NEWER
         internal static SelectionModifierBehavior selectionModifierBehavior
         {
             get { return m_SelectModifierBehavior.value; }
@@ -115,6 +118,7 @@ namespace UnityEditor.ProBuilder
                     s_Instance.m_ScenePickerPreferences.selectionModifierBehavior = value;
             }
         }
+#endif
 
         internal static bool backfaceSelectionEnabled
         {
@@ -355,7 +359,9 @@ namespace UnityEditor.ProBuilder
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
+#if !UNITY_2023_2_OR_NEWER
                 selectionModifierBehavior = m_SelectModifierBehavior,
+#endif
                 rectSelectMode = m_DragSelectRectMode
             };
         }

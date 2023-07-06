@@ -82,11 +82,6 @@ namespace UnityEditor.ProBuilder.UI
         }
     }
 
-    [EditorToolbarElement("ProBuilder Settings/Drag Selection Mode")]
-    class DragSelectionModeToggle : SettingsToggle<ToggleDragSelectionMode>
-    {
-    }
-
     [EditorToolbarElement("ProBuilder Settings/Drag Rect Mode")]
     class DragRectModeToggle : SettingsToggle<ToggleDragRectMode>
     {
