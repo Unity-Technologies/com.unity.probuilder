@@ -265,6 +265,9 @@ namespace UnityEditor.ProBuilder
             get { return MenuActionState.Hidden; }
         }
 
+        internal bool optionsVisible => optionsMenuState != MenuActionState.Hidden;
+        internal bool optionsEnabled => optionsMenuState == MenuActionState.VisibleAndEnabled;
+
         /// <summary>
         /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
         /// Calling this method triggers the <see cref="onPerformAction"/> event.
