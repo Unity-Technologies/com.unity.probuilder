@@ -46,14 +46,15 @@ The default value is <b>On</b>.
             }
         }
 
+        internal Texture2D[] icons => m_Icons;
         Texture2D[] m_Icons;
 
         public ToggleSelectBackFaces()
         {
             m_Icons = new Texture2D[]
             {
-                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On", IconSkin.Pro)
+                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off"),
+                IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On")
             };
         }
 
