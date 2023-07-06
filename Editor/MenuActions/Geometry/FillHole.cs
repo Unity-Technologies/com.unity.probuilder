@@ -60,10 +60,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges. If no elements are selected, the entire object will be scanned for holes.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var toggle = new Toggle("Fill Entire Hole");
+            toggle.tooltip = "Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges. If no elements are selected, the entire object will be scanned for holes.";
             toggle.style.flexGrow =1;
             toggle.SetValueWithoutNotify(m_SelectEntirePath);
             toggle.RegisterCallback<ChangeEvent<bool>>(OnFillHoleToggleChanged);

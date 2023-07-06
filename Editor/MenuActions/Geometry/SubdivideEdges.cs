@@ -69,23 +69,23 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("How many vertices to insert on each selected edge. Vertices will be equally " +
-                "spaced between one another and the boundaries of the edge.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var line = new VisualElement();
             line.style.flexDirection = FlexDirection.Row;
+            var tooltip = "How many vertices to insert on each selected edge. Vertices will be equally spaced between " +
+                "one another and the boundaries of the edge.";
 
             var foldout = new Foldout();
             foldout.SetValueWithoutNotify(m_SubdivisionRangeExpanded.value);
             foldout.RegisterCallback<ChangeEvent<bool>>(OnFoldoutChanged);
             m_Slider = new SliderInt("Subdivisions", m_SubdivisionUIMin, m_SubdivisionUIMax);
             m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+            m_Slider.tooltip = tooltip;
             m_Slider.RegisterCallback<ChangeEvent<int>>(OnSliderChanged);
             m_Slider.style.flexGrow = 1f;
             m_SubdivCount = new IntegerField();
             m_SubdivCount.isDelayed = true;
             m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+            m_SubdivCount.tooltip = tooltip;
             m_SubdivCount.RegisterCallback<ChangeEvent<int>>(OnCountChanged);
             m_SubdivCount.style.width = 40;
             line.Add(foldout);

@@ -43,18 +43,15 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("Extrude Amount determines how far an edge will be moved along it's normal when extruding." +
-                " This value can be negative. Extrude as Group determines whether or not adjacent faces stay attached to one " +
-                "another when extruding.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var toggle = new Toggle("As Group");
+            toggle.tooltip = "Extrude as Group determines whether or not adjacent faces stay attached to one another when extruding.";
             toggle.SetValueWithoutNotify(VertexManipulationTool.s_ExtrudeEdgesAsGroup);
             toggle.RegisterCallback<ChangeEvent<bool>>(OnEdgesAsGroupChanged);
             root.Add(toggle);
 
             var floatField = new FloatField("Distance");
             floatField.isDelayed = true;
+            floatField.tooltip = "Extrude Amount determines how far an edge will be moved along it's normal when extruding. This value can be negative.";
             floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
             floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
             root.Add(floatField);

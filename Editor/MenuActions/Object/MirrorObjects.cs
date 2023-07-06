@@ -85,36 +85,36 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("Mirror objects on the selected axes. If Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             MirrorSettings scale = m_MirrorAxes;
-
             bool x = (scale & MirrorSettings.X) != 0;
             bool y = (scale & MirrorSettings.Y) != 0;
             bool z = (scale & MirrorSettings.Z) != 0;
             bool d = (scale & MirrorSettings.Duplicate) != 0;
 
+            var tooltip = "Mirror objects on the selected axes";
             var toggle = new Toggle("X");
+            toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(x);
             toggle.RegisterValueChangedCallback( evt =>
                 m_MirrorAxes.SetValue((evt.newValue ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
-
             root.Add(toggle);
 
             toggle = new Toggle("Y");
+            toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(y);
             toggle.RegisterValueChangedCallback( evt =>
                 m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (evt.newValue ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
             root.Add(toggle);
 
             toggle = new Toggle("Z");
+            toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(z);
             toggle.RegisterValueChangedCallback( evt =>
                 m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (evt.newValue ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
             root.Add(toggle);
 
             toggle = new Toggle("Duplicate");
+            toggle.tooltip = "If Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.";
             toggle.SetValueWithoutNotify(d);
             toggle.RegisterValueChangedCallback( evt =>
                 m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (evt.newValue ? MirrorSettings.Duplicate : 0)));

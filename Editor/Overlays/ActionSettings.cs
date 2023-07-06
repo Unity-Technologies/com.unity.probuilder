@@ -7,7 +7,7 @@ using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class MenuActionSettingsOverlay : Overlay
+class MenuActionSettingsOverlay : Overlay
 {
     MenuActionSettings m_Owner;
     MenuAction m_CurrentAction;
@@ -17,18 +17,20 @@ public class MenuActionSettingsOverlay : Overlay
         displayName = action.menuTitle;
         m_Owner = owner;
         m_CurrentAction = action;
-        maxSize = new Vector2(300, 300);
     }
 
     public override VisualElement CreatePanelContent()
     {
+        rootVisualElement.tooltip = m_CurrentAction.tooltip.summary;
+
         var root = new VisualElement();
         root.style.flexDirection = FlexDirection.Column;
+        root.style.minWidth = root.style.maxWidth = 300;
 
         var lastLine = new VisualElement();
         lastLine.style.flexDirection = FlexDirection.Row;
         var okButton = new Button(() => m_Owner.Finish(EditorActionResult.Success));
-        okButton.text = "Ok";
+        okButton.text = "Validate";
         okButton.style.flexGrow = 1;
         var cancelButton = new Button(() => m_Owner.Finish(EditorActionResult.Canceled));
         cancelButton.text = "Cancel";
@@ -36,7 +38,22 @@ public class MenuActionSettingsOverlay : Overlay
         lastLine.Add(okButton);
         lastLine.Add(cancelButton);
 
-        root.Add(m_CurrentAction.CreateSettingsContent());
+        var settingsElement = m_CurrentAction.CreateSettingsContent();
+        root.Add(settingsElement);
+
+        if (m_Owner.HasPreview)
+        {
+            var previewButton = new Button(() =>
+            {
+                Undo.PerformUndo();
+                m_CurrentAction.PerformAction();
+            });
+            previewButton.text = "Preview";
+            previewButton.style.flexDirection = FlexDirection.Row;
+            previewButton.style.flexGrow = 1;
+            root.Add(previewButton);
+        }
+
         root.Add(lastLine);
 
         return root;
@@ -48,9 +65,16 @@ public class MenuActionSettings : EditorAction
     MenuActionSettingsOverlay m_Overlay;
     MenuAction m_Action;
 
-    public MenuActionSettings(MenuAction action)
+    bool m_Preview;
+    internal bool HasPreview => m_Preview;
+
+    public MenuActionSettings(MenuAction action, bool hasPreview = true)
     {
         m_Action = action;
+        m_Preview = hasPreview;
+
+        if(m_Preview)
+            m_Action.PerformAction();
         // Creating the overlay based on the action to fill the settings
         m_Overlay = new MenuActionSettingsOverlay(this, action);
         SceneView.AddOverlayToActiveView(m_Overlay);
@@ -68,15 +92,18 @@ public class MenuActionSettings : EditorAction
     void OnMenuActionPerformed(MenuAction action)
     {
         if (action != m_Action)
-            Finish(EditorActionResult.Success);
+            Finish(EditorActionResult.Canceled);
     }
 
     protected override void OnFinish(EditorActionResult result)
     {
         MenuAction.onPerformAction -= OnMenuActionPerformed;
         SceneView.RemoveOverlayFromActiveView(m_Overlay);
-        if (result == EditorActionResult.Success)
+
+        if (!HasPreview && result == EditorActionResult.Success)
             m_Action.PerformAction();
+        else if (HasPreview && result == EditorActionResult.Canceled)
+            Undo.PerformUndo();
     }
 
     public override void OnSceneGUI(SceneView sceneView)

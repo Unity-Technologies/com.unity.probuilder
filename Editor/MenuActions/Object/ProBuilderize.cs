@@ -107,9 +107,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("When Preserve Faces is enabled ProBuilder will try to group adjacent triangles into faces.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var quadsToggle = new Toggle(m_QuadsTooltip.text);
             quadsToggle.tooltip = m_QuadsTooltip.tooltip;
             quadsToggle.SetValueWithoutNotify(m_Quads);

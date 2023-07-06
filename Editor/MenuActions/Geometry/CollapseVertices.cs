@@ -30,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Collapse Vertices",
-                @"Merge all selected vertices into a single vertex, centered at the average of all selected points.",
+                @"Merge all selected vertices into a single vertex, centered at the first vertex or average position of all selected points.",
                 keyCommandAlt, 'C'
             );
 
@@ -55,10 +55,10 @@ namespace UnityEditor.ProBuilder.Actions
             var root = new VisualElement();
             root.style.minWidth = 150;
 
-            var helpBox = new HelpBox("Collapse To First setting decides where the collapsed vertex will be placed. If True, the new vertex will be placed at the position of the first selected vertex. If false, the new vertex is placed at the average position of all selected vertices.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var toggle = new Toggle("Collapse to First");
+            toggle.tooltip = "Collapse To First setting decides where the collapsed vertex will be placed. If True, " +
+                "the new vertex will be placed at the position of the first selected vertex. If false, the new vertex " +
+                "is placed at the average position of all selected vertices.";
             toggle.SetValueWithoutNotify(m_CollapseToFirst);
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {

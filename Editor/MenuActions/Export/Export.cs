@@ -102,7 +102,7 @@ namespace UnityEditor.ProBuilder.Actions
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
                 EditorApplication.delayCall += () =>
                 {
-                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<Export>()));
+                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<Export>(), false));
                     s_ActionAlreadyTriggered = false;
                 };
             }
@@ -117,9 +117,6 @@ namespace UnityEditor.ProBuilder.Actions
         protected internal override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
-
-            var helpBox = new HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
 
             var exportFormat = new EnumField(gc_ExportFormat.text, m_ExportFormat);
             exportFormat.tooltip = gc_ExportFormat.tooltip;

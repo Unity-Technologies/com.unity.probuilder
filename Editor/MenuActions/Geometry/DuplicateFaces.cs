@@ -51,10 +51,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
             var duplicateType = new EnumField("Duplicate To", m_DuplicateFaceSetting);
+            duplicateType.tooltip = "You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.";
             duplicateType.RegisterCallback<ChangeEvent<string>>(evt =>
             {
                 Enum.TryParse(evt.newValue, out DuplicateFaceSetting newValue);

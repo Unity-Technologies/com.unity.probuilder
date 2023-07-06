@@ -86,18 +86,14 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var helpBox = new HelpBox("Extrude Amount determines how far a face will be moved along it's normal when " +
-                "extruding. This value can be negative. You may also choose to Extrude by Face Normal, Vertex Normal, or" +
-                " as Individual Faces.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
-
-
             var extrudeMethodLabel = new Label();
+            extrudeMethodLabel.tooltip = " You may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.";
             extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
             extrudeMethodLabel.style.height = 22;
             extrudeMethodLabel.style.width = 36;
 
             var extrudeMethodField = new EnumField("Extrude By", extrudeMethod);
+            extrudeMethodField.tooltip = " You may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.";
             extrudeMethodField.RegisterCallback<ChangeEvent<string>>(evt =>
             {
                 System.Enum.TryParse(evt.newValue, out ExtrudeMethod newValue);
@@ -116,6 +112,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(line);
 
             var distanceField = new FloatField("Distance");
+            distanceField.tooltip = "Extrude Amount determines how far a face will be moved along it's normal when extruding. This value can be negative.";
             distanceField.SetValueWithoutNotify(m_ExtrudeDistance.value);
             distanceField.isDelayed = true;
             distanceField.RegisterCallback<ChangeEvent<float>>(evt =>

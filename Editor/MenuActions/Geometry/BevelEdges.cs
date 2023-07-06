@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel", IconSkin.Pro); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
-        static readonly GUIContent gc_BevelDistance = EditorGUIUtility.TrTextContent("Distance", "The size of the bevel in meters.");
+        static readonly GUIContent gc_BevelDistance = EditorGUIUtility.TrTextContent("Distance", "The size of the bevel in meters. The value is clamped to the size of the smallest affected face.");
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
@@ -45,9 +45,6 @@ namespace UnityEditor.ProBuilder.Actions
         protected internal override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
-
-            var helpBox = new HelpBox("Amount determines how much space the bevel occupies. The value is clamped to the size of the smallest affected face.", HelpBoxMessageType.Info);
-            root.Add(helpBox);
 
             var floatField = new FloatField(gc_BevelDistance.text);
             floatField.tooltip = gc_BevelDistance.tooltip;
