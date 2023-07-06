@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         Texture2D[] m_Icons;
 
-        HandleOrientation handleOrientation
+        internal HandleOrientation handleOrientation
         {
             get { return VertexManipulationTool.handleOrientation; }
             set
@@ -38,6 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return k_Tooltips[(int)handleOrientation]; }
         }
 
+        internal static TooltipContent[] tooltips => k_Tooltips;
         static readonly TooltipContent[] k_Tooltips = new TooltipContent[]
         {
             new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),

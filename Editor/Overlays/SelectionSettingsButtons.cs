@@ -1,8 +1,10 @@
 ﻿#if UNITY_2023_2_OR_NEWER
 using System;
+using System.Collections.Generic;
 using UnityEditor.Overlays;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
@@ -95,14 +97,90 @@ namespace UnityEditor.ProBuilder.UI
     {
     }
 
-    [EditorToolbarElement("ProBuilder Settings/Handle Orientation")]
-    class HandleOrientationToggle : SettingsToggle<ToggleHandleOrientation>
-    {
-    }
-
     [EditorToolbarElement("ProBuilder Settings/X Ray")]
     class XRayToggle : SettingsToggle<ToggleXRay>
     {
+    }
+
+    [EditorToolbarElement("ProBuilder Settings/Handle Orientation")]
+    class HandleOrientationDropdown : EditorToolbarDropdown
+    {
+        ToggleHandleOrientation m_MenuAction;
+        readonly List<GUIContent> m_OptionContents = new List<GUIContent>();
+
+        public HandleOrientationDropdown()
+        {
+            m_MenuAction = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
+            name = "Handle Rotation";
+            tooltip = m_MenuAction.tooltip.summary;
+
+            var content = UnityEditor.EditorGUIUtility.TrTextContent(ToggleHandleOrientation.tooltips[(int)HandleOrientation.World].title,
+                ToggleHandleOrientation.tooltips[(int)HandleOrientation.World].summary,
+                "ToolHandleGlobal");
+            m_OptionContents.Add(content);
+
+            content = UnityEditor.EditorGUIUtility.TrTextContent(ToggleHandleOrientation.tooltips[(int)HandleOrientation.ActiveObject].title,
+                ToggleHandleOrientation.tooltips[(int)HandleOrientation.ActiveObject].summary,
+                "ToolHandleLocal");
+            m_OptionContents.Add(content);
+
+            content = UnityEditor.EditorGUIUtility.TrTextContent(ToggleHandleOrientation.tooltips[(int)HandleOrientation.ActiveElement].title,
+                ToggleHandleOrientation.tooltips[(int)HandleOrientation.ActiveElement].summary,
+                "ToolHandleLocal");
+            m_OptionContents.Add(content);
+
+            RegisterCallback<AttachToPanelEvent>(AttachedToPanel);
+            RegisterCallback<DetachFromPanelEvent>(DetachedFromPanel);
+
+            clicked += OpenContextMenu;
+            RefreshElementContent();
+
+            style.display = m_MenuAction.hidden ? DisplayStyle.None : DisplayStyle.Flex;
+            ProBuilderEditor.selectModeChanged += (s) => SelectModeUpdated();
+        }
+
+        void OpenContextMenu()
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(m_OptionContents[(int)HandleOrientation.World], m_MenuAction.handleOrientation == HandleOrientation.World,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.World));
+
+            menu.AddItem(m_OptionContents[(int)HandleOrientation.ActiveObject], m_MenuAction.handleOrientation == HandleOrientation.ActiveObject,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.ActiveObject));
+
+            menu.AddItem(m_OptionContents[(int)HandleOrientation.ActiveElement], m_MenuAction.handleOrientation == HandleOrientation.ActiveElement,
+                () => SetHandleOrientationIfNeeded(HandleOrientation.ActiveElement));
+
+            menu.DropDown(worldBound);
+        }
+
+        void SetHandleOrientationIfNeeded(HandleOrientation handleOrientation)
+        {
+            if (m_MenuAction.handleOrientation != handleOrientation)
+            {
+                m_MenuAction.handleOrientation = handleOrientation;
+                RefreshElementContent();
+            }
+        }
+
+        void RefreshElementContent()
+        {
+            var content = m_OptionContents[(int)m_MenuAction.handleOrientation];
+            text = content.text;
+            tooltip = content.tooltip;
+            icon = content.image as Texture2D;
+        }
+
+        void AttachedToPanel(AttachToPanelEvent evt)
+            => VertexManipulationTool.handleOrientationChanged += RefreshElementContent;
+
+        void DetachedFromPanel(DetachFromPanelEvent evt)
+            => VertexManipulationTool.handleOrientationChanged -= RefreshElementContent;
+
+        void SelectModeUpdated()
+        {
+            style.display = m_MenuAction.hidden ? DisplayStyle.None : DisplayStyle.Flex;
+        }
     }
 }
 #endif
