@@ -4,6 +4,10 @@ using UnityEngine.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class GrowSelection : MenuAction
@@ -56,6 +60,49 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
                 return MenuActionState.Hidden;
             }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var angleToggle = new Toggle("Restrict to Angle");
+            angleToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle);
+            root.Add(angleToggle);
+
+            var floatField = new FloatField("Max Angle");
+            floatField.SetValueWithoutNotify(m_GrowSelectionAngleValue);
+            floatField.isDelayed = true;
+            floatField.SetEnabled(m_GrowSelectionWithAngle);
+            root.Add(floatField);
+
+            var iterativeToggle = new Toggle("Iterative");
+            iterativeToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true);
+            iterativeToggle.SetEnabled(m_GrowSelectionWithAngle);
+            root.Add(iterativeToggle);
+
+            angleToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_GrowSelectionWithAngle.value = evt.newValue;
+                floatField.SetEnabled(m_GrowSelectionWithAngle);
+                iterativeToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true);
+                iterativeToggle.SetEnabled(m_GrowSelectionWithAngle);
+                ProBuilderSettings.Save();
+            });
+            floatField.RegisterValueChangedCallback(evt =>
+            {
+                m_GrowSelectionAngleValue.value = evt.newValue;
+                ProBuilderSettings.Save();
+            });
+            iterativeToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_GrowSelectionAngleIterative.value = evt.newValue;
+                ProBuilderSettings.Save();
+            });
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

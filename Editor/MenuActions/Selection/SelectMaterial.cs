@@ -2,7 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.SettingsManagement;
+
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -46,6 +49,25 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle(gc_restrictToSelection.text);
+            toggle.tooltip = gc_restrictToSelection.tooltip;
+            toggle.SetValueWithoutNotify(m_RestrictToSelectedObjects);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_RestrictToSelectedObjects.value = evt.newValue;
+                ProBuilderSettings.Save();
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

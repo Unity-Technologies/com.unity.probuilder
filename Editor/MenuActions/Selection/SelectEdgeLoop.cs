@@ -1,11 +1,10 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using System.Collections.Generic;
+
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -103,6 +102,25 @@ namespace UnityEditor.ProBuilder.Actions
             else
                 return new ActionResult(ActionResult.Status.Failure, "Nothing to Loop");
         }
+
+#if UNITY_2023_2_OR_NEWER
+        protected internal override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle(gc_selectIterative.text);
+            toggle.tooltip = gc_selectIterative.tooltip;
+            toggle.SetValueWithoutNotify(m_SelectIterative);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_SelectIterative.value = evt.newValue;
+                ProBuilderSettings.Save();
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {
