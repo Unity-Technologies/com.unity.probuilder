@@ -23,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Grow", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Selection_Grow"); }
         }
 
         public override TooltipContent tooltip

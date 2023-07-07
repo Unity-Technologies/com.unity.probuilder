@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Pivot_Reset", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Pivot_FreezeTransform"); }
         }
 
         public override TooltipContent tooltip

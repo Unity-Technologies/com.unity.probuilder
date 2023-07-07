@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial"); }
         }
 
         public override TooltipContent tooltip

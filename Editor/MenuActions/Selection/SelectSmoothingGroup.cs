@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"); }
         }
 
         public override TooltipContent tooltip

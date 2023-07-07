@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Shrink", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Selection_Shrink"); }
         }
 
         public override TooltipContent tooltip
