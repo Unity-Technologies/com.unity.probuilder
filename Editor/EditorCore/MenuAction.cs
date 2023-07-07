@@ -3,6 +3,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -299,7 +300,6 @@ namespace UnityEditor.ProBuilder
         [Obsolete(obsoleteDoActionMsg, false)]
         public ActionResult DoAction() => PerformAction();
 
-
         /// <summary>
         /// Performs the action for this menu item when in Text mode.
         /// </summary>
@@ -444,5 +444,13 @@ namespace UnityEditor.ProBuilder
             }
             return m_LastCalculatedSize;
         }
+
+        public event Action changed;
+
+        protected void ContentsChanged() => changed?.Invoke();
+
+        public virtual void RegisterChangedCallbacks() { }
+
+        public virtual void UnregisterChangedCallbacks() { }
     }
 }

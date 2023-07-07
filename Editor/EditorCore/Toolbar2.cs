@@ -9,6 +9,65 @@ namespace UnityEditor.ProBuilder.UI
     {
         public new class UxmlFactory : UxmlFactory<ToolbarMenuItem, UxmlTraits> { }
         public MenuAction action;
+        public bool iconMode;
+
+        public void RefreshContents()
+        {
+            var state = action.menuActionState;
+            var valid = iconMode ? SetupIcon(this, action) : SetupText(this, action);
+
+            style.display = (state & MenuAction.MenuActionState.Visible) == MenuAction.MenuActionState.Visible && valid
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
+
+            SetEnabled((state & MenuAction.MenuActionState.Enabled) == MenuAction.MenuActionState.Enabled);
+
+            var options = this.Q<VisualElement>("Options");
+
+            if (action.optionsVisible)
+            {
+                options.style.display = DisplayStyle.Flex;
+                options.SetEnabled(action.optionsEnabled);
+            }
+            else
+            {
+                options.style.display = DisplayStyle.None;
+            }
+        }
+
+        static bool SetupIcon(VisualElement ui, MenuAction action)
+        {
+            if (action.icon == null)
+                return false;
+            var color = ToolbarGroupUtility.GetColor(action.group);
+            var button = ui.Q<Button>("Button");
+            button.style.borderLeftColor = color;
+            button.tooltip = action.tooltip.summary;
+            button.iconImage = action.icon;
+            // todo context click opens options
+            return true;
+        }
+
+        static bool SetupText(VisualElement ui, MenuAction action)
+        {
+            var color = ToolbarGroupUtility.GetColor(action.group);
+
+            var button = ui.Q<Button>("Button");
+            var label = button.Q<Label>("Label");
+            var swatch = ui.Q<VisualElement>("CategorySwatch");
+            var options = ui.Q<Button>("Options");
+
+            swatch.style.backgroundColor = color;
+            button.tooltip = action.tooltip.summary;
+            label.text = action.menuTitle;
+
+            options.style.borderLeftColor = color;
+            options.style.borderRightColor = color;
+            options.style.borderBottomColor = color;
+            options.style.borderTopColor = color;
+
+            return true;
+        }
     }
 
     class ProBuilderToolbar : VisualElement
@@ -42,27 +101,7 @@ namespace UnityEditor.ProBuilder.UI
         void RefreshVisibility()
         {
             foreach (var element in m_Actions)
-            {
-                var state = element.action.menuActionState;
-
-                element.style.display = (state & MenuAction.MenuActionState.Visible) == MenuAction.MenuActionState.Visible
-                    ? DisplayStyle.Flex
-                    : DisplayStyle.None;
-
-                element.SetEnabled((state & MenuAction.MenuActionState.Enabled) == MenuAction.MenuActionState.Enabled);
-
-                var options = element.Q<VisualElement>("Options");
-
-                if (element.action.optionsVisible)
-                {
-                    options.style.display = DisplayStyle.Flex;
-                    options.SetEnabled(element.action.optionsEnabled);
-                }
-                else
-                {
-                    options.style.display = DisplayStyle.None;
-                }
-            }
+                element.RefreshContents();
         }
 
         public void CreateGUI()
@@ -86,56 +125,32 @@ namespace UnityEditor.ProBuilder.UI
 
             for(int i = 0, c = actions.Count; i < c; ++i)
             {
-                var ui = menuContentAsset.Instantiate();
+                var menu = menuContentAsset.Instantiate().Q<ToolbarMenuItem>();
                 var action = actions[i];
 
-                var menu = ui.Q<ToolbarMenuItem>();
+                menu.iconMode = iconMode;
                 menu.action = action;
-                m_Actions.Add(menu);
+                action.changed += menu.RefreshContents;
+                action.RegisterChangedCallbacks();
+                menu.RegisterCallback<DetachFromPanelEvent>(_ => action.UnregisterChangedCallbacks());
+                menu.RefreshContents();
 
-                if( iconMode ? SetupIcon(menu, action) : SetupText(menu, action) )
-                    scrollContentsRoot.Add(menu);
+                var button = menu.Q<Button>("Button");
+                button.clicked += () => action.PerformAction();
+
+                if (!iconMode)
+                {
+                    var options = menu.Q<Button>("Options");
+                    options.clicked += action.PerformAltAction;
+                }
+
+                m_Actions.Add(menu);
+                scrollContentsRoot.Add(menu);
             }
 
             RefreshVisibility();
         }
 
-        static bool SetupIcon(VisualElement ui, MenuAction action)
-        {
-            if (action.icon == null)
-                return false;
-            var color = ToolbarGroupUtility.GetColor(action.group);
-            var button = ui.Q<Button>("Button");
-            button.style.borderLeftColor = color;
-            button.tooltip = action.tooltip.summary;
-            button.clicked += () => action.PerformAction();
-            button.iconImage = action.icon;
-            // todo context click opens options
-            return true;
-        }
-
-        static bool SetupText(VisualElement ui, MenuAction action)
-        {
-            var color = ToolbarGroupUtility.GetColor(action.group);
-
-            var button = ui.Q<Button>("Button");
-            var label = button.Q<Label>("Label");
-            var swatch = ui.Q<VisualElement>("CategorySwatch");
-            var options = ui.Q<Button>("Options");
-
-            swatch.style.backgroundColor = color;
-            button.tooltip = action.tooltip.summary;
-            label.text = action.menuTitle;
-            button.clicked += () => action.PerformAction();
-
-            options.style.borderLeftColor = color;
-            options.style.borderRightColor = color;
-            options.style.borderBottomColor = color;
-            options.style.borderTopColor = color;
-
-            options.clicked += action.PerformAltAction;
-            return true;
-        }
     }
 
     class Toolbar2 : EditorWindow

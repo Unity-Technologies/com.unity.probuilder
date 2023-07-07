@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
-using UnityEngine.ProBuilder.Shapes;
 
 #if DEBUG_HANDLES
 using UnityEngine.Rendering;
@@ -31,6 +30,12 @@ namespace UnityEditor.ProBuilder
         static object[] s_FindNearestVertexArguments = new object[3];
         static MethodInfo s_FindNearestVertex;
 #endif
+
+        static VertexManipulationTool()
+        {
+            Tools.pivotRotationChanged += SyncPivotRotation;
+            Tools.pivotModeChanged += SyncPivotPoint;
+        }
 
         internal static PivotPoint pivotModePivotEquivalent
         {
@@ -91,6 +96,9 @@ namespace UnityEditor.ProBuilder
             }
             set
             {
+                if (value == s_HandleOrientation)
+                    return;
+
                 s_HandleOrientation.SetValue(value, true);
 
                 if (value != HandleOrientation.ActiveElement)
@@ -98,13 +106,18 @@ namespace UnityEditor.ProBuilder
                         ? PivotRotation.Local
                         : PivotRotation.Global;
 
+                s_PivotRotation = Tools.pivotRotation;
+
                 MeshSelection.InvalidateCaches();
+                pivotRotationChanged?.Invoke();
 
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
                 repaint.Invoke(null, null);
             }
         }
+
+        public static event Action pivotRotationChanged;
 
         // Sync ProBuilder HandleOrientation to the current Tools.PivotRotation
         static void SyncPivotRotation()
@@ -116,6 +129,7 @@ namespace UnityEditor.ProBuilder
                     : HandleOrientation.ActiveObject);
                 s_PivotRotation = Tools.pivotRotation;
                 MeshSelection.InvalidateCaches();
+                pivotRotationChanged?.Invoke();
                 return;
             }
 
@@ -131,6 +145,7 @@ namespace UnityEditor.ProBuilder
                             : HandleOrientation.ActiveObject,
                         true);
                     MeshSelection.InvalidateCaches();
+                    pivotRotationChanged?.Invoke();
                 }
             }
         }
