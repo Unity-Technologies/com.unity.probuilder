@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
@@ -10,24 +11,33 @@ namespace UnityEditor.ProBuilder.UI
         public MenuAction action;
     }
 
-    class Toolbar2 : EditorWindow
+    class ProBuilderToolbar : VisualElement
     {
         const string k_IconMode = "ToolbarIcon";
         const string k_TextMode = "ToolbarLabel";
         const string k_UI = "Packages/com.unity.probuilder/Content/UI";
 
-        [MenuItem("Window/Toolbar 2")]
-        static void init() => GetWindow<Toolbar2>();
+        readonly List<ToolbarMenuItem> m_Actions = new List<ToolbarMenuItem>();
 
-        List<ToolbarMenuItem> m_Actions = new List<ToolbarMenuItem>();
-
-        public void CreateGUI()
+        public ProBuilderToolbar()
         {
-            Reload();
-            ProBuilderEditor.selectModeChanged += _ => RefreshVisibility();
+            CreateGUI();
+
+            ProBuilderEditor.selectModeChanged += RefreshVisibility;
             MeshSelection.objectSelectionChanged += RefreshVisibility;
-            ProBuilderMesh.elementSelectionChanged += _ => RefreshVisibility();
+            ProBuilderMesh.elementSelectionChanged += RefreshVisibility;
+
+            RegisterCallback<DetachFromPanelEvent>(_ =>
+            {
+                ProBuilderEditor.selectModeChanged -= RefreshVisibility;
+                MeshSelection.objectSelectionChanged -= RefreshVisibility;
+                ProBuilderMesh.elementSelectionChanged -= RefreshVisibility;
+            });
         }
+
+        void RefreshVisibility(ProBuilderMesh obj) => RefreshVisibility();
+
+        void RefreshVisibility(SelectMode obj) => RefreshVisibility();
 
         void RefreshVisibility()
         {
@@ -55,18 +65,16 @@ namespace UnityEditor.ProBuilder.UI
             }
         }
 
-        void Reload()
+        public void CreateGUI()
         {
-            rootVisualElement.Clear();
             m_Actions.Clear();
 
             var iconMode = ProBuilderEditor.s_IsIconGui;
-
             var menuContentAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/{(iconMode ? k_IconMode : k_TextMode)}.uxml");
             var actions = EditorToolbarLoader.GetActions(true);
 
             VisualElement scrollContentsRoot = new ScrollView(ScrollViewMode.Vertical);
-            rootVisualElement.Add(scrollContentsRoot);
+            Add(scrollContentsRoot);
 
             if (iconMode)
             {
@@ -88,8 +96,6 @@ namespace UnityEditor.ProBuilder.UI
                 if( iconMode ? SetupIcon(menu, action) : SetupText(menu, action) )
                     scrollContentsRoot.Add(menu);
             }
-
-            rootVisualElement.Add(new Button(Reload) { text = "reload" });
 
             RefreshVisibility();
         }
@@ -129,6 +135,25 @@ namespace UnityEditor.ProBuilder.UI
 
             options.clicked += action.PerformAltAction;
             return true;
+        }
+    }
+
+    class Toolbar2 : EditorWindow
+    {
+        ProBuilderToolbar m_Toolbar;
+
+        [MenuItem("Window/Toolbar 2")]
+        static void init() => GetWindow<Toolbar2>();
+
+        public void CreateGUI()
+        {
+            rootVisualElement.Add(new Button(() =>
+            {
+                var toolbar = rootVisualElement.Q<ProBuilderToolbar>();
+                rootVisualElement.Remove(toolbar);
+                rootVisualElement.Add(new ProBuilderToolbar());
+            }) { text = "Rebuild" });
+            rootVisualElement.Add(new ProBuilderToolbar());
         }
     }
 }
