@@ -103,7 +103,7 @@ public class MenuActionSettings : EditorAction
         if (!HasPreview && result == EditorActionResult.Success)
             m_Action.PerformAction();
         else if (HasPreview && result == EditorActionResult.Canceled)
-            Undo.PerformUndo();
+            EditorApplication.delayCall += Undo.PerformUndo;
     }
 
     public override void OnSceneGUI(SceneView sceneView)

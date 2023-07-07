@@ -403,7 +403,12 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case EventType.KeyUp:
+#if UNITY_2023_2_OR_NEWER
+                    //Do not escape the select mode if an active tool override is active
+                    if (e.keyCode == KeyCode.Escape && EditorToolManager.activeOverride == null)
+#else
                     if (e.keyCode == KeyCode.Escape)
+#endif
                     {
                         selectMode = SelectMode.Object;
                         e.Use();
@@ -478,7 +483,12 @@ namespace UnityEditor.ProBuilder
             if (m_CurrentEvent.type == EventType.KeyDown)
             {
                 // Escape isn't assignable as a shortcut
+#if UNITY_2023_2_OR_NEWER
+                //Do not escape the select mode if an active tool override is active
+                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object && EditorToolManager.activeOverride == null)
+#else
                 if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
+#endif
                 {
                     selectMode = SelectMode.Object;
 
@@ -897,7 +907,9 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
-                selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+                var mode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+                if (selectMode != mode)
+                    selectMode = mode;
 
                 if (s_ShowSceneInfo)
                 {

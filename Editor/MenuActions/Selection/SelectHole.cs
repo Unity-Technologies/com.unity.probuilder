@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
