@@ -12,10 +12,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Face_Delete"); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Delete"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_Delete"); } }
 
         public override TooltipContent tooltip
         {

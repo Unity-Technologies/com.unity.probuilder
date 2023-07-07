@@ -178,12 +178,18 @@ namespace UnityEditor.ProBuilder
         public virtual int toolbarPriority { get { return -1; } }
 
         /// <summary>
-        /// Gets the icon to display on the toolbar for this action.
+        /// Gets the icon to display in the Context Menu for this action.
+        /// </summary>
+        public abstract Texture2D icon { get; }
+
+        /// <summary>
+        /// Gets the high resolution icon to display on the toolbar for this action.
         /// </summary>
         /// <remarks>
         /// This property is not used when the [Toolbar display mode](../manual/toolbar.html#toolbar-display-modes) is set to text.
         /// </remarks>
-        public abstract Texture2D icon { get; }
+
+        public virtual Texture2D icon2x { get { return null; } }
 
         /// <summary>
         /// Gets the contents of the tooltip to display for this menu action.
@@ -370,7 +376,8 @@ namespace UnityEditor.ProBuilder
 
             if (iconMode)
             {
-                if (GUILayout.Button(buttonEnabled || !disabledIcon ? icon : disabledIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions))
+                var bestIcon = icon2x == null ? icon : icon2x;
+                if (GUILayout.Button(buttonEnabled || !disabledIcon ? bestIcon : disabledIcon, ToolbarGroupUtility.GetStyle(group, isHorizontal), layoutOptions))
                 {
                     if (showOptions && (optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)
                     {
@@ -454,7 +461,8 @@ namespace UnityEditor.ProBuilder
         {
             if (iconMode)
             {
-                m_LastCalculatedSize = ToolbarGroupUtility.GetStyle(ToolbarGroup.Object, isHorizontal).CalcSize(UI.EditorGUIUtility.TempContent(null, null, icon));
+                var bestIcon = icon2x == null ? icon : icon2x;
+                m_LastCalculatedSize = ToolbarGroupUtility.GetStyle(ToolbarGroup.Object, isHorizontal).CalcSize(UI.EditorGUIUtility.TempContent(null, null, bestIcon));
             }
             else
             {

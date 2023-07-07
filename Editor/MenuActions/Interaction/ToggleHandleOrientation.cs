@@ -8,6 +8,8 @@ namespace UnityEditor.ProBuilder.Actions
     {
         Texture2D[] m_Icons;
 
+        const string k_NormalRotationIconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/ToolHandleElement.png";
+
         internal HandleOrientation handleOrientation
         {
             get { return VertexManipulationTool.handleOrientation; }
@@ -23,10 +25,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return m_Icons[(int)handleOrientation]; }
-        }
+        public override Texture2D icon => m_Icons[(int)handleOrientation];
+        public override Texture2D icon2x => m_Icons[(int)handleOrientation];
 
         public override int toolbarPriority
         {
@@ -65,9 +65,9 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_Icons = new Texture2D[]
             {
-                IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
+                EditorGUIUtility.LoadIconRequired("ToolHandleGlobal"),
+                EditorGUIUtility.LoadIconRequired("ToolHandleLocal"),
+                EditorGUIUtility.LoadIconRequired(k_NormalRotationIconPath)
             };
         }
 

@@ -8,6 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Triangulate"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Object_Triangulate"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Triangulate"; } }
 

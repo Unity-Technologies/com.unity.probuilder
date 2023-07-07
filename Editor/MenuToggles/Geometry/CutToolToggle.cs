@@ -23,10 +23,8 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         /// <inheritdoc/>
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/CutTool", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CutTool"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/CutTool"); } }
 
         /// <inheritdoc/>
         public override TooltipContent tooltip

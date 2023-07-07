@@ -11,6 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_ConformNormals"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_ConformNormals"); } }
         public override TooltipContent tooltip { get { return s_TooltipContent; } }
         public override string menuTitle { get { return "Conform Normals"; } }
 

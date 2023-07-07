@@ -90,7 +90,8 @@ namespace UnityEditor.ProBuilder
                     style.hover.background = normalTex;
                 }
 
-                bool isToggled = GUILayout.Toggle( isActiveTool, buttonEnabled || !disabledIcon ? icon : disabledIcon, style, layoutOptions);
+                var bestIcon = icon2x == null ? icon : icon2x;
+                bool isToggled = GUILayout.Toggle( isActiveTool, buttonEnabled || !disabledIcon ? bestIcon : disabledIcon, style, layoutOptions);
                 if(isToggled != isActiveTool)
                 {
                     if (showOptions && (optionsMenuState & MenuActionState.VisibleAndEnabled) == MenuActionState.VisibleAndEnabled)

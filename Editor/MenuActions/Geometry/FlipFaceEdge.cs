@@ -11,10 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Face_FlipTri"); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_FlipTri"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_FlipTri"); } }
 
         public override TooltipContent tooltip
         {

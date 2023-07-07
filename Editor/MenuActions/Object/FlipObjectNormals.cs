@@ -1,8 +1,5 @@
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -13,10 +10,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals"); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_FlipNormals"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Object_FlipNormals"); } }
 
         public override TooltipContent tooltip
         {

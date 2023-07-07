@@ -16,6 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Detach"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_Detach"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent

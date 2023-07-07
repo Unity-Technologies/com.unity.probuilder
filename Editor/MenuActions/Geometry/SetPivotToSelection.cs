@@ -8,6 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements"); } }
+        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Pivot_CenterOnElements"); } }
         public override TooltipContent tooltip { get { return _tooltip; } }
         public override string menuTitle { get { return "Set Pivot"; } }
 
