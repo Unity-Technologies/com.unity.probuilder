@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Vert_Collapse"); }
         }
 
         public override TooltipContent tooltip

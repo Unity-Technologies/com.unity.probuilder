@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Edge_Bridge", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Edge_Bridge"); }
         }
 
         public override TooltipContent tooltip

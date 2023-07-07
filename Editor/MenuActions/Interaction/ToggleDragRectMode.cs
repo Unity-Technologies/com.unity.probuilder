@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get => m_Icons[mode == RectSelectMode.Complete ? 0 : 1];
+            get => m_Icons[mode == RectSelectMode.Partial ? 0 : 1];
         }
 
         internal Texture2D[] icons => m_Icons;

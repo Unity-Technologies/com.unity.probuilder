@@ -43,7 +43,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),
             new TooltipContent("Local", "The transform handle is aligned with the active object rotation.", 'P'),
-            new TooltipContent("Normal", "The transform handle is aligned with the active element selection.", 'P')
+            new TooltipContent("Element", "The transform handle is aligned with the active element selection.", 'P')
         };
 
         public override string menuTitle

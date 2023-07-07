@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Face_Triangulate", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Face_Triangulate"); }
         }
 
         public override TooltipContent tooltip

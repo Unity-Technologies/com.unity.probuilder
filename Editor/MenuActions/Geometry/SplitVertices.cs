@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon("Toolbar/Vert_Split", IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Vert_Split"); }
         }
 
         public override TooltipContent tooltip

@@ -17,13 +17,6 @@ namespace UnityEditor.ProBuilder.Actions
             set { VertexManipulationTool.s_ExtrudeMethod.value = value; }
         }
 
-        static string GetExtrudeIconString(ExtrudeMethod m)
-        {
-            return m == ExtrudeMethod.VertexNormal ? "Toolbar/ExtrudeFace_VertexNormals"
-                : m == ExtrudeMethod.FaceNormal ? "Toolbar/ExtrudeFace_FaceNormals"
-                : "Toolbar/ExtrudeFace_Individual";
-        }
-
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Geometry; }
@@ -31,12 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override Texture2D icon
         {
-            get { return IconUtility.GetIcon(GetExtrudeIconString(extrudeMethod), IconSkin.Pro); }
-        }
-
-        protected override Texture2D disabledIcon
-        {
-            get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(extrudeMethod)), IconSkin.Pro); }
+            get { return IconUtility.GetIcon("Toolbar/Face_Extrude"); }
         }
 
         public override TooltipContent tooltip
