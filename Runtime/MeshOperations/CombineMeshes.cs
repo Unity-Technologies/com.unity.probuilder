@@ -203,7 +203,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
                         newFace.manualUV = true;
                         autoUvFaces.Add(newFace);
                     }
-                    var material = materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)];
+                    var material = materialCount > 0 ? materials[Math.Clamp(face.submeshIndex, 0, materialCount - 1)] : null;
                     var submeshIndex = materialMap.IndexOf(material);
 
                     if (submeshIndex > -1)
