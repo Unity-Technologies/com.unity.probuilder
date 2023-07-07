@@ -308,6 +308,8 @@ namespace UnityEditor.ProBuilder
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
 
+        public void PerformAltAction() => DoAlternateAction();
+
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.
         /// </summary>
