@@ -85,8 +85,8 @@ namespace UnityEditor.ProBuilder.UI
                 menu.action = action;
                 m_Actions.Add(menu);
 
-                if( iconMode ? SetupIcon(ui, action) : SetupText(ui, action) )
-                    scrollContentsRoot.Add(ui);
+                if( iconMode ? SetupIcon(menu, action) : SetupText(menu, action) )
+                    scrollContentsRoot.Add(menu);
             }
 
             rootVisualElement.Add(new Button(Reload) { text = "reload" });
