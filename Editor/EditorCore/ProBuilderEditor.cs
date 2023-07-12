@@ -60,7 +60,6 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
         internal static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
-        internal Action iconModeChanged;
 
         [UserSetting("Mesh Editing", "Allow non-manifold actions",
             "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
@@ -423,7 +422,6 @@ namespace UnityEditor.ProBuilder
         {
             m_Toolbar.Dispose();
             m_Toolbar = new EditorToolbar(this);
-            iconModeChanged?.Invoke();
         }
 
         void Menu_ToggleIconMode()
