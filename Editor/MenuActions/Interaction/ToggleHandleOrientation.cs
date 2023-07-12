@@ -7,8 +7,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class ToggleHandleOrientation : MenuAction
     {
         Texture2D[] m_Icons;
-
-        const string k_NormalRotationIconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/ToolHandleElement.png";
+        Texture2D[] m_Icons2x;
 
         internal HandleOrientation handleOrientation
         {
@@ -26,7 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon => m_Icons[(int)handleOrientation];
-        public override Texture2D icon2x => m_Icons[(int)handleOrientation];
+        public override Texture2D icon2x => m_Icons2x[(int)handleOrientation];
 
         public override int toolbarPriority
         {
@@ -65,9 +64,15 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_Icons = new Texture2D[]
             {
-                EditorGUIUtility.LoadIconRequired("ToolHandleGlobal"),
-                EditorGUIUtility.LoadIconRequired("ToolHandleLocal"),
-                EditorGUIUtility.LoadIconRequired(k_NormalRotationIconPath)
+                IconUtility.GetIcon("Modes/ToolHandleGlobal"),
+                IconUtility.GetIcon("Modes/ToolHandleLocal"),
+                IconUtility.GetIcon("Modes/ToolHandleElement")
+            };
+            m_Icons2x = new Texture2D[]
+            {
+                IconUtility.GetLargeIcon("Modes/ToolHandleGlobal"),
+                IconUtility.GetLargeIcon("Modes/ToolHandleLocal"),
+                IconUtility.GetLargeIcon("Modes/ToolHandleElement")
             };
         }
 
