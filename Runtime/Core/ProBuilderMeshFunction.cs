@@ -368,6 +368,18 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
+            if (mesh.subMeshCount == 0)
+            {
+                EnsureMeshFilterIsAssigned();
+
+                if (usedInParticleSystem)
+                    MeshUtility.RestoreParticleSystem(this);
+
+                IncrementVersionIndex();
+
+                return;
+            }
+
             var currentSubmeshIndex = 0;
             var shouldReassignMaterials = false;
             for (int i = 0; i < mesh.subMeshCount; i++)
