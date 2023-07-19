@@ -165,7 +165,8 @@ namespace UnityEditor.ProBuilder.UI
             rootVisualElement.Add(new Button(() =>
             {
                 var toolbar = rootVisualElement.Q<ProBuilderToolbar>();
-                rootVisualElement.Remove(toolbar);
+                if (toolbar != null)
+                    rootVisualElement.Remove(toolbar);
                 rootVisualElement.Add(new ProBuilderToolbar());
             }) { text = "Rebuild" });
             rootVisualElement.Add(new ProBuilderToolbar());

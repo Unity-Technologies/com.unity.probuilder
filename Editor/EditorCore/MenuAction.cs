@@ -282,7 +282,9 @@ namespace UnityEditor.ProBuilder
         {
             if(onPerformAction != null)
                 onPerformAction(this);
-            return PerformActionImplementation();
+            var res = PerformActionImplementation();
+            ContentsChanged();
+            return res;
         }
 
         /// <summary>
