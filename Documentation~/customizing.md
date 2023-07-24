@@ -4,7 +4,7 @@ There are a number of ways to customize the way you work with ProBuilder. You ca
 
 * [Dimensions Overlay](preferences.md#dimover): Customize which elements are used for the dimensions overlay.
 * [Experimental](preferences.md#experimental): Toggle ProBuilder beta features.
-* [General](preferences.md#general): This section contains a variety of settings, many of which control what information appears in the Scene view (see [Interaction and display](#toolbar)).
+* [General](preferences.md#general): This section contains a variety of settings, many of which control what information appears in the Scene view (see [Interaction and display](#toolbar)).
 * [Graphics](preferences.md#graphics): Mostly these settings control the look of Unity (see [Interaction and display](#toolbar)).
 * [Mesh Editing](preferences.md#mesh-editing): Define behavior specific to editing Meshes.
 * [Mesh Settings](preferences.md#mesh-settings): Define defaults for ProBuilder Meshes (such as default Material, collider type, and shadows).
