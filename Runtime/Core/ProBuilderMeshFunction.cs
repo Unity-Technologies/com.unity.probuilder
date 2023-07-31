@@ -368,15 +368,12 @@ namespace UnityEngine.ProBuilder
 
             mesh.subMeshCount = submeshes.Length;
 
+            // If the mesh does not have any submeshes, we don't want to do
+            // any manipulation on the mesh's materials. We skip to the end
+            // of the method and return.
             if (mesh.subMeshCount == 0)
             {
-                EnsureMeshFilterIsAssigned();
-
-                if (usedInParticleSystem)
-                    MeshUtility.RestoreParticleSystem(this);
-
-                IncrementVersionIndex();
-
+                FinalizeToMesh(usedInParticleSystem);
                 return;
             }
 
@@ -428,9 +425,14 @@ namespace UnityEngine.ProBuilder
             if (shouldReassignMaterials)
                 renderer.sharedMaterials = MaterialUtility.s_MaterialArray.ToArray();
 
+            FinalizeToMesh(usedInParticleSystem);
+        }
+
+        private void FinalizeToMesh(bool usedInParticleSystem)
+        {
             EnsureMeshFilterIsAssigned();
 
-            if(usedInParticleSystem)
+            if (usedInParticleSystem)
                 MeshUtility.RestoreParticleSystem(this);
 
             IncrementVersionIndex();
