@@ -2,7 +2,7 @@
 
 To give your walls, doors, floors, or other objects a realistic look, use a Texture material, which is a special material with a 2-dimensional image defined on it. You can [create it yourself](workflow-materials.md#texmat) or [download one from the Asset Store](https://docs.unity3d.com/Manual/AssetStore.html).
 
-After you [apply the Texture material](material-tools.md#apply), open the UV Editor to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping helpers for getting the position, orientation, and size correct.
+After you [apply the Texture material](material-tools.md#apply), open the [UV Editor](uv-editor) to fine-tune the look of the Texture on your Mesh and adjust its appearance. The UV Editor window provides several texture mapping helpers for getting the position, orientation, and size correct.
 
 > **Tip:** Before you start to manually edit UVs, delete any hidden faces. This helps simplify the UV unwrapping process, because it simplifies the complexity of the UV elements that appear in the UV Editor.
 
@@ -10,7 +10,7 @@ After you [apply the Texture material](material-tools.md#apply), open the UV Edi
 
 ## Manipulating UV elements in the UV Editor
 
-You can manipulate elements with the [ProBuilder edit modes](edit-mode-toolbar.md) in the UV Editor, but you are actually moving UI elements rather than geometry. Also, when the UV Editor window is open, you can still manipulate elements in the Scene view: if you turn on the ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope control, you are moving geometry; if you turn it off (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), you are moving UVs.
+You can manipulate elements with the [ProBuilder edit modes](edit-mode-toolbar.md) in the [UV Editor](uv-editor), but you are actually moving UI elements rather than geometry. Also, when the UV Editor window is open, you can still manipulate elements in the Scene view: if you turn on the ![In-Scene ON](images/icons/ProBuilderGUI_UV_Manip_On.png) Scope control, you are moving geometry; if you turn it off (![In-Scene OFF](images/icons/ProBuilderGUI_UV_Manip_Off.png)), you are moving UVs.
 
 You can [translate, rotate, and scale](https://docs.unity3d.com/Manual/PositioningGameObjects.html) elements to move them into place:
 
@@ -49,7 +49,7 @@ When you work in Auto UV mode, you can designate several faces as a [Texture Gro
 
 #### To make a Texture Group
 
-1. Open the UV Editor.
+1. In the ProBuilder window, open the [UV Editor](uv-editor).
 2. Select the faces you want to group, either from inside the UV Editor or in the Scene view.
 3. Click the [Group Selected Faces](auto-uvs-actions.md#Groups) button. In the UV Editor, the UV faces now move as one.  
 
