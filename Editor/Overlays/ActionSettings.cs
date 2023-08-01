@@ -1,10 +1,12 @@
 ﻿#if UNITY_2023_2_OR_NEWER
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Actions;
 using UnityEditor.Overlays;
 using UnityEditor.ProBuilder;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
 class MenuActionSettingsOverlay : Overlay
@@ -41,14 +43,11 @@ class MenuActionSettingsOverlay : Overlay
         var settingsElement = m_CurrentAction.CreateSettingsContent();
         root.Add(settingsElement);
 
-        if (m_Owner.HasPreview)
-        {
-            var previewButton = new Button(() => m_Owner.UpdatePreview());
-            previewButton.text = "Preview";
-            previewButton.style.flexDirection = FlexDirection.Row;
-            previewButton.style.flexGrow = 1;
-            root.Add(previewButton);
-        }
+        var previewButton = new Button(() => m_Owner.UpdatePreview());
+        previewButton.text = "Preview";
+        previewButton.style.flexDirection = FlexDirection.Row;
+        previewButton.style.flexGrow = 1;
+        root.Add(previewButton);
 
         root.Add(lastLine);
 
@@ -61,19 +60,14 @@ public class MenuActionSettings : EditorAction
     MenuActionSettingsOverlay m_Overlay;
     MenuAction m_Action;
 
-    bool m_Preview;
-    internal bool HasPreview => m_Preview;
-
     bool m_UndoNeeded = true;
 
-    public MenuActionSettings(MenuAction action, bool hasPreview = true)
+    public MenuActionSettings(MenuAction action)
     {
         m_Action = action;
-        m_Preview = hasPreview;
-        m_UndoNeeded = m_Preview;
+        // Triggering action Preview
+        m_Action.PerformAction();
 
-        if(m_Preview)
-            m_Action.PerformAction();
         // Creating the overlay based on the action to fill the settings
         m_Overlay = new MenuActionSettingsOverlay(this, action);
         SceneView.AddOverlayToActiveView(m_Overlay);
@@ -87,6 +81,9 @@ public class MenuActionSettings : EditorAction
         // Undo should undo the preview and leaving the action
         Undo.undoRedoPerformed += UndoRedoPerformed;
 
+        // Changing selection should apply the preview and exit the current action
+        ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+
         // Delay call to ensure that if a MenuActionSettings is currently active, starting this one will not call
         // OnMenuActionPerformed when the other is deactivated
         EditorApplication.delayCall += () => MenuAction.onPerformAction += OnMenuActionPerformed;
@@ -95,24 +92,28 @@ public class MenuActionSettings : EditorAction
     protected override void OnFinish(EditorActionResult result)
     {
         MenuAction.onPerformAction -= OnMenuActionPerformed;
+        ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
         Undo.undoRedoPerformed -= UndoRedoPerformed;
         SceneView.RemoveOverlayFromActiveView(m_Overlay);
 
-        if (!HasPreview && result == EditorActionResult.Success)
-            m_Action.PerformAction();
-        else if (m_UndoNeeded && result == EditorActionResult.Canceled)
+        if (m_UndoNeeded && result == EditorActionResult.Canceled)
             EditorApplication.delayCall += Undo.PerformUndo;
     }
 
     internal void UpdatePreview()
     {
-        if (HasPreview)
-        {
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
-            Undo.PerformUndo();
-            m_Action.PerformAction();
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-        }
+        //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
+        ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
+        Undo.undoRedoPerformed -= UndoRedoPerformed;
+        Undo.PerformUndo();
+        m_Action.PerformAction();
+        ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+        Undo.undoRedoPerformed += UndoRedoPerformed;
+    }
+
+    void OnSelectionUpdated(IEnumerable<ProBuilderMesh> meshes)
+    {
+        Finish(EditorActionResult.Success);
     }
 
     void UndoRedoPerformed()
