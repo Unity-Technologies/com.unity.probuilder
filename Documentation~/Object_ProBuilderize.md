@@ -6,13 +6,7 @@ The __ProBuilderize__ action converts the selected object(s) into ProBuilder-edi
 
 ## ProBuilderize options
 
-![ProBuilderize options](images/Object_ProBuilderize_props.png)
-
-<!--
-
-<span style="color:red">@TODO: Follow up on my question about where the **Preserve Faces** option is (it's mentioned in the info box on the options but it's not an option here nor is it a Preference). </span>
-
--->
+Use the following ProBuilderize options to customize how your object is converted to a ProBuilder object.
 
 | **Property:**         | **Description:**                                           |
 | :---------------------- | :----------------------------------------------------------- |
