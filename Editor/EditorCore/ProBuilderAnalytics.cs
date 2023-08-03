@@ -15,7 +15,7 @@ using System.IO;
 using UnityEditorInternal;
 using UnityEngine.Analytics;
 using UnityEngine.ProBuilder;
-#if !UNITY_2023_3_OR_NEWER
+#if !UNITY_2023_2_OR_NEWER
 using System.Linq;
 using System.IO;
 using UnityEngine;
@@ -23,25 +23,39 @@ using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2023_3_OR_NEWER
-
+#if UNITY_2023_2_OR_NEWER
     [AnalyticInfo(
         eventName: k_ProbuilderEventName,
         vendorKey: k_VendorKey,
         maxEventsPerHour: k_MaxEventsPerHour,
         maxNumberOfElements: k_MaxNumberOfElements)]
     class ProBuilderAnalytics : IAnalytic
+#else
+    static class ProBuilderAnalytics
+#endif
     {
-        const string k_ProbuilderEventName = "ProbuilderAction";
         const int k_MaxEventsPerHour = 1000;
         const int k_MaxNumberOfElements = 1000;
         const string k_VendorKey = "unity.probuilder";
+
+#if UNITY_2023_2_OR_NEWER
+        const string k_ProbuilderEventName = "ProbuilderAction";
         const string k_PackageName = "com.unity.probuilder";
 
         MenuAction m_Action;
         string m_SelectMode;
         int m_SelectModeId;
         string m_TriggerType;
+#else
+        static bool s_EventRegistered = false;
+        static string packageName = $"com.{k_VendorKey}";
+
+        // Holds the type of data we want to send to the database
+        enum EventName
+        {
+            ProbuilderAction
+        }
+#endif
 
         // Data structure for Triggered Actions
         [Serializable]
@@ -61,6 +75,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderUI
         }
 
+#if UNITY_2023_2_OR_NEWER
         internal ProBuilderAnalytics(MenuAction action, SelectMode mode, TriggerType triggerType)
         {
             m_Action = action;
@@ -107,9 +122,10 @@ namespace UnityEditor.ProBuilder
             }
             #endif
 
-#if PB_ANALYTICS_DONTSEND
+            #if PB_ANALYTICS_DONTSEND
             return;
-#endif
+            #endif
+
             try
             {
                 // If DONTSEND is defined, skip sending stuff to the server
@@ -133,51 +149,7 @@ namespace UnityEditor.ProBuilder
                 DumpLogInfo($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
             }
         }
-
-        static void DumpLogInfo(string message)
-        {
-            #if PB_ANALYTICS_LOGGING
-            Debug.Log(message);
-            Console.WriteLine(message);
-            #else
-            if(Unsupported.IsSourceBuild())
-                Console.WriteLine(message);
-            #endif
-        }
-    }
 #else
-    static class ProBuilderAnalytics
-    {
-        static bool s_EventRegistered = false;
-        const int k_MaxEventsPerHour = 1000;
-        const int k_MaxNumberOfElements = 1000;
-        const string k_VendorKey = "unity.probuilder";
-        static string packageName = $"com.{k_VendorKey}";
-
-        // Data structure for Triggered Actions
-        [Serializable]
-        struct ProBuilderActionData
-        {
-            public string actionName;
-            public string actionType;
-            public string subLevel;
-            public int subLevelId;
-            public string triggeredFrom;
-        }
-
-        // Holds the type of data we want to send to the database
-        enum EventName
-        {
-            ProbuilderAction
-        }
-
-        // Triggered type is from where the action was performed
-        public enum TriggerType
-        {
-            MenuOrShortcut,
-            ProBuilderUI
-        }
-
         // This will register all the Event type at once
         static bool RegisterEvents()
         {
@@ -196,9 +168,7 @@ namespace UnityEditor.ProBuilder
 
             return !allNames.Any(eventName => !RegisterEvent(eventName));
         }
-
-
-        static bool RegisterEvent(string eventName)
+                static bool RegisterEvent(string eventName)
         {
             var result = EditorAnalytics.RegisterEventWithLimit(eventName, k_MaxEventsPerHour, k_MaxNumberOfElements, k_VendorKey);
             switch (result)
@@ -286,6 +256,7 @@ namespace UnityEditor.ProBuilder
                 DumpLogInfo($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
             }
         }
+#endif
 
         static void DumpLogInfo(string message)
         {
@@ -298,5 +269,4 @@ namespace UnityEditor.ProBuilder
             #endif
         }
     }
-#endif
 }
