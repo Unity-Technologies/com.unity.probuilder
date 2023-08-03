@@ -122,8 +122,9 @@ namespace UnityEditor.ProBuilder
             }
             #endif
 
-            #if PB_ANALYTICS_DONTSEND
-            return;
+            #if PB_ANALYTICS_DONTSEND || DEBUG
+                DumpLogInfo($"[PB] Analytics disabled: event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
+                return;
             #endif
 
             try
@@ -224,7 +225,7 @@ namespace UnityEditor.ProBuilder
             }
             #endif
 
-            #if !PB_ANALYTICS_DONTSEND
+            #if !PB_ANALYTICS_DONTSEND || DEBUG
             s_EventRegistered = RegisterEvents();
             #endif
 
