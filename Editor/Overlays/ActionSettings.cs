@@ -79,7 +79,7 @@ public class MenuActionSettings : EditorAction
         ProBuilderEditor.selectModeChanged += (_) => Finish(EditorActionResult.Canceled);
 
         // Undo should undo the preview and leaving the action
-        Undo.undoRedoPerformed += UndoRedoPerformed;
+        Undo.undoRedoEvent += UndoRedoEventCallback;
 
         // Changing selection should apply the preview and exit the current action
         ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
@@ -93,7 +93,7 @@ public class MenuActionSettings : EditorAction
     {
         MenuAction.onPerformAction -= OnMenuActionPerformed;
         ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
-        Undo.undoRedoPerformed -= UndoRedoPerformed;
+        Undo.undoRedoEvent -= UndoRedoEventCallback;
         SceneView.RemoveOverlayFromActiveView(m_Overlay);
 
         if (m_UndoNeeded && result == EditorActionResult.Canceled)
@@ -104,19 +104,22 @@ public class MenuActionSettings : EditorAction
     {
         //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
         ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
-        Undo.undoRedoPerformed -= UndoRedoPerformed;
+        Undo.undoRedoEvent -= UndoRedoEventCallback;
         Undo.PerformUndo();
         m_Action.PerformAction();
         ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
-        Undo.undoRedoPerformed += UndoRedoPerformed;
+        Undo.undoRedoEvent += UndoRedoEventCallback;
     }
 
+    // Selection can be updated by the ProBuilder editor on a UndoRedo event, so we need to check if we are currently in this
+    // situation to avoid exiting the action when we are actually undoing/redoing as we are not handling the 2 events the same way.
     void OnSelectionUpdated(IEnumerable<ProBuilderMesh> meshes)
     {
-        Finish(EditorActionResult.Success);
+        if (!UndoUtility.IsPerformingUndoRedo)
+            Finish(EditorActionResult.Success);
     }
 
-    void UndoRedoPerformed()
+    void UndoRedoEventCallback(in UndoRedoInfo info)
     {
         m_UndoNeeded = false;
         Finish(EditorActionResult.Canceled);
