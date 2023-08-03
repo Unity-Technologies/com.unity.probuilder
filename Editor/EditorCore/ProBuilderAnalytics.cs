@@ -11,17 +11,141 @@
 //#define PB_ANALYTICS_DONTSEND
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using UnityEditor;
 using UnityEditorInternal;
-using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.ProBuilder;
+#if !UNITY_2023_3_OR_NEWER
+using System.Linq;
+using System.IO;
+using UnityEngine;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2023_3_OR_NEWER
+
+    [AnalyticInfo(
+        eventName: k_ProbuilderEventName,
+        vendorKey: k_VendorKey,
+        maxEventsPerHour: k_MaxEventsPerHour,
+        maxNumberOfElements: k_MaxNumberOfElements)]
+    class ProBuilderAnalytics : IAnalytic
+    {
+        const string k_ProbuilderEventName = "ProbuilderAction";
+        const int k_MaxEventsPerHour = 1000;
+        const int k_MaxNumberOfElements = 1000;
+        const string k_VendorKey = "unity.probuilder";
+        const string k_PackageName = "com.unity.probuilder";
+
+        MenuAction m_Action;
+        string m_SelectMode;
+        int m_SelectModeId;
+        string m_TriggerType;
+
+        // Data structure for Triggered Actions
+        [Serializable]
+        struct ProBuilderActionData : IAnalytic.IData
+        {
+            public string actionName;
+            public string actionType;
+            public string subLevel;
+            public int subLevelId;
+            public string triggeredFrom;
+        }
+
+        // Triggered type is from where the action was performed
+        public enum TriggerType
+        {
+            MenuOrShortcut,
+            ProBuilderUI
+        }
+
+        internal ProBuilderAnalytics(MenuAction action, SelectMode mode, TriggerType triggerType)
+        {
+            m_Action = action;
+            m_SelectMode = mode.ToString();
+            m_SelectModeId = (int)mode;
+            m_TriggerType = triggerType.ToString();
+        }
+
+        public bool TryGatherData(out IAnalytic.IData data, out Exception error)
+        {
+            error = null;
+            var parameters = new ProBuilderActionData
+            {
+                actionName = m_Action.menuTitle,
+                actionType = m_Action.GetType().Name,
+                subLevel = m_SelectMode,
+                subLevelId = m_SelectModeId,
+                triggeredFrom = m_TriggerType
+            };
+            data = parameters;
+            return data != null;
+        }
+
+        // This is the main call to register an action event
+        public static void SendActionEvent(MenuAction mAction, TriggerType triggerType)
+        {
+            var data = new ProBuilderAnalytics(mAction, SelectMode.Object, triggerType);
+
+            // Don't send analytics when editor is used by an automated system
+            #if !PB_ANALYTICS_ALLOW_AUTOMATION
+            if (!InternalEditorUtility.isHumanControllingUs || InternalEditorUtility.inBatchMode)
+            {
+                DumpLogInfo($"[PB] Analytics deactivated, ProBuilder is currently used in Batch mode or run by automated system.");
+                return;
+            }
+            #endif
+
+            // Don't send analytics when using package repository
+            #if !PB_ANALYTICS_ALLOW_DEVBUILD
+            if (Directory.Exists($"Packages/{k_PackageName}/.git"))
+            {
+                DumpLogInfo($"[PB] Analytics deactivated, Dev build of ProBuilder is currently used.");
+                return;
+            }
+            #endif
+
+#if PB_ANALYTICS_DONTSEND
+            return;
+#endif
+            try
+            {
+                // If DONTSEND is defined, skip sending stuff to the server
+                #if !PB_ANALYTICS_DONTSEND
+                var sendResult = EditorAnalytics.SendAnalytic(data);
+
+                if (sendResult == AnalyticsResult.Ok)
+                {
+                    DumpLogInfo($"[PB] Event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
+                }
+                else
+                {
+                    DumpLogInfo($"[PB] Failed to send event {k_ProbuilderEventName}. Result: {sendResult}");
+                }
+                #else
+                DumpLogInfo($"[PB] Event='{eventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(eventData, true)}");
+                #endif
+            }
+            catch(Exception e)
+            {
+                DumpLogInfo($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
+            }
+        }
+
+        static void DumpLogInfo(string message)
+        {
+            #if PB_ANALYTICS_LOGGING
+            Debug.Log(message);
+            Console.WriteLine(message);
+            #else
+            if(Unsupported.IsSourceBuild())
+                Console.WriteLine(message);
+            #endif
+        }
+    }
+#else
     static class ProBuilderAnalytics
     {
         static bool s_EventRegistered = false;
@@ -29,7 +153,6 @@ namespace UnityEditor.ProBuilder
         const int k_MaxNumberOfElements = 1000;
         const string k_VendorKey = "unity.probuilder";
         static string packageName = $"com.{k_VendorKey}";
-
 
         // Data structure for Triggered Actions
         [Serializable]
@@ -89,7 +212,7 @@ namespace UnityEditor.ProBuilder
                 case AnalyticsResult.TooManyRequests:
                     // this is fine - event registration survives domain reload (native)
                     return true;
-                
+
                 default:
                 {
                     DumpLogInfo($"[PB] Failed to register analytics event '{eventName}'. Result: '{result}'");
@@ -107,7 +230,7 @@ namespace UnityEditor.ProBuilder
             data.subLevel = ProBuilderToolManager.selectMode.ToString();
             data.subLevelId = (int)ProBuilderToolManager.selectMode;
             data.triggeredFrom = triggerType.ToString();
-            
+
             Send(EventName.ProbuilderAction, data);
         }
 
@@ -175,4 +298,5 @@ namespace UnityEditor.ProBuilder
             #endif
         }
     }
+#endif
 }
