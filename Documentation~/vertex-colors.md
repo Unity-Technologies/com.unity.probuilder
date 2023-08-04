@@ -10,7 +10,7 @@ To open this window, click the **Vertex Colors** button ( ![Vertex Color Editor 
 
 **(A)** Click the **Reset** button to return all the colors on the **Color Palette** to their default values.
 
-**(B)** You can import your [own swatch library](https://docs.unity3d.com/Manual/PresetLibraries.html) and use its colors instead of the default Unity colors. To do this, set a reference to the swatch library file.
+**(B)** You can import your own swatch library and use its colors instead of the default Unity colors. To do this, set a reference to the swatch library file.
 
 **(C)** Click the **Apply** button to [set the associated color](workflow-vertexcolors.md#apply) on the selected object(s) or element(s).
 
