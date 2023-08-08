@@ -84,20 +84,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Export", true)]
-        static bool ValidateExportAction()
-        {
-            return MeshSelection.selectedObjectCount > 0;
-        }
-
-        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12)]
-        static void ExportAction(MenuCommand command)
-        {
-            EditorToolbarLoader.GetInstance<Export>().OpenSettings();
-        }
-#endif
-
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Export Settings", EditorStyles.boldLabel);

@@ -55,30 +55,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
 #if UNITY_2023_2_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", true)]
-        static bool ValidateMirrorObjectAction()
-        {
-            return MeshSelection.selectedObjectCount > 0;
-        }
-
-        // This boolean allows to call the action only once in case of multi-selection as PB actions
-        // are called on the entire selection and not per element.
-        static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17)]
-        static void MirrorObjectAction(MenuCommand command)
-        {
-            if (!s_ActionAlreadyTriggered)
-            {
-                s_ActionAlreadyTriggered = true;
-                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () =>
-                {
-                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<MirrorObjects>()));
-                    s_ActionAlreadyTriggered = false;
-                };
-            }
-        }
-
         protected internal override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();

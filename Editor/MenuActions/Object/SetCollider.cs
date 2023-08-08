@@ -31,32 +31,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-#if UNITY_2023_2_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Set Collider", true)]
-        static bool ValidateSetColliderAction()
-        {
-            return MeshSelection.selectedObjectCount > 0;
-        }
-
-        // This boolean allows to call the action only once in case of multi-selection as PB actions
-        // are called on the entire selection and not per element.
-        static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Set Collider", false, 21)]
-        static void SetColliderAction(MenuCommand command)
-        {
-            if (!s_ActionAlreadyTriggered)
-            {
-                s_ActionAlreadyTriggered = true;
-                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () =>
-                {
-                    EditorToolbarLoader.GetInstance<SetCollider>().PerformAction();
-                    s_ActionAlreadyTriggered = false;
-                };
-            }
-        }
-#endif
-
         protected override ActionResult PerformActionImplementation()
         {
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)

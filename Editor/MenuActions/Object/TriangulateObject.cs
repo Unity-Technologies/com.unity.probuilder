@@ -23,31 +23,17 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-#if UNITY_2023_2_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", true)]
-        static bool ValidateTriangulateObjectAction()
+        [MenuItem("CONTEXT/Transform/Testing", true)]
+        public static bool MyCustomItemValidation(MenuCommand command)
         {
-            return MeshSelection.selectedObjectCount > 0;
+            return false;
         }
 
-        // This boolean allows to call the action only once in case of multi-selection as PB actions
-        // are called on the entire selection and not per element.
-        static bool s_ActionAlreadyTriggered = false;
-        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13)]
-        static void TriangulateObjectAction(MenuCommand command)
+        [MenuItem("CONTEXT/Transform/Testing", false, 10, "Awesome tooltip", "Assets/Resources/Object_Triangulate.png")]
+        public static void MyCustomItemCallback(MenuCommand command)
         {
-            if (!s_ActionAlreadyTriggered)
-            {
-                s_ActionAlreadyTriggered = true;
-                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
-                EditorApplication.delayCall += () =>
-                {
-                    EditorToolbarLoader.GetInstance<TriangulateObject>().PerformAction();
-                    s_ActionAlreadyTriggered = false;
-                };
-            }
+            Debug.Log("My awesome item");
         }
-#endif
 
         protected override ActionResult PerformActionImplementation()
         {
