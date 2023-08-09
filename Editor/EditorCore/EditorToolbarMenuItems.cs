@@ -811,14 +811,14 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", true, PreferenceKeys.menuGeometry + 2, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Validate@2x.png")]
+		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_MirrorObjects()
 		{
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", false, PreferenceKeys.menuGeometry + 2, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Validate@2x.png")]
+		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", false, PreferenceKeys.menuGeometry + 2)]
 		static void MenuPerform_MirrorObjects()
 		{
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();

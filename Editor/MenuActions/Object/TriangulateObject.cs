@@ -23,18 +23,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return base.enabled && MeshSelection.selectedObjectCount > 0; }
         }
 
-        [MenuItem("CONTEXT/Transform/Testing", true)]
-        public static bool MyCustomItemValidation(MenuCommand command)
-        {
-            return false;
-        }
-
-        [MenuItem("CONTEXT/Transform/Testing", false, 10, "Awesome tooltip", "Assets/Resources/Object_Triangulate.png")]
-        public static void MyCustomItemCallback(MenuCommand command)
-        {
-            Debug.Log("My awesome item");
-        }
-
         protected override ActionResult PerformActionImplementation()
         {
             if (MeshSelection.selectedObjectCount < 1)
