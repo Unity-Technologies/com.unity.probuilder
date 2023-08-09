@@ -17,7 +17,6 @@ using UnityEngine.Analytics;
 using UnityEngine.ProBuilder;
 #if !UNITY_2023_2_OR_NEWER
 using System.Linq;
-using System.IO;
 using UnityEngine;
 #endif
 
@@ -59,7 +58,11 @@ namespace UnityEditor.ProBuilder
 
         // Data structure for Triggered Actions
         [Serializable]
+#if UNITY_2023_2_OR_NEWER
         struct ProBuilderActionData : IAnalytic.IData
+#else
+        struct ProBuilderActionData
+#endif
         {
             public string actionName;
             public string actionType;
