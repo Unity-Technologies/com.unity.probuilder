@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder.Actions
 #if !UNITY_2023_2_OR_NEWER
             get { return string.Format("Shift: {0}", modifier); }
 #else
-                get { return string.Format("Shift: Obsolete"); }
+                get { return "Shift: Obsolete"; }
 #endif
         }
 

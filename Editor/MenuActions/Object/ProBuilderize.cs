@@ -100,7 +100,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-        protected internal override VisualElement CreateSettingsContent()
+        public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
 

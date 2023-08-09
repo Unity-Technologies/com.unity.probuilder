@@ -50,7 +50,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
 #if UNITY_2023_2_OR_NEWER
-        protected internal override VisualElement CreateSettingsContent()
+        public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
             root.style.minWidth = 150;

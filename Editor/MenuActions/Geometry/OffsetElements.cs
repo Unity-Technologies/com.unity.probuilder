@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
 #if UNITY_2023_2_OR_NEWER
-        protected internal override VisualElement CreateSettingsContent()
+        public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
 
@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder.Actions
             return root;
         }
 
-        protected internal override void DoSceneGUI(SceneView sceneView)
+        public override void DoSceneGUI(SceneView sceneView)
             => MoveElementsSettings.OnSceneGUI(sceneView);
 #endif
 

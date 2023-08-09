@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
         IntegerField m_SubdivCount;
         SliderInt m_Slider;
 
-        protected internal override VisualElement CreateSettingsContent()
+        public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
 

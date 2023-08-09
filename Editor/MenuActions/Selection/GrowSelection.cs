@@ -59,7 +59,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
         }
 
 #if UNITY_2023_2_OR_NEWER
-        protected internal override VisualElement CreateSettingsContent()
+        public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
 

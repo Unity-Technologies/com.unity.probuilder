@@ -316,7 +316,7 @@ namespace UnityEditor.ProBuilder
         /// Creates a custom settings window for this action. Populate a root visual element in that method with
         /// the settings content.
         /// </summary>
-        protected internal virtual VisualElement CreateSettingsContent()
+        public virtual VisualElement CreateSettingsContent()
         {
             return null;
         }
@@ -324,7 +324,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
-        protected internal virtual void DoSceneGUI(SceneView sceneView) {}
+        public virtual void DoSceneGUI(SceneView sceneView) {}
 #endif
 
         /// <summary>

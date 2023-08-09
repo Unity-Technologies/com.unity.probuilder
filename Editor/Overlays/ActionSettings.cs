@@ -142,11 +142,6 @@ public class MenuActionSettings : EditorAction
                     Finish(EditorActionResult.Success);
                     evt.Use();
                 }
-                if (evt.keyCode == KeyCode.Escape)
-                {
-                    Finish(EditorActionResult.Canceled);
-                    evt.Use();
-                }
                 return;
         }
         m_Action.DoSceneGUI(sceneView);
