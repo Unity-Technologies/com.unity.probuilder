@@ -11,7 +11,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon => ProBuilderEditor.backfaceSelectionEnabled ? m_Icons[1] : m_Icons[0];
-        public override Texture2D icon2x => ProBuilderEditor.backfaceSelectionEnabled ? m_Icons2x[1] : m_Icons2x[0];
 
         public override TooltipContent tooltip
         {
@@ -46,7 +45,6 @@ The default value is <b>On</b>.
 
         internal Texture2D[] icons => m_Icons;
         Texture2D[] m_Icons;
-        Texture2D[] m_Icons2x;
 
         public ToggleSelectBackFaces()
         {
@@ -54,11 +52,6 @@ The default value is <b>On</b>.
             {
                 IconUtility.GetIcon("Toolbar/Selection_SelectHidden-Off"),
                 IconUtility.GetIcon("Toolbar/Selection_SelectHidden-On")
-            };
-            m_Icons2x = new Texture2D[]
-            {
-                IconUtility.GetLargeIcon("Toolbar/Selection_SelectHidden-Off"),
-                IconUtility.GetLargeIcon("Toolbar/Selection_SelectHidden-On")
             };
         }
 

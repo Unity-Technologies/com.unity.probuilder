@@ -10,7 +10,6 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_UVEditor"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Panel_UVEditor"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent

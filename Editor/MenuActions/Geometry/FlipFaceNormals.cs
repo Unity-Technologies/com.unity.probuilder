@@ -15,7 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_FlipNormals"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_FlipNormals"); } }
 
         public override TooltipContent tooltip
         {

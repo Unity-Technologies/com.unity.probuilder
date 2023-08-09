@@ -17,11 +17,9 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon => m_Icons[mode == RectSelectMode.Partial ? 0 : 1];
-        public override Texture2D icon2x => m_Icons2x[mode == RectSelectMode.Partial ? 0 : 1];
 
         internal Texture2D[] icons => m_Icons;
         Texture2D[] m_Icons;
-        Texture2D[] m_Icons2x;
 
         public override TooltipContent tooltip
         {
@@ -52,11 +50,6 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 IconUtility.GetIcon("Toolbar/DragSelect_Off"),
                 IconUtility.GetIcon("Toolbar/DragSelect_On")
-            };
-            m_Icons2x = new Texture2D[]
-            {
-                IconUtility.GetLargeIcon("Toolbar/DragSelect_Off"),
-                IconUtility.GetLargeIcon("Toolbar/DragSelect_On")
             };
         }
 

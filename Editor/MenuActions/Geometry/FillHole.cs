@@ -25,7 +25,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_FillHole"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Edge_FillHole"); } }
 
         public override TooltipContent tooltip
         {

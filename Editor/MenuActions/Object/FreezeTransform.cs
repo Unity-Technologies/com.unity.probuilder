@@ -12,7 +12,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_FreezeTransform"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Pivot_FreezeTransform"); } }
 
         public override TooltipContent tooltip
         {

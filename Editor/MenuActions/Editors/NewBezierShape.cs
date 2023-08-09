@@ -9,8 +9,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); } }
-        public override Texture2D icon2x { get { return icon; }
-        }
         public override TooltipContent tooltip { get { return _tooltip; } }
         public override string menuTitle { get { return "New Bezier Shape"; } }
         public override int toolbarPriority { get { return 1; } }

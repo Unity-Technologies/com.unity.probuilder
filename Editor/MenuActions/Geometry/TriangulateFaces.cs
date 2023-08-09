@@ -13,7 +13,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Triangulate"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_Triangulate"); } }
 
         public override TooltipContent tooltip
         {

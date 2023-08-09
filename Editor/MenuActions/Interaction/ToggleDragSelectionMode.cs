@@ -35,23 +35,6 @@ namespace UnityEditor.ProBuilder.Actions
 #endif
             }
         }
-        public override Texture2D icon2x
-        {
-            get
-            {
-#if !UNITY_2023_2_OR_NEWER
-                if (modifier == SelectionModifierBehavior.Add)
-                    return IconUtility.GetLargeIcon("Toolbar/Selection_ShiftAdd", IconSkin.Pro);
-                else if (modifier == SelectionModifierBehavior.Subtract)
-                    return IconUtility.GetLargeIcon("Toolbar/Selection_ShiftSubtract", IconSkin.Pro);
-                else
-                    return IconUtility.GetLargeIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
-#else
-                //Returning a default value for icon mode
-                return IconUtility.GetLargeIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
-#endif
-            }
-        }
 
         public override TooltipContent tooltip
         {

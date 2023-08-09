@@ -15,8 +15,6 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/AddShape"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/AddShape"); } }
-
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }

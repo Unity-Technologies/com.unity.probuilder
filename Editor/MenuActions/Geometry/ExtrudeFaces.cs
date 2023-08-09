@@ -23,7 +23,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Extrude"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Face_Extrude"); } }
 
         public override TooltipContent tooltip
         {

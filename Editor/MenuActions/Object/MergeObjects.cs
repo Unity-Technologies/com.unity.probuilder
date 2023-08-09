@@ -17,7 +17,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Merge"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Object_Merge"); } }
 
         public override TooltipContent tooltip
         {

@@ -26,50 +26,6 @@ namespace UnityEditor.ProBuilder
         /// <param name="iconName"></param>
         /// <param name="skin"></param>
         /// <returns></returns>
-        public static Texture2D GetLargeIcon(string iconName, IconSkin skin = IconSkin.Default)
-        {
-#if PB_DEBUG
-            if (iconName.EndsWith(".png"))
-                pb_Log.Error("GetIcon(string) called with .png suffix!");
-
-            if (iconName.EndsWith("_Light"))
-                pb_Log.Error("GetIcon(string) called with _Light suffix!");
-#endif
-            bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
-            string name = isDarkSkin ? iconName : iconName + "_Light";
-
-            Texture2D icon = null;
-
-            if (!s_Icons.TryGetValue(name+"@2x", out icon))
-            {
-                int i = 0;
-
-                do
-                {
-                    // - do one lap searching in 2x first and then in normal if no 2X found
-                    // - if nothing found, next searching for default
-                    string fullPath = string.Format("{0}{1}@2x.png", s_IconFolderPath, i == 0 ? name : iconName);
-                    icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
-
-                    if(icon == null)
-                    {
-                        fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
-                        icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
-                    }
-                }
-                while (++i < 2 && icon == null);
-                s_Icons.Add(name+"@2x", icon);
-            }
-
-            return icon;
-        }
-
-        /// <summary>
-        /// Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode suffix.
-        /// </summary>
-        /// <param name="iconName"></param>
-        /// <param name="skin"></param>
-        /// <returns></returns>
         public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
         {
 #if PB_DEBUG

@@ -13,7 +13,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return null; } }
-        public override Texture2D icon2x => icon;
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (

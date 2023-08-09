@@ -24,7 +24,6 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Selection_SelectByVertexColor"); } }
 
         public override TooltipContent tooltip
         {

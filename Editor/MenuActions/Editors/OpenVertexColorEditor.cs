@@ -7,7 +7,6 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_VertColors"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Panel_VertColors"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Vertex Colors"; } }
 

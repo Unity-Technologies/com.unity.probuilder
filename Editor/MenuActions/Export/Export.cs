@@ -16,7 +16,6 @@ namespace UnityEditor.ProBuilder.Actions
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export"); } }
-        public override Texture2D icon2x { get { return IconUtility.GetLargeIcon("Toolbar/Object_Export"); } }
         public override TooltipContent tooltip { get { return m_Tooltip; } }
         protected override bool hasFileMenuEntry { get { return false; } }
 
