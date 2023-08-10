@@ -19,7 +19,8 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Extrude Edges",
-                @"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
+                @"Adds a new face extending from the currently selected edges. Edges must have an open side to be extruded.
+                NB : Allow non-manifold actions should be authorized in ProBuilder preferences to enable this action.",
                 keyCommandSuper, 'E'
             );
 
@@ -30,7 +31,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
+            get { return base.enabled && MeshSelection.selectedEdgeCount > 0 && ProBuilderEditor.s_AllowNonManifoldActions; }
         }
 
         protected override MenuActionState optionsMenuState

@@ -84,7 +84,10 @@ namespace UnityEditor.ProBuilder
 
                 if (action.hasOptions)
                 {
-                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
+                    if(action is DetachFaces || action is DuplicateFaces)
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
+                    else
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettingsWithPreview(action)), GetStatus(action), action.icon);
                 }
                 else
                     menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action), action.icon);
@@ -262,7 +265,7 @@ namespace UnityEditor.ProBuilder
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
                 EditorApplication.delayCall += () =>
                 {
-                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<MirrorObjects>()));
+                    EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<MirrorObjects>()));
                     s_ActionAlreadyTriggered = false;
                 };
             }
