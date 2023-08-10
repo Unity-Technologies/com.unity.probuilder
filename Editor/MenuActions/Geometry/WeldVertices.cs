@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.Actions
             floatField.isDelayed = true;
             floatField.tooltip = gc_weldDistance.tooltip;
             floatField.SetValueWithoutNotify(m_WeldDistance);
-            floatField[1].style.minWidth = 50;
+            floatField.Q("unity-text-input").style.minWidth = 50;
             floatField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
                 if (m_WeldDistance.value != evt.newValue)
