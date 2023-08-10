@@ -74,7 +74,6 @@ namespace UnityEditor.ProBuilder.Actions
                 if (s_CoordinateSpace.value == newValue)
                     return;
                 s_CoordinateSpace.SetValue(newValue);
-                ProBuilderSettings.Save();
             });
 
             var distField = new Vector3Field("Translate");

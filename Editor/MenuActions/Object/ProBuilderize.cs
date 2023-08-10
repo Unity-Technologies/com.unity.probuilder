@@ -133,38 +133,22 @@ namespace UnityEditor.ProBuilder.Actions
 
             quadsToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                if (m_Quads.value != evt.newValue)
-                {
-                    m_Quads.value = evt.newValue;
-                    ProBuilderSettings.Save();
-                }
+                m_Quads.SetValue(evt.newValue);
             });
             smoothingToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                if (m_Smoothing.value != evt.newValue)
-                {
-                    m_Smoothing.value = evt.newValue;
-                    smoothingSlider.SetEnabled(m_Smoothing);
-                    ProBuilderSettings.Save();
-                }
+                m_Smoothing.SetValue(evt.newValue);
+                smoothingSlider.SetEnabled(m_Smoothing);
             });
             smoothingSlider.RegisterCallback<ChangeEvent<float>>(evt =>
             {
-                if (m_SmoothingAngle.value != evt.newValue)
-                {
-                    m_SmoothingAngle.value = evt.newValue;
-                    smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
-                    ProBuilderSettings.Save();
-                }
+                m_SmoothingAngle.SetValue(evt.newValue);
+                smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
             });
             smoothingSliderValue.RegisterCallback<ChangeEvent<float>>(evt =>
             {
-                if (m_SmoothingAngle.value != evt.newValue)
-                {
-                    m_SmoothingAngle.value = evt.newValue;
-                    smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
-                    ProBuilderSettings.Save();
-                }
+                m_SmoothingAngle.SetValue(evt.newValue);
+                smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
             });
 
             return root;

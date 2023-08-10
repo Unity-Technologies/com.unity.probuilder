@@ -61,20 +61,12 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnEdgesAsGroupChanged(ChangeEvent<bool> evt)
         {
-            if(VertexManipulationTool.s_ExtrudeEdgesAsGroup.value == evt.newValue)
-                return;
-
-            VertexManipulationTool.s_ExtrudeEdgesAsGroup.value = evt.newValue;
-            ProBuilderSettings.Save();
+            VertexManipulationTool.s_ExtrudeEdgesAsGroup.SetValue(evt.newValue);
         }
 
         void OnExtrudeChanged(ChangeEvent<float> evt)
         {
-            if(m_ExtrudeEdgeDistance.value == evt.newValue)
-                return;
-
-            m_ExtrudeEdgeDistance.value = evt.newValue;
-            ProBuilderSettings.Save();
+            m_ExtrudeEdgeDistance.SetValue(evt.newValue);
         }
 #endif
 

@@ -56,13 +56,11 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     if (evt.newValue < k_MinBevelDistance)
                     {
-                        m_BevelSize.value = k_MinBevelDistance;
+                        m_BevelSize.SetValue(k_MinBevelDistance);
                         floatField.SetValueWithoutNotify(m_BevelSize);
                     }
                     else
-                        m_BevelSize.value = evt.newValue;
-
-                    ProBuilderSettings.Save();
+                        m_BevelSize.SetValue(evt.newValue);
                 }
             });
             root.Add(floatField);

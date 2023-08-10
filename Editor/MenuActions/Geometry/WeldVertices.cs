@@ -62,24 +62,17 @@ namespace UnityEditor.ProBuilder.Actions
             floatField.Q("unity-text-input").style.minWidth = 50;
             floatField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
-                if (m_WeldDistance.value != evt.newValue)
+                if (evt.newValue < k_MinWeldDistance)
                 {
-                    if (evt.newValue < k_MinWeldDistance)
-                    {
-                        m_WeldDistance.value = k_MinWeldDistance;
-                        floatField.SetValueWithoutNotify(m_WeldDistance);
-                    }
-                    else
-                        m_WeldDistance.value = evt.newValue;
-
-                    ProBuilderSettings.Save();
+                    m_WeldDistance.SetValue(k_MinWeldDistance);
+                    floatField.SetValueWithoutNotify(m_WeldDistance);
                 }
+                else
+                    m_WeldDistance.SetValue(evt.newValue);
             });
             root.Add(floatField);
-
             return root;
         }
-
 #endif
 
         protected override void OnSettingsGUI()

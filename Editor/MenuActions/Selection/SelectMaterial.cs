@@ -57,8 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             toggle.SetValueWithoutNotify(m_RestrictToSelectedObjects);
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                m_RestrictToSelectedObjects.value = evt.newValue;
-                ProBuilderSettings.Save();
+                m_RestrictToSelectedObjects.SetValue(evt.newValue);
             });
             root.Add(toggle);
 

@@ -80,21 +80,18 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             angleToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                m_GrowSelectionWithAngle.value = evt.newValue;
+                m_GrowSelectionWithAngle.SetValue(evt.newValue);
                 floatField.SetEnabled(m_GrowSelectionWithAngle);
                 iterativeToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true);
                 iterativeToggle.SetEnabled(m_GrowSelectionWithAngle);
-                ProBuilderSettings.Save();
             });
             floatField.RegisterValueChangedCallback(evt =>
             {
-                m_GrowSelectionAngleValue.value = evt.newValue;
-                ProBuilderSettings.Save();
+                m_GrowSelectionAngleValue.SetValue(evt.newValue);
             });
             iterativeToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                m_GrowSelectionAngleIterative.value = evt.newValue;
-                ProBuilderSettings.Save();
+                m_GrowSelectionAngleIterative.SetValue(evt.newValue);
             });
 
             return root;

@@ -102,11 +102,7 @@ namespace UnityEditor.ProBuilder.Actions
             distanceField.isDelayed = true;
             distanceField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
-                if (m_ExtrudeDistance.value != evt.newValue)
-                {
-                    m_ExtrudeDistance.value = evt.newValue;
-                    ProBuilderSettings.Save();
-                }
+                m_ExtrudeDistance.SetValue(evt.newValue);
             });
             root.Add(distanceField);
 

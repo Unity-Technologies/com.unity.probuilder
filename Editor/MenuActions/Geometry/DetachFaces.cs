@@ -56,11 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
             detachFace.RegisterCallback<ChangeEvent<string>>(evt =>
             {
                 Enum.TryParse(evt.newValue, out DetachSetting newValue);
-                if (m_DetachSetting.value == newValue)
-                    return;
-
-                m_DetachSetting.value = newValue;
-                ProBuilderSettings.Save();
+                m_DetachSetting.SetValue(newValue);
             });
             root.Add(detachFace);
 

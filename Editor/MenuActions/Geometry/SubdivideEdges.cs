@@ -134,9 +134,8 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_SubdivisionRangeExpanded.value == evt.newValue)
                 return;
 
-            m_SubdivisionRangeExpanded.value = evt.newValue;
+            m_SubdivisionRangeExpanded.SetValue(evt.newValue);
             m_RangeField.style.display = m_SubdivisionRangeExpanded.value ? DisplayStyle.Flex : DisplayStyle.None;
-            ProBuilderSettings.Save();
         }
 
         void OnSliderChanged(ChangeEvent<int> evt)
@@ -144,9 +143,8 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_SubdivisionCount.value == evt.newValue)
                 return;
 
-            m_SubdivisionCount.value = evt.newValue;
+            m_SubdivisionCount.SetValue(evt.newValue);
             m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
-            ProBuilderSettings.Save();
         }
 
         void OnCountChanged(ChangeEvent<int> evt)
@@ -154,24 +152,20 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_SubdivisionCount.value == evt.newValue)
                 return;
 
-            m_SubdivisionCount.value = evt.newValue < 1 ? 1 : evt.newValue;
-
+            m_SubdivisionCount.SetValue(evt.newValue < 1 ? 1 : evt.newValue);
             if (m_SubdivisionCount.value < m_SubdivisionUIMin.value)
             {
-                m_SubdivisionUIMin.value = m_SubdivisionCount.value;
+                m_SubdivisionUIMin.SetValue(m_SubdivisionCount.value);
                 m_Slider.lowValue = m_SubdivisionUIMin.value;
                 m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
             }
             if (m_SubdivisionCount.value > m_SubdivisionUIMax.value)
             {
-                m_SubdivisionUIMax.value = m_SubdivisionCount.value;
+                m_SubdivisionUIMax.SetValue(m_SubdivisionCount.value);
                 m_Slider.highValue = m_SubdivisionUIMax.value;
                 m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
             }
-
             m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
-
-            ProBuilderSettings.Save();
         }
 
         void OnMinChanged(ChangeEvent<int> evt)
@@ -179,17 +173,15 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_SubdivisionUIMin.value == evt.newValue)
                 return;
 
-            m_SubdivisionUIMin.value = evt.newValue < 1 ? 1 : evt.newValue;
+            m_SubdivisionUIMin.SetValue(evt.newValue < 1 ? 1 : evt.newValue);
             m_Slider.lowValue = m_SubdivisionUIMin.value;
             m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
             if (m_SubdivisionCount.value < m_SubdivisionUIMin.value)
             {
-                m_SubdivisionCount.value = m_SubdivisionUIMin.value;
+                m_SubdivisionCount.SetValue(m_SubdivisionUIMin.value);
                 m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
             }
-
-            ProBuilderSettings.Save();
         }
 
         void OnMaxChanged(ChangeEvent<int> evt)
@@ -197,17 +189,15 @@ namespace UnityEditor.ProBuilder.Actions
             if(m_SubdivisionUIMax.value == evt.newValue)
                 return;
 
-            m_SubdivisionUIMax.value = evt.newValue;
+            m_SubdivisionUIMax.SetValue(evt.newValue);
             m_Slider.highValue = m_SubdivisionUIMax.value;
             m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
             if (m_SubdivisionCount.value > m_SubdivisionUIMax.value)
             {
-                m_SubdivisionCount.value = m_SubdivisionUIMax.value;
+                m_SubdivisionCount.SetValue(m_SubdivisionUIMax.value);
                 m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
             }
-
-            ProBuilderSettings.Save();
         }
 #endif
 

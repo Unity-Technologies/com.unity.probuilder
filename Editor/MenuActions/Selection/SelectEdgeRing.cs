@@ -111,8 +111,7 @@ namespace UnityEditor.ProBuilder.Actions
             toggle.SetValueWithoutNotify(m_SelectIterative);
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
-                m_SelectIterative.value = evt.newValue;
-                ProBuilderSettings.Save();
+                m_SelectIterative.SetValue(evt.newValue);
             });
             root.Add(toggle);
 

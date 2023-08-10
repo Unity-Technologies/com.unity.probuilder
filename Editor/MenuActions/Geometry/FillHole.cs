@@ -69,11 +69,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnFillHoleToggleChanged(ChangeEvent<bool> evt)
         {
-            if(m_SelectEntirePath.value == evt.newValue)
-                return;
-
-            m_SelectEntirePath.value = evt.newValue;
-            ProBuilderSettings.Save();
+            m_SelectEntirePath.SetValue(evt.newValue);
         }
 #endif
 
