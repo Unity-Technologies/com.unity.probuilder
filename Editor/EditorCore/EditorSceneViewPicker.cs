@@ -272,7 +272,9 @@ namespace UnityEditor.ProBuilder
             };
 
             UndoUtility.RecordSelection("Drag Select");
-            bool isAppendModifier = EditorHandleUtility.IsAppendModifier(Event.current.modifiers);
+            bool isSelectionAddModifier = EditorHandleUtility.IsSelectionAddModifier(Event.current.modifiers);
+            bool isSelectionRemoveModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(Event.current.modifiers);
+            bool isAppendModifier = isSelectionAddModifier || isSelectionRemoveModifier;
 
             if (!isAppendModifier)
                 MeshSelection.ClearElementSelection();
@@ -302,9 +304,9 @@ namespace UnityEditor.ProBuilder
                             common = mesh.GetSharedVertexHandles(mesh.selectedIndexesInternal);
 
 #if UNITY_2023_2_OR_NEWER
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                            if(isSelectionAddModifier)
                                 common.UnionWith(kvp.Value);
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                            else if(isSelectionRemoveModifier)
                                 common.RemoveWhere(x => kvp.Value.Contains(x));
 #else
                             if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
@@ -345,9 +347,9 @@ namespace UnityEditor.ProBuilder
                         {
                             current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
 #if UNITY_2023_2_OR_NEWER
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                            if(isSelectionAddModifier)
                                 current.UnionWith(kvp.Value);
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                            else if(isSelectionRemoveModifier)
                                 current.RemoveWhere(x => kvp.Value.Contains(x));
 #else
                             if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
@@ -391,9 +393,9 @@ namespace UnityEditor.ProBuilder
                         {
                             current = EdgeLookup.GetEdgeLookupHashSet(mesh.selectedEdges, common);
 #if UNITY_2023_2_OR_NEWER
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Shift))
+                            if(isSelectionAddModifier)
                                 current.UnionWith(selectedEdges);
-                            if(Event.current.modifiers.HasFlag(EventModifiers.Command) || Event.current.modifiers.HasFlag(EventModifiers.Control))
+                            else if(isSelectionRemoveModifier)
                                 current.RemoveWhere(x => selectedEdges.Contains(x));
 #else
                             if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)

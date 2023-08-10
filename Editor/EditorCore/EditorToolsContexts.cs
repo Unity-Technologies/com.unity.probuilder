@@ -84,10 +84,11 @@ namespace UnityEditor.ProBuilder
 
                 if (action.hasOptions)
                 {
-                    if(action is DetachFaces || action is DuplicateFaces)
-                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
-                    else
+                    if(HasPreview(action))
                         menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettingsWithPreview(action)), GetStatus(action), action.icon);
+                    else
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
+
                 }
                 else
                     menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action), action.icon);
@@ -99,6 +100,11 @@ namespace UnityEditor.ProBuilder
                 menu.AppendSeparator();
                 ContextMenuUtility.AddMenuItemsForType(menu, typeof(MeshFilter), targets, "Mesh Filter");
             }
+        }
+
+        static bool HasPreview(MenuAction action)
+        {
+            return !(action is DetachFaces || action is DuplicateFaces);
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions
