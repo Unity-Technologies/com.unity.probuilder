@@ -581,7 +581,7 @@ namespace UnityEditor.ProBuilder
 
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
-            if(m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID)
+            if(m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.keyCode == KeyCode.Mouse0 && HandleUtility.nearestControl == controlID)
             {
                 // double clicking object
                 if(m_CurrentEvent.clickCount > 1)
