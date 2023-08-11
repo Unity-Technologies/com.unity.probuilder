@@ -402,12 +402,7 @@ namespace UnityEditor.ProBuilder
                     break;
 
                 case EventType.KeyUp:
-#if UNITY_2023_2_OR_NEWER
-                    //Do not escape the select mode if an active tool override is active
-                    if (e.keyCode == KeyCode.Escape && EditorToolManager.activeOverride == null)
-#else
                     if (e.keyCode == KeyCode.Escape)
-#endif
                     {
                         selectMode = SelectMode.Object;
                         e.Use();
