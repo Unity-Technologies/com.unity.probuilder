@@ -96,10 +96,7 @@ namespace UnityEditor.ProBuilder
 
             var trs = Selection.transforms;
             if (trs.GetComponents<MeshFilter>().Length > trs.GetComponents<ProBuilderMesh>().Length)
-            {
-                menu.AppendSeparator();
                 ContextMenuUtility.AddMenuItemsForType(menu, typeof(MeshFilter), targets, "Mesh Filter");
-            }
         }
 
         static bool HasPreview(MenuAction action)
