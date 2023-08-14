@@ -31,11 +31,13 @@ namespace UnityEditor.ProBuilder
         static MethodInfo s_FindNearestVertex;
 #endif
 
+#if UNITY_2021_3_OR_NEWER
         static VertexManipulationTool()
         {
             Tools.pivotRotationChanged += SyncPivotRotation;
             Tools.pivotModeChanged += SyncPivotPoint;
         }
+#endif
 
         internal static PivotPoint pivotModePivotEquivalent
         {

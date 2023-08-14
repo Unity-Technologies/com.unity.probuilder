@@ -6,3 +6,9 @@ ToolbarMenuItem .unity-label:hover {
 ToolbarMenuItem .unity-label:active {
     color: rgba(40, 40, 40, 255);
 }
+
+.unity-image #LegacyIcon {
+    width:48px;
+    flex-grow: 1;
+    align-self: center;
+}

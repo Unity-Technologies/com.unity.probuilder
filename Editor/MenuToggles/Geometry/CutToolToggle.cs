@@ -62,8 +62,8 @@ namespace UnityEditor.ProBuilder.Actions
         /// <inheritdoc/>
         protected override ActionResult PerformActionImplementation()
         {
-            if(EditorToolManager.activeTool is CutTool active)
-                Object.DestroyImmediate(active);
+            if(ToolManager.activeToolType == typeof(CutTool))
+                ToolManager.RestorePreviousTool();
             else
                 ToolManager.SetActiveTool<CutTool>();
 

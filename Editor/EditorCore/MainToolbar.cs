@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.UI
             #if !UNITY_2023_2_OR_NEWER
             var icon = button.Q<Image>();
             if(icon == null)
-                button.Add(icon = new Image());
+                button.Add(icon = new Image() {name = "LegacyIcon" });
             icon.image = action.icon;
             #else
             button.iconImage = action.icon;
@@ -135,7 +135,12 @@ namespace UnityEditor.ProBuilder.UI
             if (iconMode)
             {
                 var container = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/ToolbarIconContainer.uxml");
+#if UNITY_2021_3_OR_NEWER
                 var contents = container.Instantiate();
+#else
+                var contents = new VisualElement();
+                container.CloneTree(contents);
+#endif
                 scrollContentsRoot.Add(contents);
                 scrollContentsRoot = contents.Q<VisualElement>("IconRoot");
             }
@@ -149,7 +154,13 @@ namespace UnityEditor.ProBuilder.UI
 
             for(int i = 0, c = actions.Count; i < c; ++i)
             {
+            #if UNITY_2021_3_OR_NEWER
                 var menu = menuContentAsset.Instantiate().Q<ToolbarMenuItem>();
+            #else
+                var root = new VisualElement();
+                menuContentAsset.CloneTree(root);
+                var menu = root.Q<ToolbarMenuItem>();
+            #endif
                 var action = actions[i];
 
                 menu.iconMode = iconMode;
