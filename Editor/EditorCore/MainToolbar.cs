@@ -42,7 +42,14 @@ namespace UnityEditor.ProBuilder.UI
             var button = ui.Q<Button>("Button");
             button.style.borderLeftColor = color;
             button.tooltip = action.tooltip.summary;
+            #if !UNITY_2023_2_OR_NEWER
+            var icon = button.Q<Image>();
+            if(icon == null)
+                button.Add(icon = new Image());
+            icon.image = action.icon;
+            #else
             button.iconImage = action.icon;
+            #endif
             // todo context click opens options
             return true;
         }
