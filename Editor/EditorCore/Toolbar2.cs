@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
@@ -75,6 +76,8 @@ namespace UnityEditor.ProBuilder.UI
         const string k_IconMode = "ToolbarIcon";
         const string k_TextMode = "ToolbarLabel";
         const string k_UI = "Packages/com.unity.probuilder/Content/UI";
+        const string k_USS_Light = k_UI + "/ToolbarLight.uss";
+        const string k_USS_Dark = k_UI + "/ToolbarDark.uss";
 
         readonly List<ToolbarMenuItem> m_Actions = new List<ToolbarMenuItem>();
 
@@ -122,6 +125,13 @@ namespace UnityEditor.ProBuilder.UI
                 scrollContentsRoot.Add(contents);
                 scrollContentsRoot = contents.Q<VisualElement>("IconRoot");
             }
+
+            var uss = AssetDatabase.LoadAssetAtPath<StyleSheet>(UnityEditor.EditorGUIUtility.isProSkin
+                ? k_USS_Dark
+                : k_USS_Light);
+
+            if(uss != null)
+                scrollContentsRoot.styleSheets.Add(uss);
 
             for(int i = 0, c = actions.Count; i < c; ++i)
             {
