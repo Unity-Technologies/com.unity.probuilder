@@ -86,17 +86,16 @@ namespace UnityEditor.ProBuilder.UI
 
         readonly List<ToolbarMenuItem> m_Actions = new List<ToolbarMenuItem>();
 
-        bool m_IconMode;
+        bool m_IconMode, m_Horizontal;
 
-        public bool iconMode
-        {
-            get => m_IconMode;
-            set => m_IconMode = value;
-        }
+        public bool iconMode => m_IconMode;
 
-        public ProBuilderToolbar(bool iconMode)
+        public bool horizontalMode => m_Horizontal;
+
+        public ProBuilderToolbar(bool iconMode, bool horizontal)
         {
             m_IconMode = iconMode;
+            m_Horizontal = horizontal;
 
             CreateGUI();
 
@@ -129,7 +128,7 @@ namespace UnityEditor.ProBuilder.UI
             var menuContentAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/{(iconMode ? k_IconMode : k_TextMode)}.uxml");
             var actions = EditorToolbarLoader.GetActions(true);
 
-            VisualElement scrollContentsRoot = new ScrollView(ScrollViewMode.Vertical);
+            VisualElement scrollContentsRoot = new ScrollView(m_Horizontal ? ScrollViewMode.Horizontal : ScrollViewMode.Vertical);
             Add(scrollContentsRoot);
 
             if (iconMode)
@@ -202,9 +201,9 @@ namespace UnityEditor.ProBuilder.UI
                 var toolbar = rootVisualElement.Q<ProBuilderToolbar>();
                 if (toolbar != null)
                     rootVisualElement.Remove(toolbar);
-                rootVisualElement.Add(new ProBuilderToolbar(false));
+                rootVisualElement.Add(new ProBuilderToolbar(false, false));
             }) { text = "Rebuild" });
-            rootVisualElement.Add(new ProBuilderToolbar(false));
+            rootVisualElement.Add(new ProBuilderToolbar(false, false));
         }
     }
 }

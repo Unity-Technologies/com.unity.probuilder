@@ -49,6 +49,7 @@ namespace UnityEditor.ProBuilder
         ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
         internal static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         static ProBuilderEditor s_Instance;
+        ProBuilderToolbar m_Toolbar;
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -173,6 +174,9 @@ namespace UnityEditor.ProBuilder
         Event m_CurrentEvent;
 
         internal bool isFloatingWindow { get; private set; }
+
+        // if the ratio is 1/2 height/width then switch to horizontal mode
+        bool horizontalMode => position.height / position.width < .5;
 
         /// <summary>
         /// Gets and sets the current <see cref="SelectMode"/> value.
@@ -320,7 +324,7 @@ namespace UnityEditor.ProBuilder
         void CreateGUI()
         {
             rootVisualElement.Clear();
-            rootVisualElement.Add(new ProBuilderToolbar(s_IsIconGui));
+            rootVisualElement.Add(m_Toolbar = new ProBuilderToolbar(s_IsIconGui, horizontalMode));
         }
 
         void OnSelectModeChanged()
@@ -376,7 +380,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="vertexCountChanged">True if the number of vertices changed, which is the default value.</param>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if(instance != null)
+            if (instance != null)
                 instance.UpdateSelection(vertexCountChanged);
         }
 
@@ -387,8 +391,14 @@ namespace UnityEditor.ProBuilder
 
             Event e = Event.current;
 
+
             switch (e.type)
             {
+                case EventType.Layout:
+                    if (horizontalMode != m_Toolbar.horizontalMode)
+                        CreateGUI();
+                    break;
+
                 case EventType.ContextClick:
                     var menu = new GenericMenu();
                     AddItemsToMenu(menu);
@@ -401,6 +411,7 @@ namespace UnityEditor.ProBuilder
                         selectMode = SelectMode.Object;
                         e.Use();
                     }
+
                     break;
             }
         }
