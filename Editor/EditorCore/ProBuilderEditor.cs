@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
@@ -45,10 +46,8 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
-        EditorToolbar m_Toolbar;
         ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
         internal static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
-        internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
 
         GUIContent[] m_EditModeIcons;
@@ -271,7 +270,6 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderToolManager.selectModeChanged += OnSelectModeChanged;
 
-            m_Toolbar = new EditorToolbar(this);
             m_ToolManager = s_Instance == this ? new ProBuilderToolManager() : null;
 
             SceneView.duringSceneGui += OnSceneGUI;
@@ -308,7 +306,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
-            m_Toolbar.Dispose();
             if(m_ToolManager != null)
                 m_ToolManager.Dispose();
             OnSelectModeChanged();
@@ -318,6 +315,12 @@ namespace UnityEditor.ProBuilder
 
             if(s_Instance == this)
                 s_Instance = null;
+        }
+
+        void CreateGUI()
+        {
+            rootVisualElement.Clear();
+            rootVisualElement.Add(new ProBuilderToolbar(s_IsIconGui));
         }
 
         void OnSelectModeChanged()
@@ -379,9 +382,6 @@ namespace UnityEditor.ProBuilder
 
         void OnGUI()
         {
-            if (m_Toolbar.isIconMode != s_IsIconGui.value)
-                IconModeChanged();
-
             if (m_CommandStyle == null)
                 m_CommandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
@@ -403,20 +403,12 @@ namespace UnityEditor.ProBuilder
                     }
                     break;
             }
-
-            m_Toolbar.OnGUI();
-        }
-
-        void IconModeChanged()
-        {
-            m_Toolbar.Dispose();
-            m_Toolbar = new EditorToolbar(this);
         }
 
         void Menu_ToggleIconMode()
         {
             s_IsIconGui.value = !s_IsIconGui.value;
-            IconModeChanged();
+            CreateGUI();
         }
 
         /// <summary>

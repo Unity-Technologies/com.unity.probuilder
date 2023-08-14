@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
@@ -81,8 +79,18 @@ namespace UnityEditor.ProBuilder.UI
 
         readonly List<ToolbarMenuItem> m_Actions = new List<ToolbarMenuItem>();
 
-        public ProBuilderToolbar()
+        bool m_IconMode;
+
+        public bool iconMode
         {
+            get => m_IconMode;
+            set => m_IconMode = value;
+        }
+
+        public ProBuilderToolbar(bool iconMode)
+        {
+            m_IconMode = iconMode;
+
             CreateGUI();
 
             ProBuilderEditor.selectModeChanged += RefreshVisibility;
@@ -111,7 +119,6 @@ namespace UnityEditor.ProBuilder.UI
         {
             m_Actions.Clear();
 
-            var iconMode = ProBuilderEditor.s_IsIconGui;
             var menuContentAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/{(iconMode ? k_IconMode : k_TextMode)}.uxml");
             var actions = EditorToolbarLoader.GetActions(true);
 
@@ -177,9 +184,9 @@ namespace UnityEditor.ProBuilder.UI
                 var toolbar = rootVisualElement.Q<ProBuilderToolbar>();
                 if (toolbar != null)
                     rootVisualElement.Remove(toolbar);
-                rootVisualElement.Add(new ProBuilderToolbar());
+                rootVisualElement.Add(new ProBuilderToolbar(false));
             }) { text = "Rebuild" });
-            rootVisualElement.Add(new ProBuilderToolbar());
+            rootVisualElement.Add(new ProBuilderToolbar(false));
         }
     }
 }
