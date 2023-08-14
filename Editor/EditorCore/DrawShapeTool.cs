@@ -162,7 +162,9 @@ namespace UnityEditor.ProBuilder
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             ToolManager.activeToolChanged += OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             handleSelectionChange = true;
+
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -177,6 +179,7 @@ namespace UnityEditor.ProBuilder
         void OnDisable()
         {
             Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             ToolManager.activeToolChanged -= OnActiveToolChanged;
             handleSelectionChange = false;
 
@@ -192,12 +195,13 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_ShapePreviewMaterial);
         }
 
+        void OnSelectModeChanged(SelectMode _) => DestroyImmediate(this);
+
         void OnActiveToolChanged()
         {
             if(ToolManager.IsActiveTool(this))
                 SetBounds(currentShapeInOverlay.size);
         }
-
 
         void HandleUndoRedoPerformed()
         {

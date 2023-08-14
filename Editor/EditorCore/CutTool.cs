@@ -182,18 +182,18 @@ namespace UnityEditor.ProBuilder
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
-            if(MeshSelection.selectedObjectCount == 1)
-            {
-                m_Mesh = MeshSelection.activeMesh;
-                m_Mesh.ClearSelection();
 
-                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
-                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
-            }
+            m_Mesh = null;
+            UpdateTarget();
+
+            MeshSelection.objectSelectionChanged += UpdateTarget;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
         }
 
         void OnDisable()
         {
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            MeshSelection.objectSelectionChanged -= UpdateTarget;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
 
             ExecuteCut(false);
@@ -238,6 +238,11 @@ namespace UnityEditor.ProBuilder
             m_MeshConnections.Clear();
 
             m_Dirty = true;
+        }
+
+        void OnSelectModeChanged(SelectMode _)
+        {
+            DestroyImmediate(this);
         }
 
         /// <summary>
