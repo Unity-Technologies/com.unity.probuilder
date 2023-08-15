@@ -140,8 +140,8 @@ namespace UnityEditor.ProBuilder.UI
 #if UNITY_2021_3_OR_NEWER
                     var contents = container.Instantiate();
 #else
-                var contents = new VisualElement();
-                container.CloneTree(contents);
+                    var contents = new VisualElement();
+                    container.CloneTree(contents);
 #endif
                     scrollContentsRoot.Add(contents);
                     scrollContentsRoot = contents.Q<VisualElement>("IconRoot");
@@ -162,13 +162,13 @@ namespace UnityEditor.ProBuilder.UI
 
             for(int i = 0, c = actions.Count; i < c; ++i)
             {
-            #if UNITY_2021_3_OR_NEWER
+#if UNITY_2021_3_OR_NEWER
                 var menu = menuContentAsset.Instantiate().Q<ToolbarMenuItem>();
-            #else
+#else
                 var root = new VisualElement();
                 menuContentAsset.CloneTree(root);
                 var menu = root.Q<ToolbarMenuItem>();
-            #endif
+#endif
                 var action = actions[i];
 
                 menu.iconMode = iconMode;
@@ -194,25 +194,5 @@ namespace UnityEditor.ProBuilder.UI
             RefreshVisibility();
         }
 
-    }
-
-    class Toolbar2 : EditorWindow
-    {
-        ProBuilderToolbar m_Toolbar;
-
-        [MenuItem("Window/Toolbar 2")]
-        static void init() => GetWindow<Toolbar2>();
-
-        public void CreateGUI()
-        {
-            rootVisualElement.Add(new Button(() =>
-            {
-                var toolbar = rootVisualElement.Q<ProBuilderToolbar>();
-                if (toolbar != null)
-                    rootVisualElement.Remove(toolbar);
-                rootVisualElement.Add(new ProBuilderToolbar(false, false));
-            }) { text = "Rebuild" });
-            rootVisualElement.Add(new ProBuilderToolbar(false, false));
-        }
     }
 }
