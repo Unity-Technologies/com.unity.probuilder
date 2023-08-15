@@ -81,6 +81,7 @@ namespace UnityEditor.ProBuilder.UI
         const string k_IconMode = "ToolbarIcon";
         const string k_TextMode = "ToolbarLabel";
         const string k_UI = "Packages/com.unity.probuilder/Content/UI";
+        const string k_USS_Common = k_UI + "/ToolbarCommon.uss";
         const string k_USS_Light = k_UI + "/ToolbarLight.uss";
         const string k_USS_Dark = k_UI + "/ToolbarDark.uss";
 
@@ -133,23 +134,31 @@ namespace UnityEditor.ProBuilder.UI
 
             if (iconMode)
             {
-                var container = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/ToolbarIconContainer.uxml");
+                if (m_Horizontal)
+                {
+                    var container = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>($"{k_UI}/ToolbarIconContainer.uxml");
 #if UNITY_2021_3_OR_NEWER
-                var contents = container.Instantiate();
+                    var contents = container.Instantiate();
 #else
                 var contents = new VisualElement();
                 container.CloneTree(contents);
 #endif
-                scrollContentsRoot.Add(contents);
-                scrollContentsRoot = contents.Q<VisualElement>("IconRoot");
+                    scrollContentsRoot.Add(contents);
+                    scrollContentsRoot = contents.Q<VisualElement>("IconRoot");
+                }
+                else
+                {
+                    scrollContentsRoot.contentContainer.AddToClassList("icon-container-vertical");
+                }
             }
 
+            var common = AssetDatabase.LoadAssetAtPath<StyleSheet>(k_USS_Common);
             var uss = AssetDatabase.LoadAssetAtPath<StyleSheet>(UnityEditor.EditorGUIUtility.isProSkin
                 ? k_USS_Dark
                 : k_USS_Light);
 
-            if(uss != null)
-                scrollContentsRoot.styleSheets.Add(uss);
+            scrollContentsRoot.styleSheets.Add(common);
+            scrollContentsRoot.styleSheets.Add(uss);
 
             for(int i = 0, c = actions.Count; i < c; ++i)
             {
