@@ -1,8 +1,8 @@
 
-ToolbarMenuItem .unity-label:hover {
+ToolbarMenuItem:hover .unity-label {
     color: rgba(60, 60, 60, 255);
 }
 
-ToolbarMenuItem .unity-label:active {
+ToolbarMenuItem:active .unity-label {
     color: rgba(40, 40, 40, 255);
 }
