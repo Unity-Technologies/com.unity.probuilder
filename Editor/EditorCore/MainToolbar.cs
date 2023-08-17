@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
@@ -181,7 +183,11 @@ namespace UnityEditor.ProBuilder.UI
                 var button = menu.Q<Button>("Button");
                 button.clicked += () => action.PerformAction();
 
-                if (!iconMode)
+                if (iconMode)
+                {
+                    button.AddManipulator(new ContextClickManipulator(action.PerformAltAction));
+                }
+                else
                 {
                     var options = menu.Q<Button>("Options");
                     options.clicked += action.PerformAltAction;
