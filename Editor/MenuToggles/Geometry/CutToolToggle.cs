@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder.Actions
     /// <summary>
     /// Represents the [Cut tool](../manual/cut-tool.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    public class CutToolToggle : MenuAction
+    public class CutToolToggle : MenuToolToggle
     {
         /// <inheritdoc/>
         public override ToolbarGroup group
