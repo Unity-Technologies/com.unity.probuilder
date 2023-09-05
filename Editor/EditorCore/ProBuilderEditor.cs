@@ -391,11 +391,10 @@ namespace UnityEditor.ProBuilder
 
             Event e = Event.current;
 
-
             switch (e.type)
             {
                 case EventType.Layout:
-                    if (horizontalMode != m_Toolbar.horizontalMode)
+                    if (horizontalMode != m_Toolbar?.horizontalMode)
                         CreateGUI();
                     break;
 
