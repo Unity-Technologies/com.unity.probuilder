@@ -106,12 +106,12 @@ namespace UnityEditor.ProBuilder
         {
             if(go.TryGetComponent<ProBuilderMesh>(out var mesh))
                 OnObjectCreated(mesh);
-            // var childCount = go.transform.childCount;
-            // if (childCount > 0)
-            // {
-            //     for(int childIndex = 0; childIndex < childCount; ++childIndex)
-            //         CheckForProBuilderMeshesCreatedOrModified(go.transform.GetChild(childIndex).gameObject);
-            // }
+            var childCount = go.transform.childCount;
+            if (childCount > 0)
+            {
+                for(int childIndex = 0; childIndex < childCount; ++childIndex)
+                    CheckForProBuilderMeshesCreatedOrModified(go.transform.GetChild(childIndex).gameObject);
+            }
         }
 
         // used by tests
