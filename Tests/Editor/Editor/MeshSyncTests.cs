@@ -63,8 +63,9 @@ class MeshSyncTests : TemporaryAssetTest
         Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
     }
 
+    //[PBLD-75] Sending the event to the scene view is needed as just calling HierarchyListener.OnObjectCreated
+    // is not reproducing the actual bug.
     [UnityTest]
-    //[TestCaseSource(nameof(CopyPasteDuplicate))]
     public IEnumerator ExecuteCopyPasteDuplicateOnParent_CreatesUniqueMesh()
     {
         string[] commands = new[] { "Duplicate" };
