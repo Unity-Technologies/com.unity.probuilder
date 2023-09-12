@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.TestTools;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 class MeshSyncTests : TemporaryAssetTest
@@ -52,6 +53,51 @@ class MeshSyncTests : TemporaryAssetTest
         Assume.That(parent.transform.childCount, Is.EqualTo(2));
 
         var copy = parent.GetChild(1).GetComponent<ProBuilderMesh>();
+
+        // this is called by ObjectChangeKind.CreateGameObjectHierarchy in HierarchyListener. for the sake of the test
+        // we'll assume that the callback is working as intended. this way we avoid waiting til end of frame for the
+        // events to flush.
+        HierarchyListener.OnObjectCreated(copy);
+
+        Assume.That(copy, Is.Not.EqualTo(cube));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
+    }
+
+    [UnityTest]
+    //[TestCaseSource(nameof(CopyPasteDuplicate))]
+    public IEnumerator ExecuteCopyPasteDuplicateOnParent_CreatesUniqueMesh()
+    {
+        string[] commands = new[] { "Duplicate" };
+        var parent = new GameObject().transform;
+        var emptyGO = new GameObject().transform;
+        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstCorner);
+
+        emptyGO.parent = parent;
+        cube.transform.parent = emptyGO;
+
+        Assume.That(parent.childCount, Is.EqualTo(1));
+        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+
+        Selection.objects = new[] { emptyGO.gameObject };
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        foreach (var command in commands)
+        {
+            var evt = new Event(){type = EventType.ExecuteCommand, commandName = command};
+            SceneView.lastActiveSceneView.SendEvent(evt);
+        }
+        //    Assume.That(EditorApplication.ExecuteMenuItem(command), Is.True);
+
+        var count = 0;
+        while (parent.transform.childCount < 2 && count < 100)
+        {
+            count++;
+            yield return null;
+        }
+        Assert.That(count, Is.Not.EqualTo(100), "Exiting from the duplicate loop after too many attempts.");
+
+        //parent.GetChild(1) is the duplicated emptyGO
+        var copy = parent.GetChild(1).GetChild(0).GetComponent<ProBuilderMesh>();
 
         // this is called by ObjectChangeKind.CreateGameObjectHierarchy in HierarchyListener. for the sake of the test
         // we'll assume that the callback is working as intended. this way we avoid waiting til end of frame for the
