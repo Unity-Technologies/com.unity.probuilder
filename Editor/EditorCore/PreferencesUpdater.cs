@@ -46,8 +46,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        // for upgrading from pre-4.0.0 preferences this keymap is used. for renaming post 4.0.0 settings, use
-        // [FormerlySavedAs] attribute (not yet created).
+        // when upgrading from pre-4.0.0 preferences this keymap is used
         static readonly FormerPreferenceKeyMap[] s_FormerPreferenceKeyMap = new FormerPreferenceKeyMap[]
         {
 #pragma warning disable 612, 618

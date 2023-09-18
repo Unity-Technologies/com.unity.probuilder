@@ -77,12 +77,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         internal const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
-        static readonly GUIContent AltButtonContent = new GUIContent("+", "");
-
-        static readonly Vector2 AltButtonSize = new Vector2(21, 0);
-
-        Vector2 m_LastCalculatedSize = Vector2.zero;
-
         /// <summary>
         /// Invoked when the user selects an action to perform from the toolbar.
         /// </summary>
@@ -93,7 +87,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         protected MenuAction()
         {
-            iconMode = ProBuilderEditor.s_IsIconGui;
         }
 
         /// <summary>
@@ -108,59 +101,24 @@ namespace UnityEditor.ProBuilder
             {
                 if (right == null)
                     return 0;
-                else
-                    return -1;
+                return -1;
             }
-            else
-            {
-                if (right == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    int l = (int)left.group, r = (int)right.group;
 
-                    if (l < r)
-                        return -1;
-                    else if (l > r)
-                        return 1;
-                    else
-                    {
-                        int lp = left.toolbarPriority < 0 ? int.MaxValue : left.toolbarPriority,
-                            rp = right.toolbarPriority < 0 ? int.MaxValue : right.toolbarPriority;
+            if (right == null)
+                return 1;
 
-                        return lp.CompareTo(rp);
-                    }
-                }
-            }
-        }
+            int l = (int)left.group, r = (int)right.group;
 
-        Texture2D m_DesaturatedIcon = null;
+            if (l < r)
+                return -1;
 
-        /// <summary>
-        /// Gets the icon to use when the action button on the toolbar is disabled. By default, this function looks for an image named
-        /// `${icon}_disabled`. Override this function if your disabled icon does not follow that naming convention or location.
-        /// </summary>
-        protected virtual Texture2D disabledIcon
-        {
-            get
-            {
-                if (m_DesaturatedIcon == null)
-                {
-                    if (icon == null)
-                        return null;
+            if (l > r)
+                return 1;
 
-                    m_DesaturatedIcon = IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
+            int lp = left.toolbarPriority < 0 ? int.MaxValue : left.toolbarPriority,
+                rp = right.toolbarPriority < 0 ? int.MaxValue : right.toolbarPriority;
 
-#if GENERATE_DESATURATED_ICONS
-                    if (!m_DesaturatedIcon)
-                        m_DesaturatedIcon = ProBuilder2.EditorCommon.DebugUtilities.pb_GenerateDesaturatedImage.CreateDesaturedImage(icon);
-#endif
-                }
-
-                return m_DesaturatedIcon;
-            }
+            return lp.CompareTo(rp);
         }
 
         /// <summary>
@@ -349,23 +307,6 @@ namespace UnityEditor.ProBuilder
         /// Called when the settings window is closed.
         /// </summary>
         protected virtual void OnSettingsDisable() {}
-
-        /// <summary>
-        /// Gets or sets whether the [Toolbar display mode](../manual/toolbar.html#toolbar-display-modes)
-        /// is set to Icon mode (true) or Text mode (false).
-        /// </summary>
-        protected bool iconMode { get; set; }
-
-        /// <summary>
-        /// Draws the menu item for this action in Text mode.
-        /// </summary>
-        /// <param name="options">Optional array of layout options for this menu item.</param>
-        /// <returns>True if successful; false otherwise.</returns>
-        [Obsolete]
-        protected bool DoAltButton(params GUILayoutOption[] options)
-        {
-            return false;
-        }
 
         public event Action changed;
 

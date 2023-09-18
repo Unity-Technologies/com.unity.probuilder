@@ -5,18 +5,13 @@ using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
-using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
-using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
 using UnityEngine.Assertions;
 
-#if UNITY_2020_2_OR_NEWER
+using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
+using UObject = UnityEngine.Object;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -75,9 +70,6 @@ namespace UnityEditor.ProBuilder
             "Toggle the display of information about selected meshes in the Scene View.")]
         static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
 
-        [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
-        internal static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
-
         [UserSetting("Mesh Editing", "Allow non-manifold actions",
             "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
         internal static Pref<bool> s_AllowNonManifoldActions =
@@ -88,9 +80,6 @@ namespace UnityEditor.ProBuilder
         static Pref<SceneToolbarLocation> s_SceneToolbarLocation =
             new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter,
                 SettingsScope.User);
-
-        static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow",
-            false, SettingsScope.Project);
 
         static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
 
@@ -156,7 +145,6 @@ namespace UnityEditor.ProBuilder
         SelectMode m_LastComponentMode;
 
         GUIStyle m_CommandStyle;
-        Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
         int m_DefaultControl;
         SceneSelection m_Hovering = new SceneSelection();
