@@ -59,7 +59,6 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             int selectionCount = MeshSelection.selectedObjectCount;
-
             if (selectionCount < 1)
                 return new ActionResult(ActionResult.Status.NoChange, "Set Trigger\nNo objects selected");
 

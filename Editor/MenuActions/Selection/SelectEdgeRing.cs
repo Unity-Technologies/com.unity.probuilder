@@ -1,10 +1,11 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -18,10 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Ring", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Ring_Edge"); } }
 
         public override TooltipContent tooltip
         {
@@ -102,6 +100,24 @@ namespace UnityEditor.ProBuilder.Actions
 
             return new ActionResult(ActionResult.Status.Failure, "Nothing to Ring");
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle(gc_selectIterative.text);
+            toggle.tooltip = gc_selectIterative.tooltip;
+            toggle.SetValueWithoutNotify(m_SelectIterative);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_SelectIterative.SetValue(evt.newValue);
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

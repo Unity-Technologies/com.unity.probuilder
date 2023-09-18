@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEditor.Actions;
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class ProBuilderize : MenuAction
@@ -33,10 +38,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize"); } }
 
         public override TooltipContent tooltip
         {
@@ -66,6 +68,92 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
+        static bool ValidateProBuilderizeMeshAction()
+        {
+            return EditorToolbarLoader.GetInstance<ProBuilderize>().enabled;
+        }
+
+        // This boolean allows to call the action only once in case of multi-selection as PB actions
+        // are called on the entire selection and not per element.
+        static bool s_ActionAlreadyTriggered = false;
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", false, 11)]
+        static void ProBuilderizeMeshAction(MenuCommand command)
+        {
+            if (!s_ActionAlreadyTriggered)
+            {
+                var filter = (MeshFilter)command.context;
+                //Check if we are not trying to Probuilderize a PB mesh
+                if (filter.GetComponent<ProBuilderMesh>() != null)
+                    return;
+
+                s_ActionAlreadyTriggered = true;
+                //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
+                EditorApplication.delayCall += () =>
+                {
+                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+                    s_ActionAlreadyTriggered = false;
+                };
+            }
+        }
+
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var quadsToggle = new Toggle(m_QuadsTooltip.text);
+            quadsToggle.tooltip = m_QuadsTooltip.tooltip;
+            quadsToggle.SetValueWithoutNotify(m_Quads);
+            root.Add(quadsToggle);
+
+            var smoothingToggle = new Toggle(m_SmoothingTooltip.text);
+            smoothingToggle.tooltip = m_SmoothingTooltip.tooltip;
+            smoothingToggle.SetValueWithoutNotify(m_Smoothing);
+            root.Add(smoothingToggle);
+
+            var line = new VisualElement();
+            line.style.flexDirection = FlexDirection.Row;
+            root.Add(line);
+
+            var smoothingSlider = new Slider(m_SmoothingThresholdTooltip.text, 0.0001f, 45f);
+            smoothingSlider.tooltip = m_SmoothingThresholdTooltip.tooltip;
+            smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
+            smoothingSlider.style.flexGrow = 1;
+            smoothingSlider.SetEnabled(m_Smoothing);
+            line.Add(smoothingSlider);
+
+            var smoothingSliderValue = new FloatField();
+            smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
+            smoothingSliderValue.isDelayed = true;
+            smoothingSliderValue.style.width = 50;
+            line.Add(smoothingSliderValue);
+
+            quadsToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_Quads.SetValue(evt.newValue);
+            });
+            smoothingToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_Smoothing.SetValue(evt.newValue);
+                smoothingSlider.SetEnabled(m_Smoothing);
+            });
+            smoothingSlider.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                m_SmoothingAngle.SetValue(evt.newValue);
+                smoothingSliderValue.SetValueWithoutNotify(m_SmoothingAngle);
+            });
+            smoothingSliderValue.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                m_SmoothingAngle.SetValue(evt.newValue);
+                smoothingSlider.SetValueWithoutNotify(m_SmoothingAngle);
+            });
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

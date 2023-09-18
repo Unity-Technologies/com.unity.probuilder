@@ -9,6 +9,9 @@ using UnityEngine.ProBuilder.MeshOperations;
 using EditorGUILayout = UnityEditor.EditorGUILayout;
 using EditorStyles = UnityEditor.EditorStyles;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -21,10 +24,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Edge_FillHole", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_FillHole"); } }
 
         public override TooltipContent tooltip
         {
@@ -51,6 +51,27 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle("Fill Entire Hole");
+            toggle.tooltip = "Fill Hole can optionally fill entire holes (default) or just the selected vertices on the hole edges. If no elements are selected, the entire object will be scanned for holes.";
+            toggle.style.flexGrow =1;
+            toggle.SetValueWithoutNotify(m_SelectEntirePath);
+            toggle.RegisterCallback<ChangeEvent<bool>>(OnFillHoleToggleChanged);
+            root.Add(toggle);
+
+            return root;
+        }
+
+        void OnFillHoleToggleChanged(ChangeEvent<bool> evt)
+        {
+            m_SelectEntirePath.SetValue(evt.newValue);
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

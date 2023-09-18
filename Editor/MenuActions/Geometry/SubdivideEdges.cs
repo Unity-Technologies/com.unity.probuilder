@@ -1,7 +1,11 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -19,10 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide"); } }
 
         public override TooltipContent tooltip
         {
@@ -56,6 +57,150 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        Vector2IntField m_RangeField;
+        IntegerField m_SubdivCount;
+        SliderInt m_Slider;
+
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var line = new VisualElement();
+            line.style.flexDirection = FlexDirection.Row;
+            var tooltip = "How many vertices to insert on each selected edge. Vertices will be equally spaced between " +
+                "one another and the boundaries of the edge.";
+
+            var foldout = new Foldout();
+            foldout.SetValueWithoutNotify(m_SubdivisionRangeExpanded.value);
+            foldout.RegisterCallback<ChangeEvent<bool>>(OnFoldoutChanged);
+            m_Slider = new SliderInt("Subdivisions", m_SubdivisionUIMin, m_SubdivisionUIMax);
+            m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+            m_Slider.tooltip = tooltip;
+            m_Slider.RegisterCallback<ChangeEvent<int>>(OnSliderChanged);
+            m_Slider.style.flexGrow = 1f;
+            m_SubdivCount = new IntegerField();
+            m_SubdivCount.isDelayed = true;
+            m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+            m_SubdivCount.tooltip = tooltip;
+            m_SubdivCount.RegisterCallback<ChangeEvent<int>>(OnCountChanged);
+            m_SubdivCount.style.width = 40;
+            line.Add(foldout);
+            line.Add(m_Slider);
+            line.Add(m_SubdivCount);
+            root.Add(line);
+
+            m_RangeField = new Vector2IntField("Range");
+            m_RangeField.style.paddingLeft = new StyleLength(25);
+            m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
+            m_RangeField.Q<Label>().style.flexGrow = 1;
+
+            var label = m_RangeField.Q<IntegerField>("unity-x-input").Q<Label>();
+            label.text = String.Empty;
+            label.style.flexGrow = 0;
+            label = m_RangeField.Q<IntegerField>("unity-y-input").Q<Label>();
+            label.text = String.Empty;
+            label.style.flexGrow = 0;
+
+            var field = m_RangeField.Q<IntegerField>("unity-x-input");
+            field.isDelayed = true;
+            field.RegisterCallback<ChangeEvent<int>>(OnMinChanged);
+            field.style.width = 40f;
+            var child = field[0];
+            child.style.display = DisplayStyle.None;
+            child = m_RangeField.Q<IntegerField>("unity-x-input")[1];
+            child.style.flexShrink = 0;
+
+            field = m_RangeField.Q<IntegerField>("unity-y-input");
+            field.isDelayed = true;
+            field.RegisterCallback<ChangeEvent<int>>(OnMaxChanged);
+            field.style.width = 40f;
+            child = field[0];
+            child.style.display = DisplayStyle.None;
+            child = m_RangeField.Q<IntegerField>("unity-y-input")[1];
+            child.style.flexShrink = 0;
+
+            child = m_RangeField[1][2];
+            child.style.display = DisplayStyle.None;
+
+            m_RangeField.style.display = m_SubdivisionRangeExpanded.value ? DisplayStyle.Flex : DisplayStyle.None;
+            root.Add(m_RangeField);
+
+            return root;
+        }
+
+        void OnFoldoutChanged(ChangeEvent<bool> evt)
+        {
+            if(m_SubdivisionRangeExpanded.value == evt.newValue)
+                return;
+
+            m_SubdivisionRangeExpanded.SetValue(evt.newValue);
+            m_RangeField.style.display = m_SubdivisionRangeExpanded.value ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        void OnSliderChanged(ChangeEvent<int> evt)
+        {
+            if(m_SubdivisionCount.value == evt.newValue)
+                return;
+
+            m_SubdivisionCount.SetValue(evt.newValue);
+            m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+        }
+
+        void OnCountChanged(ChangeEvent<int> evt)
+        {
+            if(m_SubdivisionCount.value == evt.newValue)
+                return;
+
+            m_SubdivisionCount.SetValue(evt.newValue < 1 ? 1 : evt.newValue);
+            if (m_SubdivisionCount.value < m_SubdivisionUIMin.value)
+            {
+                m_SubdivisionUIMin.SetValue(m_SubdivisionCount.value);
+                m_Slider.lowValue = m_SubdivisionUIMin.value;
+                m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
+            }
+            if (m_SubdivisionCount.value > m_SubdivisionUIMax.value)
+            {
+                m_SubdivisionUIMax.SetValue(m_SubdivisionCount.value);
+                m_Slider.highValue = m_SubdivisionUIMax.value;
+                m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
+            }
+            m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+        }
+
+        void OnMinChanged(ChangeEvent<int> evt)
+        {
+            if(m_SubdivisionUIMin.value == evt.newValue)
+                return;
+
+            m_SubdivisionUIMin.SetValue(evt.newValue < 1 ? 1 : evt.newValue);
+            m_Slider.lowValue = m_SubdivisionUIMin.value;
+            m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
+            if (m_SubdivisionCount.value < m_SubdivisionUIMin.value)
+            {
+                m_SubdivisionCount.SetValue(m_SubdivisionUIMin.value);
+                m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+                m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+            }
+        }
+
+        void OnMaxChanged(ChangeEvent<int> evt)
+        {
+            if(m_SubdivisionUIMax.value == evt.newValue)
+                return;
+
+            m_SubdivisionUIMax.SetValue(evt.newValue);
+            m_Slider.highValue = m_SubdivisionUIMax.value;
+            m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
+            if (m_SubdivisionCount.value > m_SubdivisionUIMax.value)
+            {
+                m_SubdivisionCount.SetValue(m_SubdivisionUIMax.value);
+                m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+                m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+            }
+        }
+#endif
+
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Subdivide Edge Settings", EditorStyles.boldLabel);
@@ -70,7 +215,6 @@ namespace UnityEditor.ProBuilder.Actions
             m_SubdivisionUIMin.value = minUIRange;
             m_SubdivisionUIMax.value = maxUIRange;
             m_SubdivisionRangeExpanded.value = expanded;
-
 
             if (EditorGUI.EndChangeCheck())
                 ProBuilderSettings.Save();

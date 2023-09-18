@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -9,14 +12,15 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_ExtrudeEdgeDistance = new Pref<float>("ExtrudeEdges.distance", .5f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Extrude", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Extrude"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         protected override bool hasFileMenuEntry { get { return false; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Extrude Edges",
-                @"Adds a new face extending from the currently selected edges.  Edges must have an open side to be extruded.",
+                @"Adds a new face extending from the currently selected edges. Edges must have an open side to be extruded.
+                NB : Allow non-manifold actions should be authorized in ProBuilder preferences to enable this action.",
                 keyCommandSuper, 'E'
             );
 
@@ -27,13 +31,45 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return base.enabled && MeshSelection.selectedEdgeCount > 0; }
+            get { return base.enabled && MeshSelection.selectedEdgeCount > 0 && ProBuilderEditor.s_AllowNonManifoldActions; }
         }
 
         protected override MenuActionState optionsMenuState
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle("As Group");
+            toggle.tooltip = "Extrude as Group determines whether or not adjacent faces stay attached to one another when extruding.";
+            toggle.SetValueWithoutNotify(VertexManipulationTool.s_ExtrudeEdgesAsGroup);
+            toggle.RegisterCallback<ChangeEvent<bool>>(OnEdgesAsGroupChanged);
+            root.Add(toggle);
+
+            var floatField = new FloatField("Distance");
+            floatField.isDelayed = true;
+            floatField.tooltip = "Extrude Amount determines how far an edge will be moved along it's normal when extruding. This value can be negative.";
+            floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
+            floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
+            root.Add(floatField);
+
+            return root;
+        }
+
+        void OnEdgesAsGroupChanged(ChangeEvent<bool> evt)
+        {
+            VertexManipulationTool.s_ExtrudeEdgesAsGroup.SetValue(evt.newValue);
+        }
+
+        void OnExtrudeChanged(ChangeEvent<float> evt)
+        {
+            m_ExtrudeEdgeDistance.SetValue(evt.newValue);
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

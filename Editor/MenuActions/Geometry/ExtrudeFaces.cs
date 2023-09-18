@@ -1,7 +1,9 @@
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -15,27 +17,12 @@ namespace UnityEditor.ProBuilder.Actions
             set { VertexManipulationTool.s_ExtrudeMethod.value = value; }
         }
 
-        static string GetExtrudeIconString(ExtrudeMethod m)
-        {
-            return m == ExtrudeMethod.VertexNormal ? "Toolbar/ExtrudeFace_VertexNormals"
-                : m == ExtrudeMethod.FaceNormal ? "Toolbar/ExtrudeFace_FaceNormals"
-                : "Toolbar/ExtrudeFace_Individual";
-        }
-
         public override ToolbarGroup group
         {
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon(GetExtrudeIconString(extrudeMethod), IconSkin.Pro); }
-        }
-
-        protected override Texture2D disabledIcon
-        {
-            get { return IconUtility.GetIcon(string.Format("{0}_disabled", GetExtrudeIconString(extrudeMethod)), IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Extrude"); } }
 
         public override TooltipContent tooltip
         {
@@ -78,6 +65,50 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var extrudeMethodLabel = new Label();
+            extrudeMethodLabel.tooltip = " You may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.";
+            extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
+            extrudeMethodLabel.style.height = 22;
+            extrudeMethodLabel.style.width = 36;
+
+            var extrudeMethodField = new EnumField("Extrude By", extrudeMethod);
+            extrudeMethodField.tooltip = " You may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.";
+            extrudeMethodField.RegisterCallback<ChangeEvent<string>>(evt =>
+            {
+                System.Enum.TryParse(evt.newValue, out ExtrudeMethod newValue);
+                if (extrudeMethod != newValue)
+                {
+                    extrudeMethod = newValue;
+                    extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
+                    ProBuilderSettings.Save();
+                }
+            });
+            extrudeMethodField.style.flexGrow = 1;
+            var line = new VisualElement();
+            line.style.flexDirection = FlexDirection.Row;
+            line.Add(extrudeMethodField);
+            line.Add(extrudeMethodLabel);
+            root.Add(line);
+
+            var distanceField = new FloatField("Distance");
+            distanceField.tooltip = "Extrude Amount determines how far a face will be moved along it's normal when extruding. This value can be negative.";
+            distanceField.SetValueWithoutNotify(m_ExtrudeDistance.value);
+            distanceField.isDelayed = true;
+            distanceField.RegisterCallback<ChangeEvent<float>>(evt =>
+            {
+                m_ExtrudeDistance.SetValue(evt.newValue);
+            });
+            root.Add(distanceField);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

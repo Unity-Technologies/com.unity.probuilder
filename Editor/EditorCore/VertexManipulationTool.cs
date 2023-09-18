@@ -86,6 +86,8 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        internal static event Action handleOrientationChanged;
+
         /// <value>
         /// How the handle is rotated relative to the current selection.
         /// </value>
@@ -116,6 +118,7 @@ namespace UnityEditor.ProBuilder
                 var toolbar = typeof(EditorWindow).Assembly.GetType("UnityEditor.Toolbar");
                 var repaint = toolbar.GetMethod("RepaintToolbar", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
                 repaint.Invoke(null, null);
+                handleOrientationChanged?.Invoke();
             }
         }
 

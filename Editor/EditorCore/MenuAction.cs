@@ -3,6 +3,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -19,7 +22,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Determines whether the menu item is visible, and if visible, whether it is enabled.
         /// </summary>
-        [System.Flags]
+        [Flags]
         public enum MenuActionState
         {
             /// <summary>
@@ -175,11 +178,8 @@ namespace UnityEditor.ProBuilder
         public virtual int toolbarPriority { get { return -1; } }
 
         /// <summary>
-        /// Gets the icon to display on the toolbar for this action.
+        /// Gets the icon to display in the Context Menu for this action.
         /// </summary>
-        /// <remarks>
-        /// This property is not used when the [Toolbar display mode](../manual/toolbar.html#toolbar-display-modes) is set to text.
-        /// </remarks>
         public abstract Texture2D icon { get; }
 
         /// <summary>
@@ -268,6 +268,11 @@ namespace UnityEditor.ProBuilder
         internal bool optionsVisible => optionsMenuState != MenuActionState.Hidden;
         internal bool optionsEnabled => optionsMenuState == MenuActionState.VisibleAndEnabled;
 
+        internal bool hasOptions
+        {
+            get => (optionsMenuState & MenuActionState.Visible) == MenuActionState.Visible;
+        }
+
         /// <summary>
         /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
         /// Calling this method triggers the <see cref="onPerformAction"/> event.
@@ -301,6 +306,8 @@ namespace UnityEditor.ProBuilder
         [Obsolete(obsoleteDoActionMsg, false)]
         public ActionResult DoAction() => PerformAction();
 
+        internal void OpenSettings() => DoAlternateAction();
+
         /// <summary>
         /// Performs the action for this menu item when in Text mode.
         /// </summary>
@@ -310,6 +317,23 @@ namespace UnityEditor.ProBuilder
         }
 
         public void PerformAltAction() => DoAlternateAction();
+
+#if UNITY_2023_2_OR_NEWER
+        /// <summary>
+        /// Replaces OnSettingsGUI for 2023.2 and newer to display settings in a SceneView overlay.
+        /// Creates a custom settings window for this action. Populate a root visual element in that method with
+        /// the settings content.
+        /// </summary>
+        public virtual VisualElement CreateSettingsContent()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
+        /// </summary>
+        public virtual void DoSceneGUI(SceneView sceneView) {}
+#endif
 
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.

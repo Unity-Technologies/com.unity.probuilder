@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class NewPolyShapeToggle : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/NewPolyShape", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CreatePolyShape"); } }
         public override TooltipContent tooltip { get { return _tooltip; } }
         public override string menuTitle { get { return "New Poly Shape"; } }
         public override int toolbarPriority { get { return 1; } }

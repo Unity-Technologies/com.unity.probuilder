@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
-using Math = System.Math;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -15,10 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Pivot_Reset", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_FreezeTransform"); } }
 
         public override TooltipContent tooltip
         {
@@ -78,7 +71,6 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
-
             SceneView.RepaintAll();
 
             return new ActionResult(ActionResult.Status.Success, "Freeze Transforms");
