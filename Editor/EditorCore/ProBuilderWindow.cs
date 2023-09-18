@@ -6,11 +6,10 @@ namespace UnityEditor.ProBuilder
 {
     sealed class ProBuilderWindow : EditorWindow, IHasCustomMenu
     {
-        static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow",
-            false, SettingsScope.Project);
+        static readonly Pref<bool> s_WindowIsFloating = new ("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow", false);
 
         [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
-        static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
+        static readonly Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
 
         // reference is only kept to manage horizontal/vertical layouts
         ProBuilderToolbar m_Toolbar;
@@ -18,7 +17,7 @@ namespace UnityEditor.ProBuilder
         // if the ratio is 1/2 height/width then switch to horizontal mode
         bool horizontalMode => position.height / position.width < .5;
 
-        [MenuItem("Window/Probuilder")]
+        [MenuItem("Tools/ProBuilder/Toolbar", priority = 0)]
         public static void MenuOpenWindow()
         {
             GetWindow<ProBuilderWindow>(s_WindowIsFloating, "Probuilder", true);
