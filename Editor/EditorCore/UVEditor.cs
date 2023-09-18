@@ -272,7 +272,7 @@ namespace UnityEditor.ProBuilder
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
-            var selectMode = ProBuilderToolManager.selectMode;
+            var selectMode = ProBuilderEditor.selectMode;
             if (selectMode.IsTextureMode())
                 ProBuilderEditor.selectMode = selectMode.GetPositionMode();
 

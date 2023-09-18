@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
         // This is the main call to register an action event
         public static void SendActionEvent(MenuAction mAction, TriggerType triggerType)
         {
-            var data = new ProBuilderAnalytics(mAction, ProBuilderToolManager.selectMode, triggerType);
+            var data = new ProBuilderAnalytics(mAction, ProBuilderEditor.selectMode, triggerType);
 
             // Don't send analytics when editor is used by an automated system
             #if !PB_ANALYTICS_ALLOW_AUTOMATION

@@ -10,8 +10,12 @@ namespace UnityEditor.ProBuilder.UI
 {
     class SelectModeToggle : EditorToolbarToggle
     {
+        SelectMode m_Mode;
+
         public SelectModeToggle(SelectMode mode)
         {
+            m_Mode = mode;
+
             switch (mode)
             {
                 case SelectMode.Face:
@@ -32,7 +36,15 @@ namespace UnityEditor.ProBuilder.UI
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode));
             }
+
+            RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderEditor.selectModeChanged += UpdateSelectMode; });
+            RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderEditor.selectModeChanged -= UpdateSelectMode; });
+            this.RegisterValueChangedCallback(evt => { ProBuilderEditor.selectMode = m_Mode; });
+
+            UpdateSelectMode(ProBuilderEditor.selectMode);
         }
+
+        void UpdateSelectMode(SelectMode obj) => SetValueWithoutNotify(obj == m_Mode);
     }
 
     [EditorToolbarElement("ProBuilder Settings/Select Mode")]

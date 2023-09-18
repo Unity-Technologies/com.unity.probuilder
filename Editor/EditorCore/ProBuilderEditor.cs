@@ -55,6 +55,22 @@ namespace UnityEditor.ProBuilder
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
 
+        static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>(nameof(s_SelectMode), SelectMode.Face);
+
+        /// <summary>
+        /// Gets and sets the current <see cref="SelectMode"/> value.
+        /// </summary>
+        public static SelectMode selectMode
+        {
+            get => s_SelectMode;
+
+            set
+            {
+                s_SelectMode.SetValue(value);
+                selectModeChanged?.Invoke(value);
+            }
+        }
+
         [UserSetting("General", "Show Scene Info",
             "Toggle the display of information about selected meshes in the Scene View.")]
         static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
@@ -178,15 +194,6 @@ namespace UnityEditor.ProBuilder
 
         Event m_CurrentEvent;
 
-        /// <summary>
-        /// Gets and sets the current <see cref="SelectMode"/> value.
-        /// </summary>
-        public static SelectMode selectMode
-        {
-            get => ProBuilderToolManager.selectMode;
-            set => ProBuilderToolManager.selectMode = value;
-        }
-
         static class SceneStyles
         {
             static bool s_Init = false;
@@ -234,6 +241,7 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+            selectModeChanged += OnSelectModeChanged;
 
             ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
 
@@ -250,6 +258,7 @@ namespace UnityEditor.ProBuilder
         {
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
+            selectModeChanged -= OnSelectModeChanged;
 
             ClearElementSelection();
 
@@ -264,7 +273,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
-            OnSelectModeChanged();
 
             SceneView.RepaintAll();
 
@@ -272,11 +280,9 @@ namespace UnityEditor.ProBuilder
                 s_Instance = null;
         }
 
-        void OnSelectModeChanged()
+        void OnSelectModeChanged(SelectMode obj)
         {
             Refresh();
-            if (selectModeChanged != null)
-                selectModeChanged(ProBuilderToolManager.selectMode);
         }
 
         void BeforeMeshModification(IEnumerable<ProBuilderMesh> meshes)
@@ -326,8 +332,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="vertexCountChanged">True if the number of vertices changed, which is the default value.</param>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if (instance != null)
-                instance.UpdateSelection(vertexCountChanged);
+            instance?.UpdateSelection(vertexCountChanged);
         }
 
         public void OnSceneGUI(SceneView sceneView)

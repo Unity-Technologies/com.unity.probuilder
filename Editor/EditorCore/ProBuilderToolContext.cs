@@ -11,15 +11,7 @@ namespace UnityEditor.ProBuilder
 {
     static class ProBuilderToolManager
     {
-        static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>(nameof(s_SelectMode), SelectMode.Face);
-
         public static Tool activeTool => Tools.current;
-
-        public static SelectMode selectMode
-        {
-            get => SelectMode.Face;
-            set => s_SelectMode.SetValue(value);
-        }
     }
 
     [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
@@ -140,7 +132,6 @@ namespace UnityEditor.ProBuilder
                 return;
             m_Editor.OnSceneGUI(view);
         }
-
     }
 
     class TextureToolContext : EditorToolContext
