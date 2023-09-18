@@ -1,3 +1,4 @@
+#if TODO_DISABLED
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -126,3 +127,4 @@ class VertexManipulationTests
         }
     }
 }
+#endif

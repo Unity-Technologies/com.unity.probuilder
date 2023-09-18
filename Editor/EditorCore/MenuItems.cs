@@ -1,29 +1,9 @@
-using UnityEngine;
-using UnityEditor;
-using System.Linq;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
     static class MenuItems
     {
-        static ProBuilderEditor editor
-        {
-            get { return ProBuilderEditor.instance; }
-        }
-
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/" + PreferenceKeys.pluginTitle + " Window", false,
-             PreferenceKeys.menuEditor)]
-        public static void OpenEditorWindow()
-        {
-            ProBuilderEditor.MenuOpenWindow();
-        }
-
-        static ProBuilderMesh[] selection
-        {
-            get { return Selection.transforms.GetComponents<ProBuilderMesh>(); }
-        }
-
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 1 &#1", true,
              PreferenceKeys.menuVertexColors)]
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Vertex Colors/Set Selected Faces to Preset 2 &#2", true,

@@ -93,8 +93,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-            ProBuilderEditor.selectMode = SelectMode.Object;
-
             ToolManager.SetActiveTool<PolyShapeTool>();
 
             return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");

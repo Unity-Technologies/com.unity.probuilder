@@ -85,10 +85,7 @@ namespace UnityEditor.ProBuilder
                && ToolManager.activeToolType != typeof(EditShapeTool) )
             {
                 if(GUILayout.Button("Edit Shape"))
-                {
-                    ProBuilderEditor.selectMode = SelectMode.Object;
                     ToolManager.SetActiveTool<EditShapeTool>();
-                }
             }
         }
 

@@ -19,7 +19,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
-    internal class CutTool : EditorTool
+    class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
 

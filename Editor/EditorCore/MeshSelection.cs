@@ -578,9 +578,11 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ClearElementAndObjectSelection"/>
         public static void ClearElementSelection()
         {
-            if (ProBuilderEditor.instance)
-                ProBuilderEditor.instance.ClearElementSelection();
+            foreach (ProBuilderMesh mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
+                mesh.ClearSelection();
+
             InvalidateCaches();
+
             if (objectSelectionChanged != null)
                 objectSelectionChanged();
         }
@@ -591,8 +593,7 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ClearElementSelection"/>
         public static void ClearElementAndObjectSelection()
         {
-            if (ProBuilderEditor.instance)
-                ProBuilderEditor.instance.ClearElementSelection();
+            ClearElementSelection();
             Selection.objects = new Object[0];
         }
 

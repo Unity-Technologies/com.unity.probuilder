@@ -128,47 +128,6 @@ namespace UnityEditor.ProBuilder
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
         }
 
-#if !UNITY_2020_2_OR_NEWER
-        void ActiveToolChanging()
-        {
-            if(ToolManager.IsActiveTool(this))
-                EditorApplication.delayCall += () => ChangeToObjectMode();
-        }
-
-        void ChangeToObjectMode()
-        {
-            if(ToolManager.IsActiveTool(this))
-                ProBuilderEditor.selectMode = SelectMode.Object;
-        }
-
-#else
-        public override void OnActivated()
-        {
-            base.OnActivated();
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            EditorApplication.delayCall += () => ProBuilderEditor.selectMode = SelectMode.Object;
-        }
-
-        public override void OnWillBeDeactivated()
-        {
-            base.OnWillBeDeactivated();
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            EditorApplication.delayCall += () => ResetToLastSelectMode();
-        }
-
-        public void ResetToLastSelectMode()
-        {
-            if(ProBuilderToolManager.activeTool != Tool.Custom && ProBuilderToolManager.IsAnyProBuilderContextActive())
-                ProBuilderEditor.ResetToLastSelectMode();
-        }
-#endif
-
-        void OnSelectModeChanged(SelectMode selectMode)
-        {
-            if(ToolManager.IsActiveTool(this) && selectMode != SelectMode.Object)
-                ToolManager.RestorePreviousTool();
-        }
-
         public override void OnToolGUI(EditorWindow window)
         {
 // todo refactor overlays to use `Overlay` class

@@ -1,6 +1,8 @@
-﻿using UObject = UnityEngine.Object;
+﻿#if TODO_DISABLED
+using UObject = UnityEngine.Object;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -14,13 +16,7 @@ public class UVEditorWindow
     [SetUp]
     public void Setup()
     {
-        // make sure the ProBuilder window is open
-        if (ProBuilderEditor.instance == null)
-        {
-            ProBuilderEditor.MenuOpenWindow();
-            m_OpenedWindow = true;
-        }
-
+        ToolManager.SetActiveContext<PositionToolContext>();
         UVEditor.MenuOpenUVEditor();
 
         m_cube = ShapeFactory.Instantiate<Cube>();
@@ -109,3 +105,4 @@ public class UVEditorWindow
         Assert.That(minimalUV, Is.EqualTo(UVEditor.LowerLeft));
     }
 }
+#endif

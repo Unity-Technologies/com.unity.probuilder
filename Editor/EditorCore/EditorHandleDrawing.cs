@@ -154,7 +154,7 @@ namespace UnityEditor.ProBuilder
             s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
 
             if(EditorGUI.EndChangeCheck())
-                ProBuilderEditor.UpdateMeshHandles(true);
+                ProBuilderEditor.UpdateMeshHandles();
         }
 
         internal static float dotCapSize

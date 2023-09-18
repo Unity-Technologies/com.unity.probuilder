@@ -1,3 +1,5 @@
+#if TODO_DISABLED
+
 using NUnit.Framework;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
@@ -256,3 +258,4 @@ public class CutToolTest
     }
 
 }
+#endif

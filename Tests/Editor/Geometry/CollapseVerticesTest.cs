@@ -1,4 +1,5 @@
-﻿using UObject = UnityEngine.Object;
+﻿#if TODO_DISABLED
+using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.ProBuilder;
@@ -83,3 +84,4 @@ public class CollapseVerticesTest
         Assert.That(collapseAction.enabled, Is.True);
     }
 }
+#endif

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -95,8 +96,8 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            if (GUILayout.Button("Open ProBuilder"))
-                ProBuilderEditor.MenuOpenWindow();
+            if (GUILayout.Button("Edit Mesh"))
+                ToolManager.SetActiveContext<PositionToolContext>();
 
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;
@@ -323,10 +324,10 @@ namespace UnityEditor.ProBuilder
             return new Bounds((min + max) / 2f, max != min ? max - min : Vector3.one * .1f);
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Open ProBuilder", false, 0)]
+        [MenuItem("CONTEXT/ProBuilderMesh/Edit Mesh", false, 0)]
         static void OpenProBuilder()
         {
-            ProBuilderEditor.MenuOpenWindow();
+            ToolManager.SetActiveContext<PositionToolContext>();
         }
     }
 }

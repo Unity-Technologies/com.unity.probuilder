@@ -1,7 +1,5 @@
-﻿#if UNITY_2023_2_OR_NEWER
-using System;
+﻿using System;
 using System.Collections.Generic;
-using UnityEditor.Overlays;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine;
@@ -10,6 +8,45 @@ using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.UI
 {
+    class SelectModeToggle : EditorToolbarToggle
+    {
+        public SelectModeToggle(SelectMode mode)
+        {
+            switch (mode)
+            {
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    icon = IconUtility.GetIcon("Modes/Mode_Face");
+                    break;
+
+                case SelectMode.Edge:
+                case SelectMode.TextureEdge:
+                    icon = IconUtility.GetIcon("Modes/Mode_Edge");
+                    break;
+
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                    icon = IconUtility.GetIcon("Modes/Mode_Vertex");
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode));
+            }
+        }
+    }
+
+    [EditorToolbarElement("ProBuilder Settings/Select Mode")]
+    class SelectModeToolbar : VisualElement
+    {
+        public SelectModeToolbar()
+        {
+            Add(new SelectModeToggle(SelectMode.Vertex));
+            Add(new SelectModeToggle(SelectMode.Edge));
+            Add(new SelectModeToggle(SelectMode.Face));
+            EditorToolbarUtility.SetupChildrenAsButtonStrip(this);
+        }
+    }
+
     [EditorToolbarElement("ProBuilder Settings/Drag Rect Mode")]
     class DragRectModeToggle : EditorToolbarToggle
     {
@@ -139,4 +176,3 @@ namespace UnityEditor.ProBuilder.UI
         }
     }
 }
-#endif

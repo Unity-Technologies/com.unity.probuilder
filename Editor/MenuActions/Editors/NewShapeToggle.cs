@@ -33,7 +33,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            ProBuilderEditor.selectMode = SelectMode.Object;
             MeshSelection.SetSelection((GameObject)null);
 
             if(EditorToolManager.activeTool is DrawShapeTool active)
