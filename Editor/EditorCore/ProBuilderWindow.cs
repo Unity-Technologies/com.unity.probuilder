@@ -12,12 +12,16 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Toolbar", "Icon GUI", "Toggles the ProBuilder window interface between text and icon versions.")]
         static Pref<bool> s_IsIconGui = new Pref<bool>("editor.toolbarIconGUI", false);
 
+        // reference is only kept to manage horizontal/vertical layouts
+        ProBuilderToolbar m_Toolbar;
+
         // if the ratio is 1/2 height/width then switch to horizontal mode
         bool horizontalMode => position.height / position.width < .5;
 
+        [MenuItem("Window/Probuilder")]
         public static void MenuOpenWindow()
         {
-            GetWindow<ProBuilderWindow>(s_WindowIsFloating, "ProBuilder", true);
+            GetWindow<ProBuilderWindow>(s_WindowIsFloating, "Probuilder", true);
         }
 
         public void SetIconMode(bool iconMode)
@@ -56,6 +60,12 @@ namespace UnityEditor.ProBuilder
             Close();
             var res = GetWindow(GetType(), isUtilityWindow);
             res.titleContent = windowTitle;
+        }
+
+        internal override void OnResized()
+        {
+            if (horizontalMode != m_Toolbar?.horizontalMode)
+                CreateGUI();
         }
     }
 }
