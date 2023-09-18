@@ -128,7 +128,7 @@ namespace UnityEditor.ProBuilder
             #if PB_ANALYTICS_DONTSEND || DEBUG
                 DumpLogInfo($"[PB] Analytics disabled: event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
                 return;
-            #endif
+            #else
 
             try
             {
@@ -152,6 +152,7 @@ namespace UnityEditor.ProBuilder
             {
                 DumpLogInfo($"[PB] Exception --> {e}, Something went wrong while trying to send Event='{k_ProbuilderEventName}', time='{DateTime.Now:HH:mm:ss}', payload={EditorJsonUtility.ToJson(data, true)}");
             }
+            #endif
         }
 #else
         // This will register all the Event type at once

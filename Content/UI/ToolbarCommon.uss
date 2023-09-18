@@ -1,0 +1,10 @@
+.unity-image #LegacyIcon {
+    width:48px;
+    flex-grow: 1;
+    align-self: center;
+}
+
+.icon-container-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+}

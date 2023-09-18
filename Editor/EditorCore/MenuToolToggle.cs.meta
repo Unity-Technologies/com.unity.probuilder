@@ -1,15 +1,3 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
-guid: c7eb6fea243bbe045b0d90f776fe4013
-=======
-guid: 75ee05acc67ed8445b569a5aab0f3cc8
->>>>>>> master
-MonoImporter:
-  externalObjects: {}
-  serializedVersion: 2
-  defaultReferences: []
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+guid: e920ff4a74814a8b8987c5f7503c976f
+timeCreated: 1693932824
