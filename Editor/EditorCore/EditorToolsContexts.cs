@@ -115,7 +115,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11, "Conform object normals","Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_ConformNormals@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11, "Conform object normals","Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_ConformNormals.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11)]
 #endif
@@ -140,7 +140,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12, "Export ProBuilder mesh to another format", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Export@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12, "Export ProBuilder mesh to another format", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Export.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12)]
 #endif
@@ -156,7 +156,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13,  "Triangulate ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Triangulate@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13,  "Triangulate ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Triangulate.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13)]
 #endif
@@ -181,7 +181,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14, "Center object pivot", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_CenterOnObject@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14, "Center object pivot", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_CenterOnObject.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14)]
 #endif
@@ -206,7 +206,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16, "Invert object normals", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_FlipNormals@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16, "Invert object normals", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_FlipNormals.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16)]
 #endif
@@ -231,7 +231,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15, "Subdivide ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Subdivide@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15, "Subdivide ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Subdivide.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15)]
 #endif
@@ -256,7 +256,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Mirror@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Mirror.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17)]
 #endif
@@ -281,7 +281,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18, "Merge ProBuilder meshes", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Merge@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18, "Merge ProBuilder meshes", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Merge.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18)]
 #endif
@@ -306,7 +306,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_2023_3_OR_NEWER
-        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19, "Set pivot point to (0,0,0)", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_FreezeTransform@2x.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19, "Set pivot point to (0,0,0)", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_FreezeTransform.png")]
 #else
         [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19)]
 #endif
