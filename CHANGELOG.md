@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- Moved most of ProBuilder actions in the SceneView context menu and overlays when using Unity 2023.2 and newer.
+- Added ProBuilder actions to the Scene view context menu and overlays for Unity versions 2023.2 and newer.
 
 ### Fixed
 
