@@ -5,10 +5,6 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder.Stl;
 using UnityEngine.ProBuilder;
 using Object = UnityEngine.Object;
-#if UNITY_2023_2_OR_NEWER
-using UnityEditor.Actions;
-using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {

@@ -85,6 +85,7 @@ namespace UnityEditor.ProBuilder
             new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
 #endif
 
+        internal static event Action rectSelectModeChanged;
         internal static RectSelectMode rectSelectMode
         {
             get { return m_DragSelectRectMode.value; }
@@ -95,6 +96,8 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 m_DragSelectRectMode.SetValue(value, true);
+                if(rectSelectModeChanged != null)
+                    rectSelectModeChanged();
 
                 if (s_Instance != null)
                     s_Instance.m_ScenePickerPreferences.rectSelectMode = value;
@@ -119,6 +122,7 @@ namespace UnityEditor.ProBuilder
         }
 #endif
 
+        internal static event Action backfaceSelectionEnabledChanged;
         internal static bool backfaceSelectionEnabled
         {
             get { return m_BackfaceSelectEnabled.value; }
@@ -129,6 +133,8 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 m_BackfaceSelectEnabled.SetValue(value, true);
+                if(backfaceSelectionEnabledChanged != null)
+                    backfaceSelectionEnabledChanged();
 
                 if (s_Instance != null)
                     s_Instance.m_ScenePickerPreferences.cullMode = value ? CullingMode.None : CullingMode.Back;

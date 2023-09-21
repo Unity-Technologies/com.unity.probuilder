@@ -1,7 +1,6 @@
 ﻿#if UNITY_2023_2_OR_NEWER
 using System;
 using System.Collections.Generic;
-using UnityEditor.Overlays;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
 using UnityEngine;
@@ -23,13 +22,30 @@ namespace UnityEditor.ProBuilder.UI
             onIcon = action.icons[1];
             SetValueWithoutNotify(ProBuilderEditor.rectSelectMode == RectSelectMode.Complete);
             RegisterCallback<ChangeEvent<bool>>(evt => ProBuilderEditor.rectSelectMode = evt.newValue ? RectSelectMode.Complete : RectSelectMode.Partial);
-
-            ProBuilderEditor.selectModeChanged += (s) => SelectModeUpdated();
+            RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+            RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
         }
 
-        void SelectModeUpdated()
+        void OnAttachToPanel(AttachToPanelEvent evt)
+        {
+            ProBuilderEditor.selectModeChanged += SelectModeUpdated;
+            ProBuilderEditor.rectSelectModeChanged += UpdateVisual;
+        }
+
+        void OnDetachFromPanel(DetachFromPanelEvent evt)
+        {
+            ProBuilderEditor.selectModeChanged -= SelectModeUpdated;
+            ProBuilderEditor.rectSelectModeChanged -= UpdateVisual;
+        }
+
+        void SelectModeUpdated(SelectMode s)
         {
             style.display = EditorToolbarLoader.GetInstance<ToggleDragRectMode>().hidden ? DisplayStyle.None : DisplayStyle.Flex;
+        }
+
+        void UpdateVisual()
+        {
+            SetValueWithoutNotify(ProBuilderEditor.rectSelectMode == RectSelectMode.Complete);
         }
     }
 
@@ -46,13 +62,30 @@ namespace UnityEditor.ProBuilder.UI
             onIcon = action.icons[1];
             SetValueWithoutNotify(ProBuilderEditor.backfaceSelectionEnabled);
             RegisterCallback<ChangeEvent<bool>>(evt => ProBuilderEditor.backfaceSelectionEnabled = evt.newValue);
-
-            ProBuilderEditor.selectModeChanged += (s) => SelectModeUpdated();
+            RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
+            RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
         }
 
-        void SelectModeUpdated()
+        void OnAttachToPanel(AttachToPanelEvent evt)
         {
-            style.display = EditorToolbarLoader.GetInstance<ToggleDragRectMode>().hidden ? DisplayStyle.None : DisplayStyle.Flex;
+            ProBuilderEditor.selectModeChanged += SelectModeUpdated;
+            ProBuilderEditor.backfaceSelectionEnabledChanged += UpdateVisual;
+        }
+
+        void OnDetachFromPanel(DetachFromPanelEvent evt)
+        {
+            ProBuilderEditor.selectModeChanged -= SelectModeUpdated;
+            ProBuilderEditor.backfaceSelectionEnabledChanged += UpdateVisual;
+        }
+
+        void SelectModeUpdated(SelectMode s)
+        {
+            style.display = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>().hidden ? DisplayStyle.None : DisplayStyle.Flex;
+        }
+
+        void UpdateVisual()
+        {
+            SetValueWithoutNotify(ProBuilderEditor.backfaceSelectionEnabled);
         }
     }
 
