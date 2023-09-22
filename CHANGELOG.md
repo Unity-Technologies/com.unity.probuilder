@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- [PBLD-87] Fixed a bug where an infinite recursion loop could crash the editor when using the Boolean tool.  
+
 ### Internal
 
 - Updated analytics API for 2023.2 and after.
