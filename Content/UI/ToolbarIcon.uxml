@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <UnityEditor.ProBuilder.UI.ToolbarMenuItem name="ToolbarMenuItem" style="flex-direction: row; flex-grow: 1;">
+        <ui:Button icon-image="project://database/Packages/com.unity.probuilder/Content/Icons/Toolbar/Edge_Bevel.png?fileID=2800000&amp;guid=43dee953c3e16437c905284d61f0b482&amp;type=3#Edge_Bevel" name="Button" style="width: auto; padding-left: 4px; padding-right: 2px; padding-top: 2px; padding-bottom: 2px; height: 36px; border-left-color: rgb(255, 0, 0); border-left-width: 2px; border-top-left-radius: 2px; border-bottom-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; flex-grow: 1; max-width: none; justify-content: center; align-items: stretch;">
+            <ui:VisualElement name="Options" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-shrink: 0; position: absolute; width: 14px; height: 14px; background-image: url(&apos;project://database/Packages/com.unity.probuilder/Content/Icons/Toolbar/Options.png?fileID=2800000&amp;guid=62abaf77b3059466288eeb593d07d59a&amp;type=3#Options&apos;); align-items: center; justify-content: center; right: 0; top: 0; left: auto; bottom: auto;" />
+        </ui:Button>
+    </UnityEditor.ProBuilder.UI.ToolbarMenuItem>
+</ui:UXML>

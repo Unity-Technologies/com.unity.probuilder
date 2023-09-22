@@ -62,15 +62,10 @@ namespace UnityEditor.ProBuilder.Actions
         /// <inheritdoc/>
         protected override ActionResult PerformActionImplementation()
         {
-            m_Tool = ScriptableObject.CreateInstance<CutTool>();
-            ToolManager.SetActiveTool(m_Tool);
-
-            Undo.RegisterCreatedObjectUndo(m_Tool, "Open Cut Tool");
-
-            MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += LeaveTool;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            Selection.selectionChanged += OnSelectionChanged;
+            if(ToolManager.activeToolType == typeof(CutTool))
+                ToolManager.RestorePreviousTool();
+            else
+                ToolManager.SetActiveTool<CutTool>();
 
             //Give the focus back to scene view to handle key inputs directly
             SceneView.lastActiveSceneView.Focus();
@@ -78,45 +73,5 @@ namespace UnityEditor.ProBuilder.Actions
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
-        internal override ActionResult EndActivation()
-        {
-            MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= LeaveTool;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            Selection.selectionChanged -= OnSelectionChanged;
-
-            Object.DestroyImmediate(m_Tool);
-
-            ProBuilderEditor.instance.Repaint();
-
-            return new ActionResult(ActionResult.Status.Success,"Cut Tool Ends");
-        }
-
-        void ActionPerformed(MenuAction newActionPerformed)
-        {
-            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
-                LeaveTool();
-        }
-
-        void OnSelectModeChanged(SelectMode obj)
-        {
-            if(!obj.IsPositionMode())
-                LeaveTool();
-        }
-
-        void OnSelectionChanged()
-        {
-            if(MeshSelection.activeMesh == null
-            || MeshSelection.selectedObjectCount != 1)
-                LeaveTool();
-            else
-                ((CutTool)m_Tool).UpdateTarget();
-        }
-
-        void LeaveTool()
-        {
-            ActionResult result = EndActivation();
-            EditorUtility.ShowNotification(result.notification);
-        }
     }
 }

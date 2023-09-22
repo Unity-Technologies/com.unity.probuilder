@@ -11,7 +11,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class NewShapeToggle : MenuToolToggle
+    sealed class NewShapeToggle : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Shapes", IconSkin.Pro); } }
@@ -36,46 +36,14 @@ namespace UnityEditor.ProBuilder.Actions
             ProBuilderEditor.selectMode = SelectMode.Object;
             MeshSelection.SetSelection((GameObject)null);
 
-            m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
-            ToolManager.SetActiveTool(m_Tool);
-
-            MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += LeaveTool;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-
-            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
-        }
-
-        internal override ActionResult EndActivation()
-        {
-            MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= LeaveTool;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-
-            Object.DestroyImmediate(m_Tool);
-
-            ProBuilderEditor.Refresh();
+            if(EditorToolManager.activeTool is DrawShapeTool active)
+                Object.DestroyImmediate(active);
+            else
+                ToolManager.SetActiveTool<DrawShapeTool>();
 
             SceneView.RepaintAll();
-            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
-        }
 
-        void ActionPerformed(MenuAction newActionPerformed)
-        {
-            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
-                LeaveTool();
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool");
         }
-
-        void OnSelectModeChanged(SelectMode obj)
-        {
-            LeaveTool();
-        }
-
-        void LeaveTool()
-        {
-            ActionResult result = EndActivation();
-            EditorUtility.ShowNotification(result.notification);
-        }
-
     }
 }
