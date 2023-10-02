@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-75] Fixed a bug where duplicating a GameObject with  `ProBuilderMesh` children would not make unique `Mesh` for the duplicates.
 - [PBLD-87] Fixed a bug where an infinite recursion loop could crash the editor when using the Boolean tool.  
 
 ### Internal
@@ -23,7 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [case: PBLD-75] Fixed a bug where duplicating a GameObject with  `ProBuilderMesh` children would not make unique `Mesh` for the duplicates.
 - Fixed an exception in `CombineMeshes.AccumulateMeshesInfo` when a `ProBuilderMesh` contains an empty `Material` array.
 - [case: PBLD-78] Fixed a regression where it was no longer possible to set the extrusion point with the Poly Shape tool.
 - [case: UUM-43960] Fixed warning on project import caused by merge conflicts in a meta file.
