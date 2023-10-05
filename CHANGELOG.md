@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [5.2.0] - 2023-10-02
+## [Unreleased]
 
 ### Fixed
 
 - Fixed a bug where it was no longer possible to edit meshes or enable view tools after the new shortcut improvements were added to the editor.
+
+## [5.2.0] - 2023-10-02
+
+### Fixed
+
 - [PBLD-75] Fixed a bug where duplicating a GameObject with  `ProBuilderMesh` children would not make unique `Mesh` for the duplicates.
 - [PBLD-87] Fixed a bug where an infinite recursion loop could crash the editor when using the Boolean tool.  
 
