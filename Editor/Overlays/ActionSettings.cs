@@ -131,6 +131,7 @@ namespace UnityEditor.ProBuilder
 
         public MenuActionSettingsWithPreview(MenuAction action) : base(action)
         {
+            UndoUtility.StartPreview();
             // Triggering action Preview
             m_Action.PerformAction();
 
@@ -143,7 +144,7 @@ namespace UnityEditor.ProBuilder
             base.OnFinish(result);
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             if (m_UndoNeeded && result == EditorActionResult.Canceled)
-                EditorApplication.delayCall += Undo.PerformUndo;
+                UndoUtility.EndPreview();
         }
 
         internal void UpdatePreview()
@@ -151,7 +152,8 @@ namespace UnityEditor.ProBuilder
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             Undo.undoRedoEvent -= UndoRedoEventCallback;
-            Undo.PerformUndo();
+            UndoUtility.EndPreview();
+            UndoUtility.StartPreview();
             m_Action.PerformAction();
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
             Undo.undoRedoEvent += UndoRedoEventCallback;

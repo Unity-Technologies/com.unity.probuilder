@@ -44,6 +44,25 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
+        static int s_PreviewGroupIndex = -1;
+
+        internal static void StartPreview()
+        {
+            s_PreviewGroupIndex = Undo.GetCurrentGroup();
+        }
+
+        internal static void EndPreview()
+        {
+            if (s_PreviewGroupIndex != -1)
+            {
+                //Using this Undo method to remove the preview actions from the redo stack
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
+                s_PreviewGroupIndex = -1;
+            }
+            else
+                Undo.PerformUndo();
+        }
+
         /**
          * Since Undo calls can potentially hang the main thread, store states when the diff
          * will large.
