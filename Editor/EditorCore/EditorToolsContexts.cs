@@ -82,7 +82,7 @@ namespace UnityEditor.ProBuilder
                 if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
                     title = $"{action.group}/{action.menuTitle}";
 
-                if (action.hasOptions)
+                if (action.optionsEnabled)
                 {
                     if(HasPreview(action))
                         menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettingsWithPreview(action)), GetStatus(action), action.icon);
@@ -146,7 +146,7 @@ namespace UnityEditor.ProBuilder
 #endif
         public static void ExportAction(MenuCommand command)
         {
-            EditorToolbarLoader.GetInstance<Export>().OpenSettings();
+            EditorToolbarLoader.GetInstance<Export>().PerformAltAction();
         }
 
         [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", true)]

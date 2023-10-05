@@ -89,7 +89,7 @@ namespace UnityEditor.ProBuilder
                         EditorUtility.SynchronizeWithMeshFilter(pb);
                 }
             }
-            
+
             ProBuilderEditor.Refresh();
         }
         #endif
@@ -98,9 +98,20 @@ namespace UnityEditor.ProBuilder
         {
             // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
             // if so, we need to create a new mesh asset.
-            if (UnityEditor.EditorUtility.InstanceIDToObject(instanceId) is GameObject go
-                && go.TryGetComponent<ProBuilderMesh>(out var mesh))
+            if (UnityEditor.EditorUtility.InstanceIDToObject(instanceId) is GameObject go)
+                CheckForProBuilderMeshesCreatedOrModified(go);
+        }
+
+        static void CheckForProBuilderMeshesCreatedOrModified(GameObject go)
+        {
+            if(go.TryGetComponent<ProBuilderMesh>(out var mesh))
                 OnObjectCreated(mesh);
+            var childCount = go.transform.childCount;
+            if (childCount > 0)
+            {
+                for(int childIndex = 0; childIndex < childCount; ++childIndex)
+                    CheckForProBuilderMeshesCreatedOrModified(go.transform.GetChild(childIndex).gameObject);
+            }
         }
 
         // used by tests

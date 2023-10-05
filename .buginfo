@@ -1,4 +1,5 @@
 system: jira
 server: jira.unity3d.com
-project: PBLD
 issuetype: Bug
+package: Probuilder
+project: PBLD

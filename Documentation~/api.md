@@ -57,26 +57,51 @@ Modifying a ProBuilder Mesh is different from modifying a Unity Mesh: instead of
 The basics are the same: set vertex positions, modify triangles (faces in ProBuilder), then rebuild the mesh. For example, to move the vertices up on that quad from the previous example:
 
 ```c#
-// Move vertex positions up
-Vertex[] vertices = quad.GetVertices();
-for(int i = 0; i < quad.vertexCount; i++)
-	vertices[i] += Vector3.one;
+using UnityEngine;
+using UnityEngine.ProBuilder;
+#if UNITY_EDITOR
+using UnityEditor.ProBuilder;
+#endif
 
-// Rebuild the triangle and submesh arrays, and apply vertex positions & submeshes to `MeshFilter.sharedMesh`
-quad.SetVertices(vertices);
-quad.Rebuild();
+public class MoveVertices : MonoBehaviour
+{
+    void Start()
+    {
+        var cube = ShapeGenerator.CreateShape(ShapeType.Cube);
+        
+        // Move one face on the cube along the direction of its normal
+        Vertex[] vertices = cube.GetVertices();
+        Face face = cube.faces[0];
 
-// Recalculate UVs, Normals, Tangents, Collisions, then apply to Unity Mesh.
-quad.Refresh();
+        Vector3 normal = Math.Normal(cube, face);
+        
+        // A face is a collection of triangles, stored in the indexes array. Because mesh geometry requires that seams
+        // be inserted at points where normals, UVs, or other vertex attributes differ we use GetCoincidentVertices to
+        // collect all vertices at a common position.
+        // To see the difference, try replacing `cube.GetCoincidentVertices` with just `face.dinstinctIndexes`.
+        foreach(var index in cube.GetCoincidentVertices(face.indexes))
+            vertices[index].position += normal;
 
-// If in editor, generate UV2 and collapse duplicate vertices with
-EditorMeshUtility.Optimize(quad, true);
+        cube.SetVertices(vertices);
+        
+        // Rebuild the triangle and submesh arrays, and apply vertex positions and submeshes to `MeshFilter.sharedMesh`.
+        cube.ToMesh();
 
-// At runtime, `EditorMeshUtility` is not available. To collapse duplicate
-// vertices in runtime, modify the MeshFilter.sharedMesh directly.
-// Note that any subsequent changes to `quad` will overwrite the sharedMesh.
-var umesh = quad.GetComponent<MeshFilter>().sharedMesh;
-MeshUtility.CollapseSharedVertices(umesh);
+        // Recalculate UVs, Normals, Tangents, Collisions, then apply to Unity Mesh.
+        cube.Refresh();
+
+        // If in Editor, generate UV2 and collapse duplicate vertices.
+        #if UNITY_EDITOR
+        EditorMeshUtility.Optimize(cube, true);
+        #else
+        // At runtime, `EditorMeshUtility` is not available. To collapse duplicate
+        // vertices in runtime, modify the MeshFilter.sharedMesh directly.
+        // Note that any subsequent changes to `quad` will overwrite the sharedMesh.
+        var umesh = cube.GetComponent<MeshFilter>().sharedMesh;
+        MeshUtility.CollapseSharedVertices(umesh);    
+        #endif
+    }
+}
 ```
 
 Note that you should never directly modify the `MeshFilter.sharedMesh`. ProBuilder controls updating the Unity Mesh with [ProBuilderMesh::ToMesh](xref:UnityEngine.ProBuilder.ProBuilderMesh.ToMesh(UnityEngine.MeshTopology)) and [ProBuilderMesh::Refresh](xref:UnityEngine.ProBuilder.ProBuilderMesh.Refresh(UnityEngine.ProBuilder.RefreshMask)) functions.

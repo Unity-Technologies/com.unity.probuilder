@@ -80,5 +80,9 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ProBuilderEditor.instance != null; }
         }
+
+        public override void RegisterChangedCallbacks() => VertexManipulationTool.pivotRotationChanged += ContentsChanged;
+
+        public override void UnregisterChangedCallbacks() => VertexManipulationTool.pivotRotationChanged -= ContentsChanged;
     }
 }
