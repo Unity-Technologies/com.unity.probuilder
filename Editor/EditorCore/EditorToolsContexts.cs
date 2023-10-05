@@ -79,8 +79,14 @@ namespace UnityEditor.ProBuilder
                 }
 
                 var title = action.menuTitle;
+                // Geometry and Tool groups are not displayed in the menu
                 if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
-                    title = $"{action.group}/{action.menuTitle}";
+                {
+                    //STO-3001: For a better UX, Selection group is renamed to Select so that users don't think this is
+                    //acting on the current selection
+                    var groupName = action.group == ToolbarGroup.Selection ? "Select" : action.group.ToString();
+                    title = $"{groupName}/{action.menuTitle}";
+                }
 
                 if (action.hasOptions)
                 {
@@ -102,6 +108,26 @@ namespace UnityEditor.ProBuilder
         static bool HasPreview(MenuAction action)
         {
             return !(action is DetachFaces || action is DuplicateFaces);
+        }
+
+        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Open ProBuilder", false, 0)]
+        static void OpenProBuilder()
+        {
+            ProBuilderEditor.MenuOpenWindow();
+        }
+
+        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Shape", false, 11)]
+        static void CreateShape(MenuCommand command)
+        {
+            var action = new NewShapeToggle();
+            action.PerformAction();
+        }
+
+        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Poly Shape", false, 12)]
+        static void CreatePolyShape(MenuCommand command)
+        {
+            var action = new NewPolyShapeToggle();
+            action.PerformAction();
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions
