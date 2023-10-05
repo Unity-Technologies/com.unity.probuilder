@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fixed a bug where it was no longer possible to edit meshes or enable view tools after the new shortcut improvements were added to the editor.
 - [PBLD-75] Fixed a bug where duplicating a GameObject with  `ProBuilderMesh` children would not make unique `Mesh` for the duplicates.
 - [PBLD-87] Fixed a bug where an infinite recursion loop could crash the editor when using the Boolean tool.  
 
