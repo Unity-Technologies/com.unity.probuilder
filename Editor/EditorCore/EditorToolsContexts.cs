@@ -1,6 +1,7 @@
 using System;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.UIElements;
 
 #if UNITY_2023_2_OR_NEWER
 using System.Collections.Generic;
@@ -41,8 +42,37 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleXRay)
         };
 
+        static string BuildMenuTitle()
+        {
+            var title = "ProBuilder";
+            switch (ProBuilderEditor.selectMode)
+            {
+                case SelectMode.Vertex:
+                    title = MeshSelection.selectedSharedVertexCount.ToString();
+                    title += MeshSelection.selectedSharedVertexCount == 1 ? " Vertex" : " Vertices";
+                    break;
+                case SelectMode.Edge:
+                    title = MeshSelection.selectedEdgeCount.ToString();
+                    title += MeshSelection.selectedEdgeCount == 1 ? " Edge" : " Edges";
+                    break;
+                case SelectMode.Face:
+                    title = MeshSelection.selectedFaceCount.ToString();
+                    title += MeshSelection.selectedFaceCount == 1 ? " Face" : " Faces";
+                    break;
+            }
+
+            return title;
+        }
+
+
         public override void PopulateMenu(DropdownMenu menu)
         {
+            menu.SetDescriptor(new DropdownMenuDescriptor()
+                {
+                    title = BuildMenuTitle()
+                }
+            );
+
             //Headers area is for ProBuilder modes
             menu.AppendHeaderAction(UI.EditorGUIUtility.Styles.VertexIcon,
                 x => { ProBuilderEditor.selectMode = SelectMode.Vertex; },

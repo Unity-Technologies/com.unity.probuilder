@@ -19,6 +19,9 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2023_2_OR_NEWER
+    [EditorTool("Cut Tool", typeof(ProBuilderMesh))]
+#endif
     internal class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -162,6 +165,16 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        public override bool IsAvailable()
+        {
+            return MeshSelection.selectedObjectCount == 1 &&
+                (ProBuilderEditor.selectMode == SelectMode.Vertex ||
+                ProBuilderEditor.selectMode == SelectMode.Edge ||
+                ProBuilderEditor.selectMode == SelectMode.Face);
+        }
+#endif
+
         void OnEnable()
         {
             m_IconContent = new GUIContent()
@@ -182,6 +195,12 @@ namespace UnityEditor.ProBuilder
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            Selection.selectionChanged += OnSelectionChanged;
+        }
+
+        public override void OnActivated()
+        {
             if(MeshSelection.selectedObjectCount == 1)
             {
                 m_Mesh = MeshSelection.activeMesh;
@@ -195,9 +214,22 @@ namespace UnityEditor.ProBuilder
         void OnDisable()
         {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            Selection.selectionChanged -= OnSelectionChanged;
 
             ExecuteCut(false);
             Clear();
+        }
+
+        void OnSelectionChanged()
+        {
+            UpdateTarget();
+        }
+
+        void OnSelectModeChanged(SelectMode mode)
+        {
+            if(!mode.IsPositionMode())
+                ToolManager.RestorePreviousTool();
         }
 
         /// <summary>

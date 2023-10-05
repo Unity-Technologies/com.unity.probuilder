@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using Object = UnityEngine.Object;
@@ -53,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
         /// <inheritdoc/>
         public override bool enabled
         {
-            get => MeshSelection.selectedObjectCount > 0;
+            get => MeshSelection.selectedObjectCount == 1;
         }
 
         /// <inheritdoc/>
@@ -66,7 +65,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanging += LeaveTool;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             Selection.selectionChanged += OnSelectionChanged;
 
             //Give the focus back to scene view to handle key inputs directly
@@ -79,7 +77,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanging -= LeaveTool;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             Selection.selectionChanged -= OnSelectionChanged;
 
             Object.DestroyImmediate(m_Tool);
@@ -95,19 +92,11 @@ namespace UnityEditor.ProBuilder.Actions
                 LeaveTool();
         }
 
-        void OnSelectModeChanged(SelectMode obj)
-        {
-            if(!obj.IsPositionMode())
-                LeaveTool();
-        }
-
         void OnSelectionChanged()
         {
             if(MeshSelection.activeMesh == null
             || MeshSelection.selectedObjectCount != 1)
                 LeaveTool();
-            else
-                ((CutTool)m_Tool).UpdateTarget();
         }
 
         void LeaveTool()
