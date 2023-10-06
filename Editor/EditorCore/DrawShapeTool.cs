@@ -14,6 +14,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+    [EditorTool("Draw Shape Tool")]
     class DrawShapeTool : EditorTool
     {
         internal const int k_MinOverlayWidth = 250;
@@ -155,9 +156,9 @@ namespace UnityEditor.ProBuilder
 
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
-                text = "Shape Settings",
-                tooltip = "Shape Settings"
+                image = IconUtility.GetIcon("Toolbar/AddShape"),
+                text = "Draw New Shape",
+                tooltip = "Draw New Shape"
             };
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;

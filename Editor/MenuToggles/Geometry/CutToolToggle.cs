@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder.Actions
         /// <inheritdoc/>
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Geometry; }
+            get { return ToolbarGroup.Tool; }
         }
 
         /// <inheritdoc/>

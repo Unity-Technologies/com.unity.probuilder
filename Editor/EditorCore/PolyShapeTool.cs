@@ -1,4 +1,6 @@
-﻿using UnityEditor.EditorTools;
+﻿using System;
+using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -16,6 +18,93 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+    /// <summary>
+    /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
+    /// </summary>
+    [EditorTool("Create PolyShape")]
+    public class CreatePolyShapeTool : EditorTool
+    {
+        PolyShapeTool m_Tool;
+
+        PolyShape m_PolyShape = null;
+        bool m_CanCreatePolyShape = false;
+
+        public void OnEnable()
+        {
+            m_Tool = EditorToolManager.GetSingleton<PolyShapeTool>();
+        }
+
+        public override void OnActivated()
+        {
+            m_CanCreatePolyShape = CanCreateNewPolyShape();
+            if (m_CanCreatePolyShape)
+            {
+                GameObject go = new GameObject("PolyShape");
+                UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+                m_PolyShape = Undo.AddComponent<PolyShape>(go);
+                ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
+                pb.CreateShapeFromPolygon(m_PolyShape.m_Points, m_PolyShape.extrude, m_PolyShape.flipNormals);
+                EditorUtility.InitObject(pb);
+
+                // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
+                // interaction, regardless of whether snapping is enabled or not.
+                if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
+                {
+                    Vector3 pivot;
+                    if (ProGridsInterface.GetPivot(out pivot))
+                        go.transform.position = pivot;
+                }
+
+                m_PolyShape.polyEditMode = PolyShape.PolyEditMode.Path;
+                ProBuilderEditor.selectMode = SelectMode.Object;
+
+                Selection.activeObject = m_PolyShape;
+            }
+
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            m_PolyShape = null;
+        }
+
+        public override void OnToolGUI(EditorWindow window)
+        {
+            if (!m_CanCreatePolyShape)
+                ToolManager.RestorePreviousTool();
+            else
+                EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
+        }
+
+        internal static bool CanCreateNewPolyShape()
+        {
+            //If inspector is locked we cannot create new PolyShape.
+            //First created inspector seems to hold a specific semantic where
+            //if not unlocked no matter how many inspectors are present they will
+            //not allow the creation of new PolyShape.
+            var inspWindows = InspectorWindow.GetInspectors();
+
+            if (inspWindows.Any(x => x.isLocked))
+            {
+                if (UnityEditor.EditorUtility.DisplayDialog(
+                        L10n.Tr("Inspector Locked"),
+                        L10n.Tr("To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?"),
+                        L10n.Tr("Unlock"),
+                        L10n.Tr("Cancel")))
+                {
+                    foreach (var insp in inspWindows)
+                        insp.isLocked = false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
@@ -48,8 +137,7 @@ namespace UnityEditor.ProBuilder
                 if(s_IconContent == null)
                     s_IconContent = new GUIContent()
                     {
-                        //image = IconUtility.GetIcon("Tools/PolyShape/CreatePolyShape"),
-                        image = IconUtility.GetIcon("Toolbar/NewPolyShape"),
+                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
                         text = "Create PolyShape",
                         tooltip = "Create PolyShape"
                     };
@@ -171,6 +259,7 @@ namespace UnityEditor.ProBuilder
 #else
         public override void OnActivated()
         {
+            m_Target = null;
             UpdateTarget();
         }
 #endif
@@ -181,17 +270,16 @@ namespace UnityEditor.ProBuilder
             if(shape != null)
                 m_Target = shape;
 
-            if(target is PolyShape)
+            if(target is PolyShape ps)
             {
-                polygon = ( (PolyShape) target );
+                polygon = ps;
                 SetPolyEditMode(PolyShape.PolyEditMode.Edit);
             }
-            else if(target is GameObject)
+            else if(target is GameObject go)
             {
-                PolyShape ps;
-                if(( (GameObject) target ).transform.TryGetComponent<PolyShape>(out ps))
+                if(go.transform.TryGetComponent<PolyShape>(out var psComp))
                 {
-                    polygon = ps;
+                    polygon = psComp;
                     SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                 }
             }
@@ -207,7 +295,7 @@ namespace UnityEditor.ProBuilder
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
-            ToolManager.RestorePreviousTool();
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         /// <summary>
