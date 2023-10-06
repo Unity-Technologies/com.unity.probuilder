@@ -37,23 +37,20 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            ToolManager.SetActiveTool(EditorToolManager.GetSingleton<DrawPolyShapeTool>());
+            m_Tool = EditorToolManager.GetSingleton<DrawPolyShapeTool>();
+            ToolManager.SetActiveTool(m_Tool);
 
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanged += OnActiveToolChanged;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
 
             return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
         }
 
         void Clear()
         {
-            //m_Tool = null;
+            m_Tool = null;
             MenuAction.onPerformAction -= ActionPerformed;
             ToolManager.activeToolChanged -= OnActiveToolChanged;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             ProBuilderEditor.Refresh();
         }
@@ -75,20 +72,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
                 LeaveTool();
-        }
-
-        void OnObjectSelectionChanged()
-        {
-            if( m_Tool == null )
-                return;
-
-            if(MeshSelection.activeMesh == null || MeshSelection.activeMesh.GetComponent<PolyShape>() == null)
-                EditorApplication.delayCall += () => LeaveTool();
-        }
-
-        void OnSelectModeChanged(SelectMode obj)
-        {
-            LeaveTool();
         }
 
         void OnActiveToolChanged()

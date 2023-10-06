@@ -199,6 +199,7 @@ namespace UnityEditor.ProBuilder
         public override void OnWillBeDeactivated()
         {
             handleSelectionChange = false;
+            m_LastShapeCreated = null;
             Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
             ToolManager.activeToolChanged -= OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -233,7 +234,7 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(Selection.activeGameObject != null)
+                if(Selection.activeGameObject != null && Selection.activeGameObject != m_LastShapeCreated.gameObject)
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousTool();

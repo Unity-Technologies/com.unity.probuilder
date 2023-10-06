@@ -31,17 +31,13 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ProBuilderEditor.instance != null; }
         }
 
-        bool m_ActiveToolIsChanging = false;
-
         protected override ActionResult PerformActionImplementation()
         {
             m_Tool = (EditorToolManager.GetSingleton<DrawShapeTool>());
             ToolManager.SetActiveTool(m_Tool);
 
             MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += OnActiveToolChanged;;
-
-            m_ActiveToolIsChanging = false;
+            ToolManager.activeToolChanged += OnActiveToolChanged;;
 
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
         }
@@ -49,9 +45,9 @@ namespace UnityEditor.ProBuilder.Actions
         internal override ActionResult EndActivation()
         {
             MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= OnActiveToolChanged;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
 
-            if(!m_ActiveToolIsChanging)
+            if(ToolManager.IsActiveTool(m_Tool))
                 ToolManager.RestorePreviousPersistentTool();
 
             ProBuilderEditor.Refresh();
@@ -68,7 +64,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         void OnActiveToolChanged()
         {
-            m_ActiveToolIsChanging = true;
             LeaveTool();
         }
 

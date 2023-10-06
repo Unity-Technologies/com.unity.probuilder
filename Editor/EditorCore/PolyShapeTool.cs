@@ -236,32 +236,13 @@ namespace UnityEditor.ProBuilder
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanged += OnToolChanged;
 #endif
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
-            Undo.undoRedoPerformed += UndoRedoPerformed;
         }
 
         void OnDisable()
         {
-            SetPolyEditMode(PolyShape.PolyEditMode.None);
 #if !UNITY_2020_2_OR_NEWER
             ToolManager.activeToolChanged -= OnToolChanged;
 #endif
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
-        }
-
-#if !UNITY_2020_2_OR_NEWER
-        void End()
-#else
-        public override void OnWillBeDeactivated()
-#endif
-        {
-            if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
-
-            polygon = null;
         }
 
 #if !UNITY_2020_2_OR_NEWER
@@ -269,6 +250,8 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
+                m_Target = null;
                 UpdateTarget();
                 if(polygon == null)
                     End();
@@ -279,11 +262,31 @@ namespace UnityEditor.ProBuilder
 #else
         public override void OnActivated()
         {
+            SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+            Undo.undoRedoPerformed += UndoRedoPerformed;
+
             m_Target = null;
             UpdateTarget();
         }
 #endif
 
+#if !UNITY_2020_2_OR_NEWER
+        void End()
+#else
+        public override void OnWillBeDeactivated()
+#endif
+        {
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
+            if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            polygon = null;
+        }
 
         internal void UpdateTarget(PolyShape shape = null)
         {
@@ -1034,9 +1037,6 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged(SelectMode selectMode)
         {
-            if(!ToolManager.IsActiveTool(this))
-                return;
-
             if(MeshSelection.activeMesh)
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
@@ -1047,7 +1047,7 @@ namespace UnityEditor.ProBuilder
 
         void OnObjectSelectionChanged()
         {
-            if(!ToolManager.IsActiveTool(this) || polygon == null)
+            if(polygon == null)
                 return;
 
             if(MeshSelection.activeMesh)

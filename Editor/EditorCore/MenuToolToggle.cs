@@ -27,6 +27,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets a reference to the <see cref="UnityEditor.EditorTools.EditorTool"/> instance created by the action.
         /// </summary>
+        [Obsolete]
         public EditorTool Tool
         {
             get => m_Tool;
