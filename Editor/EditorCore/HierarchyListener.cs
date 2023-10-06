@@ -45,11 +45,11 @@ namespace UnityEditor.ProBuilder
                     stream.GetChangeGameObjectStructureEvent(i, out var data);
                     GameObjectCreatedOrStructureModified(data.instanceId);
                 }
-                #if !UNITY_2023_1_OR_NEWER
-                // for handling prefab revert pre-2023.1
                 else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructureHierarchy)
                 {
-                    // note that this is leaking meshes when reverting! in 2023.1+ we handle it correctly, but 2022 and
+                    // Note 2 : This needs to be called when using a Prefab>Replace action in the menus to refresh the current
+                    // ProBuilder Mesh, this is still a problem in 2023.3 as it does not automatically refresh the mesh
+                    // Note 1 : that this is leaking meshes when reverting! in 2023.1+ we handle it correctly, but 2022 and
                     // 2021 have the PPtr reset to the serialized value (null) before we have any access. orphaned
                     // mesh assets are cleaned up on scene or domain reloads, so we'll live with it. the alternative is
                     // to find all mesh assets, determine which aren't referenced by any component and owned by
@@ -66,7 +66,7 @@ namespace UnityEditor.ProBuilder
 
                     ProBuilderEditor.Refresh();
                 }
-                #endif
+                //#endif
             }
         }
         #else
@@ -89,7 +89,7 @@ namespace UnityEditor.ProBuilder
                         EditorUtility.SynchronizeWithMeshFilter(pb);
                 }
             }
-            
+
             ProBuilderEditor.Refresh();
         }
         #endif
