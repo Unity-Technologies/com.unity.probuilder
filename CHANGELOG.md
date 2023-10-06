@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changes
+
+- Added ProBuilder actions to the Scene view context menu and overlays for Unity versions 2023.2 and newer.
+  
 ## [5.2.0] - 2023-10-02
 
 ### Fixed
@@ -21,10 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Significantly improved performance of "ProBuilder Window."
 
 ## [5.1.1] - 2023-08-01
-
-### Changes
-
-- Added ProBuilder actions to the Scene view context menu and overlays for Unity versions 2023.2 and newer.
 
 ### Fixed
 
