@@ -31,17 +31,17 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ProBuilderEditor.instance != null; }
         }
 
+        bool m_ActiveToolIsChanging = false;
+
         protected override ActionResult PerformActionImplementation()
         {
-            ProBuilderEditor.selectMode = SelectMode.Object;
-            MeshSelection.SetSelection((GameObject)null);
-
-            m_Tool = ScriptableObject.CreateInstance<DrawShapeTool>();
+            m_Tool = (EditorToolManager.GetSingleton<DrawShapeTool>());
             ToolManager.SetActiveTool(m_Tool);
 
             MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanging += LeaveTool;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            ToolManager.activeToolChanging += OnActiveToolChanged;;
+
+            m_ActiveToolIsChanging = false;
 
             return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
         }
@@ -49,10 +49,10 @@ namespace UnityEditor.ProBuilder.Actions
         internal override ActionResult EndActivation()
         {
             MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanging -= LeaveTool;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            ToolManager.activeToolChanging -= OnActiveToolChanged;
 
-            Object.DestroyImmediate(m_Tool);
+            if(!m_ActiveToolIsChanging)
+                ToolManager.RestorePreviousPersistentTool();
 
             ProBuilderEditor.Refresh();
 
@@ -66,8 +66,9 @@ namespace UnityEditor.ProBuilder.Actions
                 LeaveTool();
         }
 
-        void OnSelectModeChanged(SelectMode obj)
+        void OnActiveToolChanged()
         {
+            m_ActiveToolIsChanging = true;
             LeaveTool();
         }
 
@@ -76,6 +77,5 @@ namespace UnityEditor.ProBuilder.Actions
             ActionResult result = EndActivation();
             EditorUtility.ShowNotification(result.notification);
         }
-
     }
 }

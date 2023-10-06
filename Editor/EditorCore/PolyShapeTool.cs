@@ -22,12 +22,32 @@ namespace UnityEditor.ProBuilder
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape")]
-    public class CreatePolyShapeTool : EditorTool
+    public class DrawPolyShapeTool : EditorTool
     {
         PolyShapeTool m_Tool;
 
         PolyShape m_PolyShape = null;
         bool m_CanCreatePolyShape = false;
+
+        static GUIContent s_IconContent;
+
+        /// <summary>
+        /// Gets the icon and tooltip for the PolyShapeTool.
+        /// </summary>
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if(s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
+                        text = "Create PolyShape",
+                        tooltip = "Create PolyShape"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public void OnEnable()
         {
@@ -138,8 +158,8 @@ namespace UnityEditor.ProBuilder
                     s_IconContent = new GUIContent()
                     {
                         image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = "Create PolyShape",
-                        tooltip = "Create PolyShape"
+                        text = "Edit PolyShape",
+                        tooltip = "Edit PolyShape"
                     };
                 return s_IconContent;
             }

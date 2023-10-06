@@ -37,7 +37,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            ToolManager.SetActiveTool(EditorToolManager.GetSingleton<CreatePolyShapeTool>());
+            ToolManager.SetActiveTool(EditorToolManager.GetSingleton<DrawPolyShapeTool>());
 
             MenuAction.onPerformAction += ActionPerformed;
             ToolManager.activeToolChanged += OnActiveToolChanged;

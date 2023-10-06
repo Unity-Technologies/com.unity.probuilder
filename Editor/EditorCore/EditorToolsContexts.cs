@@ -149,15 +149,13 @@ namespace UnityEditor.ProBuilder
         [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Shape", false, 11)]
         static void CreateShape(MenuCommand command)
         {
-            var action = new NewShapeToggle();
-            action.PerformAction();
+            ToolManager.SetActiveTool<DrawShapeTool>();
         }
 
         [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Poly Shape", false, 12)]
         static void CreatePolyShape(MenuCommand command)
         {
-            var action = new NewPolyShapeToggle();
-            action.PerformAction();
+            ToolManager.SetActiveTool<DrawPolyShapeTool>();
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions

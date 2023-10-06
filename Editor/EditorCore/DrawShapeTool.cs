@@ -153,17 +153,12 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
-
             m_IconContent = new GUIContent()
             {
                 image = IconUtility.GetIcon("Toolbar/AddShape"),
                 text = "Draw New Shape",
                 tooltip = "Draw New Shape"
             };
-
-            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
-            ToolManager.activeToolChanged += OnActiveToolChanged;
-            handleSelectionChange = true;
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -177,8 +172,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             handleSelectionChange = false;
 
             if(m_ShapeEditor != null)
@@ -187,10 +181,39 @@ namespace UnityEditor.ProBuilder
                 ShapeState.ResetState();
         }
 
+        public override void OnActivated()
+        {
+            m_ProBuilderShape = null;
+
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            MeshSelection.SetSelection((GameObject)null);
+            handleSelectionChange = true;
+
+            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            ShapeState.ResetState();
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            handleSelectionChange = false;
+            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+        }
+
         void OnDestroy()
         {
             if(m_ShapePreviewMaterial)
                 DestroyImmediate(m_ShapePreviewMaterial);
+        }
+
+        void OnSelectModeChanged(SelectMode mode)
+        {
+            if(mode != SelectMode.Object)
+                ToolManager.RestorePreviousPersistentTool();
         }
 
         void OnActiveToolChanged()
