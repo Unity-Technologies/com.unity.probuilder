@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fixed a bug where it was no longer possible to edit meshes or enable view tools after the new shortcut improvements were added to the editor.
+- Fixed a bug that prevented editing meshes or enabling view tools after the new shortcut improvements were added to the Editor.
 
 ## [5.2.0] - 2023-10-02
 
