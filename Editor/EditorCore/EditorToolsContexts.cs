@@ -99,7 +99,7 @@ namespace UnityEditor.ProBuilder
                 if (k_ContextMenuBlacklist.Contains(action.GetType()))
                     continue;
 
-                if (action.group == ToolbarGroup.Entity || action.group == ToolbarGroup.Object)
+                if (action.group == ToolbarGroup.Entity || action.group == ToolbarGroup.Object || action.group == ToolbarGroup.Tool)
                     continue;
 
                 if (action.group != group)
@@ -144,18 +144,6 @@ namespace UnityEditor.ProBuilder
         static void OpenProBuilder()
         {
             ProBuilderEditor.MenuOpenWindow();
-        }
-
-        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Shape", false, 11)]
-        static void CreateShape(MenuCommand command)
-        {
-            ToolManager.SetActiveTool<DrawShapeTool>();
-        }
-
-        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Create Poly Shape", false, 12)]
-        static void CreatePolyShape(MenuCommand command)
-        {
-            ToolManager.SetActiveTool<DrawPolyShapeTool>();
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions

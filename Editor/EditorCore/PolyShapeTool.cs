@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    [EditorTool("Create PolyShape")]
+    [EditorTool("Create PolyShape", toolPriority = 1001)]
     public class DrawPolyShapeTool : EditorTool
     {
         PolyShapeTool m_Tool;
