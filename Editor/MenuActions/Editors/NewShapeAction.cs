@@ -11,7 +11,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class NewShapeToggle : MenuAction
+    sealed class NewShapeAction : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/AddShape"); } }

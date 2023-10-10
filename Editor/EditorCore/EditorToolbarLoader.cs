@@ -37,9 +37,9 @@ namespace UnityEditor.ProBuilder
             s_LoadedMenuActions = new List<MenuAction>()
             {
                 // tools
-                new Actions.NewShapeToggle(),
+                new Actions.NewShapeAction(),
                 new Actions.NewBezierShape(),
-                new Actions.NewPolyShapeToggle(),
+                new Actions.NewPolyShapeAction(),
                 new Actions.OpenMaterialEditor(),
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
@@ -85,7 +85,7 @@ namespace UnityEditor.ProBuilder
                 // All
                 new Actions.SetPivotToSelection(),
                 new Actions.OffsetElements(),
-                new Actions.CutToolToggle(),
+                new Actions.CutToolAction(),
 
                 // Faces (All)
                 new Actions.DeleteFaces(),

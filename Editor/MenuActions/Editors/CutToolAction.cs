@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
     /// <summary>
     /// Represents the [Cut tool](../manual/cut-tool.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    public class CutToolToggle : MenuToolToggle
+    public class CutToolAction : MenuAction
     {
         /// <inheritdoc/>
         public override ToolbarGroup group
@@ -65,7 +65,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             //Give the focus back to scene view to handle key inputs directly
             SceneView.lastActiveSceneView.Focus();
-
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 
