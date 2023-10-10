@@ -164,8 +164,8 @@ namespace UnityEditor.ProBuilder
 
         // prevents leftClickUp from stealing focus after double click
         bool m_WasDoubleClick;
-        // vertex handles
 
+        // vertex handles
         Vector3[][] m_VertexPositions;
         Vector3[] m_VertexOffset;
 
@@ -584,7 +584,19 @@ namespace UnityEditor.ProBuilder
 
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
-            if(m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.keyCode == KeyCode.Mouse0 && HandleUtility.nearestControl == controlID)
+            if (Tools.viewToolActive || Tools.current == Tool.View || (Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt)
+                return;
+
+#if UNITY_2023_1_OR_NEWER
+            bool isLeftMouseClick = m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.keyCode == KeyCode.Mouse0 && HandleUtility.nearestControl == controlID;
+#elif UNITY_2022_3
+            KeyCode keyCode = m_CurrentEvent.isMouse ? m_CurrentEvent.button + KeyCode.Mouse0 : m_CurrentEvent.keyCode;
+            bool isLeftMouseClick = m_CurrentEvent.type == EventType.MouseDown && keyCode == KeyCode.Mouse0 && HandleUtility.nearestControl == controlID;
+#else
+            bool isLeftMouseClick = m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID;
+#endif
+
+            if (isLeftMouseClick)
             {
                 // double clicking object
                 if(m_CurrentEvent.clickCount > 1)
