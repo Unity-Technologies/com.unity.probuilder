@@ -21,105 +21,177 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2023_3_OR_NEWER
     struct CreateShapeVariant{}
 
-    abstract class CreateTool : EditorTool
-    {
-        DrawShapeTool m_Tool;
-        protected abstract Type shapeType { get; }
+    // abstract class CreateTool : EditorTool
+    // {
+    //     DrawShapeTool m_Tool;
+    //     protected abstract Type shapeType { get; }
+    //
+    //     public void OnEnable()
+    //     {
+    //         m_Tool = EditorToolManager.GetSingleton<DrawShapeTool>();
+    //     }
+    //
+    //     public override void OnToolGUI(EditorWindow window)
+    //     {
+    //         DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, shapeType);
+    //         EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
+    //     }
+    // }
 
-        public void OnEnable()
-        {
-            m_Tool = EditorToolManager.GetSingleton<DrawShapeTool>();
-        }
-
-        public override void OnToolGUI(EditorWindow window)
-        {
-            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, shapeType);
-            EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
-        }
-    }
-
-    [EditorTool("Create Plane", variantGroup = typeof(CreateShapeVariant), variantPriority = 0)]
+    [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
-    class CreatePlaneTool : CreateTool
+    class CreatePlaneTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Plane);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Plane));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Cube", variantGroup = typeof(CreateShapeVariant), variantPriority = 1)]
+    [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
-    class CreateCubeTool : CreateTool
+    class CreateCubeTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Cube);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cube))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cube));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Sphere",variantGroup = typeof(CreateShapeVariant), variantPriority = 2)]
+    [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
-    class CreateSphereTool : CreateTool
+    class CreateSphereTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Sphere);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sphere))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Sphere));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Cylinder",variantGroup = typeof(CreateShapeVariant), variantPriority = 3)]
+    [EditorTool("Create Cylinder",variantGroup = typeof(DrawShapeTool), variantPriority = 3)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
-    class CreateCylinderTool : CreateTool
+    class CreateCylinderTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Cylinder);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cylinder))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cylinder));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Cone", variantGroup = typeof(CreateShapeVariant), variantPriority = 4)]
+    [EditorTool("Create Cone", variantGroup = typeof(DrawShapeTool), variantPriority = 4)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
-    class CreateConeTool : CreateTool
+    class CreateConeTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Cone);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cone))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cone));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Prism",variantGroup = typeof(CreateShapeVariant), variantPriority = 5)]
+    [EditorTool("Create Prism",variantGroup = typeof(DrawShapeTool), variantPriority = 5)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
-    class CreatePrismTool : CreateTool
+    class CreatePrismTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Prism);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Prism))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Prism));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Stairs", variantGroup = typeof(CreateShapeVariant), variantPriority = 6)]
+    [EditorTool("Create Stairs", variantGroup = typeof(DrawShapeTool), variantPriority = 6)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
-    class CreateStairsTool : CreateTool
+    class CreateStairsTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Stairs);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Stairs))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Stairs));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Torus",variantGroup = typeof(CreateShapeVariant), variantPriority = 7)]
+    [EditorTool("Create Torus",variantGroup = typeof(DrawShapeTool), variantPriority = 7)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
-    class CreateTorusTool : CreateTool
+    class CreateTorusTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Torus);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Torus))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Torus));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Pipe",variantGroup = typeof(CreateShapeVariant), variantPriority = 8)]
+    [EditorTool("Create Pipe",variantGroup = typeof(DrawShapeTool), variantPriority = 8)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
-    class CreatePipeTool : CreateTool
+    class CreatePipeTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Pipe);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Pipe))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Pipe));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Arch",variantGroup = typeof(CreateShapeVariant), variantPriority = 9)]
+    [EditorTool("Create Arch",variantGroup = typeof(DrawShapeTool), variantPriority = 9)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
-    class CreateArchTool : CreateTool
+    class CreateArchTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Arch);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Arch))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Arch));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Door",variantGroup = typeof(CreateShapeVariant), variantPriority = 10)]
+    [EditorTool("Create Door",variantGroup = typeof(DrawShapeTool), variantPriority = 10)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
-    class CreateDoorTool : CreateTool
+    class CreateDoorTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Door);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Door))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Door));
+            base.OnActivated();
+        }
     }
 
-    [EditorTool("Create Sprite",variantGroup = typeof(CreateShapeVariant), variantPriority = 11)]
+    [EditorTool("Create Sprite",variantGroup = typeof(DrawShapeTool), variantPriority = 11)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
-    class CreateSpriteTool : CreateTool
+    class CreateSpriteTool : DrawShapeTool
     {
-        protected override Type shapeType => typeof(Sprite);
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sprite))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Sprite));
+            base.OnActivated();
+        }
     }
 #endif
 
@@ -129,7 +201,7 @@ namespace UnityEditor.ProBuilder
 
         ShapeState m_CurrentState;
 
-        internal ProBuilderShape m_LastShapeCreated = null;
+        protected internal ProBuilderShape m_LastShapeCreated = null;
 
         internal ProBuilderShape m_ProBuilderShape;
         internal bool m_IsShapeInit;
@@ -210,6 +282,7 @@ namespace UnityEditor.ProBuilder
         // ideally this would be owned by the state machine
         public int controlID => m_ControlID;
 
+#if !UNITY_2023_2_OR_NEWER
         //Styling
         static class Styles
         {
@@ -223,6 +296,7 @@ namespace UnityEditor.ProBuilder
         {
             get { return m_IconContent; }
         }
+#endif
 
         public static Type activeShapeType
         {
@@ -243,6 +317,14 @@ namespace UnityEditor.ProBuilder
                 if(m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
                     return m_DuplicateGO.GetComponent<ProBuilderShape>();
 
+                return proBuilderShape;
+            }
+        }
+
+        internal ProBuilderShape proBuilderShape
+        {
+            get
+            {
                 if(m_ProBuilderShape == null)
                 {
                     m_ProBuilderShape = new GameObject("Shape", typeof(ProBuilderShape)).GetComponent<ProBuilderShape>();
@@ -262,12 +344,14 @@ namespace UnityEditor.ProBuilder
         {
             m_CurrentState = InitStateMachine();
 
+#if !UNITY_2023_2_OR_NEWER
             m_IconContent = new GUIContent()
             {
                 image = IconUtility.GetIcon("Toolbar/AddShape"),
                 text = "Draw new Shape",
                 tooltip = "Draw new Shape"
             };
+#endif
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -299,7 +383,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            ShapeState.ResetState();
+            m_CurrentState = ShapeState.ResetState();
         }
 
         public override void OnWillBeDeactivated()
@@ -340,7 +424,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(Selection.activeGameObject != null
-                   && Selection.activeGameObject != m_LastShapeCreated.gameObject)
+                   && (m_LastShapeCreated && Selection.activeGameObject != m_LastShapeCreated.gameObject))
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousPersistentTool();
@@ -380,12 +464,12 @@ namespace UnityEditor.ProBuilder
             EditorShapeUtility.SaveParams(proBuilderShape.shape);
         }
 
-        internal static void ApplyPrefsSettings(ProBuilderShape proBuilderShape)
+        internal static void ApplyPrefsSettings(ProBuilderShape pBShape)
         {
-            proBuilderShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
-            proBuilderShape.pivotLocalPosition = s_LastPivotPosition.value;
-            proBuilderShape.size = s_LastSize.value;
-            proBuilderShape.rotation = s_LastRotation.value;
+            pBShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
+            pBShape.pivotLocalPosition = s_LastPivotPosition.value;
+            pBShape.size = s_LastSize.value;
+            pBShape.rotation = s_LastRotation.value;
         }
 
         // Transform the point according to the snapping settings
@@ -534,7 +618,7 @@ namespace UnityEditor.ProBuilder
                 m_IsShapeInit = true;
             }
 
-            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+            proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();
@@ -584,7 +668,10 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
+
+#if !UNITY_2023_2_OR_NEWER
             DrawShapeGUI();
+#endif
 
 #if !UNITY_2021_1_OR_NEWER
             var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
@@ -632,6 +719,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.Refresh();
         }
 
+#if !UNITY_2023_2_OR_NEWER
         void DrawShapeGUI()
         {
             if(m_BoldCenteredStyle == null)
@@ -672,5 +760,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
+#endif
     }
 }

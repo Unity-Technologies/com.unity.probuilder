@@ -253,6 +253,15 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Exit the tool and restore the previous tool
+        /// </summary>
+        void ExitTool()
+        {
+            Clear();
+            ToolManager.RestorePreviousTool();
+        }
+
+        /// <summary>
         /// Undo/Redo callback: Reset and recompute lines, and update the targeted face if needed
         /// </summary>
         void UndoRedoPerformed()
@@ -415,10 +424,7 @@ namespace UnityEditor.ProBuilder
                         UpdateTarget();
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
-                    {
-                        Clear();
-                        ToolManager.RestorePreviousTool();
-                    }
+                        ExitTool();
                 }
                 else
                 {
@@ -426,10 +432,7 @@ namespace UnityEditor.ProBuilder
                         ExecuteCut();
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
-                    {
-                        Clear();
-                        ToolManager.RestorePreviousTool();
-                    }
+                        ExitTool();
                 }
             }
 
@@ -462,7 +465,7 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                     evt.Use();
-                    Clear();
+                    ExitTool();
                     break;
 
                 case KeyCode.KeypadEnter:
@@ -470,7 +473,7 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                     evt.Use();
                     ExecuteCut();
-                    ToolManager.RestorePreviousTool();
+                    ExitTool();
                     break;
             }
         }
@@ -790,7 +793,7 @@ namespace UnityEditor.ProBuilder
             EditorUtility.ShowNotification(result.notification);
 
             if(restorePrevious)
-                ToolManager.RestorePreviousTool();
+                ExitTool();
         }
 
         /// <summary>
