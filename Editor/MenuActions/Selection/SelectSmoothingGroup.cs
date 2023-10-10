@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -15,10 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectBySmoothingGroup"); } }
 
         public override TooltipContent tooltip
         {

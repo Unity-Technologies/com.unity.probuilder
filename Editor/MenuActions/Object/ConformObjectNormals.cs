@@ -10,10 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Object_ConformNormals", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ConformNormals"); } }
 
         public override TooltipContent tooltip
         {
@@ -52,7 +49,6 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             ProBuilderEditor.Refresh();
-
             return res;
         }
     }

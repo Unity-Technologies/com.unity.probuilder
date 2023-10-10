@@ -17,6 +17,7 @@ namespace UnityEditor.ProBuilder
     static class IconUtility
     {
         static Dictionary<string, Texture2D> s_Icons = new Dictionary<string, Texture2D>();
+
         static string s_IconFolderPath = "Content/Icons/";
 
         /// <summary>

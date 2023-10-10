@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenSmoothingEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Smoothing"; } }
         public override int toolbarPriority { get { return 2; } }

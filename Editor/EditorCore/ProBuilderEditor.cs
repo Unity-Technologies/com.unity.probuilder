@@ -80,9 +80,12 @@ namespace UnityEditor.ProBuilder
         static Pref<RectSelectMode> m_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
+#if !UNITY_2023_2_OR_NEWER
         static Pref<SelectionModifierBehavior> m_SelectModifierBehavior =
             new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
+#endif
 
+        internal static event Action rectSelectModeChanged;
         internal static RectSelectMode rectSelectMode
         {
             get { return m_DragSelectRectMode.value; }
@@ -93,12 +96,15 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 m_DragSelectRectMode.SetValue(value, true);
+                if(rectSelectModeChanged != null)
+                    rectSelectModeChanged();
 
                 if (s_Instance != null)
                     s_Instance.m_ScenePickerPreferences.rectSelectMode = value;
             }
         }
 
+#if !UNITY_2023_2_OR_NEWER
         internal static SelectionModifierBehavior selectionModifierBehavior
         {
             get { return m_SelectModifierBehavior.value; }
@@ -114,7 +120,9 @@ namespace UnityEditor.ProBuilder
                     s_Instance.m_ScenePickerPreferences.selectionModifierBehavior = value;
             }
         }
+#endif
 
+        internal static event Action backfaceSelectionEnabledChanged;
         internal static bool backfaceSelectionEnabled
         {
             get { return m_BackfaceSelectEnabled.value; }
@@ -125,6 +133,8 @@ namespace UnityEditor.ProBuilder
                     return;
 
                 m_BackfaceSelectEnabled.SetValue(value, true);
+                if(backfaceSelectionEnabledChanged != null)
+                    backfaceSelectionEnabledChanged();
 
                 if (s_Instance != null)
                     s_Instance.m_ScenePickerPreferences.cullMode = value ? CullingMode.None : CullingMode.Back;
@@ -361,7 +371,9 @@ namespace UnityEditor.ProBuilder
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
+#if !UNITY_2023_2_OR_NEWER
                 selectionModifierBehavior = m_SelectModifierBehavior,
+#endif
                 rectSelectMode = m_DragSelectRectMode
             };
         }
@@ -472,7 +484,12 @@ namespace UnityEditor.ProBuilder
             if (m_CurrentEvent.type == EventType.KeyDown)
             {
                 // Escape isn't assignable as a shortcut
+#if UNITY_2023_2_OR_NEWER
+                //Do not escape the select mode if an active tool override is active
+                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object && EditorToolManager.activeOverride == null)
+#else
                 if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
+#endif
                 {
                     selectMode = SelectMode.Object;
 
@@ -567,7 +584,7 @@ namespace UnityEditor.ProBuilder
 
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
-            if(m_CurrentEvent.type == EventType.MouseDown && HandleUtility.nearestControl == controlID)
+            if(m_CurrentEvent.type == EventType.MouseDown && m_CurrentEvent.keyCode == KeyCode.Mouse0 && HandleUtility.nearestControl == controlID)
             {
                 // double clicking object
                 if(m_CurrentEvent.clickCount > 1)
@@ -891,7 +908,9 @@ namespace UnityEditor.ProBuilder
                         break;
                 }
 
-                selectMode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+                var mode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
+                if (selectMode != mode)
+                    selectMode = mode;
 
                 if (s_ShowSceneInfo)
                 {

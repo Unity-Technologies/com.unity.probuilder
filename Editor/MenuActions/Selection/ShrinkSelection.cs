@@ -12,10 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Selection_Shrink", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Shrink"); } }
 
         public override TooltipContent tooltip
         {

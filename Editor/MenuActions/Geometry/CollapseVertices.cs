@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class CollapseVertices : MenuAction
@@ -13,10 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Vert_Collapse", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Collapse"); } }
 
         public override TooltipContent tooltip
         {
@@ -26,7 +27,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Collapse Vertices",
-                @"Merge all selected vertices into a single vertex, centered at the average of all selected points.",
+                @"Merge all selected vertices into a single vertex, centered at the first vertex or average position of all selected points.",
                 keyCommandAlt, 'C'
             );
 
@@ -44,6 +45,27 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+            root.style.minWidth = 150;
+
+            var toggle = new Toggle("Collapse to First");
+            toggle.tooltip = "Collapse To First setting decides where the collapsed vertex will be placed. If True, " +
+                "the new vertex will be placed at the position of the first selected vertex. If false, the new vertex " +
+                "is placed at the average position of all selected vertices.";
+            toggle.SetValueWithoutNotify(m_CollapseToFirst);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_CollapseToFirst.SetValue(evt.newValue);
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

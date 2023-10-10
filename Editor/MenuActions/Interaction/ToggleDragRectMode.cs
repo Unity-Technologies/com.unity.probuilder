@@ -16,15 +16,10 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get
-            {
-                return mode == RectSelectMode.Complete
-                    ? IconUtility.GetIcon("Toolbar/Selection_Rect_Complete")
-                    : IconUtility.GetIcon("Toolbar/Selection_Rect_Intersect", IconSkin.Pro);
-            }
-        }
+        public override Texture2D icon => m_Icons[mode == RectSelectMode.Partial ? 0 : 1];
+
+        internal Texture2D[] icons => m_Icons;
+        Texture2D[] m_Icons;
 
         public override TooltipContent tooltip
         {
@@ -48,6 +43,15 @@ namespace UnityEditor.ProBuilder.Actions
             );
 
         public override string menuTitle { get { return mode == RectSelectMode.Complete ? "Rect: Complete" : "Rect: Intersect"; } }
+
+        public ToggleDragRectMode()
+        {
+            m_Icons = new Texture2D[]
+            {
+                IconUtility.GetIcon("Toolbar/DragSelect_Off"),
+                IconUtility.GetIcon("Toolbar/DragSelect_On")
+            };
+        }
 
         protected override ActionResult PerformActionImplementation()
         {

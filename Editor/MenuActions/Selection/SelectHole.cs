@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -16,10 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole"); } }
 
         public override TooltipContent tooltip
         {

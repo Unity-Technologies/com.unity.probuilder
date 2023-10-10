@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.UIElements;
+#endif
+
 namespace UnityEditor.ProBuilder.Actions
 {
     sealed class SelectVertexColor : MenuAction
@@ -19,10 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor"); } }
 
         public override TooltipContent tooltip
         {
@@ -49,6 +50,24 @@ namespace UnityEditor.ProBuilder.Actions
                 return MenuActionState.Visible;
             }
         }
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var toggle = new Toggle(gc_restrictToSelection.text);
+            toggle.tooltip = gc_restrictToSelection.tooltip;
+            toggle.SetValueWithoutNotify(m_SearchSelectedObjectsOnly);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_SearchSelectedObjectsOnly.SetValue(evt.newValue);
+            });
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

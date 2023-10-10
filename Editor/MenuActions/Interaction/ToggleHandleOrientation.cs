@@ -8,7 +8,7 @@ namespace UnityEditor.ProBuilder.Actions
     {
         Texture2D[] m_Icons;
 
-        HandleOrientation handleOrientation
+        internal HandleOrientation handleOrientation
         {
             get { return VertexManipulationTool.handleOrientation; }
             set
@@ -23,10 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return m_Icons[(int)handleOrientation]; }
-        }
+        public override Texture2D icon => m_Icons[(int)handleOrientation];
 
         public override int toolbarPriority
         {
@@ -38,11 +35,12 @@ namespace UnityEditor.ProBuilder.Actions
             get { return k_Tooltips[(int)handleOrientation]; }
         }
 
+        internal static TooltipContent[] tooltips => k_Tooltips;
         static readonly TooltipContent[] k_Tooltips = new TooltipContent[]
         {
             new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),
             new TooltipContent("Local", "The transform handle is aligned with the active object rotation.", 'P'),
-            new TooltipContent("Normal", "The transform handle is aligned with the active element selection.", 'P')
+            new TooltipContent("Element", "The transform handle is aligned with the active element selection.", 'P')
         };
 
         public override string menuTitle
@@ -60,13 +58,15 @@ namespace UnityEditor.ProBuilder.Actions
             get { return false; }
         }
 
+        const string k_NormalRotationIconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/ToolHandleElement.png";
+
         public ToggleHandleOrientation()
         {
             m_Icons = new Texture2D[]
             {
-                IconUtility.GetIcon("Toolbar/HandleAlign_World", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Local", IconSkin.Pro),
-                IconUtility.GetIcon("Toolbar/HandleAlign_Plane", IconSkin.Pro),
+                IconUtility.GetIcon("Modes/ToolHandleGlobal"),
+                IconUtility.GetIcon("Modes/ToolHandleLocal"),
+                IconUtility.GetIcon("Modes/ToolHandleElement")
             };
         }
 

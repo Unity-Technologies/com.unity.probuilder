@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class Export : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export", IconSkin.Pro); } }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export"); } }
         public override TooltipContent tooltip { get { return m_Tooltip; } }
         protected override bool hasFileMenuEntry { get { return false; } }
 

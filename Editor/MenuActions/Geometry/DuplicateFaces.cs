@@ -1,8 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+
+#if UNITY_2023_2_OR_NEWER
+using System;
+using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -11,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<DuplicateFaceSetting> m_DuplicateFaceSetting = new Pref<DuplicateFaceSetting>("DuplicateFaces.target", DuplicateFaceSetting.GameObject);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Duplicate", IconSkin.Pro); } } //icon to be replaced
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Duplicate"); } }
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
@@ -40,6 +45,28 @@ namespace UnityEditor.ProBuilder.Actions
             GameObject,
             Submesh
         };
+
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            var duplicateType = new EnumField("Duplicate To", m_DuplicateFaceSetting);
+            duplicateType.tooltip = "You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.";
+            duplicateType.RegisterCallback<ChangeEvent<string>>(evt =>
+            {
+                Enum.TryParse(evt.newValue, out DuplicateFaceSetting newValue);
+                if (m_DuplicateFaceSetting.value == newValue)
+                    return;
+
+                m_DuplicateFaceSetting.value = newValue;
+                ProBuilderSettings.Save();
+            });
+            root.Add(duplicateType);
+
+            return root;
+        }
+#endif
 
         protected override void OnSettingsGUI()
         {

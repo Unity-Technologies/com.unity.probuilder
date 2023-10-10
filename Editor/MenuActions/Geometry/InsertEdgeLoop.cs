@@ -15,10 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Edge_InsertLoop", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_InsertLoop"); } }
 
         public override TooltipContent tooltip
         {

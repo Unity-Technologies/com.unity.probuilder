@@ -2,6 +2,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using Object = UnityEngine.Object;
+
+#if UNITY_2023_2_OR_NEWER
+using System;
+using UnityEditor.Actions;
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -14,10 +21,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Object_Mirror", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Mirror"); } }
 
         public override TooltipContent tooltip
         {
@@ -49,6 +53,49 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        public override VisualElement CreateSettingsContent()
+        {
+            var root = new VisualElement();
+
+            MirrorSettings scale = m_MirrorAxes;
+            bool x = (scale & MirrorSettings.X) != 0;
+            bool y = (scale & MirrorSettings.Y) != 0;
+            bool z = (scale & MirrorSettings.Z) != 0;
+            bool d = (scale & MirrorSettings.Duplicate) != 0;
+
+            var tooltip = "Mirror objects on the selected axes";
+            var toggle = new Toggle("X");
+            toggle.tooltip = tooltip;
+            toggle.SetValueWithoutNotify(x);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((evt.newValue ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            toggle = new Toggle("Y");
+            toggle.tooltip = tooltip;
+            toggle.SetValueWithoutNotify(y);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (evt.newValue ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            toggle = new Toggle("Z");
+            toggle.tooltip = tooltip;
+            toggle.SetValueWithoutNotify(z);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (evt.newValue ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            toggle = new Toggle("Duplicate");
+            toggle.tooltip = "If Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.";
+            toggle.SetValueWithoutNotify(d);
+            toggle.RegisterValueChangedCallback( evt =>
+                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (evt.newValue ? MirrorSettings.Duplicate : 0)));
+            root.Add(toggle);
+
+            return root;
+        }
+#endif
         protected override void OnSettingsGUI()
         {
             GUILayout.Label("Mirror Settings", EditorStyles.boldLabel);

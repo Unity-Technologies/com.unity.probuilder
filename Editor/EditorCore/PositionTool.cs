@@ -1,12 +1,33 @@
 //#define DEBUG_HANDLES
-
 using System.Linq;
 using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
+#if UNITY_2023_2_OR_NEWER
+using System.Collections.Generic;
+using UnityEditor.Overlays;
+#endif
+
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2023_2_OR_NEWER
+    [CustomEditor(typeof(PositionTool), true)]
+    class PositionToolEditor : Editor, ICreateToolbar
+    {
+        public IEnumerable<string> toolbarElements
+        {
+            get
+            {
+                yield return "Tool Settings/Pivot Mode";
+                yield return "ProBuilder Settings/Handle Orientation";
+                yield return "ProBuilder Settings/Drag Rect Mode";
+                yield return "ProBuilder Settings/Select Back Faces";
+            }
+        }
+    }
+#endif
+
     abstract class PositionTool : VertexManipulationTool
     {
         [UserSetting("General", "Show Handle Info", "Toggle the display of information of move, rotate, and scale deltas.")]

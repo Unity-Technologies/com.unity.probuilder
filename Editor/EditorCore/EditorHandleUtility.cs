@@ -31,17 +31,17 @@ namespace UnityEditor.ProBuilder
             return (em & EventModifiers.Shift) == EventModifiers.Shift;
         }
 
-        public static bool IsSelectionPathModifier(EventModifiers em)
-        {
-            return (em & EventModifiers.Shift) == EventModifiers.Shift &&
-               ((em & EventModifiers.Control) == EventModifiers.Control ||
-               (em & EventModifiers.Command) == EventModifiers.Command);
-        }
-
         public static bool IsSelectionAppendOrRemoveIfPresentModifier(EventModifiers em)
         {
             return (((Application.platform == RuntimePlatform.OSXEditor)  && (em & EventModifiers.Command) == EventModifiers.Command) ||
                 ((Application.platform != RuntimePlatform.OSXEditor) && (em & EventModifiers.Control) == EventModifiers.Control));
+        }
+
+        public static bool IsSelectionPathModifier(EventModifiers em)
+        {
+            return (em & EventModifiers.Shift) == EventModifiers.Shift &&
+                ((em & EventModifiers.Control) == EventModifiers.Control ||
+                    (em & EventModifiers.Command) == EventModifiers.Command);
         }
 
         const int HANDLE_PADDING = 8;

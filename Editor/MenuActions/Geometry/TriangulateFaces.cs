@@ -12,10 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return IconUtility.GetIcon("Toolbar/Face_Triangulate", IconSkin.Pro); }
-        }
+        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Triangulate"); } }
 
         public override TooltipContent tooltip
         {

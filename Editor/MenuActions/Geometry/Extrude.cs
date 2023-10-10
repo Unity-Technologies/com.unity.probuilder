@@ -12,16 +12,13 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return null; }
-        }
+        public override Texture2D icon { get { return null; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
-            (
-                "Extrude", "",
-                keyCommandSuper, 'E'
-            );
+        (
+            "Extrude", "",
+            keyCommandSuper, 'E'
+        );
 
         public override TooltipContent tooltip
         {
