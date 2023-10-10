@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
@@ -45,11 +46,10 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
-        EditorToolbar m_Toolbar;
         ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
         internal static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
-        internal EditorToolbar toolbar => m_Toolbar; // used by unit tests
         static ProBuilderEditor s_Instance;
+        ProBuilderToolbar m_Toolbar;
 
         GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
@@ -185,6 +185,9 @@ namespace UnityEditor.ProBuilder
 
         internal bool isFloatingWindow { get; private set; }
 
+        // if the ratio is 1/2 height/width then switch to horizontal mode
+        bool horizontalMode => position.height / position.width < .5;
+
         /// <summary>
         /// Gets and sets the current <see cref="SelectMode"/> value.
         /// </summary>
@@ -281,7 +284,6 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderToolManager.selectModeChanged += OnSelectModeChanged;
 
-            m_Toolbar = new EditorToolbar(this);
             m_ToolManager = s_Instance == this ? new ProBuilderToolManager() : null;
 
             SceneView.duringSceneGui += OnSceneGUI;
@@ -318,7 +320,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
-            m_Toolbar.Dispose();
             if(m_ToolManager != null)
                 m_ToolManager.Dispose();
             OnSelectModeChanged();
@@ -328,6 +329,12 @@ namespace UnityEditor.ProBuilder
 
             if(s_Instance == this)
                 s_Instance = null;
+        }
+
+        void CreateGUI()
+        {
+            rootVisualElement.Clear();
+            rootVisualElement.Add(m_Toolbar = new ProBuilderToolbar(s_IsIconGui, horizontalMode));
         }
 
         void OnSelectModeChanged()
@@ -385,15 +392,12 @@ namespace UnityEditor.ProBuilder
         /// <param name="vertexCountChanged">True if the number of vertices changed, which is the default value.</param>
         public static void Refresh(bool vertexCountChanged = true)
         {
-            if(instance != null)
+            if (instance != null)
                 instance.UpdateSelection(vertexCountChanged);
         }
 
         void OnGUI()
         {
-            if (m_Toolbar.isIconMode != s_IsIconGui.value)
-                IconModeChanged();
-
             if (m_CommandStyle == null)
                 m_CommandStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("Command");
 
@@ -401,6 +405,11 @@ namespace UnityEditor.ProBuilder
 
             switch (e.type)
             {
+                case EventType.Layout:
+                    if (horizontalMode != m_Toolbar?.horizontalMode)
+                        CreateGUI();
+                    break;
+
                 case EventType.ContextClick:
                     var menu = new GenericMenu();
                     AddItemsToMenu(menu);
@@ -413,22 +422,15 @@ namespace UnityEditor.ProBuilder
                         selectMode = SelectMode.Object;
                         e.Use();
                     }
+
                     break;
             }
-
-            m_Toolbar.OnGUI();
-        }
-
-        void IconModeChanged()
-        {
-            m_Toolbar.Dispose();
-            m_Toolbar = new EditorToolbar(this);
         }
 
         void Menu_ToggleIconMode()
         {
             s_IsIconGui.value = !s_IsIconGui.value;
-            IconModeChanged();
+            CreateGUI();
         }
 
         /// <summary>

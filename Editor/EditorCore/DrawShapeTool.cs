@@ -4,8 +4,7 @@ using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
-using Plane = UnityEngine.ProBuilder.Shapes.Plane;
-using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
+using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
@@ -15,110 +14,6 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
-    struct CreateShapeVariant{}
-
-    abstract class CreateTool : EditorTool
-    {
-        DrawShapeTool m_Tool;
-        protected abstract Type shapeType { get; }
-
-        public void OnEnable()
-        {
-            m_Tool = EditorToolManager.GetSingleton<DrawShapeTool>();
-        }
-
-        public override void OnToolGUI(EditorWindow window)
-        {
-            EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
-            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, shapeType);
-        }
-    }
-
-    [EditorTool("Create Plane", variantGroup = typeof(CreateShapeVariant), variantPriority = 0)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
-    class CreatePlaneTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Plane);
-    }
-
-    [EditorTool("Create Cube", variantGroup = typeof(CreateShapeVariant), variantPriority = 1)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
-    class CreateCubeTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Cube);
-    }
-
-    [EditorTool("Create Sphere",variantGroup = typeof(CreateShapeVariant), variantPriority = 2)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
-    class CreateSphereTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Sphere);
-    }
-
-    [EditorTool("Create Cylinder",variantGroup = typeof(CreateShapeVariant), variantPriority = 3)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
-    class CreateCylinderTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Cylinder);
-    }
-
-    [EditorTool("Create Cone", variantGroup = typeof(CreateShapeVariant), variantPriority = 4)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
-    class CreateConeTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Cone);
-    }
-
-    [EditorTool("Create Prism",variantGroup = typeof(CreateShapeVariant), variantPriority = 5)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
-    class CreatePrismTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Prism);
-    }
-
-    [EditorTool("Create Stairs", variantGroup = typeof(CreateShapeVariant), variantPriority = 6)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
-    class CreateStairsTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Stairs);
-    }
-
-    [EditorTool("Create Torus",variantGroup = typeof(CreateShapeVariant), variantPriority = 7)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
-    class CreateTorusTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Torus);
-    }
-
-    [EditorTool("Create Pipe",variantGroup = typeof(CreateShapeVariant), variantPriority = 8)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
-    class CreatePipeTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Pipe);
-    }
-
-    [EditorTool("Create Arch",variantGroup = typeof(CreateShapeVariant), variantPriority = 9)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
-    class CreateArchTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Arch);
-    }
-
-    [EditorTool("Create Door",variantGroup = typeof(CreateShapeVariant), variantPriority = 10)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
-    class CreateDoorTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Door);
-    }
-
-    [EditorTool("Create Sprite",variantGroup = typeof(CreateShapeVariant), variantPriority = 11)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
-    class CreateSpriteTool : CreateTool
-    {
-        protected override Type shapeType => typeof(Sprite);
-    }
-
-
     class DrawShapeTool : EditorTool
     {
         internal const int k_MinOverlayWidth = 250;
@@ -257,12 +152,19 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
+
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Toolbar/AddShape"),
-                text = "Draw New Shape",
-                tooltip = "Draw New Shape"
+                image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
+                text = "Shape Settings",
+                tooltip = "Shape Settings"
             };
+
+            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            handleSelectionChange = true;
+
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -276,7 +178,9 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
+            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
             handleSelectionChange = false;
 
             if(m_ShapeEditor != null)
@@ -285,48 +189,19 @@ namespace UnityEditor.ProBuilder
                 ShapeState.ResetState();
         }
 
-        public override void OnActivated()
-        {
-            m_ProBuilderShape = null;
-
-            ProBuilderEditor.selectMode = SelectMode.Object;
-            MeshSelection.SetSelection((GameObject)null);
-            handleSelectionChange = true;
-
-            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
-            ToolManager.activeToolChanged += OnActiveToolChanged;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-
-            ShapeState.ResetState();
-        }
-
-        public override void OnWillBeDeactivated()
-        {
-            handleSelectionChange = false;
-            m_LastShapeCreated = null;
-            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-        }
-
         void OnDestroy()
         {
             if(m_ShapePreviewMaterial)
                 DestroyImmediate(m_ShapePreviewMaterial);
         }
 
-        void OnSelectModeChanged(SelectMode mode)
-        {
-            if(mode != SelectMode.Object)
-                ToolManager.RestorePreviousPersistentTool();
-        }
+        void OnSelectModeChanged(SelectMode _) => DestroyImmediate(this);
 
         void OnActiveToolChanged()
         {
             if(ToolManager.IsActiveTool(this))
                 SetBounds(currentShapeInOverlay.size);
         }
-
 
         void HandleUndoRedoPerformed()
         {
@@ -338,10 +213,10 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(Selection.activeGameObject != null && Selection.activeGameObject != m_LastShapeCreated.gameObject)
+                if(Selection.activeGameObject != null)
                 {
                     m_CurrentState = ShapeState.ResetState();
-                    ToolManager.RestorePreviousPersistentTool();
+                    ToolManager.RestorePreviousTool();
                 }
             }
         }

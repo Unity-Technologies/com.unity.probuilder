@@ -11,7 +11,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class NewShapeToggle : MenuToolToggle
+    sealed class NewShapeToggle : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/AddShape"); } }
@@ -33,44 +33,17 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            m_Tool = (EditorToolManager.GetSingleton<DrawShapeTool>());
-            ToolManager.SetActiveTool(m_Tool);
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            MeshSelection.SetSelection((GameObject)null);
 
-            MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanged += OnActiveToolChanged;;
-
-            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Starts");
-        }
-
-        internal override ActionResult EndActivation()
-        {
-            MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
-
-            if(ToolManager.IsActiveTool(m_Tool))
-                ToolManager.RestorePreviousPersistentTool();
-
-            ProBuilderEditor.Refresh();
+            if(EditorToolManager.activeTool is DrawShapeTool active)
+                Object.DestroyImmediate(active);
+            else
+                ToolManager.SetActiveTool<DrawShapeTool>();
 
             SceneView.RepaintAll();
-            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool Ends");
-        }
 
-        void ActionPerformed(MenuAction newActionPerformed)
-        {
-            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
-                LeaveTool();
-        }
-
-        void OnActiveToolChanged()
-        {
-            LeaveTool();
-        }
-
-        void LeaveTool()
-        {
-            ActionResult result = EndActivation();
-            EditorUtility.ShowNotification(result.notification);
+            return new ActionResult(ActionResult.Status.Success,"Draw Shape Tool");
         }
     }
 }

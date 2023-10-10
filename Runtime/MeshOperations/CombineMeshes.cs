@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// it generates new meshes unless there is a single mesh left. In that case it appends it to the return list.
         /// </summary>
         /// <param name="meshes">A collection of meshes to merge. This collection should include the `meshTarget` object.</param>
-        /// <param name="meshTarget">A mesh to use as the starting point for merging and which will be kept as a reference (target).</param>
+        /// <param name="meshTarget">A mesh to use as the starting point for merging and which will be kept as a reference (target). This mesh must be present in the `meshes` collection.</param>
         /// <returns>
         /// A list of merged meshes. In most cases this is a single mesh corresponding to `meshTarget`. However it can be multiple in cases
         /// where the resulting vertex count exceeds the maximum allowable value.

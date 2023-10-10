@@ -10,6 +10,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Added ProBuilder actions to the Scene view context menu and overlays for Unity versions 2023.2 and newer.
+  
+## [5.2.0] - 2023-10-02
+
+### Fixed
+
+- [PBLD-75] Fixed a bug where duplicating a GameObject with  `ProBuilderMesh` children would not make unique `Mesh` for the duplicates.
+- [PBLD-87] Fixed a bug where an infinite recursion loop could crash the editor when using the Boolean tool.  
+
+### Internal
+
+- Updated analytics API for 2023.2 and after.
+
+### Features
+
+- Significantly improved performance of "ProBuilder Window."
+
+## [5.1.1] - 2023-08-01
 
 ### Fixed
 
@@ -32,7 +49,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [case: PBLD-64] Fixed "Strip ProBuilder Scripts" not correctly appyling changes when used in a prefab stage.
 - [case: PBLD-54] Fixed a possible error when inserting edge loop.
 - Arch shape now allows 2 sides.
-
+  
 ### Changes
 
 - Moved cut tool cursor icon from runtime to editor resources.

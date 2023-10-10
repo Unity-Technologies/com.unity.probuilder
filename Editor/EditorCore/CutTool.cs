@@ -19,9 +19,6 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2023_2_OR_NEWER
-    [EditorTool("Cut Tool", typeof(ProBuilderMesh))]
-#endif
     internal class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -165,16 +162,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if UNITY_2023_2_OR_NEWER
-        public override bool IsAvailable()
-        {
-            return MeshSelection.selectedObjectCount == 1 &&
-                (ProBuilderEditor.selectMode == SelectMode.Vertex ||
-                ProBuilderEditor.selectMode == SelectMode.Edge ||
-                ProBuilderEditor.selectMode == SelectMode.Face);
-        }
-#endif
-
         void OnEnable()
         {
             m_IconContent = new GUIContent()
@@ -195,41 +182,22 @@ namespace UnityEditor.ProBuilder
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
+
+            m_Mesh = null;
+            UpdateTarget();
+
+            MeshSelection.objectSelectionChanged += UpdateTarget;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            Selection.selectionChanged += OnSelectionChanged;
-        }
-
-        public override void OnActivated()
-        {
-            if(MeshSelection.selectedObjectCount == 1)
-            {
-                m_Mesh = MeshSelection.activeMesh;
-                m_Mesh.ClearSelection();
-
-                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
-                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
-            }
         }
 
         void OnDisable()
         {
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            Selection.selectionChanged -= OnSelectionChanged;
+            MeshSelection.objectSelectionChanged -= UpdateTarget;
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
 
             ExecuteCut(false);
             Clear();
-        }
-
-        void OnSelectionChanged()
-        {
-            UpdateTarget();
-        }
-
-        void OnSelectModeChanged(SelectMode mode)
-        {
-            if(!mode.IsPositionMode())
-                ToolManager.RestorePreviousTool();
         }
 
         /// <summary>
@@ -270,6 +238,11 @@ namespace UnityEditor.ProBuilder
             m_MeshConnections.Clear();
 
             m_Dirty = true;
+        }
+
+        void OnSelectModeChanged(SelectMode _)
+        {
+            DestroyImmediate(this);
         }
 
         /// <summary>

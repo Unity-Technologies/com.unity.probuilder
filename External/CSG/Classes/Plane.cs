@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.ProBuilder.Csg
 {
@@ -126,12 +127,26 @@ namespace UnityEngine.ProBuilder.Csg
 
                     if (f.Count >= 3)
                     {
-                        front.Add(new Polygon(f, polygon.material));
+                        if (f.SequenceEqual(polygon.vertices))
+                            front.Add(polygon);
+                        else
+                        {
+                            var p = new Polygon(f, polygon.material);
+                            if (p.plane.Valid())
+                                front.Add(p);
+                        }
                     }
 
                     if (b.Count >= 3)
                     {
-                        back.Add(new Polygon(b, polygon.material));
+                         if (b.SequenceEqual(polygon.vertices))
+                             back.Add(polygon);
+                         else
+                        {
+                            var p = new Polygon(b, polygon.material);
+                            if (p.plane.Valid())
+                                back.Add(p);
+                        }
                     }
                 }
                 break;

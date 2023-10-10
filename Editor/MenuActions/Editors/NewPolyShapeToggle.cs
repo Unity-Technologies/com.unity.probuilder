@@ -11,7 +11,7 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    sealed class NewPolyShapeToggle : MenuToolToggle
+    sealed class NewPolyShapeToggle : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
         public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CreatePolyShape"); } }
@@ -37,53 +37,37 @@ namespace UnityEditor.ProBuilder.Actions
 
         protected override ActionResult PerformActionImplementation()
         {
-            m_Tool = EditorToolManager.GetSingleton<DrawPolyShapeTool>();
-            ToolManager.SetActiveTool(m_Tool);
+            if (!CanCreateNewPolyShape())
+                return new ActionResult(ActionResult.Status.Canceled, "Canceled Create Poly Shape");
 
-            MenuAction.onPerformAction += ActionPerformed;
-            ToolManager.activeToolChanged += OnActiveToolChanged;
+            GameObject go = new GameObject("PolyShape");
+            UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+            PolyShape poly = Undo.AddComponent<PolyShape>(go);
+            ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
+            pb.CreateShapeFromPolygon(poly.m_Points, poly.extrude, poly.flipNormals);
+            EditorUtility.InitObject(pb);
 
-            return new ActionResult(ActionResult.Status.Success,"Create Poly Shape");
-        }
+            // Special case - we don't want to reset the grid pivot because we rely on it to set the active plane for
+            // interaction, regardless of whether snapping is enabled or not.
+            if (ProGridsInterface.SnapEnabled() || ProGridsInterface.GridVisible())
+            {
+                Vector3 pivot;
+                if (ProGridsInterface.GetPivot(out pivot))
+                    go.transform.position = pivot;
+            }
 
-        void Clear()
-        {
-            m_Tool = null;
-            MenuAction.onPerformAction -= ActionPerformed;
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            MeshSelection.SetSelection(go);
 
-            ProBuilderEditor.Refresh();
-        }
+            // need to flush selection so that the toolmanager rebuilds available tools with poly shape in selection
+            ActiveEditorTracker.RebuildAllIfNecessary();
 
-        internal override ActionResult EndActivation()
-        {
-            Clear();
-            ToolManager.RestorePreviousPersistentTool();
-            return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
-        }
+            poly.polyEditMode = PolyShape.PolyEditMode.Path;
 
-        ActionResult QuitTool()
-        {
-            Clear();
-            return new ActionResult(ActionResult.Status.Success,"End Poly Shape");
-        }
+            ProBuilderEditor.selectMode = SelectMode.Object;
 
-        void ActionPerformed(MenuAction newActionPerformed)
-        {
-            if(ToolManager.IsActiveTool(m_Tool) && newActionPerformed.GetType() != this.GetType())
-                LeaveTool();
-        }
+            ToolManager.SetActiveTool<PolyShapeTool>();
 
-        void OnActiveToolChanged()
-        {
-            if(m_Tool != null && ToolManager.activeToolType != m_Tool.GetType())
-                 LeaveTool();
-        }
-
-        void LeaveTool()
-        {
-            ActionResult result = QuitTool();
-            EditorUtility.ShowNotification(result.notification);
+            return new ActionResult(ActionResult.Status.Success, "Create Poly Shape");
         }
     }
 }

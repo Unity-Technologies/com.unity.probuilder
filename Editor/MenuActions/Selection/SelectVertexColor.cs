@@ -120,7 +120,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 foreach (ProBuilderMesh pb in pool)
                 {
-                    if (pb.colorsInternal == null)
+                    if (pb.colorsInternal == null || pb.colorsInternal.Length < 1)
                     {
                         List<Face> matches = new List<Face>();
                         Face[] faces = pb.facesInternal;
