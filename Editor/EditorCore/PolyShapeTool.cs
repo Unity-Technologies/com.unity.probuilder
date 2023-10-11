@@ -9,10 +9,8 @@ using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
 
 #if UNITY_2020_2_OR_NEWER
-using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
 using ToolManager = UnityEditor.EditorTools.EditorTools;
 #endif
 
@@ -22,10 +20,8 @@ namespace UnityEditor.ProBuilder
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape", toolPriority = 1001)]
-    public class DrawPolyShapeTool : EditorTool
+    public class DrawPolyShapeTool : PolyShapeTool
     {
-        PolyShapeTool m_Tool;
-
         PolyShape m_PolyShape = null;
         bool m_CanCreatePolyShape = false;
 
@@ -47,11 +43,6 @@ namespace UnityEditor.ProBuilder
                     };
                 return s_IconContent;
             }
-        }
-
-        public void OnEnable()
-        {
-            m_Tool = EditorToolManager.GetSingleton<PolyShapeTool>();
         }
 
         public override void OnActivated()
@@ -80,23 +71,23 @@ namespace UnityEditor.ProBuilder
 
                 Selection.activeObject = m_PolyShape;
             }
-
+            base.OnActivated();
         }
 
         public override void OnWillBeDeactivated()
         {
             m_PolyShape = null;
+            base.OnWillBeDeactivated();
         }
 
         public override void OnToolGUI(EditorWindow window)
         {
             if (!m_CanCreatePolyShape)
                 ToolManager.RestorePreviousTool();
-            else
-                EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
+            base.OnToolGUI(window);
         }
 
-        internal static bool CanCreateNewPolyShape()
+        static bool CanCreateNewPolyShape()
         {
             //If inspector is locked we cannot create new PolyShape.
             //First created inspector seems to hold a specific semantic where
