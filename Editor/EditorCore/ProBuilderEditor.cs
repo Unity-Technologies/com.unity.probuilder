@@ -545,15 +545,15 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
-             if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
-             {
-                 if(m_IsDragging)
+            if (EditorHandleUtility.SceneViewInUse(m_CurrentEvent))
+            {
+                if (m_IsDragging)
                     m_IsDragging = false;
 
-                 if (GUIUtility.hotControl == m_DefaultControl)
-                     GUIUtility.hotControl = 0;
+                if (GUIUtility.hotControl == m_DefaultControl)
+                    GUIUtility.hotControl = 0;
 
-                 return;
+                return;
             }
 
             // This prevents us from selecting other objects in the scene,
@@ -567,7 +567,7 @@ namespace UnityEditor.ProBuilder
 
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
-            if (Tools.viewToolActive || Tools.current == Tool.View || (Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt)
+            if ((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt)
                 return;
 
 #if UNITY_2023_1_OR_NEWER
