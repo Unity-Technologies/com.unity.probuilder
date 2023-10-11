@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
             if(ToolManager.IsActiveTool(this))
             {
                 if(Selection.activeGameObject != null
-                   && (m_LastShapeCreated && Selection.activeGameObject != m_LastShapeCreated.gameObject))
+                   && (m_LastShapeCreated == null || Selection.activeGameObject != m_LastShapeCreated.gameObject))
                 {
                     m_CurrentState = ShapeState.ResetState();
                     ToolManager.RestorePreviousPersistentTool();
