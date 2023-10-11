@@ -19,24 +19,6 @@ namespace UnityEditor.ProBuilder
 {
 
 #if UNITY_2023_3_OR_NEWER
-    struct CreateShapeVariant{}
-
-    // abstract class CreateTool : EditorTool
-    // {
-    //     DrawShapeTool m_Tool;
-    //     protected abstract Type shapeType { get; }
-    //
-    //     public void OnEnable()
-    //     {
-    //         m_Tool = EditorToolManager.GetSingleton<DrawShapeTool>();
-    //     }
-    //
-    //     public override void OnToolGUI(EditorWindow window)
-    //     {
-    //         DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, shapeType);
-    //         EditorApplication.delayCall += () => ToolManager.SetActiveTool(m_Tool);
-    //     }
-    // }
 
     [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
@@ -367,8 +349,6 @@ namespace UnityEditor.ProBuilder
         {
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
-            if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
-                ShapeState.ResetState();
         }
 
         public override void OnActivated()
@@ -383,7 +363,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            m_CurrentState = ShapeState.ResetState();
+            m_CurrentState = ShapeState.ResetTool(this);
         }
 
         public override void OnWillBeDeactivated()
@@ -393,6 +373,9 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
             ToolManager.activeToolChanged -= OnActiveToolChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
+            if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
+                m_CurrentState = ShapeState.ResetState();
         }
 
         void OnDestroy()
@@ -636,8 +619,11 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
-            m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(m_ControlID);
+            if (evt.type == EventType.Layout)
+            {
+                m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
+                HandleUtility.AddDefaultControl(m_ControlID);
+            }
 
             if(GUIUtility.hotControl == 0)
                 EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);

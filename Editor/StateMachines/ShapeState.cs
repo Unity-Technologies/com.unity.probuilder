@@ -12,12 +12,7 @@ namespace UnityEditor.ProBuilder
 
         public static ShapeState StartStateMachine()
         {
-            if(tool == null)
-            {
-                Debug.LogError("Cannot start FSM, no tool associated to the FSM");
-                return null;
-            }
-            else if(s_defaultState == null)
+            if(s_defaultState == null)
             {
                 Debug.LogError("Cannot start FSM, default state has not be set");
                 return null;
@@ -46,6 +41,17 @@ namespace UnityEditor.ProBuilder
             m_nextState.InitState();
             SceneView.RepaintAll();
             return m_nextState;
+        }
+
+        public static ShapeState ResetTool(DrawShapeTool t)
+        {
+            tool = t;
+            if (tool.m_ProBuilderShape != null)
+                UnityEngine.Object.DestroyImmediate(tool.m_ProBuilderShape.gameObject);
+
+            s_defaultState.InitState();
+            SceneView.RepaintAll();
+            return s_defaultState;
         }
 
         public static ShapeState ResetState()
