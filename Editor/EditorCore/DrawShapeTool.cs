@@ -19,21 +19,7 @@ namespace UnityEditor.ProBuilder
 {
 
 #if UNITY_2023_3_OR_NEWER
-
-    [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
-    class CreatePlaneTool : DrawShapeTool
-    {
-        public override void OnActivated()
-        {
-            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
-                m_LastShapeCreated = null;
-            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Plane));
-            base.OnActivated();
-        }
-    }
-
-    [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
+    [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
@@ -46,7 +32,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
+    [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
@@ -55,6 +41,19 @@ namespace UnityEditor.ProBuilder
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sphere))
                 m_LastShapeCreated = null;
             s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Sphere));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
+    class CreatePlaneTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Plane));
             base.OnActivated();
         }
     }
