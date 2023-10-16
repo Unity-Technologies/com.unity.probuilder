@@ -1,6 +1,7 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -15,19 +16,10 @@ public class CollapseVerticesTest
 {
     ProBuilderMesh m_PBMesh;
 
-    static void CloseWindows<T>() where T : EditorWindow
-    {
-        var windows = Resources.FindObjectsOfTypeAll<T>();
-        for (int i = windows.Length - 1; i > -1; i--)
-            windows[i].Close();
-    }
-
     [SetUp]
     public void Setup()
     {
-        CloseWindows<ProBuilderEditor>();
-        EditorWindow.GetWindow<ProBuilderEditor>();
-        Assert.That(ProBuilderEditor.instance, Is.Not.Null);
+        ToolManager.SetActiveContext<PositionToolContext>();
         m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
         ProBuilderEditor.selectMode = SelectMode.Vertex;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
@@ -39,7 +31,8 @@ public class CollapseVerticesTest
     {
         if (m_PBMesh != null)
             UObject.DestroyImmediate(m_PBMesh.gameObject);
-        CloseWindows<ProBuilderEditor>();
+
+        ToolManager.SetActiveContext<GameObjectToolContext>();
     }
 
     [Test]

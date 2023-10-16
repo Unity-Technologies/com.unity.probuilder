@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    [EditorTool("Edit PolyShape", typeof(PolyShape))]
+    [EditorTool("Edit PolyShape", typeof(PolyShape), targetContext = typeof(PositionToolContext))]
     public class PolyShapeTool : EditorTool
     {
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);

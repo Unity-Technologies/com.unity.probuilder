@@ -79,8 +79,8 @@ static class UndoTests
         var detachAction = new DetachFaces();
         var result = detachAction.PerformAction();
         Assume.That(result.status, Is.EqualTo(ActionResult.Status.Success));
-        Assert.AreEqual(materialCount - 1, cube.renderer.sharedMaterials.Length);
         Assert.AreEqual(materialCount - 1, cube.mesh.subMeshCount);
+        Assert.AreEqual(materialCount - 1, cube.renderer.sharedMaterials.Length);
 
         UnityEditor.Undo.PerformUndo();
 
