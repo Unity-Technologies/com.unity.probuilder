@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
@@ -51,7 +52,6 @@ namespace UnityEditor.ProBuilder
         static ProBuilderEditor s_Instance;
         ProBuilderToolbar m_Toolbar;
 
-        GUIContent[] m_EditModeIcons;
         GUIStyle VertexTranslationInfoStyle;
 
         [UserSetting("General", "Show Scene Info",
@@ -65,12 +65,6 @@ namespace UnityEditor.ProBuilder
             "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
         internal static Pref<bool> s_AllowNonManifoldActions =
             new Pref<bool>("editor.allowNonManifoldActions", false, SettingsScope.User);
-
-        [UserSetting("Toolbar", "Toolbar Location",
-            "Where the Object, Face, Edge, and Vertex toolbar will be shown in the Scene View.")]
-        static Pref<SceneToolbarLocation> s_SceneToolbarLocation =
-            new Pref<SceneToolbarLocation>("editor.sceneToolbarLocation", SceneToolbarLocation.UpperCenter,
-                SettingsScope.User);
 
         static Pref<bool> s_WindowIsFloating = new Pref<bool>("UnityEngine.ProBuilder.ProBuilderEditor-isUtilityWindow",
             false, SettingsScope.Project);
@@ -145,7 +139,6 @@ namespace UnityEditor.ProBuilder
         SelectMode m_LastComponentMode;
 
         GUIStyle m_CommandStyle;
-        Rect m_ElementModeToolbarRect = new Rect(3, 6, 128, 24);
 
         int m_DefaultControl;
         SceneSelection m_Hovering = new SceneSelection();
@@ -195,10 +188,9 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                // for backwards compatibility reasons `Object` is returned when editor is closed
                 if (s_Instance != null)
                     return ProBuilderToolManager.selectMode;
-                return SelectMode.Object;
+                return SelectMode.Face;
             }
 
             set
@@ -214,12 +206,6 @@ namespace UnityEditor.ProBuilder
         {
             toolManager?.ResetToLastSelectMode();
             Refresh();
-        }
-
-        // used by tests for pre-override tools
-        internal static void SyncEditorToolSelectMode()
-        {
-            toolManager?.ForwardBuiltinToolCheck();
         }
 
         static class SceneStyles
@@ -415,15 +401,6 @@ namespace UnityEditor.ProBuilder
                     AddItemsToMenu(menu);
                     menu.ShowAsContext();
                     break;
-
-                case EventType.KeyUp:
-                    if (e.keyCode == KeyCode.Escape)
-                    {
-                        selectMode = SelectMode.Object;
-                        e.Use();
-                    }
-
-                    break;
             }
         }
 
@@ -484,14 +461,10 @@ namespace UnityEditor.ProBuilder
             if (m_CurrentEvent.type == EventType.KeyDown)
             {
                 // Escape isn't assignable as a shortcut
-#if UNITY_2023_2_OR_NEWER
-                //Do not escape the select mode if an active tool override is active
-                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object && EditorToolManager.activeOverride == null)
-#else
-                if (m_CurrentEvent.keyCode == KeyCode.Escape && selectMode != SelectMode.Object)
-#endif
+                // Do not escape the select mode if an active tool override is active
+                if (m_CurrentEvent.keyCode == KeyCode.Escape && EditorToolManager.activeOverride == null)
                 {
-                    selectMode = SelectMode.Object;
+                    ToolManager.SetActiveContext<GameObjectToolContext>();
 
                     m_IsDragging = false;
                     m_IsReadyForMouseDrag = false;
@@ -499,9 +472,6 @@ namespace UnityEditor.ProBuilder
                     m_CurrentEvent.Use();
                 }
             }
-
-            if (selectMode == SelectMode.Object)
-                return;
 
             bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
 
@@ -876,46 +846,6 @@ namespace UnityEditor.ProBuilder
 
             using (new HandleGUI())
             {
-                int screenWidth = (int)sceneView.position.width;
-                int screenHeight = (int)sceneView.position.height;
-
-                switch ((SceneToolbarLocation)s_SceneToolbarLocation)
-                {
-                    case SceneToolbarLocation.BottomCenter:
-                        m_ElementModeToolbarRect.x = (screenWidth / 2 - 64);
-                        m_ElementModeToolbarRect.y = screenHeight - m_ElementModeToolbarRect.height * 3;
-                        break;
-
-                    case SceneToolbarLocation.BottomLeft:
-                        m_ElementModeToolbarRect.x = 12;
-                        m_ElementModeToolbarRect.y = screenHeight - m_ElementModeToolbarRect.height * 3;
-                        break;
-
-                    case SceneToolbarLocation.BottomRight:
-                        m_ElementModeToolbarRect.x = screenWidth - (m_ElementModeToolbarRect.width + 12);
-                        m_ElementModeToolbarRect.y = screenHeight - m_ElementModeToolbarRect.height * 3;
-                        break;
-
-                    case SceneToolbarLocation.UpperLeft:
-                        m_ElementModeToolbarRect.x = 12;
-                        m_ElementModeToolbarRect.y = 10;
-                        break;
-
-                    case SceneToolbarLocation.UpperRight:
-                        m_ElementModeToolbarRect.x = screenWidth - (m_ElementModeToolbarRect.width + 96);
-                        m_ElementModeToolbarRect.y = 10;
-                        break;
-
-                    default:
-                        m_ElementModeToolbarRect.x = (screenWidth / 2 - 64);
-                        m_ElementModeToolbarRect.y = 10;
-                        break;
-                }
-
-                var mode = UI.EditorGUIUtility.DoElementModeToolbar(m_ElementModeToolbarRect, selectMode);
-                if (selectMode != mode)
-                    selectMode = mode;
-
                 if (s_ShowSceneInfo)
                 {
                     Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
@@ -937,9 +867,7 @@ namespace UnityEditor.ProBuilder
                         SceneStyles.selectionRect.Draw(m_MouseDragRect, false, false, false, false);
                     }
                     else if (m_CurrentEvent.isMouse)
-                    {
                         HandleUtility.Repaint();
-                    }
                 }
             }
         }
@@ -1039,9 +967,6 @@ namespace UnityEditor.ProBuilder
         void PushToGrid(float snapVal)
         {
             UndoUtility.RecordSelection(selection.ToArray(), "Push elements to Grid");
-
-            if (selectMode == SelectMode.Object || selectMode == SelectMode.None)
-                return;
 
             for (int i = 0, c = MeshSelection.selectedObjectCount; i < c; i++)
             {

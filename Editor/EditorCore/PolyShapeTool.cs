@@ -67,8 +67,6 @@ namespace UnityEditor.ProBuilder
                 }
 
                 m_PolyShape.polyEditMode = PolyShape.PolyEditMode.Path;
-                ProBuilderEditor.selectMode = SelectMode.Object;
-
                 Selection.activeObject = m_PolyShape;
             }
             base.OnActivated();
@@ -297,11 +295,6 @@ namespace UnityEditor.ProBuilder
                     SetPolyEditMode(PolyShape.PolyEditMode.Edit);
                 }
             }
-
-            EditorApplication.delayCall += () =>
-            {
-                ProBuilderEditor.selectMode = SelectMode.Object;
-            };
         }
 
         void LeaveTool()
@@ -1031,7 +1024,7 @@ namespace UnityEditor.ProBuilder
             if(MeshSelection.activeMesh)
             {
                 PolyShape shape = MeshSelection.activeMesh.GetComponent<PolyShape>();
-                if(shape != null && shape != polygon || selectMode != SelectMode.Object)
+                if(shape != null && shape != polygon)
                     LeaveTool();
             }
         }

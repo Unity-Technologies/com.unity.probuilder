@@ -9,12 +9,6 @@ namespace UnityEditor.ProBuilder
 	/// </summary>
 	static class ProBuilderEditorShortcuts
 	{
-		[Shortcut("ProBuilder/Editor/Edit Objects", typeof(SceneView))]
-		static void SetSelectMode_Object()
-		{
-			ProBuilderEditor.selectMode = SelectMode.Object;
-		}
-
 		[Shortcut("ProBuilder/Editor/Edit Vertices", typeof(SceneView))]
 		static void SetSelectMode_Vertex()
 		{
@@ -31,15 +25,6 @@ namespace UnityEditor.ProBuilder
 		static void SetSelectMode_Faces()
 		{
 			ProBuilderEditor.selectMode = SelectMode.Face;
-		}
-
-		[Shortcut("ProBuilder/Editor/Toggle Geometry Mode", typeof(SceneView), KeyCode.G)]
-		static void Toggle_ObjectElementMode()
-		{
-			if (ProBuilderEditor.selectMode == SelectMode.Object)
-				ProBuilderEditor.ResetToLastSelectMode();
-			else
-				ProBuilderEditor.selectMode = SelectMode.Object;
 		}
 
 		[Shortcut("ProBuilder/Editor/Toggle Select Mode", typeof(SceneView), KeyCode.H)]

@@ -13,52 +13,47 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// No selection mode defined.
         /// </summary>
-        None = 0 << 0,
-
-        /// <summary>
-        /// Objects are selectable.
-        /// </summary>
-        Object = 1 << 0,
+        None = 0x0,
 
         /// <summary>
         /// Vertices are selectable.
         /// </summary>
-        Vertex = 1 << 1,
+        Vertex = 1 << 0,
 
         /// <summary>
         /// Edges are selectable.
         /// </summary>
-        Edge = 1 << 2,
+        Edge = 1 << 1,
 
         /// <summary>
         /// Faces are selectable.
         /// </summary>
-        Face = 1 << 3,
+        Face = 1 << 2,
 
         /// <summary>
         /// Texture coordinates are selectable.
         /// </summary>
-        TextureFace = 1 << 4,
+        TextureVertex = 1 << 3,
 
         /// <summary>
         /// Texture coordinates are selectable.
         /// </summary>
-        TextureEdge = 1 << 5,
+        TextureEdge = 1 << 4,
 
         /// <summary>
         /// Texture coordinates are selectable.
         /// </summary>
-        TextureVertex = 1 << 6,
+        TextureFace = 1 << 5,
 
         /// <summary>
         /// Other input tool (Poly Shape editor, Bezier editor, etc)
         /// </summary>
-        InputTool = 1 << 7,
+        InputTool = 1 << 6,
 
         /// <summary>
         /// Match any value.
         /// </summary>
-        Any = 0xFFFF
+        Any = 0xFF
     }
 
     /// <summary>

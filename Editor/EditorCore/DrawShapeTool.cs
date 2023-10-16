@@ -354,7 +354,6 @@ namespace UnityEditor.ProBuilder
         {
             m_ProBuilderShape = null;
 
-            ProBuilderEditor.selectMode = SelectMode.Object;
             MeshSelection.SetSelection((GameObject)null);
             handleSelectionChange = true;
 
@@ -385,8 +384,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged(SelectMode mode)
         {
-            if(mode != SelectMode.Object)
-                ToolManager.RestorePreviousPersistentTool();
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         void OnActiveToolChanged()

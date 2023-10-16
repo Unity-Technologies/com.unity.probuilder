@@ -9,6 +9,57 @@ using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.UI
 {
+    class SelectModeToggle : EditorToolbarToggle
+    {
+        SelectMode m_Mode;
+
+        public SelectModeToggle(SelectMode mode)
+        {
+            m_Mode = mode;
+
+            switch (mode)
+            {
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    icon = IconUtility.GetIcon("Modes/Mode_Face");
+                    break;
+
+                case SelectMode.Edge:
+                case SelectMode.TextureEdge:
+                    icon = IconUtility.GetIcon("Modes/Mode_Edge");
+                    break;
+
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                    icon = IconUtility.GetIcon("Modes/Mode_Vertex");
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode));
+            }
+
+            RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderEditor.selectModeChanged += UpdateSelectMode; });
+            RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderEditor.selectModeChanged -= UpdateSelectMode; });
+            this.RegisterValueChangedCallback(evt => { ProBuilderEditor.selectMode = m_Mode; });
+
+            UpdateSelectMode(ProBuilderEditor.selectMode);
+        }
+
+        void UpdateSelectMode(SelectMode obj) => SetValueWithoutNotify(obj == m_Mode);
+    }
+
+    [EditorToolbarElement("ProBuilder Settings/Select Mode")]
+    class SelectModeToolbar : VisualElement
+    {
+        public SelectModeToolbar()
+        {
+            Add(new SelectModeToggle(SelectMode.Vertex));
+            Add(new SelectModeToggle(SelectMode.Edge));
+            Add(new SelectModeToggle(SelectMode.Face));
+            EditorToolbarUtility.SetupChildrenAsButtonStrip(this);
+        }
+    }
+
     [EditorToolbarElement("ProBuilder Settings/Drag Rect Mode")]
     class DragRectModeToggle : EditorToolbarToggle
     {

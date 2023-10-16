@@ -28,7 +28,6 @@ public class EditorToolTests
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Face));
         Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
         Tools.current = Tool.Rotate;
-        ProBuilderEditor.SyncEditorToolSelectMode();
         Assert.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderRotateTool)));
     }
 
@@ -37,14 +36,11 @@ public class EditorToolTests
     {
         var editor = EditorWindow.GetWindow<ProBuilderEditor>();
         Assume.That(editor, Is.Not.Null);
-        ProBuilderEditor.selectMode = SelectMode.Object;
-        Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Object));
+        ProBuilderEditor.selectMode = SelectMode.None;
+        Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.None));
         Tools.current = Tool.Move;
 
         ProBuilderEditor.selectMode = SelectMode.Face;
-        // this is here to avoid race conditions when testing
-        ProBuilderEditor.SyncEditorToolSelectMode();
-
         Assert.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
     }
 }

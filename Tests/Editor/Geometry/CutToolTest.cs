@@ -35,7 +35,7 @@ public class CutToolTest
         MeshSelection.OnObjectSelectionChanged();
 
         m_PreviousSelectMode = ProBuilderEditor.selectMode;
-        ProBuilderEditor.selectMode = SelectMode.Object;
+        ProBuilderEditor.selectMode = SelectMode.None;
     }
 
     [TearDown]

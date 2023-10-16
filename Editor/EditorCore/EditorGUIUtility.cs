@@ -516,9 +516,6 @@ namespace UnityEditor.ProBuilder.UI
 
             switch (mode)
             {
-                case SelectMode.Object:
-                    currentSelectionMode = 0;
-                    break;
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                     currentSelectionMode = 1;
@@ -540,14 +537,13 @@ namespace UnityEditor.ProBuilder.UI
 
             if (EditorGUI.EndChangeCheck())
             {
-                if (currentSelectionMode == 0)
-                    mode = SelectMode.Object;
-                else if (currentSelectionMode == 1)
-                    mode = textureMode ? SelectMode.TextureVertex : SelectMode.Vertex;
-                else if (currentSelectionMode == 2)
-                    mode = textureMode ? SelectMode.TextureEdge : SelectMode.Edge;
-                else if (currentSelectionMode == 3)
-                    mode = textureMode ? SelectMode.TextureFace : SelectMode.Face;
+                mode = currentSelectionMode switch
+                {
+                    1 => textureMode ? SelectMode.TextureVertex : SelectMode.Vertex,
+                    2 => textureMode ? SelectMode.TextureEdge : SelectMode.Edge,
+                    3 => textureMode ? SelectMode.TextureFace : SelectMode.Face,
+                    _ => mode
+                };
             }
 
             return mode;

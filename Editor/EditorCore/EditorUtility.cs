@@ -489,62 +489,7 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         internal static bool ContainsFlag(this SelectMode target, SelectMode value)
         {
-            return (target & value) != SelectMode.None;
-        }
-        internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)
-        {
-            switch (edit)
-            {
-                case EditLevel.Top:
-                    return SelectMode.Object;
-
-                case EditLevel.Geometry:
-                {
-                    switch (component)
-                    {
-                        case ComponentMode.Vertex:
-                            return SelectMode.Vertex;
-                        case ComponentMode.Edge:
-                            return SelectMode.Edge;
-                        default:
-                            return SelectMode.Face;
-                    }
-                }
-
-                case EditLevel.Texture:
-                    return SelectMode.TextureFace;
-
-                default:
-                    return SelectMode.None;
-            }
-        }
-
-        internal static EditLevel GetEditLevel(SelectMode mode)
-        {
-            switch (mode)
-            {
-                case SelectMode.Object:
-                    return EditLevel.Top;
-                case SelectMode.TextureFace:
-                    return EditLevel.Texture;
-                case SelectMode.None:
-                    return EditLevel.Plugin;
-                default:
-                    return EditLevel.Geometry;
-            }
-        }
-
-        internal static ComponentMode GetComponentMode(SelectMode mode)
-        {
-            switch (mode)
-            {
-                case SelectMode.Vertex:
-                    return ComponentMode.Vertex;
-                case SelectMode.Edge:
-                    return ComponentMode.Edge;
-                default:
-                    return ComponentMode.Face;
-            }
+            return (target & value) != 0;
         }
 
         internal static bool IsDeveloperMode()

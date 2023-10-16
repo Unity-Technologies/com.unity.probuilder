@@ -30,7 +30,6 @@ public class CollapseVerticesTest
         Assert.That(ProBuilderEditor.instance, Is.Not.Null);
         m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
         ProBuilderEditor.selectMode = SelectMode.Vertex;
-        ProBuilderEditor.SyncEditorToolSelectMode();
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
         Assume.That(typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType));
     }

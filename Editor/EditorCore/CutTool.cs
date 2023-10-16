@@ -20,9 +20,9 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 namespace UnityEditor.ProBuilder
 {
 #if UNITY_2023_2_OR_NEWER
-    [EditorTool("Cut Tool", typeof(ProBuilderMesh))]
+    [EditorTool("Cut Tool", typeof(ProBuilderMesh), targetContext = typeof(PositionToolContext))]
 #endif
-    internal class CutTool : EditorTool
+    class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
 
@@ -36,7 +36,7 @@ namespace UnityEditor.ProBuilder
         [Flags]
         public enum VertexTypes
         {
-            None = 0 << 0,
+            None = 0x0,
             NewVertex = 1 << 0,
             AddedOnEdge = 1 << 1,
             ExistingVertex = 1 << 2,
