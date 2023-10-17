@@ -89,6 +89,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        public override bool IsAvailable()
+        {
+            return ProBuilderEditor.instance != null;
+        }
+
         void OnEnable()
         {
             m_OverlayTitle = new GUIContent("Edit Shape");

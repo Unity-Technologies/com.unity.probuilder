@@ -168,7 +168,8 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2023_2_OR_NEWER
         public override bool IsAvailable()
         {
-            return MeshSelection.selectedObjectCount == 1 &&
+            return ProBuilderEditor.instance != null &&
+                MeshSelection.selectedObjectCount == 1 &&
                 (ProBuilderEditor.selectMode == SelectMode.Vertex ||
                     ProBuilderEditor.selectMode == SelectMode.Edge ||
                     ProBuilderEditor.selectMode == SelectMode.Face);
