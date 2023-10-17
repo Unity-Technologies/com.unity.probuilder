@@ -33,16 +33,6 @@ namespace UnityEditor.ProBuilder
         public override ShapeState DoState(Event evt)
         {
             tool.handleSelectionChange = true;
-            if(evt.type == EventType.KeyDown)
-            {
-                switch(evt.keyCode)
-                {
-                    case KeyCode.Escape:
-                        ToolManager.RestorePreviousTool();
-                        break;
-                }
-            }
-
             if(tool.m_LastShapeCreated != null)
                 EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, true);
 
