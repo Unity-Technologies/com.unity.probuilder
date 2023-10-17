@@ -44,7 +44,7 @@ class VertexManipulationTests
             var selectedFaces = new List<Face>();
             selectedFaces.Add(face);
             Tools.current = Tool.Move;
-            ProBuilderEditor.toolManager.SetSelectMode(SelectMode.Face);
+            ProBuilderToolManager.SetSelectMode(SelectMode.Face);
             pb.SetSelectedFaces(selectedFaces);
             MeshSelection.SetSelection(pb.gameObject);
 

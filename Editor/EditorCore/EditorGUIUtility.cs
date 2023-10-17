@@ -15,8 +15,6 @@ namespace UnityEditor.ProBuilder.UI
     {
         internal static class Styles
         {
-            static bool s_Initialized;
-
             public static GUIStyle command = "command";
             public static GUIContent[] selectModeIcons;
 
@@ -32,13 +30,9 @@ namespace UnityEditor.ProBuilder.UI
             static Texture2D s_FaceIcon;
             public static Texture2D FaceIcon => s_FaceIcon;
 
+            [InitializeOnLoadMethod]
             public static void Init()
             {
-                if (s_Initialized)
-                    return;
-
-                s_Initialized = true;
-
                 s_ObjectIcon = IconUtility.GetIcon("Modes/Mode_Object");
                 s_VertexIcon = IconUtility.GetIcon("Modes/Mode_Vertex");
                 s_EdgeIcon = IconUtility.GetIcon("Modes/Mode_Edge");

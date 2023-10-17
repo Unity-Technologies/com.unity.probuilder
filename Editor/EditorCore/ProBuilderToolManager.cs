@@ -5,8 +5,7 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
-    // Handles forwarding the Unity tool to ProBuilder editor
-    class ProBuilderToolManager : IDisposable
+    static class ProBuilderToolManager
     {
         // When tool contexts are fully implemented there should be no need for `SelectMode`
         static Pref<SelectMode> s_SelectMode = new Pref<SelectMode>("editor.selectMode", SelectMode.Face);
@@ -29,24 +28,13 @@ namespace UnityEditor.ProBuilder
 
         public static event Action selectModeChanged = () => {};
 
-        bool m_IsDisposed = false;
-
-        public ProBuilderToolManager()
+        [InitializeOnLoadMethod]
+        static void ProBuilderToolManagerInit()
         {
             SetSelectMode(s_SelectMode);
         }
 
-        public void Dispose()
-        {
-            if (m_IsDisposed)
-                return;
-            m_IsDisposed = true;
-            GC.SuppressFinalize(this);
-
-            SetSelectMode(SelectMode.Face);
-        }
-
-        public void SetSelectMode(SelectMode mode)
+        public static void SetSelectMode(SelectMode mode)
         {
             if (mode == selectMode)
                 return;
@@ -54,7 +42,7 @@ namespace UnityEditor.ProBuilder
             selectMode = mode;
         }
 
-        public void ResetToLastSelectMode()
+        public static void ResetToLastSelectMode()
         {
             SetSelectMode(s_LastMeshSelectMode);
         }

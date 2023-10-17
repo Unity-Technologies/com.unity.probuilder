@@ -47,8 +47,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
-        ProBuilderToolManager m_ToolManager; // never use this directly! use toolManager getter to avoid problems with multiple editor instances
-        internal static ProBuilderToolManager toolManager => s_Instance != null ? s_Instance.m_ToolManager : null;
         static ProBuilderEditor s_Instance;
         ProBuilderToolbar m_Toolbar;
 
@@ -195,7 +193,7 @@ namespace UnityEditor.ProBuilder
 
             set
             {
-                toolManager?.SetSelectMode(value);
+                ProBuilderToolManager.SetSelectMode(value);
             }
         }
 
@@ -204,7 +202,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public static void ResetToLastSelectMode()
         {
-            toolManager?.ResetToLastSelectMode();
+            ProBuilderToolManager.ResetToLastSelectMode();
             Refresh();
         }
 
@@ -270,8 +268,6 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderToolManager.selectModeChanged += OnSelectModeChanged;
 
-            m_ToolManager = s_Instance == this ? new ProBuilderToolManager() : null;
-
             SceneView.duringSceneGui += OnSceneGUI;
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
@@ -306,8 +302,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
-            if(m_ToolManager != null)
-                m_ToolManager.Dispose();
             OnSelectModeChanged();
             ProBuilderToolManager.selectModeChanged -= OnSelectModeChanged;
 
