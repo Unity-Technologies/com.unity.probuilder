@@ -231,10 +231,6 @@ namespace UnityEditor.ProBuilder
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false, SettingsScope.Project);
 
         [UserSetting]
-        internal static Pref<int> s_LastPivotLocation = new Pref<int>("ShapeBuilder.LastPivotLocation", (int)PivotLocation.FirstCorner);
-        [UserSetting]
-        internal static Pref<Vector3> s_LastPivotPosition = new Pref<Vector3>("ShapeBuilder.LastPivotPosition", Vector3.zero);
-        [UserSetting]
         internal static Pref<Vector3> s_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize", Vector3.one);
         [UserSetting]
         internal static Pref<Quaternion> s_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation", Quaternion.identity);
@@ -486,41 +482,22 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
-            var pivotLocation = (PivotLocation)s_LastPivotLocation.value;
             var size = currentShapeInOverlay.size;
-
             m_Bounds.size = size;
-            Vector3 cornerPosition;
 
-            switch (pivotLocation)
-            {
-                case PivotLocation.FirstCorner:
-                    cornerPosition = GetPoint(position);
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-                    m_Bounds.center = cornerPosition + m_PlaneRotation * size / 2f;
+            position = GetPoint(position);
+            var cornerPosition = position - size / 2f;
+            cornerPosition.y = position.y;
+            m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
 
-                    m_BB_Origin = cornerPosition;
-                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-                    break;
-
-                case PivotLocation.Center:
-                default:
-                    position = GetPoint(position);
-                    cornerPosition = position - size / 2f;
-                    cornerPosition.y = position.y;
-                    m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-
-                    m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
-                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-                    break;
-            }
+            m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
+            m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
+            m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
 
             if (m_DuplicateGO == null)
             {
-                var instantiated = ShapeFactory.Instantiate(activeShapeType, ((PivotLocation)s_LastPivotLocation.value));
+                var instantiated = ShapeFactory.Instantiate(activeShapeType);
                 var shape = instantiated.GetComponent<ProBuilderShape>();
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
@@ -533,8 +510,7 @@ namespace UnityEditor.ProBuilder
             }
 
             var pivot = GetPoint(position);
-            if (pivotLocation == PivotLocation.Center)
-                pivot += .5f * size.y * m_Plane.normal;
+            pivot += .5f * size.y * m_Plane.normal;
 
             m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
 

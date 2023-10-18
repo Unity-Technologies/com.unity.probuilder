@@ -13,8 +13,8 @@ namespace UnityEngine.ProBuilder
     {
         /// <summary>Place the pivot in the middle of the bounding box.</summary>
         Center,
-        /// <summary>Place the pivot at the "first corner" (the first corner vertex defined) of the bounding box.</summary>
-        FirstCorner
+        /// <summary>Place the pivot at the vertex defined as the first in the shape.</summary>
+        FirstVertex
     }
 
     /// <summary>
