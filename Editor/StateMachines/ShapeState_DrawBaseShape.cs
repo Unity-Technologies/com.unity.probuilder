@@ -98,7 +98,7 @@ namespace UnityEditor.ProBuilder
             DrawShapeTool.ApplyPrefsSettings(shape);
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation, tool.m_BB_Origin);
+            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
 
             //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);

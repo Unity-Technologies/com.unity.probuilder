@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 
         static void CreateShape(ShapeType shape)
         {
-            var res = ShapeGenerator.CreateShape(shape, EditorUtility.newShapePivotLocation);
+            var res = ShapeGenerator.CreateShape(shape);
             Undo.RegisterCreatedObjectUndo(res.gameObject, $"Create {shape}");
             EditorUtility.InitObject(res);
         }

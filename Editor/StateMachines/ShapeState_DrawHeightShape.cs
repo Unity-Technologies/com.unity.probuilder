@@ -20,7 +20,6 @@ namespace UnityEditor.ProBuilder
             tool.handleSelectionChange = false;
 
             tool.RebuildShape();
-            tool.m_ProBuilderShape.pivotGlobalPosition = tool.m_BB_Origin;
             tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
 
             EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);

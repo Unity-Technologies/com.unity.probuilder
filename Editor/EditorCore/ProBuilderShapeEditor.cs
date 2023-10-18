@@ -169,7 +169,7 @@ namespace UnityEditor.ProBuilder
                                 DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
 
                             UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
-                            proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type), proBuilderShape.pivotLocation);
+                            proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type));
                             ProBuilderEditor.Refresh();
                         }
                     }

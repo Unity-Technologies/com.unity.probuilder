@@ -311,9 +311,7 @@ namespace UnityEditor.ProBuilder
                     m_ProBuilderShape = new GameObject("Shape", typeof(ProBuilderShape)).GetComponent<ProBuilderShape>();
                     m_ProBuilderShape.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ProBuilderShape.hideFlags = HideFlags.None;
-                    m_ProBuilderShape.SetShape(EditorShapeUtility.CreateShape(activeShapeType),EditorUtility.newShapePivotLocation);
-                    m_ProBuilderShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
-                    m_ProBuilderShape.pivotLocalPosition = s_LastPivotPosition.value;
+                    m_ProBuilderShape.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
                     m_ProBuilderShape.size = s_LastSize.value;
                     m_ProBuilderShape.rotation = s_LastRotation.value;
                 }
@@ -438,8 +436,6 @@ namespace UnityEditor.ProBuilder
 
         internal static void SaveShapeParams(ProBuilderShape proBuilderShape)
         {
-            s_LastPivotLocation.value = (int)proBuilderShape.pivotLocation;
-            s_LastPivotPosition.value = proBuilderShape.pivotLocalPosition;
             s_LastSize.value = proBuilderShape.size;
             s_LastRotation.value = proBuilderShape.rotation;
 
@@ -448,8 +444,6 @@ namespace UnityEditor.ProBuilder
 
         internal static void ApplyPrefsSettings(ProBuilderShape pBShape)
         {
-            pBShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
-            pBShape.pivotLocalPosition = s_LastPivotPosition.value;
             pBShape.size = s_LastSize.value;
             pBShape.rotation = s_LastRotation.value;
         }
@@ -534,7 +528,7 @@ namespace UnityEditor.ProBuilder
                 shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
 
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-                shape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+                shape.Rebuild(m_Bounds, m_PlaneRotation);
                 ProBuilderEditor.Refresh(false);
             }
 
@@ -583,7 +577,7 @@ namespace UnityEditor.ProBuilder
                     m_ProBuilderShape.size = Vector3.zero;
                     m_ProBuilderShape.mesh.Clear();
                     m_ProBuilderShape.mesh.Rebuild();
-                    m_ProBuilderShape.Rebuild(new Bounds(m_BB_Origin, Vector3.zero), m_PlaneRotation, m_BB_Origin);
+                    m_ProBuilderShape.Rebuild(new Bounds(m_BB_Origin, Vector3.zero), m_PlaneRotation);
                     ProBuilderEditor.Refresh(true);
                 }
                 return;
@@ -600,7 +594,7 @@ namespace UnityEditor.ProBuilder
                 m_IsShapeInit = true;
             }
 
-            proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+            proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();
@@ -653,98 +647,16 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-
-#if !UNITY_2023_2_OR_NEWER
-            DrawShapeGUI();
-#endif
-
-#if !UNITY_2021_1_OR_NEWER
-            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
-            using(new EditorGUI.DisabledScope(snapDisabled))
-            {
-                if(snapDisabled)
-                    EditorGUILayout.Toggle("Snapping (only Global)", false);
-                else
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
-            }
-#endif
-
             string foldoutName = "Shape Properties (New Shape)";
             if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Shape Properties (" + m_LastShapeCreated.name + ")";
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
-            // 21.2 introduces Scene View Overlays. There's no need for additional styling, but we do need to force
-            // the width to accomodate for IMGUI not laying out nicely.
-#if UNITY_2021_2_OR_NEWER
             GUILayout.BeginVertical(GUILayout.MinWidth(k_MinOverlayWidth));
             ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
             ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
             GUILayout.EndVertical();
-#else
-            using (new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
-            {
-                ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
-                ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
-            }
-#endif
         }
-
-        void ResetPrefs()
-        {
-            var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-            if(currentShapeInOverlay == m_LastShapeCreated)
-                m_LastShapeCreated = null;
-
-            UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-            currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
-            SetBounds(currentShapeInOverlay.size);
-
-            ProBuilderEditor.Refresh();
-        }
-
-#if !UNITY_2023_2_OR_NEWER
-        void DrawShapeGUI()
-        {
-            if(m_BoldCenteredStyle == null)
-                m_BoldCenteredStyle = new GUIStyle("BoldLabel") { alignment = TextAnchor.MiddleCenter };
-
-            EditorGUILayout.LabelField(EditorShapeUtility.shapeTypes[s_ActiveShapeIndex.value], m_BoldCenteredStyle, GUILayout.ExpandWidth(true));
-
-            if(EditorShapeUtility.s_ResetUserPrefs.value)
-                ResetPrefs();
-
-            var shape = currentShapeInOverlay.shape;
-
-            int groupCount = EditorShapeUtility.shapeTypesGUI.Count;
-            for(int i = 0; i < groupCount; i++)
-            {
-                EditorGUI.BeginChangeCheck();
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                int index = GUILayout.Toolbar(s_ActiveShapeIndex.value - + i * EditorShapeUtility.MaxContentPerGroup, EditorShapeUtility.shapeTypesGUI[i], Styles.command);
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
-                if (EditorGUI.EndChangeCheck())
-                {
-                    s_ActiveShapeIndex.value = index + i * EditorShapeUtility.MaxContentPerGroup;
-
-                    var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                    if(shape.GetType() != type)
-                    {
-                        if(currentShapeInOverlay == m_LastShapeCreated)
-                            m_LastShapeCreated = null;
-
-                        UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
-                        SetBounds(currentShapeInOverlay.size);
-
-                        ProBuilderEditor.Refresh();
-                    }
-                }
-            }
-        }
-#endif
     }
 }
