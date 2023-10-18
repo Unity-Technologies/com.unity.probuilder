@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
@@ -44,23 +46,20 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        static int s_PreviewGroupIndex = -1;
-
-        internal static void StartPreview()
+        internal class PreviewScope : IDisposable
         {
-            s_PreviewGroupIndex = Undo.GetCurrentGroup();
-        }
+            int m_PreviewGroupIndex;
 
-        internal static void EndPreview()
-        {
-            if (s_PreviewGroupIndex != -1)
+            public PreviewScope()
+            {
+                m_PreviewGroupIndex = Undo.GetCurrentGroup();
+            }
+
+            public void Dispose()
             {
                 //Using this Undo method to remove the preview actions from the redo stack
-                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
-                s_PreviewGroupIndex = -1;
+                Undo.RevertAllDownToGroup(m_PreviewGroupIndex);
             }
-            else
-                Undo.PerformUndo();
         }
 
         /**
