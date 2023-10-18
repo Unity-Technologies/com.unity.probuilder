@@ -25,17 +25,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        SerializedProperty m_ShapePivotProperty = null;
-        SerializedProperty shapePivotProperty
-        {
-            get
-            {
-                if(m_ShapePivotProperty == null)
-                    m_ShapePivotProperty = serializedObject.FindProperty("m_PivotLocation");
-                return m_ShapePivotProperty;
-            }
-        }
-
         SerializedProperty m_ShapeSizeProperty = null;
         SerializedProperty shapeSizeProperty
         {
@@ -175,11 +164,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if(tool)
-                    EditorGUILayout.PropertyField(shapePivotProperty, k_ShapePivotLabel);
-
                 EditorGUILayout.PropertyField(shapeSizeProperty);
-
                 EditorGUI.indentLevel--;
             }
 

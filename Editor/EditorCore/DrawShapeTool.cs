@@ -224,7 +224,7 @@ namespace UnityEditor.ProBuilder
         internal Bounds m_Bounds;
         static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
-        static readonly GUIContent k_ShapeTitle = new GUIContent("Create Shape");
+        static readonly GUIContent k_ShapeTitle = new GUIContent("Shape Settings");
 
         [UserSetting]
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
@@ -588,11 +588,8 @@ namespace UnityEditor.ProBuilder
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
-            if (evt.type == EventType.Layout)
-            {
-                m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
-                HandleUtility.AddDefaultControl(m_ControlID);
-            }
+            m_ControlID = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(m_ControlID);
 
             if(GUIUtility.hotControl == 0)
                 EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.ArrowPlus);
