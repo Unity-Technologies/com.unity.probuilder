@@ -46,20 +46,33 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-        internal class PreviewScope : IDisposable
+        static int s_PreviewGroupIndex = -1;
+
+        internal static void StartPreview()
         {
-            int m_PreviewGroupIndex;
+            // Using this Undo method to remove the preview actions from the redo stack
+            // If a preview is already in use, reverting that one first before starting a new one
+            if (s_PreviewGroupIndex != -1)
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
 
-            public PreviewScope()
-            {
-                m_PreviewGroupIndex = Undo.GetCurrentGroup();
-            }
+            s_PreviewGroupIndex = Undo.GetCurrentGroup();
+        }
 
-            public void Dispose()
+        internal static void EndPreview()
+        {
+            if (s_PreviewGroupIndex != -1)
             {
                 //Using this Undo method to remove the preview actions from the redo stack
-                Undo.RevertAllDownToGroup(m_PreviewGroupIndex);
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
+                s_PreviewGroupIndex = -1;
             }
+            else
+                Undo.PerformUndo();
+        }
+
+        internal static void ResetPreview()
+        {
+            s_PreviewGroupIndex = -1;
         }
 
         /**
