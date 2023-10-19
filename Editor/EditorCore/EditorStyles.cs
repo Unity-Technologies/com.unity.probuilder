@@ -59,7 +59,7 @@ namespace UnityEditor.ProBuilder.UI
                     background = IconUtility.GetIcon(k_ButtonBackgroundPressed),
                     textColor = UnityEditor.EditorGUIUtility.isProSkin ? k_TextColorWhiteActive : Color.black,
                 },
-                alignment = ProBuilderEditor.s_IsIconGui ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft,
+                alignment = TextAnchor.MiddleCenter,
                 border = new RectOffset(3, 3, 3, 3),
                 stretchWidth = true,
                 stretchHeight = false,

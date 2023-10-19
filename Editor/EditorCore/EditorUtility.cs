@@ -13,15 +13,8 @@ using UnityEditor.SettingsManagement;
 using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
-#if !UNITY_2019_1_OR_NEWER
-using System.Reflection;
-#endif
 
-#if UNITY_2021_2_OR_NEWER
 using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
-#else
-using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageUtility;
-#endif
 
 namespace UnityEditor.ProBuilder
 {

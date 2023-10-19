@@ -9,12 +9,7 @@ using Object = UnityEngine.Object;
 using FaceData = UnityEditor.ProBuilder.EditorShapeUtility.FaceData;
 using Plane = UnityEngine.ProBuilder.Shapes.Plane;
 using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
-
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#endif
 
 namespace UnityEditor.ProBuilder
 {

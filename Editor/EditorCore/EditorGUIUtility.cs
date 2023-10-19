@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.UI
 {
@@ -19,37 +16,31 @@ namespace UnityEditor.ProBuilder.UI
             public static GUIContent[] selectModeIcons;
 
             static Texture2D s_ObjectIcon;
-            public static Texture2D ObjectIcon => s_ObjectIcon;
+            public static Texture2D ObjectIcon => s_ObjectIcon ??= IconUtility.GetIcon("Modes/Mode_Object");
 
             static Texture2D s_VertexIcon;
-            public static Texture2D VertexIcon => s_VertexIcon;
+            public static Texture2D VertexIcon => s_VertexIcon ??= IconUtility.GetIcon("Modes/Mode_Vertex");
 
             static Texture2D s_EdgeIcon;
-            public static Texture2D EdgeIcon => s_EdgeIcon;
+            public static Texture2D EdgeIcon => s_EdgeIcon ??= IconUtility.GetIcon("Modes/Mode_Edge");
 
             static Texture2D s_FaceIcon;
-            public static Texture2D FaceIcon => s_FaceIcon;
+            public static Texture2D FaceIcon => s_FaceIcon ??= IconUtility.GetIcon("Modes/Mode_Face");
 
-            [InitializeOnLoadMethod]
             public static void Init()
             {
-                s_ObjectIcon = IconUtility.GetIcon("Modes/Mode_Object");
-                s_VertexIcon = IconUtility.GetIcon("Modes/Mode_Vertex");
-                s_EdgeIcon = IconUtility.GetIcon("Modes/Mode_Edge");
-                s_FaceIcon = IconUtility.GetIcon("Modes/Mode_Face");
-
                 selectModeIcons = new GUIContent[]
                 {
-                    s_ObjectIcon != null
+                    ObjectIcon != null
                     ? new GUIContent(s_ObjectIcon, "Object Selection")
                     : new GUIContent("OBJ", "Object Selection"),
-                    s_VertexIcon != null
+                    VertexIcon != null
                     ? new GUIContent(s_VertexIcon, "Vertex Selection")
                     : new GUIContent("VRT", "Vertex Selection"),
-                    s_EdgeIcon != null
+                    EdgeIcon != null
                     ? new GUIContent(s_EdgeIcon, "Edge Selection")
                     : new GUIContent("EDG", "Edge Selection"),
-                    s_FaceIcon != null
+                    FaceIcon != null
                     ? new GUIContent(s_FaceIcon, "Face Selection")
                     : new GUIContent("FCE", "Face Selection"),
                 };
@@ -483,7 +474,7 @@ namespace UnityEditor.ProBuilder.UI
          */
         public static void SceneLabel(string text, Vector2 position)
         {
-            GUIContent gc = EditorGUIUtility.TempContent(text);
+            GUIContent gc = TempContent(text);
 
             float width = UnityEditor.EditorStyles.boldLabel.CalcSize(gc).x;
             float height = UnityEditor.EditorStyles.label.CalcHeight(gc, width) + 4;
@@ -493,7 +484,7 @@ namespace UnityEditor.ProBuilder.UI
             sceneLabelRect.width = width;
             sceneLabelRect.height = height;
 
-            EditorGUIUtility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
+            DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
 
             GUI.Label(sceneLabelRect, gc, sceneBoldLabel);
         }
