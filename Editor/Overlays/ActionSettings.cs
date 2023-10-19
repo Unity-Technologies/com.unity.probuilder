@@ -145,6 +145,8 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             if (m_UndoNeeded && result == EditorActionResult.Canceled)
                 UndoUtility.EndPreview();
+            else
+                UndoUtility.ResetPreview();
         }
 
         internal void UpdatePreview()
@@ -152,7 +154,6 @@ namespace UnityEditor.ProBuilder
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             Undo.undoRedoEvent -= UndoRedoEventCallback;
-            UndoUtility.EndPreview();
             UndoUtility.StartPreview();
             m_Action.PerformAction();
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;

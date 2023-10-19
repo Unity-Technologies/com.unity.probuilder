@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
@@ -48,6 +50,11 @@ namespace UnityEditor.ProBuilder
 
         internal static void StartPreview()
         {
+            // Using this Undo method to remove the preview actions from the redo stack
+            // If a preview is already in use, reverting that one first before starting a new one
+            if (s_PreviewGroupIndex != -1)
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
+
             s_PreviewGroupIndex = Undo.GetCurrentGroup();
         }
 
@@ -61,6 +68,11 @@ namespace UnityEditor.ProBuilder
             }
             else
                 Undo.PerformUndo();
+        }
+
+        internal static void ResetPreview()
+        {
+            s_PreviewGroupIndex = -1;
         }
 
         /**

@@ -69,9 +69,7 @@ namespace UnityEditor.ProBuilder
         static Quaternion s_ShapeRotation = Quaternion.identity;
         static Vector3[][] s_ArrowsLines = new Vector3[4][];
 
-#if UNITY_2021_1_OR_NEWER
         public override bool gridSnapEnabled => true;
-#endif
 
         static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
@@ -83,7 +81,7 @@ namespace UnityEditor.ProBuilder
                     {
                         image = IconUtility.GetIcon("Tools/EditShape"),
                         text = "Edit Shape",
-                        tooltip = "Edit Shape"
+                        tooltip = "Edit ProBuilder Shape"
                     };
                 return s_IconContent;
             }
@@ -96,25 +94,16 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_OverlayTitle = new GUIContent("Edit Shape");
+            m_OverlayTitle = new GUIContent("Shape Settings");
             for(int i = 0; i < s_ArrowsLines.Length; i++)
                 s_ArrowsLines[i] = new Vector3[3];
 
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
             EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
-
-#if !UNITY_2020_2_OR_NEWER
-            ToolManager.activeToolChanging += ActiveToolChanging;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-#endif
         }
 
         void OnDisable()
         {
-#if !UNITY_2020_2_OR_NEWER
-            ToolManager.activeToolChanging -= ActiveToolChanging;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-#endif
             EditorApplication.playModeStateChanged -= PlaymodeStateChanged ;
 
             if(m_ShapeEditor != null)
@@ -175,29 +164,10 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(Object obj, SceneView view)
         {
-#if !UNITY_2021_1_OR_NEWER
-            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
-            using(new EditorGUI.DisabledScope(snapDisabled))
-            {
-                if(snapDisabled)
-                    EditorGUILayout.Toggle("Snapping (only Global)", false);
-                else
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
-            }
-#endif
-
-#if UNITY_2021_2_OR_NEWER
             GUILayout.BeginVertical(GUILayout.MinWidth(DrawShapeTool.k_MinOverlayWidth));
             ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
             ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             GUILayout.EndVertical();
-#else
-            using(new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
-            {
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
-                ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
-            }
-#endif
         }
 
         /// <summary>
