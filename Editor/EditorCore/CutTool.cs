@@ -11,17 +11,11 @@ using UObject = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
 
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2023_2_OR_NEWER
     [EditorTool("Cut Tool", typeof(ProBuilderMesh), targetContext = typeof(PositionToolContext))]
-#endif
     class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -206,10 +200,6 @@ namespace UnityEditor.ProBuilder
 
         public override void OnActivated()
         {
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-            MeshSelection.objectSelectionChanged += UpdateTarget;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-
             if(MeshSelection.selectedObjectCount == 1)
             {
                 m_Mesh = MeshSelection.activeMesh;
@@ -218,9 +208,9 @@ namespace UnityEditor.ProBuilder
                 m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
             }
 
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged -= UpdateTarget;
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
+            Undo.undoRedoPerformed += UndoRedoPerformed;
+            MeshSelection.objectSelectionChanged += UpdateTarget;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
         }
 
         public override void OnWillBeDeactivated()
@@ -283,8 +273,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged(SelectMode mode)
         {
-            if(!mode.IsPositionMode())
-                ToolManager.RestorePreviousPersistentTool();
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         /// <summary>
