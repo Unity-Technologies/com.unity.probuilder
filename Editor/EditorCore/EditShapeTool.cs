@@ -190,7 +190,6 @@ namespace UnityEditor.ProBuilder
                            + Vector3.Scale(proBuilderShape.transform.TransformDirection(proBuilderShape.shapeBox.center),scale);
             var matrix = Matrix4x4.TRS(position, proBuilderShape.transform.rotation, Vector3.one);
 
-            Debug.Log(matrix);
             using (new Handles.DrawingScope(matrix))
             {
                 EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, scale, faces);
@@ -350,8 +349,7 @@ namespace UnityEditor.ProBuilder
             if( GUIUtility.hotControl != 0 && !k_OrientationControlIDs.Contains(GUIUtility.hotControl) )
                 return;
 
-            //foreach(var f in faces)
-            var f = faces[0];
+            foreach(var f in faces)
             {
                 if(f.IsVisible && EditorShapeUtility.PointerIsInFace(f))
                 {
