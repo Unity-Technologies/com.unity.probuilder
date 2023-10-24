@@ -15,13 +15,12 @@ namespace UnityEditor.ProBuilder
 {
 #if UNITY_2020_2_OR_NEWER
     [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
-    [EditorToolContext("ProBuilder")]
+    [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
     class PositionToolContext : EditorToolContext
     {
         PositionToolContext() { }
 
 #if UNITY_2023_2_OR_NEWER
-
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
