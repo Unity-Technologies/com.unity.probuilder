@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
 
         public static bool SceneViewInUse(Event e)
         {
-            return Tools.viewToolActive;
+            return Tools.viewToolActive || Tools.current == Tool.View || (e.modifiers & EventModifiers.Alt) == EventModifiers.Alt;
         }
 
         public static bool IsAppendModifier(EventModifiers em)

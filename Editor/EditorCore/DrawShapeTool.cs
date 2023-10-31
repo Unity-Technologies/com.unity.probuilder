@@ -5,20 +5,13 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
-#if UNITY_2023_3_OR_NEWER
 using Plane = UnityEngine.ProBuilder.Shapes.Plane;
 using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
-#endif
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
 
-#if UNITY_2023_3_OR_NEWER
     [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
@@ -174,7 +167,6 @@ namespace UnityEditor.ProBuilder
             base.OnActivated();
         }
     }
-#endif
 
     class DrawShapeTool : EditorTool
     {
@@ -259,30 +251,12 @@ namespace UnityEditor.ProBuilder
         // ideally this would be owned by the state machine
         public int controlID => m_ControlID;
 
-#if !UNITY_2023_2_OR_NEWER
-        //Styling
-        static class Styles
-        {
-            public static GUIStyle command = "command";
-        }
-        GUIStyle m_BoldCenteredStyle = null;
-
-        //EditorTools
-        GUIContent m_IconContent;
-        public override GUIContent toolbarIcon
-        {
-            get { return m_IconContent; }
-        }
-#endif
-
         public static Type activeShapeType
         {
             get { return s_ActiveShapeIndex < 0 ? typeof(Cube) : EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex]; }
         }
 
-#if UNITY_2021_1_OR_NEWER
         public override bool gridSnapEnabled => true;
-#endif
 
         internal ProBuilderShape currentShapeInOverlay
         {
@@ -318,15 +292,6 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_CurrentState = InitStateMachine();
-
-#if !UNITY_2023_2_OR_NEWER
-            m_IconContent = new GUIContent()
-            {
-                image = IconUtility.GetIcon("Toolbar/AddShape"),
-                text = "Draw new Shape",
-                tooltip = "Draw new Shape"
-            };
-#endif
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -582,7 +547,6 @@ namespace UnityEditor.ProBuilder
 #pragma warning restore 618
 
             var evt = Event.current;
-
             if (EditorHandleUtility.SceneViewInUse(evt))
                 return;
 
