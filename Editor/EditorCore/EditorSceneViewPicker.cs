@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
@@ -76,7 +77,10 @@ namespace UnityEditor.ProBuilder
             {
                 if(s_Selection.mesh != null)
                     s_Selection.mesh.ClearSelection();
-                MeshSelection.SetSelection((GameObject)null);
+                if(ToolManager.activeContextType != typeof(PositionToolContext))
+                    MeshSelection.SetSelection((GameObject)null);
+                else // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
+                    MeshSelection.ClearElementSelection();
             }
 
             if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)

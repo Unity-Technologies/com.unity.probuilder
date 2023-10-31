@@ -4,14 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-
-#if UNITY_2020_2_OR_NEWER
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -132,17 +126,13 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged += OnObjectSelectionChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
             ProBuilderMesh.elementSelectionChanged += ElementSelectionChanged;
-#if UNITY_2023_1_OR_NEWER
             PrefabUtility.prefabInstanceReverted += PrefabInstanceReverted;
-#endif
             EditorMeshUtility.meshOptimized += (x, y) => { s_ElementCountsDirty = true; };
             ProBuilderMesh.componentWillBeDestroyed += RemoveMeshFromSelectionInternal;
             ProBuilderMesh.componentHasBeenReset += RefreshSelectionAfterComponentReset;
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
             ToolManager.activeToolChanged += ActiveToolChanged;
-#if UNITY_2020_2_OR_NEWER
             ToolManager.activeContextChanged += ActiveToolChanged;
-#endif
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
             OnObjectSelectionChanged();
         }
@@ -196,13 +186,7 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0, c = gameObjects.Length; i < c; i++)
             {
-#if UNITY_2019_3_OR_NEWER
-                ProBuilderMesh mesh;
-                if(gameObjects[i].TryGetComponent<ProBuilderMesh>(out mesh))
-#else
-                var mesh = gameObjects[i].GetComponent<ProBuilderMesh>();
-                if (mesh != null)
-#endif
+                if(gameObjects[i].TryGetComponent<ProBuilderMesh>(out var mesh))
                 {
                     if (gameObjects[i] == Selection.activeGameObject)
                         s_ActiveMesh = mesh;
@@ -293,14 +277,10 @@ namespace UnityEditor.ProBuilder
             s_SelectedElementGroupsDirty = false;
             s_ElementSelection.Clear();
 
-#if UNITY_2020_2_OR_NEWER
             VertexManipulationTool activeTool = null;
             var editorTool = EditorToolManager.activeTool;
             if(editorTool is VertexManipulationTool)
                 activeTool = (VertexManipulationTool)editorTool;
-#else
-            var activeTool = ProBuilderEditor.activeTool;
-#endif
 
             if (activeTool != null)
             {
