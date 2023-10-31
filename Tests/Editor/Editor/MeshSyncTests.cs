@@ -25,7 +25,6 @@ class MeshSyncTests : TemporaryAssetTest
         OpenScene(copyPasteTestScene);
     }
 
-    #if UNITY_2020_2_OR_NEWER
     static IEnumerable CopyPasteDuplicate
     {
         get
@@ -108,7 +107,6 @@ class MeshSyncTests : TemporaryAssetTest
         Assume.That(copy, Is.Not.EqualTo(cube));
         Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
     }
-    #endif
 
     [Test]
     public void OpenSceneDoesNotDirtyScene()

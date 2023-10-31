@@ -1,19 +1,9 @@
 using NUnit.Framework;
-using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Shapes;
-using Plane = UnityEngine.Plane;
 using UObject = UnityEngine.Object;
-
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#endif
 
 public class CutToolTest
 {

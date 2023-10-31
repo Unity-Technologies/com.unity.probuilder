@@ -4,14 +4,8 @@ using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using EditorGUILayout = UnityEditor.EditorGUILayout;
-using EditorStyles = UnityEditor.EditorStyles;
-using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -52,7 +46,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -71,7 +64,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_SelectEntirePath.SetValue(evt.newValue);
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

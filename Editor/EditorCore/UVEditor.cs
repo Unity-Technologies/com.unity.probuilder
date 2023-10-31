@@ -6,11 +6,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -3271,11 +3267,7 @@ namespace UnityEditor.ProBuilder
         Color screenshot_backgroundColor = Color.black;
         string screenShotPath = "";
 
-        #if UNITY_2021_3_OR_NEWER
         readonly Color32 UV_FILL_COLOR = new Color32(49, 49, 49, 255);
-        #else
-        readonly Color UV_FILL_COLOR = (Color) new Color32(49, 49, 49, 255);
-        #endif
 
         // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
@@ -3328,22 +3320,13 @@ namespace UnityEditor.ProBuilder
                     screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
                     m_HorizontalOffset = 0;
-
-#if UNITY_2019_3_OR_NEWER
                     m_VerticalOffset = 0;
-#else
-                    m_VerticalOffset = 1;
-#endif
 
                     m_Docked = (bool) ReflectionUtility.GetValue(this, this.GetType(), "docked");
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
                     if(m_Docked)
                     {
-#if UNITY_2019_3_OR_NEWER
                         m_HorizontalOffset = 1;
-#else
-                        m_HorizontalOffset = 2;
-#endif
                         m_VerticalOffset = 2;
                     }
 

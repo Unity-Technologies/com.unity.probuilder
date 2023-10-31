@@ -3,9 +3,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -49,7 +47,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -73,7 +70,6 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(floatField);
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

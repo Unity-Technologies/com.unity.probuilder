@@ -1,26 +1,21 @@
 using System;
-using UnityEditor.EditorTools;
-using UnityEditor.ProBuilder.Actions;
-using UnityEditor.UIElements;
-
-#if UNITY_2023_2_OR_NEWER
 using System.Collections.Generic;
-using UnityEditor.Actions;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
-#endif
+using UnityEditor.EditorTools;
+using UnityEditor.ProBuilder.Actions;
+using UnityEditor.UIElements;
+using UnityEditor.Actions;
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2020_2_OR_NEWER
     [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
     [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
     class PositionToolContext : EditorToolContext
     {
         PositionToolContext() { }
 
-#if UNITY_2023_2_OR_NEWER
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
@@ -184,11 +179,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11, "Conform object normals","Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_ConformNormals.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11)]
-#endif
         static void ConformObjectNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -209,11 +200,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12, "Export ProBuilder mesh to another format", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Export.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12)]
-#endif
         public static void ExportAction(MenuCommand command)
         {
             EditorToolbarLoader.GetInstance<Export>().PerformAltAction();
@@ -225,11 +212,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13,  "Triangulate ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Triangulate.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13)]
-#endif
         public static void TriangulateObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -250,11 +233,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14, "Center object pivot", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_CenterOnObject.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14)]
-#endif
         static void CenterPivotAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -275,11 +254,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16, "Invert object normals", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_FlipNormals.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16)]
-#endif
         static void FlipNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -300,11 +275,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15, "Subdivide ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Subdivide.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15)]
-#endif
         public static void SubdivideObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -325,11 +296,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Mirror.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17)]
-#endif
         static void MirrorObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -350,11 +317,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 1 && MeshSelection.activeMesh != null;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18, "Merge ProBuilder meshes", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Merge.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18)]
-#endif
         static void MergeObjectsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -375,11 +338,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-#if UNITY_2023_3_OR_NEWER
         [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19, "Set pivot point to (0,0,0)", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_FreezeTransform.png")]
-#else
-        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19)]
-#endif
         static void FreezeTransformAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -435,7 +394,6 @@ namespace UnityEditor.ProBuilder
                 };
             }
         }
-#endif
     }
 
     class TextureToolContext : EditorToolContext
@@ -457,5 +415,4 @@ namespace UnityEditor.ProBuilder
             }
         }
     }
-#endif
 }

@@ -219,7 +219,6 @@ namespace UnityEngine.ProBuilder
 
             int vertexCount = mesh.vertexCount;
 
-#if !UNITY_4_6 && !UNITY_4_7
             MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
             Mesh vertexStream = renderer != null ? renderer.additionalVertexStreams : null;
 
@@ -230,7 +229,6 @@ namespace UnityEngine.ProBuilder
                 if (res != null && res.Count == vertexCount)
                     return res;
             }
-#endif
             res = attributeGetter(mesh);
 
             return res != null && res.Count == vertexCount ? res : default(T);

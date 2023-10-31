@@ -3,19 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using UnityEngine;
-using UObject = UnityEngine.Object;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-#if UNITY_2019_2_OR_NEWER
-using System.Reflection;
-using PackageInfo = UnityEditor.PackageManager.PackageInfo;
-#endif
+using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
 using UnityEngine.ProBuilder.Shapes;
+using UObject = UnityEngine.Object;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace UnityEngine.ProBuilder.Tests.Framework
 {
@@ -73,14 +70,8 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         {
             get
             {
-#if UNITY_2019_2_OR_NEWER
                 var packageName = PackageInfo.FindForAssembly(Assembly.GetExecutingAssembly()).name;
                 return "Packages/" + packageName + "/Tests";
-#else
-                if (Directory.Exists("Packages/com.unity.probuilder/Tests"))
-                    return "Packages/com.unity.probuilder/Tests";
-                return "Packages/com.unity.probuilder.tests/Tests";
-#endif
             }
         }
 

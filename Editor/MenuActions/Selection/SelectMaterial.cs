@@ -2,10 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -47,7 +44,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -63,7 +59,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

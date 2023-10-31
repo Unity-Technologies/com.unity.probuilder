@@ -1,13 +1,8 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-#endif
 
 namespace UnityEditor.ProBuilder
 {

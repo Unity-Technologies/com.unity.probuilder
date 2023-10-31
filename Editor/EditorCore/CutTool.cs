@@ -159,7 +159,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override bool IsAvailable()
         {
             return ProBuilderEditor.instance != null &&
@@ -168,7 +167,6 @@ namespace UnityEditor.ProBuilder
                     ProBuilderEditor.selectMode == SelectMode.Edge ||
                     ProBuilderEditor.selectMode == SelectMode.Face);
         }
-#endif
 
         void OnEnable()
         {

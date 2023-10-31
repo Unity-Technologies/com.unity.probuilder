@@ -26,18 +26,11 @@ namespace UnityEditor.ProBuilder
         [UserSetting(UserSettingsProvider.developerModeCategory, "Show Internal Pivot and Orientation")]
         static Pref<bool> s_ShowHandleSettingsInScene = new Pref<bool>("developer.showHandleSettingsInScene", false, SettingsScope.User);
 
-#if !UNITY_2020_2_OR_NEWER
-        static object[] s_FindNearestVertexArguments = new object[3];
-        static MethodInfo s_FindNearestVertex;
-#endif
-
-#if UNITY_2021_3_OR_NEWER
         static VertexManipulationTool()
         {
             Tools.pivotRotationChanged += SyncPivotRotation;
             Tools.pivotModeChanged += SyncPivotPoint;
         }
-#endif
 
         internal static PivotPoint pivotModePivotEquivalent
         {
@@ -45,14 +38,9 @@ namespace UnityEditor.ProBuilder
             set { s_PivotModePivotEquivalent.SetValue(value); }
         }
 
-        internal static bool showHandleSettingsInScene
-        {
-            get { return s_ShowHandleSettingsInScene; }
-        }
+        internal static bool showHandleSettingsInScene => s_ShowHandleSettingsInScene;
 
-#if UNITY_2021_1_OR_NEWER
         public override bool gridSnapEnabled => Tools.pivotRotation == PivotRotation.Global;
-#endif
 
         // Store PivotRotation so that we can detect changes and update our handles appropriately
         static PivotRotation s_PivotRotation;
@@ -384,20 +372,7 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
         {
-#if UNITY_2020_2_OR_NEWER
             return HandleUtility.FindNearestVertex(mousePosition, out vertex);
-#else
-            s_FindNearestVertexArguments[0] = mousePosition;
-            s_FindNearestVertexArguments[1] = null;
-
-            if (s_FindNearestVertex == null)
-                s_FindNearestVertex = typeof(HandleUtility).GetMethod("FindNearestVertex",
-                        BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            object result = s_FindNearestVertex.Invoke(null, s_FindNearestVertexArguments);
-            vertex = (bool)result ? (Vector3)s_FindNearestVertexArguments[2] : Vector3.zero;
-            return (bool)result;
-#endif
         }
     }
 }

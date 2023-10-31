@@ -252,15 +252,6 @@ namespace UnityEditor.ProBuilder
             UnityObject.DestroyImmediate(mesh);
         }
 
-#if !UNITY_2019_1_OR_NEWER
-        static MethodInfo s_ApplyWireMaterial = null;
-
-        static object[] s_ApplyWireMaterialArgs = new object[]
-        {
-            CompareFunction.Always
-        };
-#endif
-
         public static void DrawSceneSelection(SceneSelection selection)
         {
             var mesh = selection.mesh;

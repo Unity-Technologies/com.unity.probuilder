@@ -12,38 +12,25 @@ namespace UnityEditor.ProBuilder
     {
         static UndoUtility()
         {
-#if UNITY_2023_2_OR_NEWER
             Undo.undoRedoEvent += UndoRedoEventCallback;
-#else
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-#endif
         }
 
-#if UNITY_2023_2_OR_NEWER
         static bool s_IsPerformingUndoRedo = false;
         internal static bool IsPerformingUndoRedo => s_IsPerformingUndoRedo;
 
         static void UndoRedoEventCallback(in UndoRedoInfo info)
         {
-            s_IsPerformingUndoRedo = true;
-#else
-        static void UndoRedoPerformed()
-        {
-#endif
-
             // material preview when dragging in scene-view is done by applying then undoing changes. we don't want to
             // rebuild the mesh every single frame when dragging.
             if (SceneDragAndDropListener.isDragging)
                 return;
 
+            s_IsPerformingUndoRedo = true;
             foreach(var mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
-
-#if UNITY_2023_2_OR_NEWER
             s_IsPerformingUndoRedo = false;
-#endif
         }
 
         static int s_PreviewGroupIndex = -1;

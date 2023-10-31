@@ -7,12 +7,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
-
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -222,33 +217,10 @@ namespace UnityEditor.ProBuilder
         {
             m_OverlayTitle = new GUIContent("Poly Shape Tool");
 
-#if !UNITY_2020_2_OR_NEWER
-            ToolManager.activeToolChanged += OnToolChanged;
-#endif
         }
 
-        void OnDisable()
-        {
-#if !UNITY_2020_2_OR_NEWER
-            ToolManager.activeToolChanged -= OnToolChanged;
-#endif
-        }
+        void OnDisable(){}
 
-#if !UNITY_2020_2_OR_NEWER
-        void OnToolChanged()
-        {
-            if(ToolManager.IsActiveTool(this))
-            {
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
-                m_Target = null;
-                UpdateTarget();
-                if(polygon == null)
-                    End();
-            }
-            else if(polygon != null)
-                End();
-        }
-#else
         public override void OnActivated()
         {
             SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -260,13 +232,8 @@ namespace UnityEditor.ProBuilder
             m_Target = null;
             UpdateTarget();
         }
-#endif
 
-#if !UNITY_2020_2_OR_NEWER
-        void End()
-#else
         public override void OnWillBeDeactivated()
-#endif
         {
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;

@@ -1,13 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-
-#if UNITY_2023_2_OR_NEWER
-using System;
-using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -46,7 +43,6 @@ namespace UnityEditor.ProBuilder.Actions
             Submesh
         };
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -66,7 +62,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

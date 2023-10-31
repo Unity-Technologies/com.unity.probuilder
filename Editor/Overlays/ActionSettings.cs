@@ -1,5 +1,4 @@
-﻿#if UNITY_2023_2_OR_NEWER
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEditor.Actions;
 using UnityEditor.Overlays;
@@ -175,4 +174,3 @@ namespace UnityEditor.ProBuilder
         }
     }
 }
-#endif

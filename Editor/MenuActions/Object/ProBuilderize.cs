@@ -3,11 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-
-#if UNITY_2023_2_OR_NEWER
 using UnityEditor.Actions;
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -68,8 +65,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return MenuActionState.VisibleAndEnabled; }
         }
-
-#if UNITY_2023_2_OR_NEWER
 
         [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
         static bool ValidateProBuilderizeMeshAction()
@@ -153,7 +148,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

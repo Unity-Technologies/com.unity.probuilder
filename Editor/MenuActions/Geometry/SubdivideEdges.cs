@@ -3,9 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -57,7 +55,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         Vector2IntField m_RangeField;
         IntegerField m_SubdivCount;
         SliderInt m_Slider;
@@ -199,7 +196,6 @@ namespace UnityEditor.ProBuilder.Actions
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
             }
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

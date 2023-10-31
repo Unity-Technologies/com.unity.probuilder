@@ -757,14 +757,13 @@ namespace UnityEngine.ProBuilder
             if (first.hasNormal) mesh.normals = normals;
             if (first.hasTangent) mesh.tangents = tangents;
             if (first.hasUV2) mesh.uv2 = uv2s;
-#if !UNITY_4_7 && !UNITY_5_0
             if (first.hasUV3)
                 if (uv3s != null)
                     mesh.SetUVs(2, uv3s);
             if (first.hasUV4)
                 if (uv4s != null)
                     mesh.SetUVs(3, uv4s);
-#endif
+
             mesh.indexFormat = mesh.vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
         }
 

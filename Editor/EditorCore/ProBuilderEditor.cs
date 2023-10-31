@@ -8,13 +8,8 @@ using UnityEngine.ProBuilder;
 using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
 using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
-#if UNITY_2020_2_OR_NEWER
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -72,11 +67,6 @@ namespace UnityEditor.ProBuilder
         static Pref<RectSelectMode> m_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
-#if !UNITY_2023_2_OR_NEWER
-        static Pref<SelectionModifierBehavior> m_SelectModifierBehavior =
-            new Pref<SelectionModifierBehavior>("editor.rectSelectModifier", SelectionModifierBehavior.Difference);
-#endif
-
         internal static event Action rectSelectModeChanged;
         internal static RectSelectMode rectSelectMode
         {
@@ -95,24 +85,6 @@ namespace UnityEditor.ProBuilder
                     s_Instance.m_ScenePickerPreferences.rectSelectMode = value;
             }
         }
-
-#if !UNITY_2023_2_OR_NEWER
-        internal static SelectionModifierBehavior selectionModifierBehavior
-        {
-            get { return m_SelectModifierBehavior.value; }
-
-            set
-            {
-                if (s_Instance == null || m_SelectModifierBehavior.value == value)
-                    return;
-
-                m_SelectModifierBehavior.SetValue(value, true);
-
-                if (s_Instance != null)
-                    s_Instance.m_ScenePickerPreferences.selectionModifierBehavior = value;
-            }
-        }
-#endif
 
         internal static event Action backfaceSelectionEnabledChanged;
         internal static bool backfaceSelectionEnabled
@@ -351,9 +323,6 @@ namespace UnityEditor.ProBuilder
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
                 cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
-#if !UNITY_2023_2_OR_NEWER
-                selectionModifierBehavior = m_SelectModifierBehavior,
-#endif
                 rectSelectMode = m_DragSelectRectMode
             };
         }

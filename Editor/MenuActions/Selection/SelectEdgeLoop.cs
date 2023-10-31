@@ -1,10 +1,8 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-#if UNITY_2023_2_OR_NEWER
-using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -100,7 +98,6 @@ namespace UnityEditor.ProBuilder.Actions
                 return new ActionResult(ActionResult.Status.Failure, "Nothing to Loop");
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -116,7 +113,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

@@ -167,11 +167,7 @@ namespace UnityEditor.ProBuilder
         {
             m_GameObjectsSerializedObject.Update();
 
-#if UNITY_2019_2_OR_NEWER
             bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.ContributeGI) != 0;
-#else
-            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
-#endif
 
             EditorGUI.BeginChangeCheck();
 
@@ -179,11 +175,7 @@ namespace UnityEditor.ProBuilder
 
             if (EditorGUI.EndChangeCheck())
             {
-#if UNITY_2019_2_OR_NEWER
                 SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.ContributeGI, lightmapStatic);
-#else
-                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
-#endif
             }
 
             if (lightmapStatic)
@@ -239,13 +231,8 @@ namespace UnityEditor.ProBuilder
                 {
                     var mesh = (ProBuilderMesh)obj;
 
-#if UNITY_2019_2_OR_NEWER
                     if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.ContributeGI))
                         continue;
-#else
-                    if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
-                        continue;
-#endif
 
                     if (forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
                         mesh.Optimize(true);

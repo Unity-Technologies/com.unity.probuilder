@@ -9,11 +9,7 @@ namespace UnityEditor.ProBuilder
 
         static VertexManipulationToolSettings()
         {
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
-#endif
         }
 
         static void OnSceneGUI(SceneView view)

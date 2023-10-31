@@ -1,16 +1,11 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 public class CollapseVerticesTest
 {

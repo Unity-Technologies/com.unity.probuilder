@@ -28,14 +28,6 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
         {
-#if PB_DEBUG
-            if (iconName.EndsWith(".png"))
-                pb_Log.Error("GetIcon(string) called with .png suffix!");
-
-            if (iconName.EndsWith("_Light"))
-                pb_Log.Error("GetIcon(string) called with _Light suffix!");
-#endif
-
             bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
             string name = isDarkSkin ? iconName : iconName + "_Light";
 

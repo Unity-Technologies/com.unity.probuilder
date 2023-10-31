@@ -1,12 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using Object = UnityEngine.Object;
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {

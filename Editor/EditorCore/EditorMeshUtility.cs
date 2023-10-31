@@ -55,13 +55,7 @@ namespace UnityEditor.ProBuilder
             if (!skipMeshProcessing)
             {
                 bool autoLightmap = Lightmapping.autoUnwrapLightmapUV;
-
-#if UNITY_2019_2_OR_NEWER
                 bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.ContributeGI));
-#else
-                bool lightmapUVs = generateLightmapUVs || (autoLightmap && mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic));
-#endif
-
                 var usedInParticleSystem = UnityEngine.ProBuilder.MeshUtility.IsUsedInParticleSystem(mesh);
 
                 // if generating UV2, the process is to manually split the mesh into individual triangles,
@@ -113,11 +107,9 @@ namespace UnityEditor.ProBuilder
             if (Experimental.meshesAreAssets)
                 TryCacheMesh(mesh);
 
-#if UNITY_2020_2_OR_NEWER
             umesh.RecalculateUVDistributionMetric(0);
             if (uv2Built)
                 umesh.RecalculateUVDistributionMetric(1);
-#endif
 
             UnityEditor.EditorUtility.SetDirty(mesh);
         }

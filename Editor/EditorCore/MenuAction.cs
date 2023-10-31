@@ -3,14 +3,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
-#if UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -267,7 +260,6 @@ namespace UnityEditor.ProBuilder
 
         public void PerformAltAction() => DoAlternateAction();
 
-#if UNITY_2023_2_OR_NEWER
         /// <summary>
         /// Replaces OnSettingsGUI for 2023.2 and newer to display settings in a SceneView overlay.
         /// Creates a custom settings window for this action. Populate a root visual element in that method with
@@ -282,7 +274,6 @@ namespace UnityEditor.ProBuilder
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
         public virtual void DoSceneGUI(SceneView sceneView) {}
-#endif
 
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.

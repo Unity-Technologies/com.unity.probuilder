@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.ProBuilder;
 using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-#if UNITY_2023_2_OR_NEWER
-using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -58,7 +56,6 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
             }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -96,7 +93,6 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

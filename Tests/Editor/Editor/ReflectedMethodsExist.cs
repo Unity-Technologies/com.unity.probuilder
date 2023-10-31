@@ -13,25 +13,6 @@ static class ReflectedMethodsExist
 {
     const BindingFlags k_BindingFlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-#if !UNITY_2019_1_OR_NEWER
-    [Test]
-    public static void SceneView_OnPreSceneGUIDelegate()
-    {
-        var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
-        Assert.IsNotNull(fi);
-    }
-
-    [Test]
-    public static void EditorWindow_ShowWindowPopupWithMode()
-    {
-        var mi = typeof(EditorWindow).GetMethod(
-            "ShowPopupWithMode",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        Assert.IsNotNull(mi);
-    }
-
-#endif
-
     [Test]
     public static void HandleUtility_ApplyWireMaterial()
     {
