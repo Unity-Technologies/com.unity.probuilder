@@ -92,6 +92,12 @@ namespace UnityEngine.ProBuilder.Shapes
             shapeBB.center = centerLocalPos;
             m_ShapeBox = shapeBB;
 
+            if(mesh != null && mesh.mesh != null)
+            {
+                mesh.SetPivot(mesh.transform.TransformPoint(m_ShapeBox.center));
+                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
+            }
+
             size = bounds.size;
             Rebuild();
         }
