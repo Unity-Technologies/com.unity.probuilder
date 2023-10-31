@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
@@ -75,6 +76,9 @@ namespace UnityEditor.ProBuilder
             {
                 if(GUILayout.Button("Edit Shape"))
                 {
+                    if (!(EditorToolManager.activeToolContext is PositionToolContext))
+                        ToolManager.SetActiveContext<PositionToolContext>();
+
                     ToolManager.SetActiveTool<EditShapeTool>();
                 }
             }

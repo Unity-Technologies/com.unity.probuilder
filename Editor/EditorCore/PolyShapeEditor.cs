@@ -27,6 +27,9 @@ namespace UnityEditor.ProBuilder
                  {
                      if(GUILayout.Button("Edit Poly Shape"))
                      {
+                         if (!(EditorToolManager.activeToolContext is PositionToolContext))
+                             ToolManager.SetActiveContext<PositionToolContext>();
+
                          ToolManager.SetActiveTool<PolyShapeTool>();
                      }
 
