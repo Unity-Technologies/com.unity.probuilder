@@ -13,7 +13,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-    [EditorTool("Edit Shape", typeof(ProBuilderShape), targetContext = typeof(PositionToolContext))]
+    [EditorTool("Edit Shape", typeof(ProBuilderShape), typeof(PositionToolContext))]
     sealed class EditShapeTool : EditorTool
     {
         Editor m_ShapeEditor;
@@ -62,7 +62,22 @@ namespace UnityEditor.ProBuilder
         static float s_CurrentAngle = 0;
         static int s_CurrentArrowHovered = -1;
         static Quaternion s_ShapeRotation = Quaternion.identity;
-        static Vector3[][] s_ArrowsLines = new Vector3[4][];
+        static Vector3[][] s_ArrowsLines;
+
+        static Vector3[][] arrowsLines
+        {
+            get
+            {
+                if(s_ArrowsLines == null)
+                {
+                    s_ArrowsLines = new Vector3[4][];
+                    for (int i = 0; i < s_ArrowsLines.Length; i++)
+                        s_ArrowsLines[i] = new Vector3[3];
+                }
+
+                return s_ArrowsLines;
+            }
+        }
 
         public override bool gridSnapEnabled => true;
 
@@ -82,17 +97,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public override bool IsAvailable()
-        {
-            return ProBuilderEditor.instance != null;
-        }
-
         void OnEnable()
         {
             m_OverlayTitle = new GUIContent("Shape Settings");
-            for(int i = 0; i < s_ArrowsLines.Length; i++)
-                s_ArrowsLines[i] = new Vector3[3];
-
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
             EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
         }
@@ -388,7 +395,7 @@ namespace UnityEditor.ProBuilder
                             {
                                 if(k_OrientationControlIDs[i] == s_CurrentId)
                                 {
-                                    targetedNormal = (s_ArrowsLines[i][1] - face.CenterPosition).normalized;
+                                    targetedNormal = (arrowsLines[i][1] - face.CenterPosition).normalized;
                                     break;
                                 }
                             }
@@ -409,7 +416,7 @@ namespace UnityEditor.ProBuilder
                     case EventType.Layout:
                         for(int i = 0; i < 4; i++)
                         {
-                            var rectPos = 0.8f * s_ArrowsLines[i][1] + 0.2f * face.CenterPosition;
+                            var rectPos = 0.8f * arrowsLines[i][1] + 0.2f * face.CenterPosition;
                             float dist = HandleUtility.DistanceToRectangle( rectPos,
                                 Quaternion.LookRotation(face.Normal),
                                 HandleUtility.GetHandleSize(face.CenterPosition) * s_DefaultMidpointSquareSize/2f);
@@ -434,9 +441,9 @@ namespace UnityEditor.ProBuilder
                            var A = topDirection.magnitude;
                            var a = 0.33f * Mathf.Sqrt(2f * A * A);
                            var h = 0.5f * Mathf.Sqrt(2f * a * a);
-                           s_ArrowsLines[i][0] = top - ( h * arrowDirection + h * sideDirection );
-                           s_ArrowsLines[i][1] = top;
-                           s_ArrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
+                           arrowsLines[i][0] = top - ( h * arrowDirection + h * sideDirection );
+                           arrowsLines[i][1] = top;
+                           arrowsLines[i][2] = top - ( h * arrowDirection - h * sideDirection );
 
                            bool selected = HandleUtility.nearestControl == k_OrientationControlIDs[i];
 
@@ -447,7 +454,7 @@ namespace UnityEditor.ProBuilder
 
                            using(new Handles.DrawingScope(color))
                            {
-                               Handles.DrawAAPolyLine(5f, s_ArrowsLines[i]);
+                               Handles.DrawAAPolyLine(5f, arrowsLines[i]);
                                if(selected)
                                {
                                    EditorGUIUtility.AddCursorRect(new Rect(0,0,Screen.width, Screen.height), MouseCursor.RotateArrow);
