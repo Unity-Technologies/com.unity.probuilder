@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -95,8 +96,8 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            if (GUILayout.Button("Open ProBuilder"))
-                ProBuilderEditor.MenuOpenWindow();
+            if (GUILayout.Button("Edit Mesh"))
+                ToolManager.SetActiveContext<PositionToolContext>();
 
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;

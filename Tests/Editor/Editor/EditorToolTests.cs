@@ -33,10 +33,10 @@ public class EditorToolTests
     [Test]
     public void SetSelectModeSetsTool()
     {
-        var editor = EditorWindow.GetWindow<ProBuilderEditor>();
-        Assume.That(editor, Is.Not.Null);
+        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
         ProBuilderEditor.selectMode = SelectMode.None;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.None));
+        ToolManager.SetActiveContext<PositionToolContext>();
         Tools.current = Tool.Move;
 
         ProBuilderEditor.selectMode = SelectMode.Face;

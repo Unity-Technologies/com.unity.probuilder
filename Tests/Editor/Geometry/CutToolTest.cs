@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -8,16 +9,12 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 public class CutToolTest
 {
     ProBuilderMesh m_PBMesh;
-    bool m_OpenedWindow = false;
     SelectMode m_PreviousSelectMode;
 
     [SetUp]
     public void Setup()
     {
-        // make sure the ProBuilder window is open
-        if (ProBuilderEditor.instance == null)
-            ProBuilderEditor.MenuOpenWindow();
-
+        ToolManager.SetActiveContext<PositionToolContext>();
         Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
         m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
@@ -35,12 +32,7 @@ public class CutToolTest
             UObject.DestroyImmediate(m_PBMesh.gameObject);
 
         ProBuilderEditor.selectMode = m_PreviousSelectMode;
-
-        // close editor window if we had to open it
-        if (m_OpenedWindow && ProBuilderEditor.instance != null)
-        {
-            ProBuilderEditor.instance.Close();
-        }
+        ToolManager.SetActiveContext<GameObjectToolContext>();
     }
 
     [Test]

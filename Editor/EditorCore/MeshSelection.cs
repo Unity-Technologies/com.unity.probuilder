@@ -558,7 +558,7 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ClearElementAndObjectSelection"/>
         public static void ClearElementSelection()
         {
-            if (ProBuilderEditor.instance)
+            if (ProBuilderEditor.instance != null)
                 ProBuilderEditor.instance.ClearElementSelection();
             InvalidateCaches();
             if (objectSelectionChanged != null)
@@ -571,7 +571,7 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ClearElementSelection"/>
         public static void ClearElementAndObjectSelection()
         {
-            if (ProBuilderEditor.instance)
+            if (ProBuilderEditor.instance != null)
                 ProBuilderEditor.instance.ClearElementSelection();
             Selection.objects = new Object[0];
         }

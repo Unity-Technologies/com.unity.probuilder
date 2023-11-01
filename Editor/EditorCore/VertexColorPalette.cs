@@ -170,7 +170,7 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderEditor editor = ProBuilderEditor.instance;
 
-            if (editor && ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face))
+            if (editor != null && ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Vertex | SelectMode.Edge | SelectMode.Face))
             {
                 switch (ProBuilderEditor.selectMode)
                 {

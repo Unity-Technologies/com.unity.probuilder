@@ -1,3 +1,4 @@
+using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -26,6 +27,12 @@ namespace UnityEditor.ProBuilder
 		{
 			ProBuilderEditor.selectMode = SelectMode.Face;
 		}
+
+        [Shortcut("ProBuilder/Editor/Toggle Geometry Mode", typeof(SceneView), KeyCode.G)]
+        static void Toggle_ObjectElementMode()
+        {
+            ToolManager.SetActiveContext<PositionToolContext>();
+        }
 
 		[Shortcut("ProBuilder/Editor/Toggle Select Mode", typeof(SceneView), KeyCode.H)]
 		static void Toggle_SelectMode()

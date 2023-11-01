@@ -268,7 +268,7 @@ namespace UnityEditor.ProBuilder
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
-            var selectMode = ProBuilderToolManager.selectMode;
+            var selectMode = ProBuilderEditor.selectMode;
             if (selectMode.IsTextureMode())
                 ProBuilderEditor.selectMode = selectMode.GetPositionMode();
 
@@ -859,7 +859,7 @@ namespace UnityEditor.ProBuilder
                         else
                         {
                             if ((ProBuilderEditor.selectMode == SelectMode.Face || ProBuilderEditor.selectMode == SelectMode.TextureFace) &&
-                                editor && IsCopyUVSettingsModifiers(e.modifiers))
+                                editor != null && IsCopyUVSettingsModifiers(e.modifiers))
                             {
                                 Face targetFace;
                                 for (int i = 0; i < selection.Length; i++)
@@ -875,7 +875,7 @@ namespace UnityEditor.ProBuilder
 
                             UndoUtility.RecordSelection(selection, "Change Selection");
 
-                            if (Event.current.modifiers == (EventModifiers)0 && editor)
+                            if (Event.current.modifiers == (EventModifiers)0 && editor != null)
                                 editor.ClearElementSelection();
 
                             OnMouseClick(e.mousePosition);
@@ -1108,7 +1108,7 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
-            if (editor)
+            if (editor != null)
             {
                 ProBuilderEditor.Refresh();
                 SceneView.RepaintAll();
@@ -1123,7 +1123,7 @@ namespace UnityEditor.ProBuilder
         {
             Event e = Event.current;
 
-            if (editor && !e.shift && !e.control && !e.command)
+            if (editor != null && !e.shift && !e.control && !e.command)
             {
                 UndoUtility.RecordSelection(selection, "Change Selection");
                 editor.ClearElementSelection();
@@ -2024,7 +2024,7 @@ namespace UnityEditor.ProBuilder
         {
             needsRepaint = true;
 
-            if (selection == null || selection.Length < 1 || (editor && MeshSelection.selectedVertexCount < 1))
+            if (selection == null || selection.Length < 1 || (editor != null && MeshSelection.selectedVertexCount < 1))
             {
                 SetCanvasCenter(Event.current.mousePosition - UVGraphCenter - uvGraphOffset);
                 return;
@@ -2445,7 +2445,7 @@ namespace UnityEditor.ProBuilder
             // begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
             Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 140, PAD - 1, 36f, 22f);
 
-            if (editor)
+            if (editor != null)
             {
                 gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode.IsTextureMode() ? icon_sceneUV_on : icon_sceneUV_off;
 

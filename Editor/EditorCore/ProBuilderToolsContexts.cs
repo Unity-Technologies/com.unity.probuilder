@@ -10,11 +10,16 @@ using UnityEditor.Actions;
 
 namespace UnityEditor.ProBuilder
 {
+    static class ProBuilderToolManager
+    {
+        public static Tool activeTool => Tools.current;
+    }
+
     [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
     [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
     class PositionToolContext : EditorToolContext
     {
-        PositionToolContext() { }
+        ProBuilderEditor m_Editor;
 
         protected override Type GetEditorToolType(Tool tool)
         {
@@ -53,17 +58,6 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleDragRectMode),
             typeof(Actions.ToggleXRay)
         };
-
-        public override void OnActivated()
-        {
-            ProBuilderEditor.ResetToLastSelectMode();
-        }
-
-        public override void OnWillBeDeactivated()
-        {
-            ProBuilderEditor.selectMode = SelectMode.None;
-            ProBuilderEditor.Refresh();
-        }
 
         static string BuildMenuTitle()
         {
@@ -163,10 +157,21 @@ namespace UnityEditor.ProBuilder
             return !(action is DetachFaces || action is DuplicateFaces);
         }
 
-        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Open ProBuilder", false, 0)]
-        static void OpenProBuilder()
+        public override void OnActivated()
         {
-            ProBuilderEditor.MenuOpenWindow();
+            m_Editor = new ProBuilderEditor();
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            m_Editor.Dispose();
+        }
+
+        public override void OnToolGUI(EditorWindow window)
+        {
+            if (!(window is SceneView view))
+                return;
+            m_Editor.OnSceneGUI(view);
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions

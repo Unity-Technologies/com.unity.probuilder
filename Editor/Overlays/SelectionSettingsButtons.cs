@@ -37,14 +37,14 @@ namespace UnityEditor.ProBuilder.UI
                     throw new ArgumentOutOfRangeException(nameof(mode));
             }
 
-            RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderToolManager.selectModeChanged += UpdateSelectMode; });
-            RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderToolManager.selectModeChanged -= UpdateSelectMode; });
-            this.RegisterValueChangedCallback(evt => { ProBuilderToolManager.SetSelectMode(m_Mode); });
+            RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderEditor.selectModeChanged += UpdateSelectMode; });
+            RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderEditor.selectModeChanged -= UpdateSelectMode; });
+            this.RegisterValueChangedCallback(evt => { ProBuilderEditor.selectMode = m_Mode; });
 
-            UpdateSelectMode();
+            UpdateSelectMode(ProBuilderEditor.selectMode);
         }
 
-        void UpdateSelectMode() => SetValueWithoutNotify(ProBuilderToolManager.selectMode == m_Mode);
+        void UpdateSelectMode(SelectMode mode) => SetValueWithoutNotify(m_Mode == mode);
     }
 
     [EditorToolbarElement("ProBuilder Settings/Select Mode")]
