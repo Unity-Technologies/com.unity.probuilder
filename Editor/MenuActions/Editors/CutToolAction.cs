@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using Object = UnityEngine.Object;
@@ -14,12 +13,12 @@ namespace UnityEditor.ProBuilder.Actions
     /// <summary>
     /// Represents the [Cut tool](../manual/cut-tool.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    public class CutToolToggle : MenuToolToggle
+    public class CutToolAction : MenuAction
     {
         /// <inheritdoc/>
         public override ToolbarGroup group
         {
-            get { return ToolbarGroup.Geometry; }
+            get { return ToolbarGroup.Tool; }
         }
 
         /// <inheritdoc/>
@@ -53,7 +52,7 @@ namespace UnityEditor.ProBuilder.Actions
         /// <inheritdoc/>
         public override bool enabled
         {
-            get => MeshSelection.selectedObjectCount > 0;
+            get => MeshSelection.selectedObjectCount == 1;
         }
 
         /// <inheritdoc/>
@@ -66,7 +65,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             //Give the focus back to scene view to handle key inputs directly
             SceneView.lastActiveSceneView.Focus();
-
             return new ActionResult(ActionResult.Status.Success,"Cut Tool Starts");
         }
 

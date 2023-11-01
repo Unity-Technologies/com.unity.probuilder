@@ -35,17 +35,17 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape Toggle", true, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewPolyShapeToggle()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeAction>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape Toggle", false, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewPolyShapeToggle()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeToggle>();
+			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeAction>();
 			if(instance != null && instance.enabled)
 			{
 				EditorUtility.ShowNotification(instance.PerformAction().notification);
@@ -53,17 +53,17 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Shape Toggle %#k", true, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Shape %#k", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewShapeToggle()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
+			var instance = EditorToolbarLoader.GetInstance<NewShapeAction>();
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Shape Toggle %#k", false, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/New Shape %#k", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewShapeToggle()
 		{
-			var instance = EditorToolbarLoader.GetInstance<NewShapeToggle>();
+			var instance = EditorToolbarLoader.GetInstance<NewShapeAction>();
 			if(instance != null && instance.enabled)
 			{
 				EditorUtility.ShowNotification(instance.PerformAction().notification);

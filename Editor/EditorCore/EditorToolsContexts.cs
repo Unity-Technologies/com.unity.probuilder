@@ -1,6 +1,7 @@
 using System;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.UIElements;
 
 #if UNITY_2023_2_OR_NEWER
 using System.Collections.Generic;
@@ -41,8 +42,37 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleXRay)
         };
 
+        static string BuildMenuTitle()
+        {
+            var title = "ProBuilder";
+            switch (ProBuilderEditor.selectMode)
+            {
+                case SelectMode.Vertex:
+                    title = MeshSelection.selectedSharedVertexCount.ToString();
+                    title += MeshSelection.selectedSharedVertexCount == 1 ? " Vertex" : " Vertices";
+                    break;
+                case SelectMode.Edge:
+                    title = MeshSelection.selectedEdgeCount.ToString();
+                    title += MeshSelection.selectedEdgeCount == 1 ? " Edge" : " Edges";
+                    break;
+                case SelectMode.Face:
+                    title = MeshSelection.selectedFaceCount.ToString();
+                    title += MeshSelection.selectedFaceCount == 1 ? " Face" : " Faces";
+                    break;
+            }
+
+            return title;
+        }
+
+
         public override void PopulateMenu(DropdownMenu menu)
         {
+            menu.SetDescriptor(new DropdownMenuDescriptor()
+                {
+                    title = BuildMenuTitle()
+                }
+            );
+
             //Headers area is for ProBuilder modes
             menu.AppendHeaderAction(UI.EditorGUIUtility.Styles.VertexIcon,
                 x => { ProBuilderEditor.selectMode = SelectMode.Vertex; },
@@ -69,7 +99,7 @@ namespace UnityEditor.ProBuilder
                 if (k_ContextMenuBlacklist.Contains(action.GetType()))
                     continue;
 
-                if (action.group == ToolbarGroup.Entity || action.group == ToolbarGroup.Object)
+                if (action.group == ToolbarGroup.Entity || action.group == ToolbarGroup.Object || action.group == ToolbarGroup.Tool)
                     continue;
 
                 if (action.group != group)
@@ -79,8 +109,14 @@ namespace UnityEditor.ProBuilder
                 }
 
                 var title = action.menuTitle;
+                // Geometry and Tool groups are not displayed in the menu
                 if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
-                    title = $"{action.group}/{action.menuTitle}";
+                {
+                    //STO-3001: For a better UX, Selection group is renamed to Select so that users don't think this is
+                    //acting on the current selection
+                    var groupName = action.group == ToolbarGroup.Selection ? "Select" : action.group.ToString();
+                    title = $"{groupName}/{action.menuTitle}";
+                }
 
                 if (action.optionsEnabled)
                 {
@@ -102,6 +138,12 @@ namespace UnityEditor.ProBuilder
         static bool HasPreview(MenuAction action)
         {
             return !(action is DetachFaces || action is DuplicateFaces);
+        }
+
+        [MenuItem("CONTEXT/GameObjectToolContext/ProBuilder/Open ProBuilder", false, 0)]
+        static void OpenProBuilder()
+        {
+            ProBuilderEditor.MenuOpenWindow();
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions

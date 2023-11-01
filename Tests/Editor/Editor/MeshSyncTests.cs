@@ -40,7 +40,7 @@ class MeshSyncTests : TemporaryAssetTest
     public void ExecuteCopyPasteDuplicate_CreatesUniqueMesh(string[] commands)
     {
         var parent = new GameObject().transform;
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstCorner);
+        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
         cube.transform.parent = parent;
         Assume.That(parent.childCount, Is.EqualTo(1));
         int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
@@ -71,7 +71,7 @@ class MeshSyncTests : TemporaryAssetTest
         string[] commands = new[] { "Duplicate" };
         var parent = new GameObject().transform;
         var emptyGO = new GameObject().transform;
-        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstCorner);
+        var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
 
         emptyGO.parent = parent;
         cube.transform.parent = emptyGO;

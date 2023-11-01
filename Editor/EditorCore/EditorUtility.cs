@@ -44,9 +44,6 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Mesh Settings", "Mesh Collider is Convex", "If a MeshCollider is set as the default collider component, this sets the convex setting.")]
         static Pref<bool> s_MeshColliderIsConvex = new Pref<bool>("mesh.meshColliderIsConvex", false);
 
-        [UserSetting("Mesh Settings", "Pivot Location", "Determines the placement of new shape's pivot.")]
-        static Pref<PivotLocation> s_NewShapesPivotAtCenter = new Pref<PivotLocation>("mesh.newShapePivotLocation", PivotLocation.FirstCorner);
-
         [UserSetting("Mesh Settings", "Snap New Shape To Grid", "When enabled, new shapes will snap to the closest point on grid.")]
         static Pref<bool> s_SnapNewShapesToGrid = new Pref<bool>("mesh.newShapesSnapToGrid", true);
 
@@ -55,11 +52,6 @@ namespace UnityEditor.ProBuilder
 
         [UserSetting("Mesh Settings", "Collider Type", "What type of Collider to apply to new Shapes.")]
         static Pref<ColliderType> s_ColliderType = new Pref<ColliderType>("mesh.newShapeColliderType", ColliderType.MeshCollider);
-
-        internal static PivotLocation newShapePivotLocation
-        {
-            get { return s_NewShapesPivotAtCenter; }
-        }
 
         /// <summary>
         /// Raised when a new mesh has been created and initialized through ProBuilder.

@@ -19,6 +19,9 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+#if UNITY_2023_2_OR_NEWER
+    [EditorTool("Cut Tool", typeof(ProBuilderMesh))]
+#endif
     internal class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -162,6 +165,16 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if UNITY_2023_2_OR_NEWER
+        public override bool IsAvailable()
+        {
+            return MeshSelection.selectedObjectCount == 1 &&
+                (ProBuilderEditor.selectMode == SelectMode.Vertex ||
+                    ProBuilderEditor.selectMode == SelectMode.Edge ||
+                    ProBuilderEditor.selectMode == SelectMode.Face);
+        }
+#endif
+
         void OnEnable()
         {
             m_IconContent = new GUIContent()
@@ -181,23 +194,36 @@ namespace UnityEditor.ProBuilder
             m_CutCursorTexture = IconUtility.GetIcon("Cursors/cutCursor");
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-
             m_Mesh = null;
             UpdateTarget();
-
-            MeshSelection.objectSelectionChanged += UpdateTarget;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
         }
 
         void OnDisable()
         {
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            MeshSelection.objectSelectionChanged -= UpdateTarget;
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
-
-            ExecuteCut(false);
             Clear();
+        }
+
+        public override void OnActivated()
+        {
+            if(MeshSelection.selectedObjectCount == 1)
+            {
+                m_Mesh = MeshSelection.activeMesh;
+                m_Mesh.ClearSelection();
+                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+            }
+            Undo.undoRedoPerformed += UndoRedoPerformed;
+            MeshSelection.objectSelectionChanged += UpdateTarget;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            ExecuteCut(false);
+
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
+            MeshSelection.objectSelectionChanged -= UpdateTarget;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
         }
 
         /// <summary>
@@ -222,6 +248,15 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
+        /// Exit the tool and restore the previous tool
+        /// </summary>
+        void ExitTool()
+        {
+            Clear();
+            ToolManager.RestorePreviousTool();
+        }
+
+        /// <summary>
         /// Undo/Redo callback: Reset and recompute lines, and update the targeted face if needed
         /// </summary>
         void UndoRedoPerformed()
@@ -240,9 +275,10 @@ namespace UnityEditor.ProBuilder
             m_Dirty = true;
         }
 
-        void OnSelectModeChanged(SelectMode _)
+        void OnSelectModeChanged(SelectMode mode)
         {
-            DestroyImmediate(this);
+            if(!mode.IsPositionMode())
+                ToolManager.RestorePreviousPersistentTool();
         }
 
         /// <summary>
@@ -350,9 +386,11 @@ namespace UnityEditor.ProBuilder
         {
             if(MeshSelection.selectedObjectCount != 1)
             {
-                var rect = EditorGUILayout.GetControlRect(false, 45, GUILayout.Width(250));
+                var rect = EditorGUILayout.GetControlRect(false, 45);
                 EditorGUI.HelpBox(rect, L10n.Tr("One and only one ProBuilder mesh must be selected."), MessageType.Warning);
             }
+
+            GUI.enabled = MeshSelection.selectedObjectCount == 1;
 
             m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
             EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
@@ -381,10 +419,7 @@ namespace UnityEditor.ProBuilder
                         UpdateTarget();
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Quit")))
-                    {
-                        Clear();
-                        ToolManager.RestorePreviousTool();
-                    }
+                        ExitTool();
                 }
                 else
                 {
@@ -392,10 +427,7 @@ namespace UnityEditor.ProBuilder
                         ExecuteCut();
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
-                    {
-                        Clear();
-                        ToolManager.RestorePreviousTool();
-                    }
+                        ExitTool();
                 }
             }
 
@@ -428,7 +460,7 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                     evt.Use();
-                    Clear();
+                    ExitTool();
                     break;
 
                 case KeyCode.KeypadEnter:
@@ -436,7 +468,7 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                     evt.Use();
                     ExecuteCut();
-                    ToolManager.RestorePreviousTool();
+                    ExitTool();
                     break;
             }
         }
@@ -756,7 +788,7 @@ namespace UnityEditor.ProBuilder
             EditorUtility.ShowNotification(result.notification);
 
             if(restorePrevious)
-                ToolManager.RestorePreviousTool();
+                ExitTool();
         }
 
         /// <summary>

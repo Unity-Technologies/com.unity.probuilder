@@ -13,8 +13,8 @@ namespace UnityEngine.ProBuilder
     {
         /// <summary>Place the pivot in the middle of the bounding box.</summary>
         Center,
-        /// <summary>Place the pivot at the "first corner" (the first corner vertex defined) of the bounding box.</summary>
-        FirstCorner
+        /// <summary>Place the pivot at the vertex defined as the first in the shape.</summary>
+        FirstVertex
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace UnityEngine.ProBuilder
                 var shape = Activator.CreateInstance(shapeType,
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance,
                     null, null, null, null) as Shape;
-                return Instantiate(shape, pivotType);
+                return Instantiate(shape);
             }
             catch (Exception e)
             {
@@ -68,13 +68,13 @@ namespace UnityEngine.ProBuilder
         /// <param name="shape">The <see cref="Shape" /> to create.</param>
         /// <param name="pivotType">By default, new shapes pivot around the center of the bounding box but you can specify <see cref="PivotLocation.FirstCorner" /> instead. </param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive <see cref="Shape" />.</returns>
-        public static ProBuilderMesh Instantiate(Shape shape, PivotLocation pivotType = PivotLocation.Center)
+        public static ProBuilderMesh Instantiate(Shape shape)
         {
             if (shape == null)
                 throw new ArgumentNullException("shape", "Cannot instantiate a null shape.");
 
             var shapeComponent = new GameObject("Shape").AddComponent<ProBuilderShape>();
-            shapeComponent.SetShape(shape, pivotType);
+            shapeComponent.SetShape(shape);
             ProBuilderMesh pb = shapeComponent.mesh;
             pb.renderer.sharedMaterial = BuiltinMaterials.defaultMaterial;
 

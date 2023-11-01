@@ -4,8 +4,11 @@ using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
-using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
+#if UNITY_2023_3_OR_NEWER
+using Plane = UnityEngine.ProBuilder.Shapes.Plane;
+using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
+#endif
 #if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 #else
@@ -14,13 +17,172 @@ using ToolManager = UnityEditor.EditorTools.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
+
+#if UNITY_2023_3_OR_NEWER
+    [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
+    class CreateCubeTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cube))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cube));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
+    class CreateSphereTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sphere))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Sphere));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
+    class CreatePlaneTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Plane));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Cylinder",variantGroup = typeof(DrawShapeTool), variantPriority = 3)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
+    class CreateCylinderTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cylinder))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cylinder));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Cone", variantGroup = typeof(DrawShapeTool), variantPriority = 4)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
+    class CreateConeTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cone))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Cone));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Prism",variantGroup = typeof(DrawShapeTool), variantPriority = 5)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
+    class CreatePrismTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Prism))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Prism));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Stairs", variantGroup = typeof(DrawShapeTool), variantPriority = 6)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
+    class CreateStairsTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Stairs))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Stairs));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Torus",variantGroup = typeof(DrawShapeTool), variantPriority = 7)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
+    class CreateTorusTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Torus))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Torus));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Pipe",variantGroup = typeof(DrawShapeTool), variantPriority = 8)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
+    class CreatePipeTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Pipe))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Pipe));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Arch",variantGroup = typeof(DrawShapeTool), variantPriority = 9)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
+    class CreateArchTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Arch))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Arch));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Door",variantGroup = typeof(DrawShapeTool), variantPriority = 10)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
+    class CreateDoorTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Door))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Door));
+            base.OnActivated();
+        }
+    }
+
+    [EditorTool("Create Sprite",variantGroup = typeof(DrawShapeTool), variantPriority = 11)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
+    class CreateSpriteTool : DrawShapeTool
+    {
+        public override void OnActivated()
+        {
+            if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sprite))
+                m_LastShapeCreated = null;
+            s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, typeof(Sprite));
+            base.OnActivated();
+        }
+    }
+#endif
+
     class DrawShapeTool : EditorTool
     {
         internal const int k_MinOverlayWidth = 250;
 
         ShapeState m_CurrentState;
 
-        internal ProBuilderShape m_LastShapeCreated = null;
+        protected internal ProBuilderShape m_LastShapeCreated = null;
 
         internal ProBuilderShape m_ProBuilderShape;
         internal bool m_IsShapeInit;
@@ -62,16 +224,12 @@ namespace UnityEditor.ProBuilder
         internal Bounds m_Bounds;
         static readonly Color k_BoundsColor = new Color(.2f, .4f, .8f, 1f);
 
-        static readonly GUIContent k_ShapeTitle = new GUIContent("Create Shape");
+        static readonly GUIContent k_ShapeTitle = new GUIContent("Shape Settings");
 
         [UserSetting]
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false, SettingsScope.Project);
 
-        [UserSetting]
-        internal static Pref<int> s_LastPivotLocation = new Pref<int>("ShapeBuilder.LastPivotLocation", (int)PivotLocation.FirstCorner);
-        [UserSetting]
-        internal static Pref<Vector3> s_LastPivotPosition = new Pref<Vector3>("ShapeBuilder.LastPivotPosition", Vector3.zero);
         [UserSetting]
         internal static Pref<Vector3> s_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize", Vector3.one);
         [UserSetting]
@@ -101,6 +259,7 @@ namespace UnityEditor.ProBuilder
         // ideally this would be owned by the state machine
         public int controlID => m_ControlID;
 
+#if !UNITY_2023_2_OR_NEWER
         //Styling
         static class Styles
         {
@@ -114,6 +273,7 @@ namespace UnityEditor.ProBuilder
         {
             get { return m_IconContent; }
         }
+#endif
 
         public static Type activeShapeType
         {
@@ -134,14 +294,20 @@ namespace UnityEditor.ProBuilder
                 if(m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
                     return m_DuplicateGO.GetComponent<ProBuilderShape>();
 
+                return proBuilderShape;
+            }
+        }
+
+        internal ProBuilderShape proBuilderShape
+        {
+            get
+            {
                 if(m_ProBuilderShape == null)
                 {
                     m_ProBuilderShape = new GameObject("Shape", typeof(ProBuilderShape)).GetComponent<ProBuilderShape>();
                     m_ProBuilderShape.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ProBuilderShape.hideFlags = HideFlags.None;
-                    m_ProBuilderShape.SetShape(EditorShapeUtility.CreateShape(activeShapeType),EditorUtility.newShapePivotLocation);
-                    m_ProBuilderShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
-                    m_ProBuilderShape.pivotLocalPosition = s_LastPivotPosition.value;
+                    m_ProBuilderShape.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
                     m_ProBuilderShape.size = s_LastSize.value;
                     m_ProBuilderShape.rotation = s_LastRotation.value;
                 }
@@ -153,18 +319,14 @@ namespace UnityEditor.ProBuilder
         {
             m_CurrentState = InitStateMachine();
 
+#if !UNITY_2023_2_OR_NEWER
             m_IconContent = new GUIContent()
             {
-                image = IconUtility.GetIcon("Toolbar/Panel_Shapes"),
-                text = "Shape Settings",
-                tooltip = "Shape Settings"
+                image = IconUtility.GetIcon("Toolbar/AddShape"),
+                text = "Draw new Shape",
+                tooltip = "Draw new Shape"
             };
-
-            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
-            ToolManager.activeToolChanged += OnActiveToolChanged;
-            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
-            handleSelectionChange = true;
-
+#endif
 
             m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
             m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
@@ -178,15 +340,35 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
-            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
-            ToolManager.activeToolChanged -= OnActiveToolChanged;
-            handleSelectionChange = false;
-
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
+        }
+
+        public override void OnActivated()
+        {
+            m_ProBuilderShape = null;
+
+            ProBuilderEditor.selectMode = SelectMode.Object;
+            MeshSelection.SetSelection((GameObject)null);
+            handleSelectionChange = true;
+
+            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged += OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+
+            m_CurrentState = ShapeState.ResetTool(this);
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            handleSelectionChange = false;
+            m_LastShapeCreated = null;
+            Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
+            ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+
             if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
-                ShapeState.ResetState();
+                m_CurrentState = ShapeState.ResetState();
         }
 
         void OnDestroy()
@@ -195,7 +377,11 @@ namespace UnityEditor.ProBuilder
                 DestroyImmediate(m_ShapePreviewMaterial);
         }
 
-        void OnSelectModeChanged(SelectMode _) => DestroyImmediate(this);
+        void OnSelectModeChanged(SelectMode mode)
+        {
+            if(mode != SelectMode.Object)
+                ToolManager.RestorePreviousPersistentTool();
+        }
 
         void OnActiveToolChanged()
         {
@@ -213,10 +399,11 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
             {
-                if(Selection.activeGameObject != null)
+                if(Selection.activeGameObject != null
+                   && (m_LastShapeCreated == null || Selection.activeGameObject != m_LastShapeCreated.gameObject))
                 {
                     m_CurrentState = ShapeState.ResetState();
-                    ToolManager.RestorePreviousTool();
+                    ToolManager.RestorePreviousPersistentTool();
                 }
             }
         }
@@ -245,20 +432,16 @@ namespace UnityEditor.ProBuilder
 
         internal static void SaveShapeParams(ProBuilderShape proBuilderShape)
         {
-            s_LastPivotLocation.value = (int)proBuilderShape.pivotLocation;
-            s_LastPivotPosition.value = proBuilderShape.pivotLocalPosition;
             s_LastSize.value = proBuilderShape.size;
             s_LastRotation.value = proBuilderShape.rotation;
 
             EditorShapeUtility.SaveParams(proBuilderShape.shape);
         }
 
-        internal static void ApplyPrefsSettings(ProBuilderShape proBuilderShape)
+        internal static void ApplyPrefsSettings(ProBuilderShape pBShape)
         {
-            proBuilderShape.pivotLocation = (PivotLocation)s_LastPivotLocation.value;
-            proBuilderShape.pivotLocalPosition = s_LastPivotPosition.value;
-            proBuilderShape.size = s_LastSize.value;
-            proBuilderShape.rotation = s_LastRotation.value;
+            pBShape.size = s_LastSize.value;
+            pBShape.rotation = s_LastRotation.value;
         }
 
         // Transform the point according to the snapping settings
@@ -299,41 +482,22 @@ namespace UnityEditor.ProBuilder
                 return;
             }
 
-            var pivotLocation = (PivotLocation)s_LastPivotLocation.value;
             var size = currentShapeInOverlay.size;
-
             m_Bounds.size = size;
-            Vector3 cornerPosition;
 
-            switch (pivotLocation)
-            {
-                case PivotLocation.FirstCorner:
-                    cornerPosition = GetPoint(position);
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-                    m_Bounds.center = cornerPosition + m_PlaneRotation * size / 2f;
+            position = GetPoint(position);
+            var cornerPosition = position - size / 2f;
+            cornerPosition.y = position.y;
+            m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
 
-                    m_BB_Origin = cornerPosition;
-                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-                    break;
-
-                case PivotLocation.Center:
-                default:
-                    position = GetPoint(position);
-                    cornerPosition = position - size / 2f;
-                    cornerPosition.y = position.y;
-                    m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
-                    m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-
-                    m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
-                    m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-                    m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-                    break;
-            }
+            m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
+            m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
+            m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
 
             if (m_DuplicateGO == null)
             {
-                var instantiated = ShapeFactory.Instantiate(activeShapeType, ((PivotLocation)s_LastPivotLocation.value));
+                var instantiated = ShapeFactory.Instantiate(activeShapeType);
                 var shape = instantiated.GetComponent<ProBuilderShape>();
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
@@ -341,13 +505,12 @@ namespace UnityEditor.ProBuilder
                 shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
 
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-                shape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+                shape.Rebuild(m_Bounds, m_PlaneRotation);
                 ProBuilderEditor.Refresh(false);
             }
 
             var pivot = GetPoint(position);
-            if (pivotLocation == PivotLocation.Center)
-                pivot += .5f * size.y * m_Plane.normal;
+            pivot += .5f * size.y * m_Plane.normal;
 
             m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
 
@@ -390,7 +553,7 @@ namespace UnityEditor.ProBuilder
                     m_ProBuilderShape.size = Vector3.zero;
                     m_ProBuilderShape.mesh.Clear();
                     m_ProBuilderShape.mesh.Rebuild();
-                    m_ProBuilderShape.Rebuild(new Bounds(m_BB_Origin, Vector3.zero), m_PlaneRotation, m_BB_Origin);
+                    m_ProBuilderShape.Rebuild(new Bounds(m_BB_Origin, Vector3.zero), m_PlaneRotation);
                     ProBuilderEditor.Refresh(true);
                 }
                 return;
@@ -407,7 +570,7 @@ namespace UnityEditor.ProBuilder
                 m_IsShapeInit = true;
             }
 
-            m_ProBuilderShape.Rebuild(m_Bounds, m_PlaneRotation, m_BB_Origin);
+            proBuilderShape.Rebuild(m_Bounds, m_PlaneRotation);
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();
@@ -457,93 +620,16 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            DrawShapeGUI();
-
-#if !UNITY_2021_1_OR_NEWER
-            var snapDisabled = Tools.pivotRotation != PivotRotation.Global;
-            using(new EditorGUI.DisabledScope(snapDisabled))
-            {
-                if(snapDisabled)
-                    EditorGUILayout.Toggle("Snapping (only Global)", false);
-                else
-                    EditorSnapSettings.gridSnapEnabled = EditorGUILayout.Toggle("Grid Snapping", EditorSnapSettings.gridSnapEnabled);
-            }
-#endif
-
             string foldoutName = "Shape Properties (New Shape)";
             if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Shape Properties (" + m_LastShapeCreated.name + ")";
 
             Editor.CreateCachedEditor(currentShapeInOverlay, typeof(ProBuilderShapeEditor), ref m_ShapeEditor);
 
-            // 21.2 introduces Scene View Overlays. There's no need for additional styling, but we do need to force
-            // the width to accomodate for IMGUI not laying out nicely.
-#if UNITY_2021_2_OR_NEWER
             GUILayout.BeginVertical(GUILayout.MinWidth(k_MinOverlayWidth));
             ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
             ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
             GUILayout.EndVertical();
-#else
-            using (new EditorGUILayout.VerticalScope(new GUIStyle(EditorStyles.frameBox)))
-            {
-                ((ProBuilderShapeEditor)m_ShapeEditor).m_ShapePropertyLabel.text = foldoutName;
-                ((ProBuilderShapeEditor)m_ShapeEditor).DrawShapeParametersGUI(this);
-            }
-#endif
-        }
-
-        void ResetPrefs()
-        {
-            var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-            if(currentShapeInOverlay == m_LastShapeCreated)
-                m_LastShapeCreated = null;
-
-            UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-            currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
-            SetBounds(currentShapeInOverlay.size);
-
-            ProBuilderEditor.Refresh();
-        }
-
-        void DrawShapeGUI()
-        {
-            if(m_BoldCenteredStyle == null)
-                m_BoldCenteredStyle = new GUIStyle("BoldLabel") { alignment = TextAnchor.MiddleCenter };
-
-            EditorGUILayout.LabelField(EditorShapeUtility.shapeTypes[s_ActiveShapeIndex.value], m_BoldCenteredStyle, GUILayout.ExpandWidth(true));
-
-            if(EditorShapeUtility.s_ResetUserPrefs.value)
-                ResetPrefs();
-
-            var shape = currentShapeInOverlay.shape;
-
-            int groupCount = EditorShapeUtility.shapeTypesGUI.Count;
-            for(int i = 0; i < groupCount; i++)
-            {
-                EditorGUI.BeginChangeCheck();
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                int index = GUILayout.Toolbar(s_ActiveShapeIndex.value - + i * EditorShapeUtility.MaxContentPerGroup, EditorShapeUtility.shapeTypesGUI[i], Styles.command);
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
-                if (EditorGUI.EndChangeCheck())
-                {
-                    s_ActiveShapeIndex.value = index + i * EditorShapeUtility.MaxContentPerGroup;
-
-                    var type = EditorShapeUtility.availableShapeTypes[s_ActiveShapeIndex];
-                    if(shape.GetType() != type)
-                    {
-                        if(currentShapeInOverlay == m_LastShapeCreated)
-                            m_LastShapeCreated = null;
-
-                        UndoUtility.RegisterCompleteObjectUndo(currentShapeInOverlay, "Change Shape");
-                        currentShapeInOverlay.SetShape(EditorShapeUtility.CreateShape(type), currentShapeInOverlay.pivotLocation);
-                        SetBounds(currentShapeInOverlay.size);
-
-                        ProBuilderEditor.Refresh();
-                    }
-                }
-            }
         }
     }
 }

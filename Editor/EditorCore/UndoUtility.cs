@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.ProBuilder;
+using Object = UnityEngine.Object;
 
 namespace UnityEditor.ProBuilder
 {
@@ -42,6 +44,35 @@ namespace UnityEditor.ProBuilder
 #if UNITY_2023_2_OR_NEWER
             s_IsPerformingUndoRedo = false;
 #endif
+        }
+
+        static int s_PreviewGroupIndex = -1;
+
+        internal static void StartPreview()
+        {
+            // Using this Undo method to remove the preview actions from the redo stack
+            // If a preview is already in use, reverting that one first before starting a new one
+            if (s_PreviewGroupIndex != -1)
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
+
+            s_PreviewGroupIndex = Undo.GetCurrentGroup();
+        }
+
+        internal static void EndPreview()
+        {
+            if (s_PreviewGroupIndex != -1)
+            {
+                //Using this Undo method to remove the preview actions from the redo stack
+                Undo.RevertAllDownToGroup(s_PreviewGroupIndex);
+                s_PreviewGroupIndex = -1;
+            }
+            else
+                Undo.PerformUndo();
+        }
+
+        internal static void ResetPreview()
+        {
+            s_PreviewGroupIndex = -1;
         }
 
         /**

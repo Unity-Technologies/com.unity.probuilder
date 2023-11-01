@@ -322,11 +322,5 @@ namespace UnityEditor.ProBuilder
 
             return new Bounds((min + max) / 2f, max != min ? max - min : Vector3.one * .1f);
         }
-
-        [MenuItem("CONTEXT/ProBuilderMesh/Open ProBuilder", false, 0)]
-        static void OpenProBuilder()
-        {
-            ProBuilderEditor.MenuOpenWindow();
-        }
     }
 }
