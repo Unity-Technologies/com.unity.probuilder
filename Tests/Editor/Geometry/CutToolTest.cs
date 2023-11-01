@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
@@ -14,12 +15,12 @@ public class CutToolTest
     [SetUp]
     public void Setup()
     {
-        ToolManager.SetActiveContext<PositionToolContext>();
-        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
-
         m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
         MeshSelection.SetSelection(m_PBMesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        ToolManager.SetActiveContext<PositionToolContext>();
+        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
         m_PreviousSelectMode = ProBuilderEditor.selectMode;
         ProBuilderEditor.selectMode = SelectMode.None;

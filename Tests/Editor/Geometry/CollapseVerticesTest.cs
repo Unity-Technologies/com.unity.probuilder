@@ -1,5 +1,6 @@
 ﻿using UObject = UnityEngine.Object;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
@@ -14,8 +15,11 @@ public class CollapseVerticesTest
     [SetUp]
     public void Setup()
     {
-        ToolManager.SetActiveContext<PositionToolContext>();
         m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
+        MeshSelection.SetSelection(m_PBMesh.gameObject);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        ToolManager.SetActiveContext<PositionToolContext>();
         ProBuilderEditor.selectMode = SelectMode.Vertex;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
         Assume.That(typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType));
@@ -46,9 +50,6 @@ public class CollapseVerticesTest
         m_PBMesh.SetSelectedVertices(sharedVertex);
         Assert.That(m_PBMesh.selectedIndexesInternal.Length, Is.EqualTo(sharedVertex.Count));
 
-        MeshSelection.SetSelection(m_PBMesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
-
         UnityEditor.ProBuilder.Actions.CollapseVertices collapseVertices = new UnityEditor.ProBuilder.Actions.CollapseVertices();
 
         Assert.That(collapseVertices.enabled, Is.False);
@@ -59,7 +60,6 @@ public class CollapseVerticesTest
     {
         Assume.That(m_PBMesh, Is.Not.Null);
 
-        MeshSelection.SetSelection(m_PBMesh.gameObject);
         int[] vertexSelection = new[] { 0, 1, 2, 3 };
         m_PBMesh.SetSelectedVertices(vertexSelection);
 

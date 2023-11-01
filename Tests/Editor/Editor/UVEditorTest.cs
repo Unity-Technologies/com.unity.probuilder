@@ -1,11 +1,13 @@
 ﻿using UObject = UnityEngine.Object;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 public class UVEditorWindow
 {
@@ -14,25 +16,25 @@ public class UVEditorWindow
     [SetUp]
     public void Setup()
     {
-        ToolManager.SetActiveContext<PositionToolContext>();
-        UVEditor.MenuOpenUVEditor();
-
         m_cube = ShapeFactory.Instantiate<Cube>();
         EditorUtility.InitObject(m_cube);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        ToolManager.SetActiveContext<PositionToolContext>();
+        UVEditor.MenuOpenUVEditor();
     }
 
     [TearDown]
     public void Cleanup()
     {
-        UObject.DestroyImmediate(m_cube.gameObject);
         ToolManager.SetActiveContext<GameObjectToolContext>();
+        UObject.DestroyImmediate(m_cube.gameObject);
     }
 
     [Test]
     public void Manual_BoxProjection()
     {
         //Select faces
-
         List<Face> selectedFaces = new List<Face>();
         selectedFaces.Add(m_cube.faces[2]);
         selectedFaces.Add(m_cube.faces[4]);

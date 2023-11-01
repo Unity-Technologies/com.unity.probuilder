@@ -4,13 +4,21 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
+using UObject = UnityEngine.Object;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 public class EditorToolTests
 {
+    ProBuilderMesh m_PBMesh;
+
     [OneTimeSetUp]
     public void SetUp()
     {
+        m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
+        MeshSelection.SetSelection(m_PBMesh.gameObject);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
         ToolManager.SetActiveContext<PositionToolContext>();
     }
 
@@ -18,6 +26,9 @@ public class EditorToolTests
     public void TearDown()
     {
         ToolManager.SetActiveContext<GameObjectToolContext>();
+
+        if (m_PBMesh != null)
+            UObject.DestroyImmediate(m_PBMesh.gameObject);
     }
 
     [Test]
