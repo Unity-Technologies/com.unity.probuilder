@@ -205,7 +205,6 @@ namespace UnityEditor.ProBuilder
                 m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
                 m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
             }
-
             Undo.undoRedoPerformed += UndoRedoPerformed;
             MeshSelection.objectSelectionChanged += UpdateTarget;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;

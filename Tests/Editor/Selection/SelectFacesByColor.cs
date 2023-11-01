@@ -92,16 +92,17 @@ class SelectFacesByColor
     {
         Setup(true /*with color*/);
 
-        //Make first faces selected
         ProBuilderMesh mesh = selectables[0];
+        MeshSelection.SetSelection(mesh.gameObject);
+        MeshSelection.OnObjectSelectionChanged();
+
+        //Make first faces selected
         Assert.IsNotNull(mesh.faces);
         Face face = selectables[0].faces[0];
         List<Face> selectedFaces = new List<Face>();
         selectedFaces.Add(face);
         mesh.SetSelectedFaces(selectedFaces);
         Assert.AreEqual(mesh.selectedFaceCount, 1);
-        MeshSelection.SetSelection(mesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
 
         //Validate that prior only a face on first cube is selected
         Assert.AreEqual(selectables[0].selectedFacesInternal.Length, 1);
