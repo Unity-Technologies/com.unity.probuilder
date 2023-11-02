@@ -184,14 +184,12 @@ namespace UnityEditor.ProBuilder
             if(proBuilderShape == null)
                 return;
 
-            var scale = proBuilderShape.transform.lossyScale;
-            var position = proBuilderShape.transform.position
-                           + Vector3.Scale(proBuilderShape.transform.TransformDirection(proBuilderShape.shapeBox.center),scale);
-            var matrix = Matrix4x4.TRS(position, proBuilderShape.transform.rotation, Vector3.one);
+
+            var matrix = Matrix4x4.TRS(proBuilderShape.shapeWorldCenter, proBuilderShape.transform.rotation, Vector3.one);
 
             using (new Handles.DrawingScope(matrix))
             {
-                EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, scale, faces);
+                EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, proBuilderShape.transform.lossyScale, faces);
 
                 for(int i = 0; i <4; ++i)
                     k_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
@@ -236,11 +234,10 @@ namespace UnityEditor.ProBuilder
 
                     if(!s_SizeManipulationInit)
                     {
-                        var offset = proBuilderShape.transform.TransformVector(proBuilderShape.shapeBox.center);
-                        s_StartCenter = proBuilderShape.transform.position + offset;
+                        s_StartCenter = proBuilderShape.shapeWorldCenter;
                         s_StartScale = proBuilderShape.transform.lossyScale;
                         s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
-                        s_StartPositionLocal = face.CenterPosition + Vector3.Scale(offset, s_StartScale);
+                        s_StartPositionLocal = face.CenterPosition;
                         s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(s_StartPositionLocal);
                         s_StartSize = proBuilderShape.size;
                         s_SizeManipulationInit = true;
@@ -462,9 +459,9 @@ namespace UnityEditor.ProBuilder
                                    Handles.DrawAAPolyLine(3f,
                                        new Vector3[]
                                        {
-                                           Vector3.Scale(proBuilderShape.rotation * Vector3.up, proBuilderShape.size / 2f),
+                                           Vector3.Scale(proBuilderShape.shapeRotation * Vector3.up, proBuilderShape.size / 2f),
                                            Vector3.zero,
-                                           Vector3.Scale(proBuilderShape.rotation * Vector3.forward, proBuilderShape.size / 2f)
+                                           Vector3.Scale(proBuilderShape.shapeRotation * Vector3.forward, proBuilderShape.size / 2f)
                                        });
                                }
                            }

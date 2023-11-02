@@ -1,4 +1,5 @@
 ﻿using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -9,10 +10,7 @@ namespace UnityEngine.ProBuilder.Shapes
         Shape m_Shape = new Cube();
 
         [SerializeField]
-        Vector3 m_Size = Vector3.one;
-
-        [SerializeField]
-        Quaternion m_Rotation = Quaternion.identity;
+        Quaternion m_ShapeRotation = Quaternion.identity;
 
         ProBuilderMesh m_Mesh;
 
@@ -21,6 +19,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public Shape shape => m_Shape;
 
+
+        [SerializeField]
+        Vector3 m_Size = Vector3.one;
         public Vector3 size
         {
             get => m_Size;
@@ -32,10 +33,18 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public Quaternion rotation
+        public Quaternion shapeRotation
         {
-            get => m_Rotation;
-            set => m_Rotation = value;
+            get => m_ShapeRotation;
+            set => m_ShapeRotation = value;
+        }
+
+        public Vector3 shapeWorldCenter
+        {
+            get
+            {
+                return transform.TransformPoint(m_ShapeBox.center);
+            }
         }
 
         Bounds m_EditionBounds;
@@ -54,7 +63,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField]
         Bounds m_ShapeBox;
-        public Bounds shapeBox => m_ShapeBox;
+        //public Bounds shapeBox => m_ShapeBox;
 
         public bool isEditable => m_UnmodifiedMeshVersion == mesh.versionIndex;
 
@@ -83,23 +92,28 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Size.z = System.Math.Abs(m_Size.z) == 0 ? 0.001f: m_Size.z;
         }
 
-        internal void UpdateComponent() => Rebuild();
+        internal void UpdateShape()
+        {
+            Rebuild(mesh.transform.position, mesh.transform.rotation, new Bounds(shapeWorldCenter, size));
+        }
 
         internal void UpdateBounds(Bounds bounds)
         {
-            var centerLocalPos = mesh.transform.InverseTransformPoint(bounds.center);
-            Bounds shapeBB = m_ShapeBox;
-            shapeBB.center = centerLocalPos;
-            m_ShapeBox = shapeBB;
+            Rebuild(mesh.transform.position, mesh.transform.rotation, bounds);
+        }
 
-            if(mesh != null && mesh.mesh != null)
-            {
-                mesh.SetPivot(mesh.transform.TransformPoint(m_ShapeBox.center));
-                m_ShapeBox = m_Shape.UpdateBounds(mesh, size, rotation, m_ShapeBox);
-            }
-
+        internal void Rebuild(Vector3 pivotPosition, Quaternion rotation, Bounds bounds)
+        {
+            var trs = transform;
+            trs.position = bounds.center;
+            trs.rotation = rotation;
             size = bounds.size;
             Rebuild();
+            mesh.SetPivot(pivotPosition);
+            m_ShapeBox.size = size;
+            m_ShapeBox.center = mesh.transform.InverseTransformPoint(bounds.center);
+
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         internal void Rebuild(Bounds bounds, Quaternion rotation)
@@ -109,6 +123,8 @@ namespace UnityEngine.ProBuilder.Shapes
             trs.rotation = rotation;
             size = bounds.size;
             Rebuild();
+
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         void Rebuild()
@@ -116,13 +132,11 @@ namespace UnityEngine.ProBuilder.Shapes
             if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
+            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, shapeRotation);
 
             Bounds bounds = m_ShapeBox;
             bounds.size = Math.Abs(m_ShapeBox.size);
             MeshUtility.FitToSize(mesh, bounds, size);
-
-            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         internal void SetShape(Shape shape)
@@ -148,8 +162,9 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         internal void RotateInsideBounds(Quaternion deltaRotation)
         {
-            rotation = deltaRotation * rotation;
-            Rebuild();
+            shapeRotation = deltaRotation * shapeRotation;
+            var bounds = new Bounds(mesh.transform.TransformPoint(m_ShapeBox.center), m_ShapeBox.size);
+            Rebuild(mesh.transform.position, mesh.transform.rotation , bounds);
         }
     }
 }

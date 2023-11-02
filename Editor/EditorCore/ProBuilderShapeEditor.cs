@@ -105,7 +105,7 @@ namespace UnityEditor.ProBuilder
                     {
                         var shapeComponent = comp as ProBuilderShape;
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
-                        shapeComponent.UpdateComponent();
+                        shapeComponent.UpdateShape();
                         ProBuilderEditor.Refresh();
                     }
                 }
@@ -163,6 +163,9 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
+                if (tool)
+                    DrawShapeTool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, DrawShapeTool.pivotLocation);
+
                 EditorGUILayout.PropertyField(shapeSizeProperty);
                 EditorGUI.indentLevel--;
             }
@@ -177,7 +180,7 @@ namespace UnityEditor.ProBuilder
                     if(comp is ProBuilderShape shapeComponent && shapeComponent.isEditable)
                     {
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
-                        shapeComponent.UpdateComponent();
+                        shapeComponent.UpdateShape();
                         if(tool != null)
                         {
                             tool.SetBounds(shapeComponent.size);
