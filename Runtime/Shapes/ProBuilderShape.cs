@@ -1,5 +1,4 @@
 ﻿using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.Serialization;
 
 namespace UnityEngine.ProBuilder.Shapes
 {
@@ -43,7 +42,7 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             get
             {
-                return transform.TransformPoint(m_ShapeBox.center);
+                return transform.TransformPoint(m_LocalCenter);
             }
         }
 
@@ -52,9 +51,9 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             get
             {
-                m_EditionBounds.center = m_ShapeBox.center;
+                m_EditionBounds.center = m_LocalCenter;
                 m_EditionBounds.size = m_Size;
-                if(Mathf.Abs(m_ShapeBox.size.y) < Mathf.Epsilon)
+                if(Mathf.Abs(m_Size.y) < Mathf.Epsilon)
                     m_EditionBounds.size = new Vector3(m_Size.x, 0f, m_Size.z);
 
                 return m_EditionBounds;
@@ -62,8 +61,9 @@ namespace UnityEngine.ProBuilder.Shapes
         }
 
         [SerializeField]
-        Bounds m_ShapeBox;
-        //public Bounds shapeBox => m_ShapeBox;
+        Vector3 m_LocalCenter;
+        public Bounds shapeLocalBounds => new Bounds(m_LocalCenter, size);
+        public Bounds shapeWorldBounds => new Bounds(shapeWorldCenter, size);
 
         public bool isEditable => m_UnmodifiedMeshVersion == mesh.versionIndex;
 
@@ -110,8 +110,7 @@ namespace UnityEngine.ProBuilder.Shapes
             size = bounds.size;
             Rebuild();
             mesh.SetPivot(pivotPosition);
-            m_ShapeBox.size = size;
-            m_ShapeBox.center = mesh.transform.InverseTransformPoint(bounds.center);
+            m_LocalCenter = mesh.transform.InverseTransformPoint(bounds.center);
 
             m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
@@ -132,11 +131,9 @@ namespace UnityEngine.ProBuilder.Shapes
             if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, shapeRotation);
-
-            Bounds bounds = m_ShapeBox;
-            bounds.size = Math.Abs(m_ShapeBox.size);
-            MeshUtility.FitToSize(mesh, bounds, size);
+            var bbox = m_Shape.RebuildMesh(mesh, size, shapeRotation);
+            bbox.size = Math.Abs(bbox.size);
+            MeshUtility.FitToSize(mesh, bbox, size);
         }
 
         internal void SetShape(Shape shape)
@@ -144,14 +141,13 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Shape = shape;
             if(m_Shape is Plane || m_Shape is Sprite)
             {
-                Bounds bounds = m_ShapeBox;
+                Bounds bounds = new Bounds(m_LocalCenter, size);
                 var newCenter = bounds.center;
                 var newSize = bounds.size;
                 newCenter.y = 0;
                 newSize.y = 0;
-                bounds.center = newCenter;
-                bounds.size = newSize;
-                m_ShapeBox = bounds;
+                m_LocalCenter = newCenter;
+                size = newSize;
                 m_Size.y = 0;
             }
             Rebuild();
@@ -163,7 +159,7 @@ namespace UnityEngine.ProBuilder.Shapes
         internal void RotateInsideBounds(Quaternion deltaRotation)
         {
             shapeRotation = deltaRotation * shapeRotation;
-            var bounds = new Bounds(mesh.transform.TransformPoint(m_ShapeBox.center), m_ShapeBox.size);
+            var bounds = new Bounds(mesh.transform.TransformPoint(m_LocalCenter), size);
             Rebuild(mesh.transform.position, mesh.transform.rotation , bounds);
         }
     }

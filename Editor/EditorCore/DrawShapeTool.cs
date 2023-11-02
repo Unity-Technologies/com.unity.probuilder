@@ -199,7 +199,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        // plane of interaction
+        // Plane of interaction
         internal UnityEngine.Plane m_Plane;
         internal Vector3 m_PlaneForward, m_PlaneRight;
         internal Quaternion m_PlaneRotation;
@@ -240,12 +240,10 @@ namespace UnityEditor.ProBuilder
                 {
                     if (instance != null && instance.m_LastShapeCreated != null && instance.currentShapeInOverlay == instance.m_LastShapeCreated)
                     {
-                        var lastShapeTrs = instance.m_LastShapeCreated.mesh.transform;
-                        var newPivotPosition = value == PivotLocation.Center ? instance.m_LastShapeCreated.shapeWorldCenter : instance.m_BB_Origin;
-
-                        var bounds = instance.m_LastShapeCreated.mesh.GetBounds();
-                        bounds.center = lastShapeTrs.TransformPoint(bounds.center);
-                        instance.m_LastShapeCreated.Rebuild(newPivotPosition, lastShapeTrs.rotation, bounds);
+                        var lastShape = instance.m_LastShapeCreated;
+                        var lastShapeTrs = lastShape.transform;
+                        var newPivotPosition = value == PivotLocation.Center ? lastShape.shapeWorldCenter : instance.m_BB_Origin;
+                        instance.m_LastShapeCreated.Rebuild(newPivotPosition, lastShapeTrs.rotation, lastShape.shapeWorldBounds);
                     }
                     s_PivotLocation.SetValue(value);
                 }
