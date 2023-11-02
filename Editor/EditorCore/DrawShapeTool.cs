@@ -344,6 +344,7 @@ namespace UnityEditor.ProBuilder
 
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
             ToolManager.activeToolChanged += OnActiveToolChanged;
+            ToolManager.activeContextChanged += OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
             m_CurrentState = ShapeState.ResetTool(this);
@@ -357,6 +358,7 @@ namespace UnityEditor.ProBuilder
             m_LastShapeCreated = null;
             Undo.undoRedoPerformed -= HandleUndoRedoPerformed;
             ToolManager.activeToolChanged -= OnActiveToolChanged;
+            ToolManager.activeContextChanged -= OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
             if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
@@ -378,6 +380,12 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.IsActiveTool(this))
                 SetBounds(currentShapeInOverlay.size);
+        }
+
+        void OnActiveContextChanged()
+        {
+            if(ToolManager.activeContextType != typeof(GameObjectToolContext))
+                ToolManager.RestorePreviousPersistentTool();
         }
 
         void HandleUndoRedoPerformed()

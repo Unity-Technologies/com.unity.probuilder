@@ -288,6 +288,9 @@ namespace UnityEditor.ProBuilder
 
         public void OnSceneGUI(SceneView sceneView)
         {
+            if (!EditorToolUtility.IsBuiltinOverride(EditorToolManager.activeTool))
+                return;
+
             SceneStyles.Init();
 
             m_CurrentEvent = Event.current;
