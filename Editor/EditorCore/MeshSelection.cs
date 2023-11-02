@@ -454,7 +454,11 @@ namespace UnityEditor.ProBuilder
 
             temp[len] = t;
 
-            Selection.activeObject = t;
+            if (t.TryGetComponent<ProBuilderMesh>(out var mesh))
+                Selection.activeObject = mesh;
+            else
+                Selection.activeObject = t;
+
             Selection.objects = temp;
             OnObjectSelectionChanged();
         }

@@ -20,9 +20,10 @@ public class CollapseVerticesTest
         ActiveEditorTracker.sharedTracker.ForceRebuild();
 
         ToolManager.SetActiveContext<PositionToolContext>();
+        ToolManager.SetActiveTool<ProbuilderMoveTool>();
         ProBuilderEditor.selectMode = SelectMode.Vertex;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
-        Assume.That(typeof(VertexManipulationTool).IsAssignableFrom(ToolManager.activeToolType));
+        Assume.That(ToolManager.activeToolType == typeof(ProbuilderMoveTool));
     }
 
     [TearDown]
