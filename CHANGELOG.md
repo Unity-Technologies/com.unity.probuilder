@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Created a ProBuilder context and moving vertex, edge and face edit modes to the tool settings overlay.
+- Moved creation and edition tools to the main toolbar. 
+- Removed the ProBuilder editor window.
+- Removed all the code path for Unity version previous to 2023.3 and old code to upgrade projects.
 - Added ProBuilder actions to the Scene view context menu and overlays for Unity versions 2023.2 and newer.
   
 ## [5.2.0] - 2023-10-02
