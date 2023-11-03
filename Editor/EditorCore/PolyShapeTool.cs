@@ -227,6 +227,7 @@ namespace UnityEditor.ProBuilder
 
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
+            ToolManager.activeContextChanged += OnActiveContextChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
 
             m_Target = null;
@@ -237,6 +238,7 @@ namespace UnityEditor.ProBuilder
         {
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
+            ToolManager.activeContextChanged -= OnActiveContextChanged;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -984,6 +986,12 @@ namespace UnityEditor.ProBuilder
         {
             if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 RebuildPolyShapeMesh(polygon);
+        }
+
+        void OnActiveContextChanged()
+        {
+            if(ToolManager.activeContextType != typeof(GameObjectToolContext))
+                ToolManager.RestorePreviousPersistentTool();
         }
 
         void OnSelectModeChanged(SelectMode selectMode)

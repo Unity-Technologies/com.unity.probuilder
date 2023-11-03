@@ -26,6 +26,8 @@ namespace UnityEditor.ProBuilder
     class PositionToolContext : EditorToolContext
     {
         ProBuilderEditor m_Editor;
+        ProBuilderEditor editor => m_Editor ??= new ProBuilderEditor();
+
         ProBuilderContext m_ShortcutContext;
         ProBuilderContext shortcutContext => m_ShortcutContext??= new ProBuilderContext();
 
@@ -181,7 +183,7 @@ namespace UnityEditor.ProBuilder
         {
             if (!(window is SceneView view))
                 return;
-            m_Editor.OnSceneGUI(view);
+            editor.OnSceneGUI(view);
         }
 
         // This boolean allows to call the action only once in case of multi-selection as PB actions
