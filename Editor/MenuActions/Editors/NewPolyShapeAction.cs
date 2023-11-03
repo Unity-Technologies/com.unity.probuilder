@@ -25,11 +25,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return false; }
         }
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
-
         protected override ActionResult PerformActionImplementation()
         {
             ToolManager.SetActiveTool(EditorToolManager.GetSingleton<DrawPolyShapeTool>());

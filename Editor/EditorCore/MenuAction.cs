@@ -183,13 +183,11 @@ namespace UnityEditor.ProBuilder
         public virtual bool enabled
         {
             get
-            {
-                var b1 = ProBuilderEditor.instance != null;
-                var b2 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
-                var b3 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+            {;
+                var b1 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
+                var b2 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
                 return b1
-                       && b2
-                       && b3;
+                       && b2;
             }
         }
 

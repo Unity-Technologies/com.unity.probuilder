@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor.SceneManagement;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
@@ -29,7 +30,8 @@ namespace UnityEditor.ProBuilder.Actions
             return filtered;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene %&s")]
+        [Shortcut("ProBuilder/Actions/Strip All ProBuilder Scripts in Scene", typeof(ProBuilderContext), KeyCode.S, ShortcutModifiers.Control | ShortcutModifiers.Alt)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip All ProBuilder Scripts in Scene")]
         public static void StripAllScenes()
         {
             if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts in the scene. You will no longer be able to edit these objects.\n\nContinue?", "Okay", "Cancel"))
@@ -55,13 +57,14 @@ namespace UnityEditor.ProBuilder.Actions
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s", true, 0)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection", true, 0)]
         public static bool VerifyStripSelection()
         {
             return InternalUtility.GetComponents<ProBuilderMesh>(Selection.transforms).Length > 0;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection %#s")]
+        [Shortcut("ProBuilder/Actions/Strip ProBuilder Scripts in Selection", typeof(ProBuilderContext), KeyCode.S, ShortcutModifiers.Control | ShortcutModifiers.Shift)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Actions/Strip ProBuilder Scripts in Selection")]
         public static void StripAllSelected()
         {
             if (!UnityEditor.EditorUtility.DisplayDialog("Strip ProBuilder Scripts", "This will remove all ProBuilder scripts on the selected objects. You will no longer be able to edit these objects.\n\nContinue?", "Okay", "Cancel"))

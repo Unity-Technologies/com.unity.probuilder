@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return Experimental.experimentalFeaturesEnabled && ProBuilderEditor.instance != null; }
+            get { return Experimental.experimentalFeaturesEnabled; }
         }
 
         protected override ActionResult PerformActionImplementation()

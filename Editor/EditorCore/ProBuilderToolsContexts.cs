@@ -7,6 +7,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.UIElements;
 using UnityEditor.Actions;
+using UnityEditor.ShortcutManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -15,11 +16,18 @@ namespace UnityEditor.ProBuilder
         public static Tool activeTool => Tools.current;
     }
 
+    public class ProBuilderContext : IShortcutToolContext
+    {
+        public bool active => (EditorWindow.focusedWindow is SceneView);
+    }
+
     [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
     [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
     class PositionToolContext : EditorToolContext
     {
         ProBuilderEditor m_Editor;
+        ProBuilderContext m_ShortcutContext;
+        ProBuilderContext shortcutContext => m_ShortcutContext??= new ProBuilderContext();
 
         protected override Type GetEditorToolType(Tool tool)
         {
@@ -160,10 +168,12 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_Editor = new ProBuilderEditor();
+            ShortcutIntegration.instance.contextManager.RegisterToolContext(shortcutContext);
         }
 
         public override void OnWillBeDeactivated()
         {
+            ShortcutIntegration.instance.contextManager.RegisterToolContext(shortcutContext);
             m_Editor.Dispose();
         }
 

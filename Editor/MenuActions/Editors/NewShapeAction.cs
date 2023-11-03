@@ -20,11 +20,6 @@ namespace UnityEditor.ProBuilder.Actions
                 keyCommandSuper, keyCommandShift, 'K'
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
-
         protected override ActionResult PerformActionImplementation()
         {
             MeshSelection.SetSelection((GameObject)null);
