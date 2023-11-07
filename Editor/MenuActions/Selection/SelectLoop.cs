@@ -59,5 +59,18 @@ namespace UnityEditor.ProBuilder.Actions
                 return EditorToolbarLoader.GetInstance<SelectFaceLoop>().PerformAction();
             return ActionResult.NoSelection;
         }
+
+        internal override string GetMenuItemOverride()
+        {
+            return @"                switch (ProBuilderEditor.selectMode)
+                {
+                    case SelectMode.Edge:
+                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SelectEdgeLoop>()));
+                        break;
+                    case SelectMode.Face:
+                        EditorToolbarLoader.GetInstance<SelectFaceLoop>().PerformAction();
+                        break;
+                }";
+        }
     }
 }

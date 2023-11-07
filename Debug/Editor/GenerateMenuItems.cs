@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection;
 using System.IO;
+using UnityEditor.ProBuilder.Actions;
 using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 
@@ -22,12 +23,27 @@ namespace UnityEditor.ProBuilder
 
         const string k_MenuActionsFolder = "Packages/com.unity.probuilder/Editor/MenuActions/";
 
+        static readonly HashSet<string> k_GlobalActionList = new HashSet<string>()
+        {
+            "Editors",
+            "Export"
+        };
+
+
         class MenuActionData
         {
             public bool valid { get; private set; }
 
             // False to not create menu entry
             public bool visibleInMenu { get; private set; }
+
+            public bool hasMenuItemOverride { get; private set; }
+
+            public string menuItemOverride { get; private set; }
+
+            public bool optionsEnabled { get; private set; }
+
+            public bool hasPreview { get; private set; }
 
             public System.Type type { get; private set; }
 
@@ -64,6 +80,13 @@ namespace UnityEditor.ProBuilder
                     PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
                     visibleInMenu = hasMenuEntryProperty != null && (bool)hasMenuEntryProperty.GetValue(instance, null);
                     menuItemShortcut = instance.tooltip.shortcut;
+                    PropertyInfo optionsEnabledProperty = typeof(MenuAction).GetProperty("optionsEnabled", BindingFlags.NonPublic | BindingFlags.Instance);
+                    optionsEnabled = optionsEnabledProperty != null && (bool)optionsEnabledProperty.GetValue(instance, null);
+                    hasPreview = !(type == typeof(DetachFaces) || type == typeof(DuplicateFaces));
+                    MethodInfo menuItemOverrideMethod = typeof(MenuAction).GetMethod("GetMenuItemOverride", BindingFlags.NonPublic | BindingFlags.Instance);
+                    menuItemOverride = menuItemOverrideMethod != null ?
+                        (string)menuItemOverrideMethod.Invoke(instance, null) : string.Empty;
+                    hasMenuItemOverride = !string.IsNullOrEmpty(menuItemOverride);
                 }
             }
         }
@@ -132,14 +155,14 @@ namespace UnityEditor.ProBuilder
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
-using UnityEditor.ShortcutManagement;
+using UnityEditor.Actions;
+using UnityEditor.EditorTools;
 
 namespace UnityEditor.ProBuilder
 {
     static class EditorToolbarMenuItem
     {
-        const string k_MenuPrefix = ""Tools/ProBuilder/"";
-        const string k_ShortcutPrefix = ""ProBuilder/"";");
+        const string k_MenuPrefix = ""Tools/ProBuilder/"";");
         }
 
         static void AppendMenuItem(StringBuilder sb, MenuActionData data)
@@ -151,36 +174,43 @@ namespace UnityEditor.ProBuilder
             // Verify
             sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", true, {priority})]");
             sb.AppendLine($"\t\tstatic bool MenuVerify_{data.typeString}()");
-            sb.AppendLine( "\t\t{");
+            sb.AppendLine("\t\t{");
+            if (!k_GlobalActionList.Contains(category))
+                sb.AppendLine($"\t\t\tif (ToolManager.activeContextType != typeof(PositionToolContext)) return false;");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
-            sb.AppendLine( "\t\t\treturn instance != null && instance.enabled;");
-            sb.AppendLine( "\t\t}");
+            sb.AppendLine("\t\t\treturn instance != null && instance.enabled;");
+            sb.AppendLine("\t\t}");
 
             sb.AppendLine();
-
-            var shortcutInfo = data.type.GetCustomAttribute<MenuActionShortcutAttribute>();
-
-            if (shortcutInfo != null)
-            {
-                var key = GetShortcutAttributeKeyBindingArgs(shortcutInfo.key, shortcutInfo.modifiers);
-                var ctx = shortcutInfo.context == null ? "null" : $"typeof({shortcutInfo.context})";
-
-                if (!string.IsNullOrEmpty(key))
-                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx}, {key})]");
-                else
-                    sb.AppendLine($"\t\t[Shortcut(k_ShortcutPrefix + \"{data.path}\", {ctx})]");
-            }
 
             // Action
             sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
             sb.AppendLine($"\t\tstatic void MenuPerform_{data.typeString}()");
-            sb.AppendLine( "\t\t{");
+            sb.AppendLine("\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
+
             // *Important* The `instance.enabled` check is redundant for MenuItems, but not for ShortcutManager
             // shortcuts, which atm only have the context of what EditorWindow is active.
-            sb.AppendLine( "\t\t\tif(instance != null && instance.enabled)");
-            sb.AppendLine( "\t\t\t{");
-            sb.AppendLine( "\t\t\t\tEditorUtility.ShowNotification(instance.PerformAction().notification);");
+            sb.AppendLine("\t\t\tif(instance != null && instance.enabled)");
+            sb.AppendLine("\t\t\t{");
+
+            // Some more complex actions have custom behavior when called from the MenuItems to better handle the previews.
+            if (data.hasMenuItemOverride)
+                sb.AppendLine(data.menuItemOverride);
+            else
+            {
+                // Else, check if that a preview or a regular Editor Action without preview
+                if (data.optionsEnabled)
+                {
+                    if (data.hasPreview)
+                        sb.AppendLine("\t\t\t\tEditorAction.Start(new MenuActionSettingsWithPreview(instance));");
+                    else
+                        sb.AppendLine("\t\t\t\tEditorAction.Start(new MenuActionSettings(instance));");
+                }
+                else // Last case, just perform the action if this is an instant action with no options
+                    sb.AppendLine("\t\t\t\tinstance.PerformAction();");
+            }
+
             sb.AppendLine( "\t\t\t\tProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);");
             sb.AppendLine( "\t\t\t}");
             sb.AppendLine( "\t\t}");
@@ -235,14 +265,13 @@ namespace UnityEditor.ProBuilder
                     inSceneShortcut = false;
                 }
                 else
-                    res += s.Trim().ToLower();
+                    res += s.Trim().ToUpper();
             }
 
             if (!string.IsNullOrEmpty(res))
             {
-                // Show single-key context shortcuts by invalidating the MenuItem syntax
                 if (inSceneShortcut)
-                    res = $" [{res}]";
+                    res = $" _{res}";
                 else
                     res = $" {res}";
             }

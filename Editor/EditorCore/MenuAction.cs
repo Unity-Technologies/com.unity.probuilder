@@ -216,6 +216,12 @@ namespace UnityEditor.ProBuilder
         internal bool optionsEnabled => optionsMenuState == MenuActionState.VisibleAndEnabled;
 
         /// <summary>
+        /// Override the action automatically generated in the GenerateMenuItems.cs script.
+        /// </summary>
+        /// <returns></returns>
+        internal virtual string GetMenuItemOverride() => "";
+
+        /// <summary>
         /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
         /// Calling this method triggers the <see cref="onPerformAction"/> event.
         /// </summary>

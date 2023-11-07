@@ -57,5 +57,18 @@ namespace UnityEditor.ProBuilder.Actions
                     return EditorToolbarLoader.GetInstance<SubdivideFaces>().PerformAction();
             }
         }
+
+        internal override string GetMenuItemOverride()
+        {
+            return @"                switch (ProBuilderEditor.selectMode)
+                {
+                    case SelectMode.Edge:
+                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideEdges>()));
+                        break;
+                    default:
+                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideFaces>()));
+                        break;
+                }";
+        }
     }
 }
