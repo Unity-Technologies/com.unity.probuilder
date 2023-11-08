@@ -45,6 +45,9 @@ namespace UnityEditor.ProBuilder
             m_CanCreatePolyShape = CanCreateNewPolyShape();
             if (m_CanCreatePolyShape)
             {
+                MeshSelection.SetSelection((GameObject)null);
+                ToolManager.SetActiveContext<GameObjectToolContext>();
+
                 GameObject go = new GameObject("PolyShape");
                 UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
                 m_PolyShape = Undo.AddComponent<PolyShape>(go);
@@ -112,7 +115,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
-    [EditorTool("Edit PolyShape", typeof(PolyShape), targetContext = typeof(PositionToolContext))]
+    [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);

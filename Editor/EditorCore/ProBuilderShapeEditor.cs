@@ -71,12 +71,7 @@ namespace UnityEditor.ProBuilder
                && ToolManager.activeToolType != typeof(EditShapeTool))
             {
                 if(GUILayout.Button("Edit Shape"))
-                {
-                    if (!(EditorToolManager.activeToolContext is PositionToolContext))
-                        ToolManager.SetActiveContext<PositionToolContext>();
-
                     ToolManager.SetActiveTool<EditShapeTool>();
-                }
             }
         }
 

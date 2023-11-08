@@ -21,12 +21,7 @@ namespace UnityEditor.ProBuilder
                  case PolyShape.PolyEditMode.None:
                  {
                      if(GUILayout.Button("Edit Poly Shape"))
-                     {
-                         if (!(EditorToolManager.activeToolContext is PositionToolContext))
-                             ToolManager.SetActiveContext<PositionToolContext>();
-
                          ToolManager.SetActiveTool<PolyShapeTool>();
-                     }
 
                      EditorGUILayout.HelpBox(
                          "Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.",

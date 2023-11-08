@@ -13,7 +13,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-    [EditorTool("Edit Shape", typeof(ProBuilderShape), typeof(PositionToolContext))]
+    [EditorTool("Edit Shape", typeof(ProBuilderShape))]
     sealed class EditShapeTool : EditorTool
     {
         Editor m_ShapeEditor;
