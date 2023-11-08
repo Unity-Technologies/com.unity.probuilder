@@ -17,7 +17,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Ring_Edge"); } }
+        internal override string iconPath => "Toolbar/Selection_Ring_Edge";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -29,7 +30,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return 2; }
         }
 
-        protected override bool hasFileMenuEntry
+        protected internal override bool hasFileMenuEntry
         {
             get { return false; }
         }

@@ -7,7 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class TriangulateObject : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Triangulate"); } }
+        internal override string iconPath => "Toolbar/Object_Triangulate";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Triangulate"; } }
 

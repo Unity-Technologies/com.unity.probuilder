@@ -11,9 +11,10 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class Export : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Export"); } }
+        internal override string iconPath => "Toolbar/Object_Export";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return m_Tooltip; } }
-        protected override bool hasFileMenuEntry { get { return false; } }
+        protected override internal bool hasFileMenuEntry { get { return false; } }
 
         GUIContent gc_ExportFormat = new GUIContent("Export Format", "The type of file to export the current selection as.");
         GUIContent gc_ExportRecursive = new GUIContent("Include Children", "Should the exporter include children of the current selection when searching for meshes to export?");

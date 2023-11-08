@@ -11,10 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get { return null; }
-        }
+        internal override string iconPath => string.Empty;
+        public override Texture2D icon => null;
 
         public override TooltipContent tooltip
         {

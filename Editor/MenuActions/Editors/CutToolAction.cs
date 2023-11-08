@@ -16,8 +16,10 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Tool; }
         }
 
+        internal override string iconPath => "Toolbar/CutTool";
+
         /// <inheritdoc/>
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CutTool"); } }
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         /// <inheritdoc/>
         public override TooltipContent tooltip
@@ -32,7 +34,7 @@ namespace UnityEditor.ProBuilder.Actions
         }
 
         /// <inheritdoc/>
-        protected override bool hasFileMenuEntry
+        protected internal override bool hasFileMenuEntry
         {
             get { return false; }
         }

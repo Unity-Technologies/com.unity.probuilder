@@ -9,7 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenUVEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_UVEditor"); } }
+        internal override string iconPath => "Toolbar/Panel_UVEditor";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent

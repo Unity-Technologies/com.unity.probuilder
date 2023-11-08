@@ -128,25 +128,24 @@ namespace UnityEditor.ProBuilder
                 }
 
                 var title = action.menuTitle;
-                // Geometry and Tool groups are not displayed in the menu
-                if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
-                {
-                    //STO-3001: For a better UX, Selection group is renamed to Select so that users don't think this is
-                    //acting on the current selection
-                    var groupName = action.group == ToolbarGroup.Selection ? "Select" : action.group.ToString();
-                    title = $"{groupName}/{action.menuTitle}";
-                }
 
-                if (action.optionsEnabled)
+                if (action.hasFileMenuEntry)
                 {
+                    string path = EditorToolbarMenuItem.k_MenuPrefix+action.group+"/"+title;
+                    if (GetStatus(action) == DropdownMenuAction.Status.Normal || GetStatus(action) == DropdownMenuAction.Status.Disabled)
+                    {
+                        ContextMenuUtility.AddMenuItem(menu, path, GetMenuTitle(action, title));
+                    }
+                }else if (action.optionsEnabled)
+                {
+                    title = GetMenuTitle(action, title);
                     if(HasPreview(action))
                         menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettingsWithPreview(action)), GetStatus(action), action.icon);
                     else
                         menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
-
                 }
                 else
-                    menu.AppendAction(title, _ => action.PerformAction(), GetStatus(action), action.icon);
+                    menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction(), GetStatus(action), action.icon);
             }
 
             var trs = Selection.transforms;
@@ -159,9 +158,23 @@ namespace UnityEditor.ProBuilder
             return !(action is DetachFaces || action is DuplicateFaces);
         }
 
+        string GetMenuTitle(MenuAction action, string title)
+        {
+            // Geometry and Tool groups are not displayed in the menu
+            if (action.group != ToolbarGroup.Geometry && action.group != ToolbarGroup.Tool)
+            {
+                //STO-3001: For a better UX, Selection group is renamed to Select so that users don't think this is
+                //acting on the current selection
+                var groupName = action.group == ToolbarGroup.Selection ? "Select" : action.group.ToString();
+                title = $"{groupName}/{action.menuTitle}";
+            }
+            return title;
+        }
+
         public override void OnActivated()
         {
-            m_Editor = new ProBuilderEditor();
+            if(m_Editor == null)
+                m_Editor = new ProBuilderEditor();
         }
 
         public override void OnWillBeDeactivated()

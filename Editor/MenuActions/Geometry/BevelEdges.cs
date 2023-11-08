@@ -12,14 +12,15 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_BevelSize = new Pref<float>("BevelEdges.size", .2f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel"); } }
+        internal override string iconPath => "Toolbar/Edge_Bevel";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly GUIContent gc_BevelDistance = EditorGUIUtility.TrTextContent("Distance", "The size of the bevel in meters. The value is clamped to the size of the smallest affected face.");
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Bevel",
+                "Bevel Edges",
                 @"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
             );
 

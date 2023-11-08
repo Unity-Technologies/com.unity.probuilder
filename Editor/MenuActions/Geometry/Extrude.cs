@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder;
@@ -12,7 +13,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return null; } }
+        internal override string iconPath => String.Empty;
+        public override Texture2D icon => null;
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
         (

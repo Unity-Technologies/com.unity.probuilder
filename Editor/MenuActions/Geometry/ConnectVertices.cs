@@ -7,9 +7,10 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class ConnectVertices : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Connect"); } }
+        internal override string iconPath => "Toolbar/Vert_Connect";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return _tooltip; } }
-        protected override bool hasFileMenuEntry { get { return false; } }
+        protected internal override bool hasFileMenuEntry { get { return false; } }
 
         static readonly TooltipContent _tooltip = new TooltipContent
             (

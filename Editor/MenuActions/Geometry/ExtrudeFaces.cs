@@ -20,14 +20,15 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Extrude"); } }
+        internal override string iconPath => "Toolbar/Face_Extrude";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
             get { return s_Tooltip; }
         }
 
-        protected override bool hasFileMenuEntry
+        protected internal override bool hasFileMenuEntry
         {
             get { return false; }
         }

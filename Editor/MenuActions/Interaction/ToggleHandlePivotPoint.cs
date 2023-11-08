@@ -20,6 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
+        internal override string iconPath => "Toolbar/HandleAlign_Plane";
         public override Texture2D icon
         {
             get { return m_Icons[(int)pivotPoint]; }

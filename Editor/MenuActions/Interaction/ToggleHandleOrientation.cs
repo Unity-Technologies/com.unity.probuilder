@@ -23,6 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
+        internal override string iconPath => "Modes/ToolHandleElement";
         public override Texture2D icon => m_Icons[(int)handleOrientation];
 
         public override int toolbarPriority

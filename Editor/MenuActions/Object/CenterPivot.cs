@@ -11,7 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Object; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_CenterOnObject"); } }
+        internal override string iconPath => "Toolbar/Pivot_CenterOnObject";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {

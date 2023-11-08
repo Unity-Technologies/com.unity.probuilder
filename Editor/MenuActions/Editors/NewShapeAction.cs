@@ -8,7 +8,9 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class NewShapeAction : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/AddShape"); } }
+
+        internal override string iconPath => "Toolbar/AddShape";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "New Shape"; } }
         public override int toolbarPriority { get { return 0; } }

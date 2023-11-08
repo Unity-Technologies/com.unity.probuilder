@@ -10,14 +10,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon
-        {
-            get
-            {
-                //Returning a default value for icon mode
-                return IconUtility.GetIcon("Toolbar/Selection_ShiftDifference", IconSkin.Pro);
-            }
-        }
+        internal override string iconPath => "Toolbar/Selection_ShiftDifference";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath, IconSkin.Pro);
 
         public override TooltipContent tooltip => _tooltip;
 

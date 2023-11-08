@@ -17,7 +17,8 @@ namespace ProBuilder.ExampleActions
 	public class MakeFacesDoubleSided : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-		public override Texture2D icon { get { return null; } }
+        public override string iconPath => string.Empty;
+		public override Texture2D icon => null;
 		public override TooltipContent tooltip { get { return k_Tooltip; } }
 
 		/// <summary>

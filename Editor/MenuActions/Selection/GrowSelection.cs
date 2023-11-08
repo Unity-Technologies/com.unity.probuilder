@@ -18,8 +18,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ToolbarGroup.Selection; }
         }
-
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_Grow"); } }
+        internal override string iconPath => "Toolbar/Selection_Grow";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {

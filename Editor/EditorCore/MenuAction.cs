@@ -132,6 +132,11 @@ namespace UnityEditor.ProBuilder
         public abstract Texture2D icon { get; }
 
         /// <summary>
+        /// Gets the local path of the icon to display in the Context Menu for this action.
+        /// </summary>
+        internal abstract string iconPath { get; }
+
+        /// <summary>
         /// Gets the contents of the tooltip to display for this menu action.
         /// </summary>
         public abstract TooltipContent tooltip { get; }
@@ -147,7 +152,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets whether this class should have an entry built into the hardware menu. This is not implemented for custom actions.
         /// </summary>
-        protected virtual bool hasFileMenuEntry { get { return true; } }
+        protected internal virtual bool hasFileMenuEntry { get { return true; } }
 
         /// <summary>
         /// Gets a flag that indicates both the visibility and enabled state of an action

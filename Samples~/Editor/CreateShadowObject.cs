@@ -16,7 +16,8 @@ namespace ProBuilder.ExampleActions
 	sealed class CreateShadowObject : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return null; } }
+        public override string iconPath => string.Empty;
+		public override Texture2D icon => null;
 		public override TooltipContent tooltip { get { return k_Tooltip; } }
 
 		static readonly GUIContent k_VolumeSize = new GUIContent("Volume Size", "How far the shadow volume extends from " +

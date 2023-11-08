@@ -52,6 +52,7 @@ namespace UnityEditor.ProBuilder
 
             // path = "Editors/New Bezier Shape"
             public string path { get; private set; }
+            public string iconPath { get; private set; }
 
             // MenuItemAttribute shortcut string, ex "#%d"
             public string menuItemShortcut { get; private set; }
@@ -77,6 +78,7 @@ namespace UnityEditor.ProBuilder
 
                 if (valid)
                 {
+                    iconPath = instance.iconPath;
                     PropertyInfo hasMenuEntryProperty = typeof(MenuAction).GetProperty("hasFileMenuEntry", BindingFlags.NonPublic | BindingFlags.Instance);
                     visibleInMenu = hasMenuEntryProperty != null && (bool)hasMenuEntryProperty.GetValue(instance, null);
                     menuItemShortcut = instance.tooltip.shortcut;
@@ -162,7 +164,7 @@ namespace UnityEditor.ProBuilder
 {
     static class EditorToolbarMenuItem
     {
-        const string k_MenuPrefix = ""Tools/ProBuilder/"";");
+        internal const string k_MenuPrefix = ""Tools/ProBuilder/"";");
         }
 
         static void AppendMenuItem(StringBuilder sb, MenuActionData data)
@@ -184,7 +186,10 @@ namespace UnityEditor.ProBuilder
             sb.AppendLine();
 
             // Action
-            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
+            if(string.IsNullOrEmpty(data.iconPath))
+                sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
+            else
+                sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority}, \"\",\"Packages/com.unity.probuilder/Content/Icons/{data.iconPath}.png\")]");
             sb.AppendLine($"\t\tstatic void MenuPerform_{data.typeString}()");
             sb.AppendLine("\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");

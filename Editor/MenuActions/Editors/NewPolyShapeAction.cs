@@ -9,7 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class NewPolyShapeAction : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/CreatePolyShape"); } }
+        internal override string iconPath => "Toolbar/CreatePolyShape";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return _tooltip; } }
         public override string menuTitle { get { return "New Poly Shape"; } }
         public override int toolbarPriority { get { return 1; } }
