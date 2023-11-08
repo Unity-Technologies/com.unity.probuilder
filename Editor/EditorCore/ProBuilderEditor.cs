@@ -767,6 +767,9 @@ namespace UnityEditor.ProBuilder
 
         internal void ClearElementSelection()
         {
+            foreach (ProBuilderMesh pb in selection)
+                pb.ClearSelection();
+
             m_Hovering.Clear();
         }
 
