@@ -1,8 +1,10 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    [EditorTool("ProBuilder Move Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
     class ProbuilderMoveTool : PositionTool
     {
         const float k_CardinalAxisError = .001f;

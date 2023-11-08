@@ -1,8 +1,10 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    [EditorTool("ProBuilder Rotation Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
     class ProbuilderRotateTool : PositionTool
     {
         Quaternion m_Rotation;
