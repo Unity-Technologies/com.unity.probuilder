@@ -188,7 +188,6 @@ namespace UnityEditor.ProBuilder
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             m_Mesh = null;
-            UpdateTarget();
         }
 
         void OnDisable()

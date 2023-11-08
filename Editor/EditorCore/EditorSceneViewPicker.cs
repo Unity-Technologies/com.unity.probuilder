@@ -70,15 +70,20 @@ namespace UnityEditor.ProBuilder
 
             evt.Use();
 
+            var isProBuilderMesh = s_Selection.gameObject != null && s_Selection.gameObject.GetComponent<ProBuilderMesh>() != null;
+
             if (!appendModifier)
             {
                 if(s_Selection.mesh != null)
                     s_Selection.mesh.ClearSelection();
-                if(ToolManager.activeContextType != typeof(PositionToolContext))
-                    MeshSelection.SetSelection((GameObject)null);
-                else // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
+                if(s_Selection.gameObject == null || !isProBuilderMesh)
                     MeshSelection.ClearElementSelection();
+                else // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
+                    MeshSelection.SetSelection((GameObject)null);
             }
+
+            if (!isProBuilderMesh)
+                return null;
 
             if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)
             {

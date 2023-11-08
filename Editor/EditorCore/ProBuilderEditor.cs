@@ -216,12 +216,6 @@ namespace UnityEditor.ProBuilder
             VertexManipulationTool.afterMeshModification -= AfterMeshModification;
             selectModeChanged -= OnSelectModeChanged;
 
-            ClearElementSelection();
-            UpdateSelection();
-
-            if (selectionUpdated != null)
-                selectionUpdated(null);
-
             SceneView.duringSceneGui -= OnSceneGUI;
             ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
