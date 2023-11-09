@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
             if (!Math.IsNumber(m_HitPosition))
                 return this;
 
-            //tool.DoDuplicateShapePreviewHandle(m_HitPosition);
+            tool.DoDuplicateShapePreviewHandle(m_HitPosition);
 
             // Repaint to visualize the placement preview dot
             if (evt.type == EventType.MouseMove && HandleUtility.nearestControl == tool.controlID)

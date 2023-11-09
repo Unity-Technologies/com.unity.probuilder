@@ -466,55 +466,55 @@ namespace UnityEditor.ProBuilder
             m_BB_HeightCorner = m_BB_Origin + size;
         }
 
-        // internal void DoDuplicateShapePreviewHandle(Vector3 position)
-        // {
-        //     var evt = Event.current;
-        //
-        //     if(evt.type != EventType.Repaint)
-        //         return;
-        //
-        //     bool previewShortcutActive = evt.shift && !(evt.control || evt.command);
-        //
-        //     if (HandleUtility.nearestControl != m_ControlID || !previewShortcutActive)
-        //     {
-        //         DestroyImmediate(m_DuplicateGO);
-        //         return;
-        //     }
-        //
-        //     var size = currentShapeInOverlay.size;
-        //     m_Bounds.size = size;
-        //
-        //     position = GetPoint(position);
-        //     var cornerPosition = position - size / 2f;
-        //     cornerPosition.y = position.y;
-        //     m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
-        //     m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-        //
-        //     m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
-        //     m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
-        //     m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
-        //
-        //     if (m_DuplicateGO == null)
-        //     {
-        //         var instantiated = ShapeFactory.Instantiate(activeShapeType);
-        //         var shape = instantiated.GetComponent<ProBuilderShape>();
-        //         m_DuplicateGO = shape.gameObject;
-        //         m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
-        //         ApplyPrefsSettings(shape);
-        //         shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
-        //
-        //         EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-        //         shape.Rebuild(m_Bounds, m_PlaneRotation);
-        //         ProBuilderEditor.Refresh(false);
-        //     }
-        //
-        //     var pivot = GetPoint(position);
-        //     pivot += .5f * size.y * m_Plane.normal;
-        //
-        //     m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
-        //
-        //     DrawBoundingBox(false);
-        // }
+        internal void DoDuplicateShapePreviewHandle(Vector3 position)
+        {
+            var evt = Event.current;
+
+            if(evt.type != EventType.Repaint)
+                return;
+
+            bool previewShortcutActive = evt.shift && !(evt.control || evt.command);
+
+            if (HandleUtility.nearestControl != m_ControlID || !previewShortcutActive)
+            {
+                DestroyImmediate(m_DuplicateGO);
+                return;
+            }
+
+            var size = currentShapeInOverlay.size;
+            m_Bounds.size = size;
+
+            position = GetPoint(position);
+            var cornerPosition = position - size / 2f;
+            cornerPosition.y = position.y;
+            m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
+            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+
+            m_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
+            m_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
+            m_BB_OppositeCorner = m_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
+
+            if (m_DuplicateGO == null)
+            {
+                var instantiated = ShapeFactory.Instantiate(activeShapeType);
+                var shape = instantiated.GetComponent<ProBuilderShape>();
+                m_DuplicateGO = shape.gameObject;
+                m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
+                ApplyPrefsSettings(shape);
+                shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
+
+                EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
+                shape.Rebuild(m_Bounds, m_PlaneRotation);
+                ProBuilderEditor.Refresh(false);
+            }
+
+            var pivot = GetPoint(position);
+            pivot += .5f * size.y * m_Plane.normal;
+
+            m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
+
+            DrawBoundingBox(false);
+        }
 
         /// <summary>
         /// Recalculates the bounding box for this mesh's shape.
