@@ -15,7 +15,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-    [EditorTool("Cut Tool", typeof(ProBuilderMesh), targetContext = typeof(PositionToolContext))]
+    [EditorTool("Cut Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
     class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -161,11 +161,7 @@ namespace UnityEditor.ProBuilder
 
         public override bool IsAvailable()
         {
-            return ProBuilderEditor.instance != null &&
-                MeshSelection.selectedObjectCount == 1 &&
-                (ProBuilderEditor.selectMode == SelectMode.Vertex ||
-                    ProBuilderEditor.selectMode == SelectMode.Edge ||
-                    ProBuilderEditor.selectMode == SelectMode.Face);
+            return MeshSelection.selectedObjectCount == 1;
         }
 
         void OnEnable()
