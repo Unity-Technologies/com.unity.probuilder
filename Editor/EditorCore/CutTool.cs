@@ -504,7 +504,7 @@ namespace UnityEditor.ProBuilder
             //If the user is moving an existing point
             if (m_PlacingPoint || m_ModifyingPoint)
             {
-                if( evtType == EventType.MouseDown
+                if( evtType == EventType.MouseDown && evt.button == 0
                     && HandleUtility.nearestControl == m_ControlId )
                 {
                     m_PlacingPoint = true;
@@ -534,7 +534,7 @@ namespace UnityEditor.ProBuilder
             }
             //If the user is adding the current position to the cut.
             else if (hasHitPosition
-                     && evtType == EventType.MouseDown
+                     && evtType == EventType.MouseDown && evt.button == 0
                      && HandleUtility.nearestControl == m_ControlId)
             {
                 if(CanAppendCurrentPointToPath())

@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder
                     m_HitPosition = tool.GetPoint(ray.GetPoint(hit));
 
                     //Click has been done => Define a plane for the tool
-                    if(evt.type == EventType.MouseDown)
+                    if(evt.type == EventType.MouseDown && evt.button == 0)
                     {
                         //BB init
                         tool.m_BB_Origin = m_HitPosition;

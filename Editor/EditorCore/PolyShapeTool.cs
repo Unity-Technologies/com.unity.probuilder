@@ -727,8 +727,7 @@ namespace UnityEditor.ProBuilder
             bool used = evt.type == EventType.Used;
 
             if (!used &&
-                (evt.type == EventType.MouseDown &&
-                 evt.button == 0 &&
+                (evt.type == EventType.MouseDown && evt.button == 0 &&
                  !EditorHandleUtility.IsAppendModifier(evt.modifiers)))
             {
                 m_SelectedIndex = -1;
