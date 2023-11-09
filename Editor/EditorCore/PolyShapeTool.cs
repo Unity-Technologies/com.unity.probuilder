@@ -664,7 +664,7 @@ namespace UnityEditor.ProBuilder
                                     HandleUtility.GetHandleSize(wp) * k_HandleSize, evt.type);
                             }
 
-                            if (evt.type == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                            if (evt.type == EventType.MouseDown && evt.button == 0 && HandleUtility.nearestControl == m_ControlId)
                             {
                                 evt.Use();
 
