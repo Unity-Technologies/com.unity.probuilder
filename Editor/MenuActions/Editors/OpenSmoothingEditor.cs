@@ -22,10 +22,7 @@ Smoothing groups average the vertex normals with neighboring planes. This allows
 ProBuilder decides which edges should be smoothed by checking for neighboring faces that are in the same group. It also checks for Hard groups, which hardens edges of neighboring faces."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
+        public override bool enabled => true;
 
         protected override ActionResult PerformActionImplementation()
         {

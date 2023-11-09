@@ -763,7 +763,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Center Pivot", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_CenterPivot()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 			return instance != null && instance.enabled;
 		}
@@ -782,7 +781,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Conform Object Normals", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_ConformObjectNormals()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 			return instance != null && instance.enabled;
 		}
@@ -801,7 +799,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Flip Object Normals", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_FlipObjectNormals()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 			return instance != null && instance.enabled;
 		}
@@ -820,7 +817,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Freeze Transform", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_FreezeTransform()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 			return instance != null && instance.enabled;
 		}
@@ -839,7 +835,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Merge Objects", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_MergeObjects()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 			return instance != null && instance.enabled;
 		}
@@ -858,7 +853,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Mirror Objects", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_MirrorObjects()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 			return instance != null && instance.enabled;
 		}
@@ -877,7 +871,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Pro Builderize", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_ProBuilderize()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 			return instance != null && instance.enabled;
 		}
@@ -896,7 +889,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Set Collider", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_SetCollider()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SetCollider>();
 			return instance != null && instance.enabled;
 		}
@@ -915,7 +907,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Set Trigger", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_SetTrigger()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 			return instance != null && instance.enabled;
 		}
@@ -934,7 +925,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Subdivide Object", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_SubdivideObject()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 			return instance != null && instance.enabled;
 		}
@@ -953,7 +943,6 @@ namespace UnityEditor.ProBuilder
 		[MenuItem(k_MenuPrefix + "Object/Triangulate Object", true, PreferenceKeys.menuGeometry + 2)]
 		static bool MenuVerify_TriangulateObject()
 		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 			return instance != null && instance.enabled;
 		}

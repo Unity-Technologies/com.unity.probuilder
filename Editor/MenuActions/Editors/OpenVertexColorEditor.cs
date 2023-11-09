@@ -17,10 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
                 "Opens the Vertex Color Palette.\n\nApply using Face mode for hard-edged colors.\nApply using Edge or Vertex mode for soft, blended colors."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
+        public override bool enabled => true;
 
         protected override ActionResult PerformActionImplementation()
         {

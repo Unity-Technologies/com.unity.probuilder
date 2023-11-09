@@ -191,8 +191,7 @@ namespace UnityEditor.ProBuilder
             {;
                 var b1 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
                 var b2 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
-                return b1
-                       && b2;
+                return b1 && b2;
             }
         }
 

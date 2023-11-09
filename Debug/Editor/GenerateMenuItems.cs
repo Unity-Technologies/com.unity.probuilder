@@ -26,7 +26,8 @@ namespace UnityEditor.ProBuilder
         static readonly HashSet<string> k_GlobalActionList = new HashSet<string>()
         {
             "Editors",
-            "Export"
+            "Export",
+            "Object"
         };
 
 

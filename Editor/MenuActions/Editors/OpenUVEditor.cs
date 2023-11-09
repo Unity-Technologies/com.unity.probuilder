@@ -19,10 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
                 "Opens the UV Editor window.\n\nThe UV Editor allows you to change how textures are rendered on this mesh."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
+        public override bool enabled => true;
 
         protected override ActionResult PerformActionImplementation()
         {

@@ -20,15 +20,8 @@ namespace UnityEditor.ProBuilder.Actions
                 "Opens the vertex positions editor window."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
-
-        public override bool hidden
-        {
-            get { return true; }
-        }
+        public override bool enabled => true;
+        public override bool hidden => true;
 
         protected override ActionResult PerformActionImplementation()
         {
