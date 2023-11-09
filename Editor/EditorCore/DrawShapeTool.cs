@@ -170,7 +170,7 @@ namespace UnityEditor.ProBuilder
 
     class DrawShapeTool : EditorTool
     {
-        internal const int k_MinOverlayWidth = 250;
+        internal const int k_MinOverlayWidth = 300;
 
         ShapeState m_CurrentState;
 

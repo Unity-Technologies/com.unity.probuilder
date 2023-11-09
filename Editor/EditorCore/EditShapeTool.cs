@@ -5,7 +5,6 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using Math = UnityEngine.ProBuilder.Math;
 using Object = UnityEngine.Object;
-
 using FaceData = UnityEditor.ProBuilder.EditorShapeUtility.FaceData;
 using Plane = UnityEngine.ProBuilder.Shapes.Plane;
 using Sprite = UnityEngine.ProBuilder.Shapes.Sprite;
@@ -173,7 +172,7 @@ namespace UnityEditor.ProBuilder
         void OnOverlayGUI(Object obj, SceneView view)
         {
             GUILayout.BeginVertical(GUILayout.MinWidth(DrawShapeTool.k_MinOverlayWidth));
-            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI(null);
+            ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeGUI();
             ( (ProBuilderShapeEditor) m_ShapeEditor ).DrawShapeParametersGUI(null);
             GUILayout.EndVertical();
         }

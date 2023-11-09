@@ -39,9 +39,6 @@ namespace UnityEditor.ProBuilder
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
-        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("X");
-        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Y");
-        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Z");
 
         bool HasMultipleShapeTypes
         {
@@ -75,7 +72,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public void DrawShapeGUI(DrawShapeTool tool = null)
+        public void DrawShapeGUI()
         {
             if(target == null)
                 return;
@@ -110,7 +107,6 @@ namespace UnityEditor.ProBuilder
 
             if(editedShapesCount == targets.Length)
                 GUI.enabled = false;
-
         }
 
         public void DrawShapeParametersGUI(DrawShapeTool tool = null)
@@ -133,33 +129,36 @@ namespace UnityEditor.ProBuilder
                 EditorGUI.indentLevel++;
                 EditorGUIUtility.labelWidth = 90;
 
-                EditorGUI.BeginChangeCheck();
-                m_ActiveShapeIndex = HasMultipleShapeTypes
-                    ? -1
-                    : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
-                m_ActiveShapeIndex = EditorGUILayout.Popup("Shape", m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
-
-                if(EditorGUI.EndChangeCheck())
+                if (tool)
+                    DrawShapeTool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, DrawShapeTool.pivotLocation);
+                else
                 {
-                    var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
-                    foreach(var comp in targets)
-                    {
-                        ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
-                        Shape shape = proBuilderShape.shape;
-                        if(shape.GetType() != type)
-                        {
-                            if(tool != null)
-                                DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
+                    EditorGUI.BeginChangeCheck();
+                    m_ActiveShapeIndex = HasMultipleShapeTypes
+                        ? -1
+                        : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
+                    m_ActiveShapeIndex = EditorGUILayout.Popup("Shape", m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
 
-                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
-                            proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type));
-                            ProBuilderEditor.Refresh();
+                    if(EditorGUI.EndChangeCheck())
+                    {
+                        var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
+                        foreach(var comp in targets)
+                        {
+                            ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
+                            Shape shape = proBuilderShape.shape;
+                            if(shape.GetType() != type)
+                            {
+                                if(tool != null)
+                                    DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
+
+                                UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
+                                proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type));
+                                ProBuilderEditor.Refresh();
+                            }
                         }
                     }
                 }
 
-                if (tool)
-                    DrawShapeTool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, DrawShapeTool.pivotLocation);
 
                 EditorGUILayout.PropertyField(shapeSizeProperty);
                 EditorGUI.indentLevel--;
