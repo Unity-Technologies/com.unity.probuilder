@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
         public static Tool activeTool => Tools.current;
     }
 
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Modes/Mode_Face.png")]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/EditMeshContext.png")]
     [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
     class PositionToolContext : EditorToolContext
     {
