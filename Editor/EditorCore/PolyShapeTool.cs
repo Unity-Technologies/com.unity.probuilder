@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
                     s_IconContent = new GUIContent()
                     {
                         image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = "Create PolyShape",
+                        text = String.Empty,
                         tooltip = "Create PolyShape"
                     };
                 return s_IconContent;
@@ -218,7 +218,7 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_OverlayTitle = new GUIContent("Poly Shape Tool");
+            m_OverlayTitle = new GUIContent("PolyShape Settings");
 
         }
 
