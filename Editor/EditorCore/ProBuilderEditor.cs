@@ -190,7 +190,9 @@ namespace UnityEditor.ProBuilder
 
         internal ProBuilderEditor()
         {
-            Assert.IsNull(s_Instance);
+            if(s_Instance != null)
+                s_Instance.Dispose();
+
             s_Instance = this;
 
             SceneView.duringSceneGui += OnSceneGUI;
@@ -221,6 +223,8 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
+            ClearElementSelection();
+            UpdateMeshHandles();
             SetOverrideWireframe(false);
             SceneView.RepaintAll();
 
@@ -660,14 +664,13 @@ namespace UnityEditor.ProBuilder
 
         void DrawHandleGUI(SceneView sceneView)
         {
-            if (sceneView != SceneView.lastActiveSceneView)
+            if (sceneView != SceneView.lastActiveSceneView || instance == null)
                 return;
 
             if (m_CurrentEvent.type == EventType.Repaint
                 && !SceneDragAndDropListener.isDragging
                 && m_Hovering != null
                 && GUIUtility.hotControl == 0
-                && HandleUtility.nearestControl == m_DefaultControl
                 && selectMode.IsMeshElementMode())
             {
                 try

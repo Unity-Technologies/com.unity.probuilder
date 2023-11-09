@@ -173,8 +173,7 @@ namespace UnityEditor.ProBuilder
 
         public override void OnActivated()
         {
-            if(m_Editor == null)
-                m_Editor = new ProBuilderEditor();
+            m_Editor = new ProBuilderEditor();
         }
 
         public override void OnWillBeDeactivated()
