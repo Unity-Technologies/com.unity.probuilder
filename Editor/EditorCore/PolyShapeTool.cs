@@ -556,7 +556,7 @@ namespace UnityEditor.ProBuilder
             }
             else if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
-                if (eventType == EventType.MouseDown && HandleUtility.nearestControl == m_ControlId)
+                if (eventType == EventType.MouseDown && evt.button == 0 && HandleUtility.nearestControl == m_ControlId)
                 {
                     if (polygon.m_Points.Count < 1)
                         SetupInputPlane(evt.mousePosition);
