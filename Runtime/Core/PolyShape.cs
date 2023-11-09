@@ -13,6 +13,7 @@ namespace UnityEngine.ProBuilder
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [ExcludeFromPreset, ExcludeFromObjectFactory]
+    [Icon(k_IconPath)]
     [ProGridsConditionalSnap]
     public sealed class PolyShape : MonoBehaviour
     {
@@ -26,6 +27,7 @@ namespace UnityEngine.ProBuilder
             Height,
             Edit
         }
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
 
         ProBuilderMesh m_Mesh;
 

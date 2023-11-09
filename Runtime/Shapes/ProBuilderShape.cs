@@ -2,9 +2,12 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Icon(k_IconPath)]
     [AddComponentMenu(""), DisallowMultipleComponent]
     sealed class ProBuilderShape : MonoBehaviour
     {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
+
         [SerializeReference]
         Shape m_Shape = new Cube();
 
