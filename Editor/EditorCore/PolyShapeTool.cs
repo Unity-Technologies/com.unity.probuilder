@@ -367,6 +367,8 @@ namespace UnityEditor.ProBuilder
             if(currentPolygon == null)
                 return;
 
+            EditorGUILayout.BeginVertical(GUILayout.Width(300));
+
             switch (currentPolygon.polyEditMode)
             {
                 case PolyShape.PolyEditMode.Path:
@@ -385,7 +387,6 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
                         LeaveTool();
-
                     EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
                 }
@@ -419,6 +420,7 @@ namespace UnityEditor.ProBuilder
 
                 RebuildPolyShapeMesh(currentPolygon);
             }
+            EditorGUILayout.EndVertical();
         }
 
         void SetPolyEditMode(PolyShape.PolyEditMode mode)
