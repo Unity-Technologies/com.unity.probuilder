@@ -101,13 +101,10 @@ namespace UnityEditor.ProBuilder
         {
             m_OverlayTitle = new GUIContent("Shape Settings");
             m_ShapeEditor = Editor.CreateEditor(targets.ToArray(), typeof(ProBuilderShapeEditor));
-            EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
         }
 
         void OnDisable()
         {
-            EditorApplication.playModeStateChanged -= PlaymodeStateChanged ;
-
             if(m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
         }
@@ -127,19 +124,28 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             base.OnActivated();
+            EditorApplication.playModeStateChanged += PlaymodeStateChanged ;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            ToolManager.activeContextChanged += OnActiveContextChanged;
         }
 
         public override void OnWillBeDeactivated()
         {
             base.OnWillBeDeactivated();
+            ToolManager.activeContextChanged -= OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.playModeStateChanged -= PlaymodeStateChanged ;
         }
 
         void OnSelectModeChanged(SelectMode selectMode)
         {
             if(ToolManager.IsActiveTool(this))
                 ToolManager.RestorePreviousTool();
+        }
+
+        void OnActiveContextChanged()
+        {
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         public override void OnToolGUI(EditorWindow window)

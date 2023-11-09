@@ -993,8 +993,7 @@ namespace UnityEditor.ProBuilder
 
         void OnActiveContextChanged()
         {
-            if(ToolManager.activeContextType != typeof(GameObjectToolContext))
-                ToolManager.RestorePreviousPersistentTool();
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         void OnSelectModeChanged(SelectMode selectMode)
