@@ -186,11 +186,6 @@ namespace UnityEditor.ProBuilder
             m_Mesh = null;
         }
 
-        void OnDisable()
-        {
-            Clear();
-        }
-
         public override void OnActivated()
         {
             if(MeshSelection.selectedObjectCount == 1)
