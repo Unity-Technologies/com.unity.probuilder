@@ -21,16 +21,19 @@ namespace UnityEditor.ProBuilder.UI
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                     icon = IconUtility.GetIcon("Modes/Mode_Face");
+                    tooltip = "Face Selection";
                     break;
 
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
                     icon = IconUtility.GetIcon("Modes/Mode_Edge");
+                    tooltip = "Edge Selection";
                     break;
 
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                     icon = IconUtility.GetIcon("Modes/Mode_Vertex");
+                    tooltip = "Vertex Selection";
                     break;
 
                 default:
