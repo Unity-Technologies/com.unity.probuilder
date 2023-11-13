@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
         static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
         [UserSetting]
-        static Pref<bool> s_XRayView = new Pref<bool>("graphics.xRayView", false, SettingsScope.User);
+        static Pref<bool> s_XRayView = new Pref<bool>("graphics.xRayView", true, SettingsScope.User);
 
         [Obsolete]
         static Pref<bool> s_DepthTestHandles = new Pref<bool>("graphics.handleZTest", true, SettingsScope.User);
