@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
@@ -12,21 +13,24 @@ public class CollapseVerticesTest
 {
     ProBuilderMesh m_PBMesh;
 
-    [SetUp]
+    [OneTimeSetUp]
     public void Setup()
     {
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        ToolManager.SetActiveContext<GameObjectToolContext>();
         m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
         MeshSelection.SetSelection(m_PBMesh.gameObject);
         ActiveEditorTracker.sharedTracker.ForceRebuild();
 
         ToolManager.SetActiveContext<PositionToolContext>();
-        ToolManager.SetActiveTool<ProbuilderMoveTool>();
         ProBuilderEditor.selectMode = SelectMode.Vertex;
+        Tools.current = Tool.Move;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Vertex));
-        Assume.That(ToolManager.activeToolType == typeof(ProbuilderMoveTool));
+        Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
     }
 
-    [TearDown]
+    [OneTimeTearDown]
     public void Cleanup()
     {
         if (m_PBMesh != null)

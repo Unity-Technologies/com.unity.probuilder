@@ -31,6 +31,9 @@ class AutoUVUnwrapScaleUpgradeTests : TemporaryAssetTest
         Assume.That(s_Meshes[3], Is.Not.Null);
     }
 
+    [TearDown]
+    public void TearDown() => CloseScene(s_Scene);
+
     [Test]
     public void LegacyUVs_UpgradeWithoutModifyingPositions([ValueSource("s_MeshIndex")] int index)
     {
