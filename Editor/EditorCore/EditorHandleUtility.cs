@@ -670,7 +670,7 @@ namespace UnityEditor.ProBuilder
         {
             Plane plane;
             Vector3 normal = Vector3.up;
-            if(EditorSnapSettings.gridSnapEnabled || SceneView.lastActiveSceneView.showGrid)
+            if(EditorSnapSettings.gridSnapActive || SceneView.lastActiveSceneView.showGrid)
             {
                 var sceneView = SceneView.lastActiveSceneView;
                 var cameraTransform = sceneView.camera.transform;

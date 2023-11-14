@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (EditorSnapSettings.incrementalSnapActive)
                     return SnapMode.Relative;
-                if (ProGridsInterface.SnapEnabled() || EditorSnapSettings.gridSnapEnabled && Tools.pivotRotation == PivotRotation.Global)
+                if (ProGridsInterface.SnapEnabled() || EditorSnapSettings.gridSnapActive && Tools.pivotRotation == PivotRotation.Global)
                     return SnapMode.World;
                 return SnapMode.None;
             }
