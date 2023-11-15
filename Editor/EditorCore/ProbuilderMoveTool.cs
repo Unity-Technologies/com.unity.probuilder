@@ -53,7 +53,8 @@ namespace UnityEditor.ProBuilder
             m_RawHandleDelta = m_Position - handlePositionOrigin;
 
             var delta = m_RawHandleDelta;
-            if (EditorGUI.EndChangeCheck() && delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude * HandleUtility.GetHandleSize(m_Position))
+            if (EditorGUI.EndChangeCheck() &&
+                (delta.sqrMagnitude > k_MinTranslateDeltaSqrMagnitude * HandleUtility.GetHandleSize(m_Position) || isEditing))
             {
                 if (!isEditing)
                     BeginEdit("Translate Selection");
@@ -131,7 +132,6 @@ namespace UnityEditor.ProBuilder
         void ApplyTranslation(Vector3 translation)
         {
             var translationMagnitude = translation.magnitude;
-
             foreach (var key in elementSelection)
             {
                 if (!(key is MeshAndPositions))
