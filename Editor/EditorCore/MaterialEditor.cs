@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -284,7 +285,9 @@ namespace UnityEditor.ProBuilder
                 GUILayout.BeginHorizontal();
                 if (i < 10)
                 {
-                    if (GUILayout.Button("Alt + " + (i == 9 ? 0 : (i + 1)).ToString(), EditorStyles.miniButton, GUILayout.MaxWidth(58)))
+                    var shortcutPath = "Main Menu/Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset " + (i + 1);
+                    var shortcut = ShortcutManager.instance.GetShortcutBinding(shortcutPath).ToString();
+                    if (GUILayout.Button(shortcut, EditorStyles.miniButton, GUILayout.MaxWidth(58)))
                         ApplyMaterial(MeshSelection.topInternal, materials[i]);
                 }
                 else
