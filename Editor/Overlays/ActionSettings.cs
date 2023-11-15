@@ -44,6 +44,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             SceneView.RemoveOverlayFromActiveView(this);
+            MenuActionSettings.s_ActionSettingsOverlay = null;
         }
 
         public override VisualElement CreatePanelContent()
@@ -82,7 +83,7 @@ namespace UnityEditor.ProBuilder
             return root;
         }
 
-        void Validate()
+        internal void Validate()
         {
             UndoUtility.ExitAndValidatePreview();
             Clear();
@@ -110,10 +111,15 @@ namespace UnityEditor.ProBuilder
 
     public class MenuActionSettings : EditorAction
     {
+        internal static MenuActionSettingsOverlay s_ActionSettingsOverlay;
+
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
         {
+            if (s_ActionSettingsOverlay != null)
+                s_ActionSettingsOverlay.Validate();
+
             // Creating the overlay based on the action to fill the settings
-            var overlay = new MenuActionSettingsOverlay(action, hasPreview);
+            s_ActionSettingsOverlay = new MenuActionSettingsOverlay(action, hasPreview);
             Finish(EditorActionResult.Success);
         }
     }
