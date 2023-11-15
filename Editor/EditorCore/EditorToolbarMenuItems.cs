@@ -283,7 +283,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -321,7 +321,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -419,10 +419,10 @@ namespace UnityEditor.ProBuilder
                 switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<ExtrudeEdges>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ExtrudeEdges>(), true));
                         break;
                     case SelectMode.Face:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<ExtrudeFaces>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ExtrudeFaces>(), true));
                         break;
                 }
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
@@ -443,7 +443,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FillHole>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -538,7 +538,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -598,10 +598,10 @@ namespace UnityEditor.ProBuilder
                 switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideEdges>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideEdges>(), true));
                         break;
                     default:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideFaces>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideFaces>(), true));
                         break;
                 }
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
@@ -660,7 +660,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -863,7 +863,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -881,7 +881,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -1013,7 +1013,7 @@ namespace UnityEditor.ProBuilder
                 switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SelectEdgeLoop>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SelectEdgeLoop>(), true));
                         break;
                     case SelectMode.Face:
                         EditorToolbarLoader.GetInstance<SelectFaceLoop>().PerformAction();
@@ -1037,7 +1037,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettingsWithPreview(instance));
+				EditorAction.Start(new MenuActionSettings(instance, true));
 				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
 			}
 		}
@@ -1059,7 +1059,7 @@ namespace UnityEditor.ProBuilder
                 switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SelectEdgeRing>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SelectEdgeRing>(), true));
                         break;
                     case SelectMode.Face:
                         EditorToolbarLoader.GetInstance<SelectFaceRing>().PerformAction();

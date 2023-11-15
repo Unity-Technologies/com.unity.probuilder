@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder
             s_PreviewGroupIndex = Undo.GetCurrentGroup();
         }
 
-        internal static void EndPreview()
+        internal static void UndoPreview()
         {
             if (s_PreviewGroupIndex != -1)
             {
@@ -57,7 +57,7 @@ namespace UnityEditor.ProBuilder
                 Undo.PerformUndo();
         }
 
-        internal static void ResetPreview()
+        internal static void ExitAndValidatePreview()
         {
             s_PreviewGroupIndex = -1;
         }

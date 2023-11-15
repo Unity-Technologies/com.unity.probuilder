@@ -136,13 +136,11 @@ namespace UnityEditor.ProBuilder
                     {
                         ContextMenuUtility.AddMenuItem(menu, path, GetMenuTitle(action, title));
                     }
-                }else if (action.optionsEnabled)
+                }else
+                if (action.optionsEnabled)
                 {
                     title = GetMenuTitle(action, title);
-                    if(HasPreview(action))
-                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettingsWithPreview(action)), GetStatus(action), action.icon);
-                    else
-                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action)), GetStatus(action), action.icon);
+                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))), GetStatus(action), action.icon);
                 }
                 else
                     menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction(), GetStatus(action), action.icon);
@@ -324,7 +322,7 @@ namespace UnityEditor.ProBuilder
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
                 EditorApplication.delayCall += () =>
                 {
-                    EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<MirrorObjects>()));
+                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<MirrorObjects>(), true));
                     s_ActionAlreadyTriggered = false;
                 };
             }
