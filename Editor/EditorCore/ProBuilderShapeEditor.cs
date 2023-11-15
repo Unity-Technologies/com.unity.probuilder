@@ -130,7 +130,7 @@ namespace UnityEditor.ProBuilder
                 EditorGUIUtility.labelWidth = 90;
 
                 if (tool)
-                    DrawShapeTool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, DrawShapeTool.pivotLocation);
+                    tool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, tool.pivotLocation);
                 else
                 {
                     EditorGUI.BeginChangeCheck();
@@ -178,7 +178,7 @@ namespace UnityEditor.ProBuilder
                         if(tool != null)
                         {
                             tool.SetBounds(shapeComponent.size);
-                            DrawShapeTool.SaveShapeParams(shapeComponent);
+                            tool.SaveShapeParams(shapeComponent);
                         }
                         ProBuilderEditor.Refresh();
                     }

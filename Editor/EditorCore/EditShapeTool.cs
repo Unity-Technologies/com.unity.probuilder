@@ -184,7 +184,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         /// <param name="proBuilderShape">The Shape on which to attach the handles</param>
         /// <param name="updatePrefs">Parameter used to update the DrawShapeTool when needed</param>
-        internal static void DoEditingHandles(ProBuilderShape proBuilderShape, bool updatePrefs = false)
+        internal static void DoEditingHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool = null)
         {
             if(proBuilderShape == null)
                 return;
@@ -203,13 +203,13 @@ namespace UnityEditor.ProBuilder
 
                 var absSize = Math.Abs(proBuilderShape.editionBounds.size);
                 if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandles(proBuilderShape, updatePrefs);
+                    DoOrientationHandles(proBuilderShape, tool);
 
-                DoSizeHandles(proBuilderShape, updatePrefs);
+                DoSizeHandles(proBuilderShape, tool);
             }
         }
 
-        static void DoSizeHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
+        static void DoSizeHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool = null)
         {
             int faceCount = s_Faces.Length;
 
@@ -288,8 +288,8 @@ namespace UnityEditor.ProBuilder
                     }
                     ApplyProperties(proBuilderShape, s_StartCenter + center, targetSize);
 
-                    if(updatePrefs)
-                        DrawShapeTool.SaveShapeParams(proBuilderShape);
+                    if(tool != null)
+                        tool.SaveShapeParams(proBuilderShape);
                 }
             }
         }
@@ -345,7 +345,7 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        static void DoOrientationHandles(ProBuilderShape proBuilderShape, bool updatePrefs)
+        static void DoOrientationHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool)
         {
             if( GUIUtility.hotControl != 0 && !k_OrientationControlIDs.Contains(GUIUtility.hotControl) )
                 return;
@@ -361,8 +361,8 @@ namespace UnityEditor.ProBuilder
 
                         ProBuilderEditor.Refresh();
 
-                        if(updatePrefs)
-                            DrawShapeTool.SaveShapeParams(proBuilderShape);
+                        if(tool != null)
+                            tool.SaveShapeParams(proBuilderShape);
                     }
                 }
             }

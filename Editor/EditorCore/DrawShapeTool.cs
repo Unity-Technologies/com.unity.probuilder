@@ -16,6 +16,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cube", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cube", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cube", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cube))
@@ -29,6 +41,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sphere", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Sphere", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sphere", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sphere))
@@ -42,6 +66,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
     class CreatePlaneTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Plane", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Plane", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Plane", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
@@ -55,6 +91,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
     class CreateCylinderTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cylinder", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cylinder", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cylinder", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cylinder))
@@ -68,6 +116,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
     class CreateConeTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cone", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cone", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cone", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cone))
@@ -81,6 +141,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
     class CreatePrismTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Prism", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Prism", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Prism", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Prism))
@@ -94,6 +166,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
     class CreateStairsTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Stairs", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Stairs", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Stairs", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Stairs))
@@ -107,6 +191,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
     class CreateTorusTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Torus", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Torus", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Torus", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Torus))
@@ -120,6 +216,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
     class CreatePipeTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Pipe", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Pipe", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Pipe", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Pipe))
@@ -133,6 +241,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
     class CreateArchTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Arch", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Arch", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Arch", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Arch))
@@ -146,6 +266,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
     class CreateDoorTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Door", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Door", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Door", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Door))
@@ -159,6 +291,18 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
     class CreateSpriteTool : DrawShapeTool
     {
+        [UserSetting]
+        Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sprite", Vector3.one);
+        protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
+
+        [UserSetting]
+        Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Sprite", Quaternion.identity);
+        protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
+
+        [UserSetting]
+        Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sprite", PivotLocation.Center);
+        protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sprite))
@@ -168,7 +312,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    class DrawShapeTool : EditorTool
+    abstract class DrawShapeTool : EditorTool
     {
         internal const int k_MinOverlayWidth = 300;
 
@@ -222,21 +366,17 @@ namespace UnityEditor.ProBuilder
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false, SettingsScope.Project);
 
-        [UserSetting]
-        internal static Pref<Vector3> s_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize", Vector3.one);
-        [UserSetting]
-        internal static Pref<Quaternion> s_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation", Quaternion.identity);
 
+        protected abstract Vector3 lastSize { get; set; }
+        protected abstract Quaternion lastRotation { get; set; }
+        protected abstract PivotLocation shapePivotLocation { get; set; }
 
-        [UserSetting]
-        internal static Pref<PivotLocation> s_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation", PivotLocation.Center);
-
-        public static PivotLocation pivotLocation
+        public PivotLocation pivotLocation
         {
-            get => s_PivotLocation.value;
+            get => shapePivotLocation;
             set
             {
-                if (value != s_PivotLocation.value)
+                if (value != shapePivotLocation)
                 {
                     if (instance != null && instance.m_LastShapeCreated != null && instance.currentShapeInOverlay == instance.m_LastShapeCreated)
                     {
@@ -245,7 +385,7 @@ namespace UnityEditor.ProBuilder
                         var newPivotPosition = value == PivotLocation.Center ? lastShape.shapeWorldCenter : instance.m_BB_Origin;
                         instance.m_LastShapeCreated.Rebuild(newPivotPosition, lastShapeTrs.rotation, lastShape.shapeWorldBounds);
                     }
-                    s_PivotLocation.SetValue(value);
+                    shapePivotLocation = value;
                 }
             }
         }
@@ -305,8 +445,8 @@ namespace UnityEditor.ProBuilder
                     m_ProBuilderShape.gameObject.hideFlags = HideFlags.HideAndDontSave;
                     m_ProBuilderShape.hideFlags = HideFlags.None;
                     m_ProBuilderShape.SetShape(EditorShapeUtility.CreateShape(activeShapeType));
-                    m_ProBuilderShape.size = s_LastSize.value;
-                    m_ProBuilderShape.shapeRotation = s_LastRotation.value;
+                    m_ProBuilderShape.size = lastSize;
+                    m_ProBuilderShape.shapeRotation = lastRotation;
                 }
                 return m_ProBuilderShape;
             }
@@ -429,18 +569,18 @@ namespace UnityEditor.ProBuilder
             return ShapeState.StartStateMachine();
         }
 
-        internal static void SaveShapeParams(ProBuilderShape proBuilderShape)
+        internal void SaveShapeParams(ProBuilderShape proBuilderShape)
         {
-            s_LastSize.value = proBuilderShape.size;
-            s_LastRotation.value = proBuilderShape.shapeRotation;
+            lastSize = proBuilderShape.size;
+            lastRotation = proBuilderShape.shapeRotation;
 
             EditorShapeUtility.SaveParams(proBuilderShape.shape);
         }
 
-        internal static void ApplyPrefsSettings(ProBuilderShape pBShape)
+        internal void ApplyPrefsSettings(ProBuilderShape pBShape)
         {
-            pBShape.size = s_LastSize.value;
-            pBShape.shapeRotation = s_LastRotation.value;
+            pBShape.size = lastSize;
+            pBShape.shapeRotation = lastRotation;
         }
 
         // Transform the point according to the snapping settings

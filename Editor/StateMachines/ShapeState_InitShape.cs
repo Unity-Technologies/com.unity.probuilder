@@ -29,7 +29,7 @@ namespace UnityEditor.ProBuilder
         {
             tool.handleSelectionChange = true;
             if(tool.m_LastShapeCreated != null)
-                EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, true);
+                EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, tool);
 
             // Scene View in use or pressing alt to orbit
             if(EditorHandleUtility.SceneViewInUse(evt))

@@ -95,7 +95,7 @@ namespace UnityEditor.ProBuilder
             var shape = ShapeFactory.Instantiate(DrawShapeTool.activeShapeType).GetComponent<ProBuilderShape>();
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
-            DrawShapeTool.ApplyPrefsSettings(shape);
+            tool.ApplyPrefsSettings(shape);
 
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
