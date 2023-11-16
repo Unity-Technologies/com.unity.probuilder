@@ -625,9 +625,23 @@ namespace UnityEditor.ProBuilder
 
         internal static MeshAndElementSelection GetActiveSelectionGroup()
         {
+            // If the active GameObject does not have a PB Mesh, return another mesh in the selection to get a valid handle position
+            var mesh = activeMesh;
+            if (mesh == null)
+            {
+                foreach (var go in Selection.gameObjects)
+                {
+                    if (go.TryGetComponent<ProBuilderMesh>(out var pbmesh))
+                    {
+                        mesh = pbmesh;
+                        break;
+                    }
+                }
+            }
+
             foreach (var pair in elementSelection)
             {
-                if (pair.mesh == activeMesh)
+                if (pair.mesh == mesh)
                     return pair;
             }
 
