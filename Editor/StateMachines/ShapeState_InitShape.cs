@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using Math = UnityEngine.ProBuilder.Math;
 

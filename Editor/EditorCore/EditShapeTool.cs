@@ -276,7 +276,7 @@ namespace UnityEditor.ProBuilder
                         //scale by the object scale factor
                         delta.Scale(s_StartScaleInverse);
 
-                        targetSize = ProBuilderSnapping.Snap(targetSize + delta, snapValue);
+                        targetSize += ProBuilderSnapping.Snap(delta, snapValue);
                     }
 
                     var center = Vector3.zero;

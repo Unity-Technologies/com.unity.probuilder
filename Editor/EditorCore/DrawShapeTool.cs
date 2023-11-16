@@ -589,7 +589,7 @@ namespace UnityEditor.ProBuilder
             if(useIncrementSnap)
                 return ProBuilderSnapping.Snap(point, EditorSnapping.incrementalSnapMoveValue);
 
-            if (m_IsOnGrid)
+            if (m_IsOnGrid && EditorSnapSettings.gridSnapActive)
                 return ProBuilderSnapping.Snap(point, EditorSnapping.activeMoveSnapValue);
 
             return point;
