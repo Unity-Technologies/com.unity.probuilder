@@ -21,6 +21,7 @@ namespace UnityEditor.ProBuilder
 
             public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
             public static readonly GUIContent sharedMesh = EditorGUIUtility.TrTextContent("Mesh");
+            public static readonly GUIContent editMesh = EditorGUIUtility.TrTextContent("Edit Mesh", "Enables mesh edit mode.");
 
             public static void Init()
             {
@@ -96,8 +97,9 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            if (GUILayout.Button("Edit Mesh"))
-                ToolManager.SetActiveContext<PositionToolContext>();
+            if (ToolManager.activeContextType != typeof(PositionToolContext))
+                if (GUILayout.Button(Styles.editMesh))
+                    ToolManager.SetActiveContext<PositionToolContext>();
 
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;
