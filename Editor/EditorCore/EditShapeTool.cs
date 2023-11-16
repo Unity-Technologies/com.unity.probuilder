@@ -45,6 +45,7 @@ namespace UnityEditor.ProBuilder
         //Size Handle management
         static Vector2 s_StartMousePosition;
         static Vector3 s_StartSize;
+        static Vector3 s_HandleStartPosition;
         static Vector3 s_StartPositionLocal;
         static Vector3 s_StartPositionGlobal;
         static Vector3 s_StartScale;
@@ -242,7 +243,8 @@ namespace UnityEditor.ProBuilder
                         s_StartCenter = proBuilderShape.shapeWorldCenter;
                         s_StartScale = proBuilderShape.transform.lossyScale;
                         s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
-                        s_StartPositionLocal = face.CenterPosition;
+                        s_HandleStartPosition = face.CenterPosition;
+                        s_StartPositionLocal = proBuilderShape.shapeLocalBounds.center + face.CenterPosition;
                         s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(s_StartPositionLocal);
                         s_StartSize = proBuilderShape.size;
                         s_SizeManipulationInit = true;
@@ -337,12 +339,49 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseDrag:
                     if(s_CurrentId == controlID)
                     {
-                        s_SizeDelta = HandleUtility.CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_StartPositionLocal, face.Normal);
+                        s_SizeDelta = CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_HandleStartPosition, face.Normal);
                         return true;
                     }
                     break;
             }
             return false;
+        }
+
+        public static float CalcLineTranslation(Vector2 src, Vector2 dest, Vector3 srcPosition, Vector3 constraintDir)
+        {
+            // The constrained direction is facing towards the camera, THATS BAD when the handle is close to the camera
+            // The srcPosition  goes through to the other side of the camera
+            float invert = 1.0F;
+            Vector3 cameraForward = Camera.current == null ? Vector3.forward : Camera.current.transform.forward;
+            if (Vector3.Dot(constraintDir, cameraForward) < 0.0F)
+                invert = -1.0F;
+
+            // Ok - Get the parametrization of the line
+            // p1 = src position, p2 = p1 + ConstraintDir.
+            // we then parametrise the perpendicular position of dest into the line (p1-p2)
+            Vector3 cd = constraintDir;
+            cd.y = -cd.y;
+            Camera cam = Camera.current;
+            // if camera is null, then we are drawing in OnGUI, where y-coordinate goes top-to-bottom
+            Vector2 p1 = cam == null
+                ? Vector2.Scale(srcPosition, new Vector2(1f, -1f))
+                : EditorGUIUtility.PixelsToPoints(cam.WorldToScreenPoint(srcPosition));
+            Vector2 p2 = cam == null
+                ? Vector2.Scale(srcPosition + constraintDir * invert, new Vector2(1f, -1f))
+                : EditorGUIUtility.PixelsToPoints(cam.WorldToScreenPoint(srcPosition + constraintDir * invert));
+            Vector2 p3 = dest;
+            Vector2 p4 = src;
+
+            if (p1 == p2)
+                return 0;
+
+            p3.y = -p3.y;
+            p4.y = -p4.y;
+            float t0 = -(Vector2.Dot(p1 - p4, p2 - p1) / (p2 - p1).sqrMagnitude);
+            float t1 = -(Vector2.Dot(p1 - p3, p2 - p1) / (p2 - p1).sqrMagnitude);
+
+            float output = (t1 - t0) * invert;
+            return output;
         }
 
         static void DoOrientationHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool)
