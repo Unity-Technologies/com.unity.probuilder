@@ -27,7 +27,8 @@ namespace UnityEditor.ProBuilder
 
             s_IsPerformingUndoRedo = true;
             foreach(var mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
-                EditorUtility.SynchronizeWithMeshFilter(mesh);
+                using (new ProBuilderMesh.NonVersionedEditScope(mesh))
+                    EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
             s_IsPerformingUndoRedo = false;
