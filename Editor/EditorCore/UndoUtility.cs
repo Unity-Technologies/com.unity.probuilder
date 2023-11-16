@@ -15,9 +15,6 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoEvent += UndoRedoEventCallback;
         }
 
-        static bool s_IsPerformingUndoRedo = false;
-        internal static bool IsPerformingUndoRedo => s_IsPerformingUndoRedo;
-
         static void UndoRedoEventCallback(in UndoRedoInfo info)
         {
             // material preview when dragging in scene-view is done by applying then undoing changes. we don't want to
@@ -25,13 +22,11 @@ namespace UnityEditor.ProBuilder
             if (SceneDragAndDropListener.isDragging)
                 return;
 
-            s_IsPerformingUndoRedo = true;
             foreach(var mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
                 using (new ProBuilderMesh.NonVersionedEditScope(mesh))
                     EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
-            s_IsPerformingUndoRedo = false;
         }
 
         static int s_PreviewGroupIndex = -1;
