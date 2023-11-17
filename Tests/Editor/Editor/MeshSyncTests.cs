@@ -29,8 +29,8 @@ class MeshSyncTests : TemporaryAssetTest
     {
         get
         {
-            yield return new TestCaseData(new object[]{new [] { "Edit/Duplicate" }}) { TestName = "Duplicate"};
-            yield return new TestCaseData(new object[]{new [] { "Edit/Copy", "Edit/Paste" }}) { TestName = "Copy/Paste"};
+            yield return new TestCaseData(new object[]{new [] { "Duplicate" }}) { TestName = "Duplicate"};
+            yield return new TestCaseData(new object[]{new [] { "Copy", "Paste" }}) { TestName = "Copy/Paste"};
         }
     }
 
@@ -44,10 +44,13 @@ class MeshSyncTests : TemporaryAssetTest
         Assume.That(parent.childCount, Is.EqualTo(1));
         int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
 
-        Selection.objects = new[] { cube.gameObject };
+        Selection.activeObject = cube.gameObject;
 
-        foreach(var command in commands)
-            Assume.That(EditorApplication.ExecuteMenuItem(command), Is.True);
+        foreach (var command in commands)
+        {
+            var evt = new Event(){type = EventType.ExecuteCommand, commandName = command};
+            SceneView.lastActiveSceneView.SendEvent(evt);
+        }
 
         Assume.That(parent.transform.childCount, Is.EqualTo(2));
 
@@ -86,7 +89,6 @@ class MeshSyncTests : TemporaryAssetTest
             var evt = new Event(){type = EventType.ExecuteCommand, commandName = command};
             SceneView.lastActiveSceneView.SendEvent(evt);
         }
-        //    Assume.That(EditorApplication.ExecuteMenuItem(command), Is.True);
 
         var count = 0;
         while (parent.transform.childCount < 2 && count < 100)
