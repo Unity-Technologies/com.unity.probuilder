@@ -42,12 +42,45 @@ namespace UnityEditor.ProBuilder
 
         public override void OnActivated()
         {
-            m_CanCreatePolyShape = CanCreateNewPolyShape();
-            if (m_CanCreatePolyShape)
-            {
-                MeshSelection.SetSelection((GameObject)null);
-                ToolManager.SetActiveContext<GameObjectToolContext>();
+            MeshSelection.SetSelection((GameObject)null);
+            ToolManager.SetActiveContext<GameObjectToolContext>();
 
+            base.OnActivated();
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            m_PolyShape = null;
+            base.OnWillBeDeactivated();
+        }
+
+        public override void OnToolGUI(EditorWindow window)
+        {
+            if (m_PolyShape == null)
+                m_CanCreatePolyShape = TryCreatePolyShape();
+
+            var evt = Event.current;
+            if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            {
+                if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
+                {
+                    evt.Use();
+                    UndoUtility.RecordObject(polygon, "Set Height");
+                    m_CanCreatePolyShape = TryCreatePolyShape();
+                }
+            }
+
+            if (!m_CanCreatePolyShape)
+                ToolManager.RestorePreviousTool();
+
+            base.OnToolGUI(window);
+        }
+
+        bool TryCreatePolyShape()
+        {
+            var newPolyshape = CanCreateNewPolyShape();
+            if (newPolyshape)
+            {
                 GameObject go = new GameObject("PolyShape");
                 UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
                 m_PolyShape = Undo.AddComponent<PolyShape>(go);
@@ -65,22 +98,14 @@ namespace UnityEditor.ProBuilder
                 }
 
                 m_PolyShape.polyEditMode = PolyShape.PolyEditMode.Path;
-                Selection.activeObject = m_PolyShape;
+                var activeShape = polygon == null ? m_PolyShape : polygon;
+
+                UpdateTarget(m_PolyShape);
+
+                Selection.activeObject = activeShape;
             }
-            base.OnActivated();
-        }
 
-        public override void OnWillBeDeactivated()
-        {
-            m_PolyShape = null;
-            base.OnWillBeDeactivated();
-        }
-
-        public override void OnToolGUI(EditorWindow window)
-        {
-            if (!m_CanCreatePolyShape)
-                ToolManager.RestorePreviousTool();
-            base.OnToolGUI(window);
+            return newPolyshape;
         }
 
         static bool CanCreateNewPolyShape()
@@ -219,7 +244,6 @@ namespace UnityEditor.ProBuilder
         void OnEnable()
         {
             m_OverlayTitle = new GUIContent("PolyShape Settings");
-
         }
 
         void OnDisable(){}
@@ -423,13 +447,12 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.EndVertical();
         }
 
-        void SetPolyEditMode(PolyShape.PolyEditMode mode)
+        internal void SetPolyEditMode(PolyShape.PolyEditMode mode)
         {
             if(polygon == null)
                 return;
 
             PolyShape.PolyEditMode old = polygon.polyEditMode;
-
             if (mode != old)
             {
                 GUIUtility.hotControl = 0;
@@ -597,6 +620,9 @@ namespace UnityEditor.ProBuilder
                             m_NextMouseUpAdvancesMode = true;
                             return;
                         }
+
+                        if(polygon.m_Points.Count == 0)
+                            Selection.activeObject = polygon;
 
                         polygon.m_Points.Add(point);
 
