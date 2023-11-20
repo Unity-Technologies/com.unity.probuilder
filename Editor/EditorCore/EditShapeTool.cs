@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
     [EditorTool("Edit Shape", typeof(ProBuilderShape))]
     sealed class EditShapeTool : EditorTool
     {
-        [MenuItem("Tools/ProBuilder/Edition/Edit Shape", true, PreferenceKeys.menuEditor + 10)]
+        [MenuItem("Tools/ProBuilder/Edit/Edit Shape", true, PreferenceKeys.menuEditor + 10)]
         static bool ValidateEditShapeTool()
         {
             foreach (var go in Selection.gameObjects)
@@ -24,7 +24,7 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        [MenuItem("Tools/ProBuilder/Edition/Edit Shape", false, PreferenceKeys.menuEditor + 10)]
+        [MenuItem("Tools/ProBuilder/Edit/Edit Shape", false, PreferenceKeys.menuEditor + 10)]
         static void ActivateEditShapeTool() => ToolManager.SetActiveTool<EditShapeTool>();
 
         Editor m_ShapeEditor;
