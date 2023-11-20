@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Created a ProBuilder context and moving vertex, edge and face edit modes to the tool settings overlay.
 - Moved creation and edition tools to the main toolbar. 
 - Added ProBuilder actions to the Scene view context menu and overlays.
-- Added a preview option for most of the ProBuilder actions. 
+- Added a preview option for most of the ProBuilder actions.
   
 ## [5.2.0] - 2023-10-02
 

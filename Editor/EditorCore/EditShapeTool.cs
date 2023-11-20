@@ -15,6 +15,18 @@ namespace UnityEditor.ProBuilder
     [EditorTool("Edit Shape", typeof(ProBuilderShape))]
     sealed class EditShapeTool : EditorTool
     {
+        [MenuItem("Tools/ProBuilder/Edition/Edit Shape", true, PreferenceKeys.menuEditor + 10)]
+        static bool ValidateEditShapeTool()
+        {
+            foreach (var go in Selection.gameObjects)
+                if (go.TryGetComponent<ProBuilderShape>(out _)) return true;
+
+            return false;
+        }
+
+        [MenuItem("Tools/ProBuilder/Edition/Edit Shape", false, PreferenceKeys.menuEditor + 10)]
+        static void ActivateEditShapeTool() => ToolManager.SetActiveTool<EditShapeTool>();
+
         Editor m_ShapeEditor;
 
         static readonly Color k_BoundsHandleColor = new Color(.2f, .4f, .8f, 1f);

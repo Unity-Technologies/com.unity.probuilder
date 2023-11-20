@@ -143,6 +143,18 @@ namespace UnityEditor.ProBuilder
     [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
+        [MenuItem("Tools/ProBuilder/Edition/Edit PolyShape", true, PreferenceKeys.menuEditor + 10)]
+        static bool ValidateEditShapeTool()
+        {
+            foreach (var go in Selection.gameObjects)
+                if (go.TryGetComponent<PolyShape>(out _)) return true;
+
+            return false;
+        }
+
+        [MenuItem("Tools/ProBuilder/Edition/Edit PolyShape", false, PreferenceKeys.menuEditor + 10)]
+        static void ActivateEditShapeTool() => ToolManager.SetActiveTool<PolyShapeTool>();
+
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static readonly Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);
         static readonly Color k_HandleSelectedColor = new Color(.01f, .8f, .98f, 1f);
