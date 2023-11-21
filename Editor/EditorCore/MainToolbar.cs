@@ -102,9 +102,12 @@ namespace UnityEditor.ProBuilder.UI
 
             CreateGUI();
 
-            ProBuilderEditor.selectModeChanged += RefreshVisibility;
-            MeshSelection.objectSelectionChanged += RefreshVisibility;
-            ProBuilderMesh.elementSelectionChanged += RefreshVisibility;
+            RegisterCallback<AttachToPanelEvent>(_ =>
+            {
+                ProBuilderEditor.selectModeChanged += RefreshVisibility;
+                MeshSelection.objectSelectionChanged += RefreshVisibility;
+                ProBuilderMesh.elementSelectionChanged += RefreshVisibility;
+            });
 
             RegisterCallback<DetachFromPanelEvent>(_ =>
             {
