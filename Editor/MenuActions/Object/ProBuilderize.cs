@@ -83,7 +83,7 @@ namespace UnityEditor.ProBuilder.Actions
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
                 EditorApplication.delayCall += () =>
                 {
-                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+                    EditorAction.Start(new MenuActionSettings(new ProBuilderize()));
                     s_ActionAlreadyTriggered = false;
                 };
             }

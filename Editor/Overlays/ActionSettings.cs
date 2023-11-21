@@ -31,6 +31,7 @@ namespace UnityEditor.ProBuilder
             displayed = true;
 
             // Changing selection/tool/context should apply the preview and exit the current action
+            Selection.selectionChanged += Validate;
             ToolManager.activeContextChanged += Validate;
             ToolManager.activeToolChanged += Validate;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
@@ -43,6 +44,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
+            Selection.selectionChanged -= Validate;
             SceneView.RemoveOverlayFromActiveView(this);
             MenuActionSettings.s_ActionSettingsOverlay = null;
         }
