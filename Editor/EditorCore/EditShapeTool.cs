@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
                     }
                 }
 
-                if( DoFaceSizeHandle(face, s_FaceControlIDs[i]) )
+                if( DoFaceSizeHandle(proBuilderShape.transform, face, s_FaceControlIDs[i]) )
                 {
 
                     if(!s_SizeManipulationInit)
@@ -308,7 +308,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static bool DoFaceSizeHandle(FaceData face, int controlID)
+        static bool DoFaceSizeHandle(Transform trs, FaceData face, int controlID)
         {
             if( k_OrientationControlIDs.Contains(HandleUtility.nearestControl) && !EditorShapeUtility.PointerIsInFace(face) )
                 return false;
@@ -351,7 +351,8 @@ namespace UnityEditor.ProBuilder
                 case EventType.MouseDrag:
                     if(s_CurrentId == controlID)
                     {
-                        s_SizeDelta = CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_HandleStartPosition, face.Normal);
+                        using(new Handles.DrawingScope(Matrix4x4.identity))
+                            s_SizeDelta = HandleUtility.CalcLineTranslation(s_StartMousePosition, evt.mousePosition, s_StartPositionGlobal, trs.TransformDirection(face.Normal).normalized);
                         return true;
                     }
                     break;
