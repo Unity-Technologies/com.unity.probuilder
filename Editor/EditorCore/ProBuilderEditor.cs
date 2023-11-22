@@ -44,7 +44,6 @@ namespace UnityEditor.ProBuilder
         public static event Action<IEnumerable<ProBuilderMesh>> beforeMeshModification;
 
         static ProBuilderEditor s_Instance;
-        ProBuilderToolbar m_Toolbar;
 
         GUIStyle VertexTranslationInfoStyle;
 
