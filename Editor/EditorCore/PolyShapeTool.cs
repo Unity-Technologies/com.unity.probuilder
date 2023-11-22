@@ -11,12 +11,20 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
+
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape", toolPriority = 1001)]
     public class DrawPolyShapeTool : PolyShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New PolyShape", false, PreferenceKeys.menuEditor + 1)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<DrawPolyShapeTool>();
+            ProBuilderAnalytics.SendActionEvent("New PolyShape", nameof(DrawPolyShapeTool));
+        }
+
         PolyShape m_PolyShape = null;
         bool m_CanCreatePolyShape = false;
 
@@ -153,7 +161,12 @@ namespace UnityEditor.ProBuilder
         }
 
         [MenuItem("Tools/ProBuilder/Edit/Edit PolyShape", false, PreferenceKeys.menuEditor + 10)]
-        static void ActivateEditShapeTool() => ToolManager.SetActiveTool<PolyShapeTool>();
+        static void ActivateEditShapeTool()
+        {
+            ToolManager.SetActiveTool<PolyShapeTool>();
+            ProBuilderAnalytics.SendActionEvent("Edit PolyShape", nameof(PolyShapeTool));
+        }
+
 
         static readonly Color k_HandleColor = new Color(.8f, .8f, .8f, 1f);
         static readonly Color k_HandleColorGreen = new Color(.01f, .9f, .3f, 1f);

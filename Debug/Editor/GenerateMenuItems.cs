@@ -208,16 +208,13 @@ namespace UnityEditor.ProBuilder
                 // Else, check if that a preview or a regular Editor Action without preview
                 if (data.optionsEnabled)
                 {
-                    if (data.hasPreview)
-                        sb.AppendLine("\t\t\t\tEditorAction.Start(new MenuActionSettingsWithPreview(instance));");
-                    else
-                        sb.AppendLine("\t\t\t\tEditorAction.Start(new MenuActionSettings(instance));");
+                    sb.AppendLine($"\t\t\t\tEditorAction.Start(new MenuActionSettings(instance,{data.hasPreview.ToString().ToLower()}));");
                 }
                 else // Last case, just perform the action if this is an instant action with no options
                     sb.AppendLine("\t\t\t\tinstance.PerformAction();");
             }
 
-            sb.AppendLine( "\t\t\t\tProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);");
+            sb.AppendLine( "\t\t\t\tProBuilderAnalytics.SendActionEvent(instance);");
             sb.AppendLine( "\t\t\t}");
             sb.AppendLine( "\t\t}");
         }

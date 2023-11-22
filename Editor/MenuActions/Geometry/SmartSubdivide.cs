@@ -62,10 +62,10 @@ namespace UnityEditor.ProBuilder.Actions
             return @"                switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideEdges>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideEdges>(), true));
                         break;
                     default:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SubdivideFaces>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideFaces>(), true));
                         break;
                 }";
         }

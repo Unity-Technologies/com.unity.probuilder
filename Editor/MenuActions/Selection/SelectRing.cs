@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
             return @"                switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SelectEdgeRing>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SelectEdgeRing>(), true));
                         break;
                     case SelectMode.Face:
                         EditorToolbarLoader.GetInstance<SelectFaceRing>().PerformAction();

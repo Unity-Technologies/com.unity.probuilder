@@ -25,7 +25,11 @@ namespace UnityEditor.ProBuilder
         }
 
         [MenuItem("Tools/ProBuilder/Edit/Edit Shape", false, PreferenceKeys.menuEditor + 10)]
-        static void ActivateEditShapeTool() => ToolManager.SetActiveTool<EditShapeTool>();
+        static void ActivateEditShapeTool()
+        {
+            ToolManager.SetActiveTool<EditShapeTool>();
+            ProBuilderAnalytics.SendActionEvent("Edit Shape Tool", nameof(EditShapeTool));
+        }
 
         Editor m_ShapeEditor;
 

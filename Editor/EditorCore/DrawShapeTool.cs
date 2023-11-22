@@ -16,6 +16,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cube  %#K", false, PreferenceKeys.menuEditor + 1)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateCubeTool>();
+            ProBuilderAnalytics.SendActionEvent("New Cube Shape", nameof(CreateCubeTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cube", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -41,6 +48,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Sphere", false, PreferenceKeys.menuEditor + 2)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateSphereTool>();
+            ProBuilderAnalytics.SendActionEvent("New Sphere Shape", nameof(CreateSphereTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sphere", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -66,6 +80,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
     class CreatePlaneTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Plane", false, PreferenceKeys.menuEditor + 3)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreatePlaneTool>();
+            ProBuilderAnalytics.SendActionEvent("New Plane Shape", nameof(CreatePlaneTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Plane", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -91,6 +112,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
     class CreateCylinderTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cylinder", false, PreferenceKeys.menuEditor + 4)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateCylinderTool>();
+            ProBuilderAnalytics.SendActionEvent("New Cylinder Shape", nameof(CreateCylinderTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cylinder", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -116,6 +144,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
     class CreateConeTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cone", false, PreferenceKeys.menuEditor + 5)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateConeTool>();
+            ProBuilderAnalytics.SendActionEvent("New Cone Shape", nameof(CreateConeTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cone", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -141,6 +176,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
     class CreatePrismTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Prism", false, PreferenceKeys.menuEditor + 6)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreatePrismTool>();
+            ProBuilderAnalytics.SendActionEvent("New Prism Shape", nameof(CreatePrismTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Prism", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -166,6 +208,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
     class CreateStairsTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Stairs", false, PreferenceKeys.menuEditor + 7)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateStairsTool>();
+            ProBuilderAnalytics.SendActionEvent("New Stairs Shape", nameof(CreateStairsTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Stairs", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -191,6 +240,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
     class CreateTorusTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Torus", false, PreferenceKeys.menuEditor + 8)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateTorusTool>();
+            ProBuilderAnalytics.SendActionEvent("New Torus Shape", nameof(CreateTorusTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Torus", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -216,6 +272,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
     class CreatePipeTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Pipe", false, PreferenceKeys.menuEditor + 9)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreatePipeTool>();
+            ProBuilderAnalytics.SendActionEvent("New Pipe Shape", nameof(CreatePipeTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Pipe", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -241,6 +304,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
     class CreateArchTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Arch", false, PreferenceKeys.menuEditor + 10)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateArchTool>();
+            ProBuilderAnalytics.SendActionEvent("New Arch Shape", nameof(CreateArchTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Arch", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -266,6 +336,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
     class CreateDoorTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Door", false, PreferenceKeys.menuEditor + 11)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateDoorTool>();
+            ProBuilderAnalytics.SendActionEvent("New Door Shape", nameof(CreateDoorTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Door", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
@@ -291,6 +368,13 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
     class CreateSpriteTool : DrawShapeTool
     {
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Sprite", false, PreferenceKeys.menuEditor + 12)]
+        static void MenuPerform_NewShape()
+        {
+            ToolManager.SetActiveTool<CreateSpriteTool>();
+            ProBuilderAnalytics.SendActionEvent("New Sprite Shape", nameof(CreateSpriteTool));
+        }
+
         [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sprite", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }

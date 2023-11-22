@@ -32,7 +32,8 @@ namespace UnityEditor.ProBuilder
         const string k_ProbuilderEventName = "ProbuilderAction";
         const string k_PackageName = "com.unity.probuilder";
 
-        MenuAction m_Action;
+        string m_ActionName;
+        string m_ActionType;
         string m_SelectMode;
         int m_SelectModeId;
         string m_TriggerType;
@@ -48,19 +49,12 @@ namespace UnityEditor.ProBuilder
             public string triggeredFrom;
         }
 
-        // Triggered type is from where the action was performed
-        public enum TriggerType
+        internal ProBuilderAnalytics(string actionName, string actionType, SelectMode mode)
         {
-            MenuOrShortcut,
-            ProBuilderUI
-        }
-
-        internal ProBuilderAnalytics(MenuAction action, SelectMode mode, TriggerType triggerType)
-        {
-            m_Action = action;
+            m_ActionName = actionName;
+            m_ActionType = actionType;
             m_SelectMode = mode.ToString();
             m_SelectModeId = (int)mode;
-            m_TriggerType = triggerType.ToString();
         }
 
         public bool TryGatherData(out IAnalytic.IData data, out Exception error)
@@ -68,8 +62,8 @@ namespace UnityEditor.ProBuilder
             error = null;
             var parameters = new ProBuilderActionData
             {
-                actionName = m_Action.menuTitle,
-                actionType = m_Action.GetType().Name,
+                actionName = m_ActionName,
+                actionType = m_ActionType,
                 subLevel = m_SelectMode,
                 subLevelId = m_SelectModeId,
                 triggeredFrom = m_TriggerType
@@ -79,9 +73,14 @@ namespace UnityEditor.ProBuilder
         }
 
         // This is the main call to register an action event
-        public static void SendActionEvent(MenuAction mAction, TriggerType triggerType)
+        public static void SendActionEvent(MenuAction mAction)
         {
-            var data = new ProBuilderAnalytics(mAction, ProBuilderEditor.selectMode, triggerType);
+            SendActionEvent(mAction.menuTitle, mAction.GetType().Name);
+        }
+
+        public static void SendActionEvent(string actionName, string actionType)
+            {
+                var data = new ProBuilderAnalytics(actionName, actionType, ProBuilderEditor.selectMode);
 
             // Don't send analytics when editor is used by an automated system
             #if !PB_ANALYTICS_ALLOW_AUTOMATION

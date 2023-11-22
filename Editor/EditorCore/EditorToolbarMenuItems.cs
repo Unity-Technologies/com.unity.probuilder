@@ -31,43 +31,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
-			}
-		}
-
-		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape Action", true, PreferenceKeys.menuEditor + 1)]
-		static bool MenuVerify_NewPolyShapeAction()
-		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeAction>();
-			return instance != null && instance.enabled;
-		}
-
-		[MenuItem(k_MenuPrefix + "Editors/New Poly Shape Action", false, PreferenceKeys.menuEditor + 1, "","Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
-		static void MenuPerform_NewPolyShapeAction()
-		{
-			var instance = EditorToolbarLoader.GetInstance<NewPolyShapeAction>();
-			if(instance != null && instance.enabled)
-			{
-				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
-			}
-		}
-
-		[MenuItem(k_MenuPrefix + "Editors/New Shape Action %#K", true, PreferenceKeys.menuEditor + 1)]
-		static bool MenuVerify_NewShapeAction()
-		{
-			var instance = EditorToolbarLoader.GetInstance<NewShapeAction>();
-			return instance != null && instance.enabled;
-		}
-
-		[MenuItem(k_MenuPrefix + "Editors/New Shape Action %#K", false, PreferenceKeys.menuEditor + 1, "","Packages/com.unity.probuilder/Content/Icons/Toolbar/AddShape.png")]
-		static void MenuPerform_NewShapeAction()
-		{
-			var instance = EditorToolbarLoader.GetInstance<NewShapeAction>();
-			if(instance != null && instance.enabled)
-			{
-				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -85,7 +49,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -103,7 +67,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -121,7 +85,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -139,7 +103,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -157,7 +121,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -175,7 +139,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -193,7 +157,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -211,7 +175,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -229,7 +193,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -247,7 +211,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -265,7 +229,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -283,8 +247,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<BevelEdges>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -303,7 +267,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -321,8 +285,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -341,7 +305,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -360,7 +324,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -378,8 +342,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<DetachFaces>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,false));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -397,8 +361,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,false));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -425,7 +389,7 @@ namespace UnityEditor.ProBuilder
                         EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ExtrudeFaces>(), true));
                         break;
                 }
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -443,8 +407,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FillHole>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -463,7 +427,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -482,7 +446,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -501,7 +465,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -520,7 +484,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -538,8 +502,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -558,7 +522,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -577,7 +541,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -604,7 +568,7 @@ namespace UnityEditor.ProBuilder
                         EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideFaces>(), true));
                         break;
                 }
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -623,7 +587,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -642,7 +606,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -660,8 +624,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<WeldVertices>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -680,7 +644,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -699,7 +663,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -718,7 +682,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -737,7 +701,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -756,7 +720,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -774,7 +738,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -792,7 +756,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -810,7 +774,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -828,7 +792,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -846,7 +810,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -863,8 +827,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -881,8 +845,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -900,7 +864,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -918,7 +882,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -936,7 +900,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -954,7 +918,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -973,7 +937,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -992,7 +956,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1019,7 +983,7 @@ namespace UnityEditor.ProBuilder
                         EditorToolbarLoader.GetInstance<SelectFaceLoop>().PerformAction();
                         break;
                 }
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1037,8 +1001,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance, true));
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				EditorAction.Start(new MenuActionSettings(instance,true));
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1065,7 +1029,7 @@ namespace UnityEditor.ProBuilder
                         EditorToolbarLoader.GetInstance<SelectFaceRing>().PerformAction();
                         break;
                 }
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1084,7 +1048,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1103,7 +1067,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 
@@ -1122,7 +1086,7 @@ namespace UnityEditor.ProBuilder
 			if(instance != null && instance.enabled)
 			{
 				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance, ProBuilderAnalytics.TriggerType.MenuOrShortcut);
+				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
 	}

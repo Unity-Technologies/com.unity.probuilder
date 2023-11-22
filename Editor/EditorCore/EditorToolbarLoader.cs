@@ -37,9 +37,7 @@ namespace UnityEditor.ProBuilder
             s_LoadedMenuActions = new List<MenuAction>()
             {
                 // tools
-                new Actions.NewShapeAction(),
                 new Actions.NewBezierShape(),
-                new Actions.NewPolyShapeAction(),
                 new Actions.OpenMaterialEditor(),
                 new Actions.OpenUVEditor(),
                 new Actions.OpenVertexColorEditor(),
@@ -75,7 +73,6 @@ namespace UnityEditor.ProBuilder
                 new Actions.GenerateUV2(),
                 new Actions.ProBuilderize(),
                 new Actions.Export(),
-                // new Actions.ExportFbx(),
                 new Actions.ExportObj(),
                 new Actions.ExportAsset(),
                 new Actions.ExportPly(),
@@ -114,7 +111,6 @@ namespace UnityEditor.ProBuilder
                 new Actions.WeldVertices(),
                 new Actions.ConnectVertices(),
                 new Actions.FillHole(),
-                // new Actions.CreatePolygon(),
                 new Actions.SplitVertices(),
 
                 // Entity

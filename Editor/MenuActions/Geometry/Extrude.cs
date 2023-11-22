@@ -72,10 +72,10 @@ namespace UnityEditor.ProBuilder.Actions
             return @"                switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<ExtrudeEdges>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ExtrudeEdges>(), true));
                         break;
                     case SelectMode.Face:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<ExtrudeFaces>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ExtrudeFaces>(), true));
                         break;
                 }";
         }

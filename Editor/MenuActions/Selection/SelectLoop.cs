@@ -63,7 +63,7 @@ namespace UnityEditor.ProBuilder.Actions
             return @"                switch (ProBuilderEditor.selectMode)
                 {
                     case SelectMode.Edge:
-                        EditorAction.Start(new MenuActionSettingsWithPreview(EditorToolbarLoader.GetInstance<SelectEdgeLoop>()));
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SelectEdgeLoop>(), true));
                         break;
                     case SelectMode.Face:
                         EditorToolbarLoader.GetInstance<SelectFaceLoop>().PerformAction();
