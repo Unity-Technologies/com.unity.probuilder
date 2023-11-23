@@ -1,6 +1,5 @@
 using System;
 using UnityEditor.EditorTools;
-using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
@@ -23,15 +22,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Cube Shape", nameof(CreateCubeTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cube", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cube", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cube", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -55,15 +51,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Sphere Shape", nameof(CreateSphereTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sphere", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Sphere", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sphere", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -87,15 +80,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Plane Shape", nameof(CreatePlaneTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Plane", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Plane", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Plane", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -119,15 +109,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Cylinder Shape", nameof(CreateCylinderTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cylinder", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cylinder", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cylinder", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -151,15 +138,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Cone Shape", nameof(CreateConeTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Cone", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Cone", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cone", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -183,15 +167,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Prism Shape", nameof(CreatePrismTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Prism", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Prism", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Prism", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -215,15 +196,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Stairs Shape", nameof(CreateStairsTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Stairs", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Stairs", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Stairs", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -247,15 +225,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Torus Shape", nameof(CreateTorusTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Torus", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Torus", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Torus", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -279,15 +254,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Pipe Shape", nameof(CreatePipeTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Pipe", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Pipe", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Pipe", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -311,15 +283,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Arch Shape", nameof(CreateArchTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Arch", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Arch", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Arch", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -343,15 +312,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Door Shape", nameof(CreateDoorTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Door", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Door", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Door", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -375,15 +341,12 @@ namespace UnityEditor.ProBuilder
             ProBuilderAnalytics.SendActionEvent("New Sprite Shape", nameof(CreateSpriteTool));
         }
 
-        [UserSetting]
         Pref<Vector3> m_LastSize = new Pref<Vector3>("ShapeBuilder.LastSize.Sprite", Vector3.one);
         protected override Vector3 lastSize { get => m_LastSize.value; set => m_LastSize.SetValue(value); }
 
-        [UserSetting]
         Pref<Quaternion> m_LastRotation = new Pref<Quaternion>("ShapeBuilder.LastRotation.Sprite", Quaternion.identity);
         protected override Quaternion lastRotation { get => m_LastRotation.value; set => m_LastRotation.SetValue(value); }
 
-        [UserSetting]
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sprite", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
@@ -446,7 +409,6 @@ namespace UnityEditor.ProBuilder
 
         static readonly GUIContent k_ShapeTitle = new GUIContent("Shape Settings");
 
-        [UserSetting]
         internal static Pref<int> s_ActiveShapeIndex = new Pref<int>("ShapeBuilder.ActiveShapeIndex", 0);
         public static Pref<bool> s_SettingsEnabled = new Pref<bool>("ShapeComponent.SettingsEnabled", false, SettingsScope.Project);
 
