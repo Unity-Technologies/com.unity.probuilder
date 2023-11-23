@@ -222,9 +222,8 @@ namespace UnityEditor.ProBuilder
             ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
-            ClearElementSelection();
-            UpdateMeshHandles();
             SetOverrideWireframe(false);
+            OnSelectModeChanged(SelectMode.None);
             SceneView.RepaintAll();
 
             if(s_Instance == this)
