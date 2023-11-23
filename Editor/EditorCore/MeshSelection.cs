@@ -562,6 +562,7 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ClearElementAndObjectSelection"/>
         public static void ClearElementSelection()
         {
+            UndoUtility.RecordSelection(topInternal.ToArray(), "Clear Selection");
             if (ProBuilderEditor.instance != null)
                 ProBuilderEditor.instance.ClearElementSelection();
             InvalidateCaches();

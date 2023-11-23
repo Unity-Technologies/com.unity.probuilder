@@ -75,9 +75,12 @@ namespace UnityEditor.ProBuilder
             {
                 if(s_Selection.mesh != null)
                     s_Selection.mesh.ClearSelection();
-                if(s_Selection.gameObject == null || !isProBuilderMesh)
+                if (s_Selection.gameObject == null || !isProBuilderMesh)
+                {
+                    // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
                     MeshSelection.ClearElementSelection();
-                else // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
+                }
+                else
                     MeshSelection.SetSelection((GameObject)null);
             }
 
