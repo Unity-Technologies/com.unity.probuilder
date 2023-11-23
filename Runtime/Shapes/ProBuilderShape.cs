@@ -97,6 +97,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         internal void UpdateShape()
         {
+            if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
+                return;
+
             Rebuild(mesh.transform.position, mesh.transform.rotation, new Bounds(shapeWorldCenter, size));
         }
 
