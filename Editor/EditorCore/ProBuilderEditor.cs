@@ -714,7 +714,21 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         internal void ToggleSelectionMode()
         {
-            throw new NotImplementedException();
+            if (selectMode == SelectMode.None)
+                return;
+
+            switch (selectMode)
+            {
+                case SelectMode.Vertex:
+                    selectMode = SelectMode.Edge;
+                    break;
+                case SelectMode.Edge:
+                    selectMode = SelectMode.Face;
+                    break;
+                case SelectMode.Face:
+                    selectMode = SelectMode.Vertex;
+                    break;
+            }
         }
 
         void UpdateSelection(bool selectionChanged = true)
