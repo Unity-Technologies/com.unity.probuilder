@@ -402,10 +402,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            // if nothing was selected in the drag rect, clear the object selection too
-            if (!elementsInDragRect && !isAppendModifier)
-                MeshSelection.ClearElementAndObjectSelection();
-
             ProBuilderEditor.Refresh();
             SceneView.RepaintAll();
         }
