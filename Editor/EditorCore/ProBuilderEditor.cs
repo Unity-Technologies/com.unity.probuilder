@@ -207,8 +207,10 @@ namespace UnityEditor.ProBuilder
 
             LoadSettings();
             InitGUI();
-            EditorApplication.delayCall += () => UpdateSelection();
+            UpdateMeshHandles();
             SetOverrideWireframe(true);
+            EditorApplication.delayCall += () => UpdateSelection();
+
         }
 
         public void Dispose()
