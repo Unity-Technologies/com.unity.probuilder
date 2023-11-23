@@ -3,9 +3,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -20,7 +18,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Vert_Weld"); } }
+        internal override string iconPath => "Toolbar/Vert_Weld";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -49,7 +48,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -73,7 +71,6 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(floatField);
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

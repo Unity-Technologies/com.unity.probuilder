@@ -12,7 +12,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Face_Merge"); } }
+        internal override string iconPath => "Toolbar/Face_Merge";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {

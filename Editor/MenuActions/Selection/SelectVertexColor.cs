@@ -1,10 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.ProBuilder;
-
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -14,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
         GUIContent gc_restrictToSelection = new GUIContent("Current Selection", "Optionally restrict the matches to only those faces on currently selected objects.");
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Select by Colors",
+                "Select Vertex Color",
                 "Selects all faces matching the selected vertex colors."
             );
 
@@ -23,7 +20,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectByVertexColor"); } }
+        internal override string iconPath => "Toolbar/Selection_SelectByVertexColor";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -51,7 +49,6 @@ namespace UnityEditor.ProBuilder.Actions
             }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -67,7 +64,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

@@ -7,9 +7,10 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SetPivotToSelection : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Pivot_CenterOnElements"); } }
+        internal override string iconPath => "Toolbar/Pivot_CenterOnElements";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return _tooltip; } }
-        public override string menuTitle { get { return "Set Pivot"; } }
+        public override string menuTitle { get { return "Set Pivot To Selection"; } }
 
         static readonly TooltipContent _tooltip = new TooltipContent
             (

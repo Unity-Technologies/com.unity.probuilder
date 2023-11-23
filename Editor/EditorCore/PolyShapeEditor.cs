@@ -1,13 +1,8 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-using EditorToolManager = UnityEditor.EditorTools.EditorToolContext;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -26,9 +21,7 @@ namespace UnityEditor.ProBuilder
                  case PolyShape.PolyEditMode.None:
                  {
                      if(GUILayout.Button("Edit Poly Shape"))
-                     {
                          ToolManager.SetActiveTool<PolyShapeTool>();
-                     }
 
                      EditorGUILayout.HelpBox(
                          "Editing a poly shape will erase any modifications made to the mesh!\n\nIf you accidentally enter Edit Mode you can Undo to get your changes back.",

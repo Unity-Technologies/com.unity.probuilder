@@ -1,41 +1,29 @@
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
-using UnityEditor.ProBuilder.Actions;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Shapes;
-using Plane = UnityEngine.Plane;
 using UObject = UnityEngine.Object;
-
-#if !UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#else
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#endif
 
 public class CutToolTest
 {
     ProBuilderMesh m_PBMesh;
-    bool m_OpenedWindow = false;
     SelectMode m_PreviousSelectMode;
 
     [SetUp]
     public void Setup()
     {
-        // make sure the ProBuilder window is open
-        if (ProBuilderEditor.instance == null)
-            ProBuilderEditor.MenuOpenWindow();
-
-        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
-
         m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
         MeshSelection.SetSelection(m_PBMesh.gameObject);
-        MeshSelection.OnObjectSelectionChanged();
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        ToolManager.SetActiveContext<PositionToolContext>();
+        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
 
         m_PreviousSelectMode = ProBuilderEditor.selectMode;
-        ProBuilderEditor.selectMode = SelectMode.Object;
+        ProBuilderEditor.selectMode = SelectMode.None;
     }
 
     [TearDown]
@@ -45,12 +33,7 @@ public class CutToolTest
             UObject.DestroyImmediate(m_PBMesh.gameObject);
 
         ProBuilderEditor.selectMode = m_PreviousSelectMode;
-
-        // close editor window if we had to open it
-        if (m_OpenedWindow && ProBuilderEditor.instance != null)
-        {
-            ProBuilderEditor.instance.Close();
-        }
+        ToolManager.SetActiveContext<GameObjectToolContext>();
     }
 
     [Test]

@@ -7,7 +7,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenSmoothingEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_Smoothing"); } }
+        internal override string iconPath => "Toolbar/Panel_Smoothing";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Smoothing"; } }
         public override int toolbarPriority { get { return 2; } }
@@ -21,10 +22,7 @@ Smoothing groups average the vertex normals with neighboring planes. This allows
 ProBuilder decides which edges should be smoothed by checking for neighboring faces that are in the same group. It also checks for Hard groups, which hardens edges of neighboring faces."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
+        public override bool enabled => true;
 
         protected override ActionResult PerformActionImplementation()
         {

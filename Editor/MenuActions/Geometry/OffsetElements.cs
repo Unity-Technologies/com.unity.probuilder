@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.ProBuilder;
 using ColorUtility = UnityEngine.ProBuilder.ColorUtility;
-
-#if UNITY_2023_2_OR_NEWER
-using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -20,28 +17,15 @@ namespace UnityEditor.ProBuilder.Actions
             Handle
         }
 
-        static readonly TooltipContent s_TooltipFace = new TooltipContent ( "Offset Faces", "Move the selected elements by a set amount." );
-        static readonly TooltipContent s_TooltipEdge = new TooltipContent ( "Offset Edges", "Move the selected elements by a set amount." );
-        static readonly TooltipContent s_TooltipVert = new TooltipContent ( "Offset Vertices", "Move the selected elements by a set amount." );
-
         internal static Pref<Vector3> s_Translation = new Pref<Vector3>("MoveElements.s_Translation", Vector3.up);
         internal static Pref<CoordinateSpace> s_CoordinateSpace = new Pref<CoordinateSpace>("MoveElements.s_CoordinateSpace", CoordinateSpace.World);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/OffsetElements"); } }
+        internal override string iconPath => "Toolbar/OffsetElements";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
-        public override TooltipContent tooltip
-        {
-            get
-            {
-                if(ProBuilderEditor.selectMode == SelectMode.Face)
-                    return s_TooltipFace;
-                if(ProBuilderEditor.selectMode == SelectMode.Edge)
-                    return s_TooltipEdge;
-                return s_TooltipVert;
-            }
-        }
+        public override TooltipContent tooltip => new TooltipContent ( "Offset Elements", "Move the selected elements by a set amount." );
 
         public override SelectMode validSelectModes
         {
@@ -58,7 +42,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -89,8 +72,6 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override void DoSceneGUI(SceneView sceneView)
             => MoveElementsSettings.OnSceneGUI(sceneView);
-#endif
-
 
         protected override void DoAlternateAction()
         {

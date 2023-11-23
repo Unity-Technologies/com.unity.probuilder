@@ -212,7 +212,7 @@ namespace UnityEditor.ProBuilder.UI
             resizeHandles.Add(CreateResizeHandleControl(new Rect(0, 0, s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension), "TopLeft", rect, MouseCursor.ResizeUpLeft, ResizeTopLeft));
             resizeHandles.Add(CreateResizeHandleControl(new Rect(rect.width - s_ResizeHandleAreaDimension, 0, s_ResizeHandleAreaDimension, s_ResizeHandleAreaDimension), "TopRight", rect, MouseCursor.ResizeUpRight, ResizeTopRight));
 
-            if (evt.type == EventType.MouseDown)
+            if (evt.type == EventType.MouseDown && evt.button == 0)
             {
                 bool initializedControl = false;
                 foreach (KeyValuePair<int, Tuple<Rect,ComputeResize>> kvp in resizeHandles)

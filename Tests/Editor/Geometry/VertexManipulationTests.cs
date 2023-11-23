@@ -22,7 +22,7 @@ class VertexManipulationTests
             pb.transform.position = Vector3.zero;
             pb.transform.rotation = Quaternion.identity;
 
-            ProBuilderEditor.MenuOpenWindow();
+            ToolManager.SetActiveContext<PositionToolContext>();
             EditorApplication.ExecuteMenuItem("Window/General/Scene");
 
             var sceneView = UnityEngine.Resources.FindObjectsOfTypeAll<UnityEditor.SceneView>()[0];
@@ -44,7 +44,7 @@ class VertexManipulationTests
             var selectedFaces = new List<Face>();
             selectedFaces.Add(face);
             Tools.current = Tool.Move;
-            ProBuilderEditor.toolManager.SetSelectMode(SelectMode.Face);
+            ProBuilderEditor.selectMode = SelectMode.Face;
             pb.SetSelectedFaces(selectedFaces);
             MeshSelection.SetSelection(pb.gameObject);
 

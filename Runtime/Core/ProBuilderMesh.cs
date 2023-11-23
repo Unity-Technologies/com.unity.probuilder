@@ -18,7 +18,7 @@ namespace UnityEngine.ProBuilder
     // chance to mark it with the correct HideFlags.
     [RequireComponent(typeof(MeshRenderer))]
     [DisallowMultipleComponent, ExecuteInEditMode, ExcludeFromPreset, ExcludeFromObjectFactory]
-//    [MonoBehaviourIcon("Packages/com.unity.probuilder/Content/Icons/Scripts/ProBuilderMesh@64.png")]
+    [Icon(k_IconPath)]
     public sealed partial class ProBuilderMesh : MonoBehaviour
     {
 #if ENABLE_DRIVEN_PROPERTIES
@@ -26,6 +26,7 @@ namespace UnityEngine.ProBuilder
 #else
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
 #endif
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
 
         /// <summary>
         /// Stores the maximum number of UV channels that the ProBuilderMesh format supports.
@@ -243,14 +244,7 @@ namespace UnityEngine.ProBuilder
             // UV2 is a special case. It is not stored in ProBuilderMesh, does not necessarily match the vertex count,
             // and it has a cost to check.
             if ((channels & MeshArrays.Texture1) == MeshArrays.Texture1 && mesh != null)
-            {
-#if UNITY_2019_3_OR_NEWER
                 missing |= !mesh.HasVertexAttribute(VertexAttribute.TexCoord1);
-#else
-                var m_Textures1 = m_Mesh.uv2;
-                missing |= (m_Textures1 == null || m_Textures1.Length < 3);
-#endif
-            }
 
             return !missing;
         }

@@ -2,10 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -19,7 +16,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectByMaterial"); } }
+        internal override string iconPath => "Toolbar/Selection_SelectByMaterial";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -28,7 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Select by Material",
+                "Select Material",
                 "Selects all faces matching the selected materials."
             );
 
@@ -47,7 +45,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -63,7 +60,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

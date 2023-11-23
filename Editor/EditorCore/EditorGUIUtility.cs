@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder;
 
 namespace UnityEditor.ProBuilder.UI
 {
@@ -15,47 +12,35 @@ namespace UnityEditor.ProBuilder.UI
     {
         internal static class Styles
         {
-            static bool s_Initialized;
-
             public static GUIStyle command = "command";
             public static GUIContent[] selectModeIcons;
 
             static Texture2D s_ObjectIcon;
-            public static Texture2D ObjectIcon => s_ObjectIcon;
+            public static Texture2D ObjectIcon => s_ObjectIcon ??= IconUtility.GetIcon("Modes/Mode_Object");
 
             static Texture2D s_VertexIcon;
-            public static Texture2D VertexIcon => s_VertexIcon;
+            public static Texture2D VertexIcon => s_VertexIcon ??= IconUtility.GetIcon("Modes/Mode_Vertex");
 
             static Texture2D s_EdgeIcon;
-            public static Texture2D EdgeIcon => s_EdgeIcon;
+            public static Texture2D EdgeIcon => s_EdgeIcon ??= IconUtility.GetIcon("Modes/Mode_Edge");
 
             static Texture2D s_FaceIcon;
-            public static Texture2D FaceIcon => s_FaceIcon;
+            public static Texture2D FaceIcon => s_FaceIcon ??= IconUtility.GetIcon("Modes/Mode_Face");
 
             public static void Init()
             {
-                if (s_Initialized)
-                    return;
-
-                s_Initialized = true;
-
-                s_ObjectIcon = IconUtility.GetIcon("Modes/Mode_Object");
-                s_VertexIcon = IconUtility.GetIcon("Modes/Mode_Vertex");
-                s_EdgeIcon = IconUtility.GetIcon("Modes/Mode_Edge");
-                s_FaceIcon = IconUtility.GetIcon("Modes/Mode_Face");
-
                 selectModeIcons = new GUIContent[]
                 {
-                    s_ObjectIcon != null
+                    ObjectIcon != null
                     ? new GUIContent(s_ObjectIcon, "Object Selection")
                     : new GUIContent("OBJ", "Object Selection"),
-                    s_VertexIcon != null
+                    VertexIcon != null
                     ? new GUIContent(s_VertexIcon, "Vertex Selection")
                     : new GUIContent("VRT", "Vertex Selection"),
-                    s_EdgeIcon != null
+                    EdgeIcon != null
                     ? new GUIContent(s_EdgeIcon, "Edge Selection")
                     : new GUIContent("EDG", "Edge Selection"),
-                    s_FaceIcon != null
+                    FaceIcon != null
                     ? new GUIContent(s_FaceIcon, "Face Selection")
                     : new GUIContent("FCE", "Face Selection"),
                 };
@@ -489,7 +474,7 @@ namespace UnityEditor.ProBuilder.UI
          */
         public static void SceneLabel(string text, Vector2 position)
         {
-            GUIContent gc = EditorGUIUtility.TempContent(text);
+            GUIContent gc = TempContent(text);
 
             float width = UnityEditor.EditorStyles.boldLabel.CalcSize(gc).x;
             float height = UnityEditor.EditorStyles.label.CalcHeight(gc, width) + 4;
@@ -499,7 +484,7 @@ namespace UnityEditor.ProBuilder.UI
             sceneLabelRect.width = width;
             sceneLabelRect.height = height;
 
-            EditorGUIUtility.DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
+            DrawSolidColor(sceneLabelRect, SceneLabelBackgroundColor);
 
             GUI.Label(sceneLabelRect, gc, sceneBoldLabel);
         }
@@ -516,9 +501,6 @@ namespace UnityEditor.ProBuilder.UI
 
             switch (mode)
             {
-                case SelectMode.Object:
-                    currentSelectionMode = 0;
-                    break;
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                     currentSelectionMode = 1;
@@ -540,14 +522,13 @@ namespace UnityEditor.ProBuilder.UI
 
             if (EditorGUI.EndChangeCheck())
             {
-                if (currentSelectionMode == 0)
-                    mode = SelectMode.Object;
-                else if (currentSelectionMode == 1)
-                    mode = textureMode ? SelectMode.TextureVertex : SelectMode.Vertex;
-                else if (currentSelectionMode == 2)
-                    mode = textureMode ? SelectMode.TextureEdge : SelectMode.Edge;
-                else if (currentSelectionMode == 3)
-                    mode = textureMode ? SelectMode.TextureFace : SelectMode.Face;
+                mode = currentSelectionMode switch
+                {
+                    1 => textureMode ? SelectMode.TextureVertex : SelectMode.Vertex,
+                    2 => textureMode ? SelectMode.TextureEdge : SelectMode.Edge,
+                    3 => textureMode ? SelectMode.TextureFace : SelectMode.Face,
+                    _ => mode
+                };
             }
 
             return mode;

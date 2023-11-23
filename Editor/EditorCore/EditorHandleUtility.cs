@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
 
         public static bool SceneViewInUse(Event e)
         {
-            return Tools.viewToolActive;
+            return Tools.viewToolActive || Tools.current == Tool.View || (e.modifiers & EventModifiers.Alt) == EventModifiers.Alt;
         }
 
         public static bool IsAppendModifier(EventModifiers em)
@@ -670,7 +670,7 @@ namespace UnityEditor.ProBuilder
         {
             Plane plane;
             Vector3 normal = Vector3.up;
-            if(EditorSnapSettings.gridSnapEnabled || SceneView.lastActiveSceneView.showGrid)
+            if(EditorSnapSettings.gridSnapActive || SceneView.lastActiveSceneView.showGrid)
             {
                 var sceneView = SceneView.lastActiveSceneView;
                 var cameraTransform = sceneView.camera.transform;

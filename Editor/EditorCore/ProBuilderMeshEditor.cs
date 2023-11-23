@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -20,6 +21,7 @@ namespace UnityEditor.ProBuilder
 
             public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
             public static readonly GUIContent sharedMesh = EditorGUIUtility.TrTextContent("Mesh");
+            public static readonly GUIContent editMesh = EditorGUIUtility.TrTextContent("Edit Mesh", "Enables mesh edit mode.");
 
             public static void Init()
             {
@@ -95,8 +97,9 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            if (GUILayout.Button("Open ProBuilder"))
-                ProBuilderEditor.MenuOpenWindow();
+            if (ToolManager.activeContextType != typeof(PositionToolContext))
+                if (GUILayout.Button(Styles.editMesh))
+                    ToolManager.SetActiveContext<PositionToolContext>();
 
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;
@@ -167,11 +170,7 @@ namespace UnityEditor.ProBuilder
         {
             m_GameObjectsSerializedObject.Update();
 
-#if UNITY_2019_2_OR_NEWER
             bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.ContributeGI) != 0;
-#else
-            bool lightmapStatic = (m_StaticEditorFlags.intValue & (int)StaticEditorFlags.LightmapStatic) != 0;
-#endif
 
             EditorGUI.BeginChangeCheck();
 
@@ -179,11 +178,7 @@ namespace UnityEditor.ProBuilder
 
             if (EditorGUI.EndChangeCheck())
             {
-#if UNITY_2019_2_OR_NEWER
                 SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.ContributeGI, lightmapStatic);
-#else
-                SceneModeUtility.SetStaticFlags(m_GameObjectsSerializedObject.targetObjects, (int)StaticEditorFlags.LightmapStatic, lightmapStatic);
-#endif
             }
 
             if (lightmapStatic)
@@ -239,13 +234,8 @@ namespace UnityEditor.ProBuilder
                 {
                     var mesh = (ProBuilderMesh)obj;
 
-#if UNITY_2019_2_OR_NEWER
                     if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.ContributeGI))
                         continue;
-#else
-                    if (!mesh.gameObject.HasStaticFlag(StaticEditorFlags.LightmapStatic))
-                        continue;
-#endif
 
                     if (forceRebuildAll || !mesh.HasArrays(MeshArrays.Texture1))
                         mesh.Optimize(true);

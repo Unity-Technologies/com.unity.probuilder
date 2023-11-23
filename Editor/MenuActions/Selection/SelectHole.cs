@@ -13,7 +13,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Selection_SelectHole"); } }
+        internal override string iconPath => "Toolbar/Selection_SelectHole";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -22,7 +23,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         private static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Select Holes",
+                "Select Hole",
                 "Selects holes on the mesh.\n\nUses the current element selection, or tests the whole mesh if no edges or vertices are selected."
             );
 

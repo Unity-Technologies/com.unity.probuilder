@@ -9,7 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenUVEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Panel_UVEditor"); } }
+        internal override string iconPath => "Toolbar/Panel_UVEditor";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
@@ -18,10 +19,7 @@ namespace UnityEditor.ProBuilder.Actions
                 "Opens the UV Editor window.\n\nThe UV Editor allows you to change how textures are rendered on this mesh."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
+        public override bool enabled => true;
 
         protected override ActionResult PerformActionImplementation()
         {

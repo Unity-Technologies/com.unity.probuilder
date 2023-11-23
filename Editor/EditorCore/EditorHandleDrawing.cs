@@ -3,11 +3,9 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.ProBuilder.Actions;
+using UnityEditor.EditorTools;
 using UnityEngine.Rendering;
 using UnityEditor.SettingsManagement;
-using UnityEditor.ShortcutManagement;
-using System.Reflection;
 using UnityObject = UnityEngine.Object;
 using Edge = UnityEngine.ProBuilder.Edge;
 
@@ -109,7 +107,7 @@ namespace UnityEditor.ProBuilder
         static Pref<float> s_VertexPointSize = new Pref<float>("graphics.vertexPointSize", 3f, SettingsScope.User);
 
         [UserSetting]
-        static Pref<bool> s_XRayView = new Pref<bool>("graphics.xRayView", false, SettingsScope.User);
+        static Pref<bool> s_XRayView = new Pref<bool>("graphics.xRayView", true, SettingsScope.User);
 
         [Obsolete]
         static Pref<bool> s_DepthTestHandles = new Pref<bool>("graphics.handleZTest", true, SettingsScope.User);
@@ -148,13 +146,12 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-
             s_VertexPointSize.value = SettingsGUILayout.SettingsSlider("Vertex Size", s_VertexPointSize, 1f, 10f, searchContext);
             s_EdgeLineSize.value = SettingsGUILayout.SettingsSlider("Line Size", s_EdgeLineSize, 0f, 10f, searchContext);
             s_WireframeLineSize.value = SettingsGUILayout.SettingsSlider("Wireframe Size", s_WireframeLineSize, 0f, 10f, searchContext);
 
             if(EditorGUI.EndChangeCheck())
-                ProBuilderEditor.UpdateMeshHandles(true);
+                ProBuilderEditor.UpdateMeshHandles();
         }
 
         internal static float dotCapSize
@@ -255,15 +252,6 @@ namespace UnityEditor.ProBuilder
 
             UnityObject.DestroyImmediate(mesh);
         }
-
-#if !UNITY_2019_1_OR_NEWER
-        static MethodInfo s_ApplyWireMaterial = null;
-
-        static object[] s_ApplyWireMaterialArgs = new object[]
-        {
-            CompareFunction.Always
-        };
-#endif
 
         public static void DrawSceneSelection(SceneSelection selection)
         {

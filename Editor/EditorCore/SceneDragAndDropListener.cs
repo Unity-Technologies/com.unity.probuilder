@@ -21,11 +21,7 @@ namespace UnityEditor.ProBuilder
 
         static SceneDragAndDropListener()
         {
-#if UNITY_2019_1_OR_NEWER
             SceneView.duringSceneGui += OnSceneGUI;
-#else
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
-#endif
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
 
             s_PreviewMesh = new Mesh()

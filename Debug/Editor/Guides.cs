@@ -89,19 +89,11 @@ namespace ProBuilder.Debug.Editor
         {
             Handles.color = color;
             Handles.zTest = CompareFunction.LessEqual;
-#if UNITY_2021_1_OR_NEWER
             Handles.DrawLine(from, to, thickness);
-#else
-            Handles.DrawLine(from, to);
-#endif
 
             Handles.color = color * occludedTint;
             Handles.zTest = CompareFunction.Greater;
-#if UNITY_2021_1_OR_NEWER
             Handles.DrawLine(from, to, thickness);
-#else
-            Handles.DrawLine(from, to);
-#endif
         }
     }
 }

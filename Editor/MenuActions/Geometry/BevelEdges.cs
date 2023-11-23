@@ -1,11 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-
-#if UNITY_2023_2_OR_NEWER
-using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -15,14 +12,15 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_BevelSize = new Pref<float>("BevelEdges.size", .2f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bevel"); } }
+        internal override string iconPath => "Toolbar/Edge_Bevel";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 
         static readonly GUIContent gc_BevelDistance = EditorGUIUtility.TrTextContent("Distance", "The size of the bevel in meters. The value is clamped to the size of the smallest affected face.");
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
-                "Bevel",
+                "Bevel Edges",
                 @"Smooth the selected edges by adding a slanted face connecting the two adjacent faces."
             );
 
@@ -41,7 +39,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -67,7 +64,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

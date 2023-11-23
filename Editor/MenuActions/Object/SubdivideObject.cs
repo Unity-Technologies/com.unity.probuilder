@@ -10,8 +10,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ToolbarGroup.Object; }
         }
-
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_Subdivide"); } }
+        internal override string iconPath => "Toolbar/Object_Subdivide";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {

@@ -1,7 +1,3 @@
-#if !UNITY_2019_1_OR_NEWER
-using System;
-using System.Reflection;
-#endif
 using UnityEngine;
 
 namespace UnityEditor.ProBuilder
@@ -12,20 +8,6 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     sealed class TooltipEditor : EditorWindow
     {
-#if !UNITY_2019_1_OR_NEWER
-        static TooltipEditor()
-        {
-            s_ShowModeEnum = ReflectionUtility.GetType("UnityEditor.ShowMode");
-
-            s_ShowPopupWithModeMethod = typeof(EditorWindow).GetMethod(
-                "ShowPopupWithMode",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-        }
-
-        static readonly Type s_ShowModeEnum;
-        static readonly MethodInfo s_ShowPopupWithModeMethod;
-#endif
-
         static readonly Color BasicBackgroundColor = new Color(.87f, .87f, .87f, 1f);
         const int k_PositionPadding = 4;
 
@@ -41,15 +23,8 @@ namespace UnityEditor.ProBuilder
                 s_Instance.minSize = Vector2.zero;
                 s_Instance.maxSize = Vector2.zero;
                 s_Instance.hideFlags = HideFlags.HideAndDontSave;
-#if UNITY_2019_1_OR_NEWER
                 s_Instance.ShowTooltip();
                 s_Instance.m_Parent.window.SetAlpha(1f);
-#else
-                if (s_ShowPopupWithModeMethod != null && s_ShowModeEnum != null)
-                    s_ShowPopupWithModeMethod.Invoke(s_Instance, new [] { Enum.ToObject(s_ShowModeEnum, 1), false});
-                else
-                    s_Instance.ShowPopup();
-#endif
             }
 
             return s_Instance;

@@ -14,11 +14,7 @@ namespace UnityEditor.ProBuilder
     [InitializeOnLoad]
     static class Lightmapping
     {
-#if UNITY_2019_2_OR_NEWER
         const StaticEditorFlags k_ContributeGI = StaticEditorFlags.ContributeGI;
-#else
-        const StaticEditorFlags k_ContributeGI = StaticEditorFlags.LightmapStatic;
-#endif
 
         const string k_StaticEditorFlagsProperty = "m_StaticEditorFlags";
 
@@ -106,11 +102,7 @@ namespace UnityEditor.ProBuilder
 
         static Lightmapping()
         {
-#if UNITY_2019_2_OR_NEWER
             UL.bakeCompleted += OnLightmappingCompleted;
-#else
-            UL.completed += OnLightmappingCompleted;
-#endif
             Undo.postprocessModifications += PostprocessModifications;
         }
 

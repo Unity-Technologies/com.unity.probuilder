@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -102,8 +103,7 @@ namespace UnityEditor.ProBuilder
         static MaterialPalette s_CurrentPalette = null;
 
         // The user set "quick material"
-        [SerializeField]
-        Material m_QueuedMaterial;
+        Pref<Material> m_QueuedMaterial = new Pref<Material>("materialEditor.quickMaterial", null, SettingsScope.User);
 
         // Custom style for material row background
         GUIStyle m_RowBackgroundStyle;
@@ -197,17 +197,17 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width - 74));
             GUILayout.BeginVertical();
 
-            m_QueuedMaterial = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial, typeof(Material), true);
+            m_QueuedMaterial.value = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial.value, typeof(Material), true);
 
             GUILayout.Space(2);
 
             if (GUILayout.Button("Apply (Ctrl+Shift+Click)"))
-                ApplyMaterial(MeshSelection.topInternal, m_QueuedMaterial);
+                ApplyMaterial(MeshSelection.topInternal, m_QueuedMaterial.value);
 
             GUI.enabled = editor != null && MeshSelection.selectedFaceCount > 0;
             if (GUILayout.Button("Match Selection"))
             {
-                m_QueuedMaterial = EditorMaterialUtility.GetActiveSelection();
+                m_QueuedMaterial.SetValue(EditorMaterialUtility.GetActiveSelection());
             }
             GUI.enabled = true;
 
@@ -215,7 +215,7 @@ namespace UnityEditor.ProBuilder
 
             GUI.Box(new Rect(left, r.y + r.height + 2, 64, 64), "");
 
-            var previewTexture = EditorMaterialUtility.GetPreviewTexture(m_QueuedMaterial);
+            var previewTexture = EditorMaterialUtility.GetPreviewTexture(m_QueuedMaterial.value);
 
             if (previewTexture != null)
             {
@@ -285,7 +285,9 @@ namespace UnityEditor.ProBuilder
                 GUILayout.BeginHorizontal();
                 if (i < 10)
                 {
-                    if (GUILayout.Button("Alt + " + (i == 9 ? 0 : (i + 1)).ToString(), EditorStyles.miniButton, GUILayout.MaxWidth(58)))
+                    var shortcutPath = "Main Menu/Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset " + (i + 1);
+                    var shortcut = ShortcutManager.instance.GetShortcutBinding(shortcutPath).ToString();
+                    if (GUILayout.Button(shortcut, EditorStyles.miniButton, GUILayout.MaxWidth(58)))
                         ApplyMaterial(MeshSelection.topInternal, materials[i]);
                 }
                 else

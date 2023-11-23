@@ -1,12 +1,9 @@
 ﻿using System;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -42,9 +39,6 @@ namespace UnityEditor.ProBuilder
 
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
-        readonly GUIContent k_ShapeSizeXLabel = new GUIContent("X");
-        readonly GUIContent k_ShapeSizeYLabel = new GUIContent("Y");
-        readonly GUIContent k_ShapeSizeZLabel = new GUIContent("Z");
 
         bool HasMultipleShapeTypes
         {
@@ -71,17 +65,14 @@ namespace UnityEditor.ProBuilder
             DrawShapeParametersGUI();
 
             if(ToolManager.activeToolType != typeof(DrawShapeTool)
-               && ToolManager.activeToolType != typeof(EditShapeTool) )
+               && ToolManager.activeToolType != typeof(EditShapeTool))
             {
                 if(GUILayout.Button("Edit Shape"))
-                {
-                    ProBuilderEditor.selectMode = SelectMode.Object;
                     ToolManager.SetActiveTool<EditShapeTool>();
-                }
             }
         }
 
-        public void DrawShapeGUI(DrawShapeTool tool = null)
+        public void DrawShapeGUI()
         {
             if(target == null)
                 return;
@@ -106,7 +97,7 @@ namespace UnityEditor.ProBuilder
                     {
                         var shapeComponent = comp as ProBuilderShape;
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Reset Shape");
-                        shapeComponent.UpdateComponent();
+                        shapeComponent.UpdateShape();
                         ProBuilderEditor.Refresh();
                     }
                 }
@@ -116,7 +107,6 @@ namespace UnityEditor.ProBuilder
 
             if(editedShapesCount == targets.Length)
                 GUI.enabled = false;
-
         }
 
         public void DrawShapeParametersGUI(DrawShapeTool tool = null)
@@ -139,30 +129,36 @@ namespace UnityEditor.ProBuilder
                 EditorGUI.indentLevel++;
                 EditorGUIUtility.labelWidth = 90;
 
-                EditorGUI.BeginChangeCheck();
-                m_ActiveShapeIndex = HasMultipleShapeTypes
-                    ? -1
-                    : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
-                m_ActiveShapeIndex = EditorGUILayout.Popup("Shape", m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
-
-                if(EditorGUI.EndChangeCheck())
+                if (tool)
+                    tool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, tool.pivotLocation);
+                else
                 {
-                    var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
-                    foreach(var comp in targets)
-                    {
-                        ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
-                        Shape shape = proBuilderShape.shape;
-                        if(shape.GetType() != type)
-                        {
-                            if(tool != null)
-                                DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
+                    EditorGUI.BeginChangeCheck();
+                    m_ActiveShapeIndex = HasMultipleShapeTypes
+                        ? -1
+                        : Mathf.Max(-1, Array.IndexOf(EditorShapeUtility.availableShapeTypes, m_CurrentShapeType));
+                    m_ActiveShapeIndex = EditorGUILayout.Popup("Shape", m_ActiveShapeIndex, EditorShapeUtility.shapeTypes);
 
-                            UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
-                            proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type));
-                            ProBuilderEditor.Refresh();
+                    if(EditorGUI.EndChangeCheck())
+                    {
+                        var type = EditorShapeUtility.availableShapeTypes[m_ActiveShapeIndex];
+                        foreach(var comp in targets)
+                        {
+                            ProBuilderShape proBuilderShape = ( (ProBuilderShape) comp );
+                            Shape shape = proBuilderShape.shape;
+                            if(shape.GetType() != type)
+                            {
+                                if(tool != null)
+                                    DrawShapeTool.s_ActiveShapeIndex.value = m_ActiveShapeIndex;
+
+                                UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(new [] { proBuilderShape },"Change Shape");
+                                proBuilderShape.SetShape(EditorShapeUtility.CreateShape(type));
+                                ProBuilderEditor.Refresh();
+                            }
                         }
                     }
                 }
+
 
                 EditorGUILayout.PropertyField(shapeSizeProperty);
                 EditorGUI.indentLevel--;
@@ -178,11 +174,11 @@ namespace UnityEditor.ProBuilder
                     if(comp is ProBuilderShape shapeComponent && shapeComponent.isEditable)
                     {
                         UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
-                        shapeComponent.UpdateComponent();
+                        shapeComponent.UpdateShape();
                         if(tool != null)
                         {
                             tool.SetBounds(shapeComponent.size);
-                            DrawShapeTool.SaveShapeParams(shapeComponent);
+                            tool.SaveShapeParams(shapeComponent);
                         }
                         ProBuilderEditor.Refresh();
                     }

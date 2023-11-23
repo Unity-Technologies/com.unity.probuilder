@@ -1,5 +1,4 @@
-﻿#if UNITY_2023_2_OR_NEWER
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEditor.ProBuilder.Actions;
 using UnityEditor.Toolbars;
@@ -9,6 +8,60 @@ using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.UI
 {
+    class SelectModeToggle : EditorToolbarToggle
+    {
+        SelectMode m_Mode;
+
+        public SelectModeToggle(SelectMode mode)
+        {
+            m_Mode = mode;
+
+            switch (mode)
+            {
+                case SelectMode.Face:
+                case SelectMode.TextureFace:
+                    icon = IconUtility.GetIcon("Modes/Mode_Face");
+                    tooltip = "Face Selection";
+                    break;
+
+                case SelectMode.Edge:
+                case SelectMode.TextureEdge:
+                    icon = IconUtility.GetIcon("Modes/Mode_Edge");
+                    tooltip = "Edge Selection";
+                    break;
+
+                case SelectMode.Vertex:
+                case SelectMode.TextureVertex:
+                    icon = IconUtility.GetIcon("Modes/Mode_Vertex");
+                    tooltip = "Vertex Selection";
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode));
+            }
+
+            RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderEditor.selectModeChanged += UpdateSelectMode; });
+            RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderEditor.selectModeChanged -= UpdateSelectMode; });
+            this.RegisterValueChangedCallback(evt => { ProBuilderEditor.selectMode = m_Mode; });
+
+            UpdateSelectMode(ProBuilderEditor.selectMode);
+        }
+
+        void UpdateSelectMode(SelectMode mode) => SetValueWithoutNotify(m_Mode == mode);
+    }
+
+    [EditorToolbarElement("ProBuilder Settings/Select Mode")]
+    class SelectModeToolbar : VisualElement
+    {
+        public SelectModeToolbar()
+        {
+            Add(new SelectModeToggle(SelectMode.Vertex));
+            Add(new SelectModeToggle(SelectMode.Edge));
+            Add(new SelectModeToggle(SelectMode.Face));
+            EditorToolbarUtility.SetupChildrenAsButtonStrip(this);
+        }
+    }
+
     [EditorToolbarElement("ProBuilder Settings/Drag Rect Mode")]
     class DragRectModeToggle : EditorToolbarToggle
     {
@@ -172,4 +225,3 @@ namespace UnityEditor.ProBuilder.UI
         }
     }
 }
-#endif

@@ -3,14 +3,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
-#if UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -77,12 +70,6 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         internal const char keyCommandDelete = PreferenceKeys.CMD_DELETE;
 
-        static readonly GUIContent AltButtonContent = new GUIContent("+", "");
-
-        static readonly Vector2 AltButtonSize = new Vector2(21, 0);
-
-        Vector2 m_LastCalculatedSize = Vector2.zero;
-
         /// <summary>
         /// Invoked when the user selects an action to perform from the toolbar.
         /// </summary>
@@ -91,10 +78,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Creates a new button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
         /// </summary>
-        protected MenuAction()
-        {
-            iconMode = ProBuilderEditor.s_IsIconGui;
-        }
+        protected MenuAction(){}
 
         /// <summary>
         /// Compare two menu items precedence by their category and priority modifier.
@@ -108,59 +92,24 @@ namespace UnityEditor.ProBuilder
             {
                 if (right == null)
                     return 0;
-                else
-                    return -1;
+
+                return -1;
             }
-            else
-            {
-                if (right == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    int l = (int)left.group, r = (int)right.group;
 
-                    if (l < r)
-                        return -1;
-                    else if (l > r)
-                        return 1;
-                    else
-                    {
-                        int lp = left.toolbarPriority < 0 ? int.MaxValue : left.toolbarPriority,
-                            rp = right.toolbarPriority < 0 ? int.MaxValue : right.toolbarPriority;
+            if (right == null)
+                return 1;
 
-                        return lp.CompareTo(rp);
-                    }
-                }
-            }
-        }
+            int l = (int)left.group, r = (int)right.group;
 
-        Texture2D m_DesaturatedIcon = null;
+            if (l < r)
+                return -1;
+            if (l > r)
+                return 1;
 
-        /// <summary>
-        /// Gets the icon to use when the action button on the toolbar is disabled. By default, this function looks for an image named
-        /// `${icon}_disabled`. Override this function if your disabled icon does not follow that naming convention or location.
-        /// </summary>
-        protected virtual Texture2D disabledIcon
-        {
-            get
-            {
-                if (m_DesaturatedIcon == null)
-                {
-                    if (icon == null)
-                        return null;
+            int lp = left.toolbarPriority < 0 ? int.MaxValue : left.toolbarPriority,
+                rp = right.toolbarPriority < 0 ? int.MaxValue : right.toolbarPriority;
 
-                    m_DesaturatedIcon = IconUtility.GetIcon(string.Format("Toolbar/{0}_disabled", icon.name));
-
-#if GENERATE_DESATURATED_ICONS
-                    if (!m_DesaturatedIcon)
-                        m_DesaturatedIcon = ProBuilder2.EditorCommon.DebugUtilities.pb_GenerateDesaturatedImage.CreateDesaturedImage(icon);
-#endif
-                }
-
-                return m_DesaturatedIcon;
-            }
+            return lp.CompareTo(rp);
         }
 
         /// <summary>
@@ -183,6 +132,11 @@ namespace UnityEditor.ProBuilder
         public abstract Texture2D icon { get; }
 
         /// <summary>
+        /// Gets the local path of the icon to display in the Context Menu for this action.
+        /// </summary>
+        internal abstract string iconPath { get; }
+
+        /// <summary>
         /// Gets the contents of the tooltip to display for this menu action.
         /// </summary>
         public abstract TooltipContent tooltip { get; }
@@ -198,7 +152,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets whether this class should have an entry built into the hardware menu. This is not implemented for custom actions.
         /// </summary>
-        protected virtual bool hasFileMenuEntry { get { return true; } }
+        protected internal virtual bool hasFileMenuEntry { get { return true; } }
 
         /// <summary>
         /// Gets a flag that indicates both the visibility and enabled state of an action
@@ -234,13 +188,10 @@ namespace UnityEditor.ProBuilder
         public virtual bool enabled
         {
             get
-            {
-                var b1 = ProBuilderEditor.instance != null;
-                var b2 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
-                var b3 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
-                return b1
-                       && b2
-                       && b3;
+            {;
+                var b1 = ProBuilderEditor.selectMode.ContainsFlag(validSelectModes);
+                var b2 = !ProBuilderEditor.selectMode.ContainsFlag(SelectMode.InputTool);
+                return b1 && b2;
             }
         }
 
@@ -267,6 +218,12 @@ namespace UnityEditor.ProBuilder
 
         internal bool optionsVisible => optionsMenuState != MenuActionState.Hidden;
         internal bool optionsEnabled => optionsMenuState == MenuActionState.VisibleAndEnabled;
+
+        /// <summary>
+        /// Override the action automatically generated in the GenerateMenuItems.cs script.
+        /// </summary>
+        /// <returns></returns>
+        internal virtual string GetMenuItemOverride() => "";
 
         /// <summary>
         /// Performs the action for this menu item. Use <see cref="PerformActionImplementation"/> to implement the action.
@@ -311,7 +268,6 @@ namespace UnityEditor.ProBuilder
 
         public void PerformAltAction() => DoAlternateAction();
 
-#if UNITY_2023_2_OR_NEWER
         /// <summary>
         /// Replaces OnSettingsGUI for 2023.2 and newer to display settings in a SceneView overlay.
         /// Creates a custom settings window for this action. Populate a root visual element in that method with
@@ -326,7 +282,6 @@ namespace UnityEditor.ProBuilder
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
         public virtual void DoSceneGUI(SceneView sceneView) {}
-#endif
 
         /// <summary>
         /// Implement the extra settings GUI for your action in this method.

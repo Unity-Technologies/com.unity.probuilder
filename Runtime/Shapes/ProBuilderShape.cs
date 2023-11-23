@@ -2,17 +2,17 @@
 
 namespace UnityEngine.ProBuilder.Shapes
 {
+    [Icon(k_IconPath)]
     [AddComponentMenu(""), DisallowMultipleComponent]
     sealed class ProBuilderShape : MonoBehaviour
     {
+        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
+
         [SerializeReference]
         Shape m_Shape = new Cube();
 
         [SerializeField]
-        Vector3 m_Size = Vector3.one;
-
-        [SerializeField]
-        Quaternion m_Rotation = Quaternion.identity;
+        Quaternion m_ShapeRotation = Quaternion.identity;
 
         ProBuilderMesh m_Mesh;
 
@@ -21,6 +21,9 @@ namespace UnityEngine.ProBuilder.Shapes
 
         public Shape shape => m_Shape;
 
+
+        [SerializeField]
+        Vector3 m_Size = Vector3.one;
         public Vector3 size
         {
             get => m_Size;
@@ -32,10 +35,18 @@ namespace UnityEngine.ProBuilder.Shapes
             }
         }
 
-        public Quaternion rotation
+        public Quaternion shapeRotation
         {
-            get => m_Rotation;
-            set => m_Rotation = value;
+            get => m_ShapeRotation;
+            set => m_ShapeRotation = value;
+        }
+
+        public Vector3 shapeWorldCenter
+        {
+            get
+            {
+                return transform.TransformPoint(m_LocalCenter);
+            }
         }
 
         Bounds m_EditionBounds;
@@ -43,9 +54,9 @@ namespace UnityEngine.ProBuilder.Shapes
         {
             get
             {
-                m_EditionBounds.center = m_ShapeBox.center;
+                m_EditionBounds.center = m_LocalCenter;
                 m_EditionBounds.size = m_Size;
-                if(Mathf.Abs(m_ShapeBox.size.y) < Mathf.Epsilon)
+                if(Mathf.Abs(m_Size.y) < Mathf.Epsilon)
                     m_EditionBounds.size = new Vector3(m_Size.x, 0f, m_Size.z);
 
                 return m_EditionBounds;
@@ -53,8 +64,9 @@ namespace UnityEngine.ProBuilder.Shapes
         }
 
         [SerializeField]
-        Bounds m_ShapeBox;
-        public Bounds shapeBox => m_ShapeBox;
+        Vector3 m_LocalCenter;
+        public Bounds shapeLocalBounds => new Bounds(m_LocalCenter, size);
+        public Bounds shapeWorldBounds => new Bounds(shapeWorldCenter, size);
 
         public bool isEditable => m_UnmodifiedMeshVersion == mesh.versionIndex;
 
@@ -83,17 +95,30 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Size.z = System.Math.Abs(m_Size.z) == 0 ? 0.001f: m_Size.z;
         }
 
-        internal void UpdateComponent() => Rebuild();
+        internal void UpdateShape()
+        {
+            if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
+                return;
+
+            Rebuild(mesh.transform.position, mesh.transform.rotation, new Bounds(shapeWorldCenter, size));
+        }
 
         internal void UpdateBounds(Bounds bounds)
         {
-            var centerLocalPos = mesh.transform.InverseTransformPoint(bounds.center);
-            Bounds shapeBB = m_ShapeBox;
-            shapeBB.center = centerLocalPos;
-            m_ShapeBox = shapeBB;
+            Rebuild(mesh.transform.position, mesh.transform.rotation, bounds);
+        }
 
+        internal void Rebuild(Vector3 pivotPosition, Quaternion rotation, Bounds bounds)
+        {
+            var trs = transform;
+            trs.position = bounds.center;
+            trs.rotation = rotation;
             size = bounds.size;
             Rebuild();
+            mesh.SetPivot(pivotPosition);
+            m_LocalCenter = mesh.transform.InverseTransformPoint(bounds.center);
+
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         internal void Rebuild(Bounds bounds, Quaternion rotation)
@@ -103,6 +128,8 @@ namespace UnityEngine.ProBuilder.Shapes
             trs.rotation = rotation;
             size = bounds.size;
             Rebuild();
+
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         void Rebuild()
@@ -110,13 +137,9 @@ namespace UnityEngine.ProBuilder.Shapes
             if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            m_ShapeBox = m_Shape.RebuildMesh(mesh, size, rotation);
-
-            Bounds bounds = m_ShapeBox;
-            bounds.size = Math.Abs(m_ShapeBox.size);
-            MeshUtility.FitToSize(mesh, bounds, size);
-
-            m_UnmodifiedMeshVersion = mesh.versionIndex;
+            var bbox = m_Shape.RebuildMesh(mesh, size, shapeRotation);
+            bbox.size = Math.Abs(bbox.size);
+            MeshUtility.FitToSize(mesh, bbox, size);
         }
 
         internal void SetShape(Shape shape)
@@ -124,14 +147,13 @@ namespace UnityEngine.ProBuilder.Shapes
             m_Shape = shape;
             if(m_Shape is Plane || m_Shape is Sprite)
             {
-                Bounds bounds = m_ShapeBox;
+                Bounds bounds = new Bounds(m_LocalCenter, size);
                 var newCenter = bounds.center;
                 var newSize = bounds.size;
                 newCenter.y = 0;
                 newSize.y = 0;
-                bounds.center = newCenter;
-                bounds.size = newSize;
-                m_ShapeBox = bounds;
+                m_LocalCenter = newCenter;
+                size = newSize;
                 m_Size.y = 0;
             }
             Rebuild();
@@ -142,8 +164,9 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         internal void RotateInsideBounds(Quaternion deltaRotation)
         {
-            rotation = deltaRotation * rotation;
-            Rebuild();
+            shapeRotation = deltaRotation * shapeRotation;
+            var bounds = new Bounds(mesh.transform.TransformPoint(m_LocalCenter), size);
+            Rebuild(mesh.transform.position, mesh.transform.rotation , bounds);
         }
     }
 }

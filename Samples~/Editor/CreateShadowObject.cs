@@ -16,7 +16,8 @@ namespace ProBuilder.ExampleActions
 	sealed class CreateShadowObject : MenuAction
 	{
 		public override ToolbarGroup group { get { return ToolbarGroup.Object; } }
-		public override Texture2D icon { get { return null; } }
+        public override string iconPath => string.Empty;
+		public override Texture2D icon => null;
 		public override TooltipContent tooltip { get { return k_Tooltip; } }
 
 		static readonly GUIContent k_VolumeSize = new GUIContent("Volume Size", "How far the shadow volume extends from " +
@@ -73,13 +74,11 @@ namespace ProBuilder.ExampleActions
 			if( EditorGUI.EndChangeCheck() )
 				EditorPrefs.SetFloat("pb_CreateShadowObject_volumeSize", volumeSize);
 
-			#if !UNITY_4_6 && !UNITY_4_7
 			EditorGUI.BeginChangeCheck();
 			ShadowCastingMode shadowMode = (ShadowCastingMode) EditorPrefs.GetInt("pb_CreateShadowObject_shadowMode", (int) ShadowCastingMode.ShadowsOnly);
 			shadowMode = (ShadowCastingMode) EditorGUILayout.EnumPopup("Shadow Casting Mode", shadowMode);
 			if(EditorGUI.EndChangeCheck())
 				EditorPrefs.SetInt("pb_CreateShadowObject_shadowMode", (int) shadowMode);
-			#endif
 
 			EditorGUI.BeginChangeCheck();
 			ExtrudeMethod extrudeMethod = (ExtrudeMethod) EditorPrefs.GetInt("pb_CreateShadowObject_extrudeMethod", (int) ExtrudeMethod.FaceNormal);
@@ -127,12 +126,10 @@ namespace ProBuilder.ExampleActions
 				shadow.Refresh();
 				shadow.Optimize();
 
-				#if !UNITY_4_6 && !UNITY_4_7
 				MeshRenderer mr = shadow.gameObject.GetComponent<MeshRenderer>();
 				mr.shadowCastingMode = shadowMode;
 				if(shadowMode == ShadowCastingMode.ShadowsOnly)
 					mr.receiveShadows = false;
-				#endif
 
 				Collider collider = shadow.GetComponent<Collider>();
 

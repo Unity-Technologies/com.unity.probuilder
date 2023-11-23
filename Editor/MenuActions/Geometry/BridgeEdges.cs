@@ -12,7 +12,8 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Bridge"); } }
+        internal override string iconPath => "Toolbar/Edge_Bridge";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {

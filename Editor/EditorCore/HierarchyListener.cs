@@ -14,10 +14,8 @@ namespace UnityEditor.ProBuilder
         {
             AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
             PrefabUtility.prefabInstanceUpdated += PrefabInstanceUpdated;
-            #if UNITY_2023_1_OR_NEWER
             PrefabUtility.prefabInstanceReverted += PrefabInstanceUpdated;
             PrefabUtility.prefabInstanceReverting += PrefabInstanceReverting;
-            #endif
             ProBuilderMesh.meshWasInitialized += OnMeshInitialized;
             ObjectChangeEvents.changesPublished += ObjectEventChangesPublished;
         }

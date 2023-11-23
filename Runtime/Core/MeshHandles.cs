@@ -61,11 +61,7 @@ namespace UnityEngine.ProBuilder
             target.name = "ProBuilder::EdgeMesh" + target.GetInstanceID();
             target.vertices = mesh.positionsInternal;
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Lines, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Lines, 0);
-#endif
         }
 
         internal static void CreateEdgeMesh(ProBuilderMesh mesh, Mesh target, Edge[] edges)
@@ -88,11 +84,7 @@ namespace UnityEngine.ProBuilder
             target.name = "ProBuilder::EdgeMesh" + target.GetInstanceID();
             target.vertices = mesh.positionsInternal;
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Lines, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Lines, 0);
-#endif
         }
 
         internal static void CreateVertexMesh(ProBuilderMesh mesh, Mesh target)
@@ -126,10 +118,8 @@ namespace UnityEngine.ProBuilder
 
             if(indexes is int[])
                 target.SetIndices((int[]) indexes, MeshTopology.Points, 0);
-#if UNITY_2019_3_OR_NEWER
             else if(indexes is List<int>)
                 target.SetIndices((List<int>) indexes, MeshTopology.Points, 0);
-#endif
             else
                 target.SetIndices(indexes.ToArray(), MeshTopology.Points, 0);
         }
@@ -169,11 +159,7 @@ namespace UnityEngine.ProBuilder
             target.SetVertices(s_Vector3List);
             target.SetUVs(0, s_Vector2List);
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Quads, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Quads, 0);
-#endif
         }
 
         static void CreatePointBillboardMesh(IList<Vector3> positions, IList<int> indexes, Mesh target)
@@ -213,11 +199,7 @@ namespace UnityEngine.ProBuilder
             target.SetVertices(s_Vector3List);
             target.SetUVs(0, s_Vector2List);
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Quads, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Quads, 0);
-#endif
         }
 
         internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target)
@@ -270,11 +252,7 @@ namespace UnityEngine.ProBuilder
             target.SetVertices(s_Vector3List);
             target.SetTangents(s_Vector4List);
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Quads, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Quads, 0);
-#endif
         }
 
         internal static void CreateEdgeBillboardMesh(ProBuilderMesh mesh, Mesh target, ICollection<Edge> edges)
@@ -326,11 +304,7 @@ namespace UnityEngine.ProBuilder
             target.SetVertices(s_Vector3List);
             target.SetTangents(s_Vector4List);
             target.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
             target.SetIndices(s_IndexList, MeshTopology.Quads, 0);
-#else
-            target.SetIndices(s_IndexList.ToArray(), MeshTopology.Quads, 0);
-#endif
         }
     }
 }

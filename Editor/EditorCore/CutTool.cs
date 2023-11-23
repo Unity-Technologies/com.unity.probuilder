@@ -11,18 +11,12 @@ using UObject = UnityEngine.Object;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
 
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
-#if UNITY_2023_2_OR_NEWER
-    [EditorTool("Cut Tool", typeof(ProBuilderMesh))]
-#endif
-    internal class CutTool : EditorTool
+    [EditorTool("Cut Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
+    class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
 
@@ -36,7 +30,7 @@ namespace UnityEditor.ProBuilder
         [Flags]
         public enum VertexTypes
         {
-            None = 0 << 0,
+            None = 0x0,
             NewVertex = 1 << 0,
             AddedOnEdge = 1 << 1,
             ExistingVertex = 1 << 2,
@@ -165,15 +159,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override bool IsAvailable()
         {
-            return MeshSelection.selectedObjectCount == 1 &&
-                (ProBuilderEditor.selectMode == SelectMode.Vertex ||
-                    ProBuilderEditor.selectMode == SelectMode.Edge ||
-                    ProBuilderEditor.selectMode == SelectMode.Face);
+            return MeshSelection.selectedObjectCount == 1;
         }
-#endif
 
         void OnEnable()
         {
@@ -195,12 +184,6 @@ namespace UnityEditor.ProBuilder
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
 
             m_Mesh = null;
-            UpdateTarget();
-        }
-
-        void OnDisable()
-        {
-            Clear();
         }
 
         public override void OnActivated()
@@ -277,8 +260,7 @@ namespace UnityEditor.ProBuilder
 
         void OnSelectModeChanged(SelectMode mode)
         {
-            if(!mode.IsPositionMode())
-                ToolManager.RestorePreviousPersistentTool();
+            ToolManager.RestorePreviousPersistentTool();
         }
 
         /// <summary>
@@ -522,7 +504,7 @@ namespace UnityEditor.ProBuilder
             //If the user is moving an existing point
             if (m_PlacingPoint || m_ModifyingPoint)
             {
-                if( evtType == EventType.MouseDown
+                if( evtType == EventType.MouseDown && evt.button == 0
                     && HandleUtility.nearestControl == m_ControlId )
                 {
                     m_PlacingPoint = true;
@@ -552,7 +534,7 @@ namespace UnityEditor.ProBuilder
             }
             //If the user is adding the current position to the cut.
             else if (hasHitPosition
-                     && evtType == EventType.MouseDown
+                     && evtType == EventType.MouseDown && evt.button == 0
                      && HandleUtility.nearestControl == m_ControlId)
             {
                 if(CanAppendCurrentPointToPath())

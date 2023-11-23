@@ -1,5 +1,3 @@
-#if UNITY_2021_1_OR_NEWER
-
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -54,5 +52,3 @@ namespace UnityEditor.ProBuilder
         public override string GetInfoString() => MeshPreview.GetInfoString(m_GeneratedMeshAssets[0]);
     }
 }
-
-#endif

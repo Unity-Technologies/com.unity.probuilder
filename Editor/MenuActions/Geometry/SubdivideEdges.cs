@@ -3,9 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -23,14 +21,15 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Subdivide"); } }
+        internal override string iconPath => "Toolbar/Edge_Subdivide";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
             get { return s_Tooltip; }
         }
 
-        protected override bool hasFileMenuEntry
+        protected internal override bool hasFileMenuEntry
         {
             get { return false; }
         }
@@ -57,7 +56,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         Vector2IntField m_RangeField;
         IntegerField m_SubdivCount;
         SliderInt m_Slider;
@@ -199,7 +197,6 @@ namespace UnityEditor.ProBuilder.Actions
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
             }
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

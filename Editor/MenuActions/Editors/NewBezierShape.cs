@@ -8,7 +8,9 @@ namespace UnityEditor.ProBuilder.Actions
         const string k_IconPath = "Toolbar/NewBezierSpline";
 
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon(k_IconPath, IconSkin.Pro); } }
+
+        internal override string iconPath => k_IconPath;
+        public override Texture2D icon => IconUtility.GetIcon(k_IconPath, IconSkin.Pro);
         public override TooltipContent tooltip { get { return _tooltip; } }
         public override string menuTitle { get { return "New Bezier Shape"; } }
         public override int toolbarPriority { get { return 1; } }
@@ -26,7 +28,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override bool enabled
         {
-            get { return Experimental.experimentalFeaturesEnabled && ProBuilderEditor.instance != null; }
+            get { return Experimental.experimentalFeaturesEnabled; }
         }
 
         protected override ActionResult PerformActionImplementation()

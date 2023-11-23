@@ -15,9 +15,6 @@ namespace UnityEditor.ProBuilder
         public const float offPointerMultiplier = 1.2f;
 
         public CullingMode cullMode;
-#if !UNITY_2023_2_OR_NEWER
-        public SelectionModifierBehavior selectionModifierBehavior;
-#endif
         public RectSelectMode rectSelectMode;
     }
 
@@ -72,12 +69,23 @@ namespace UnityEditor.ProBuilder
 
             evt.Use();
 
+            var isProBuilderMesh = s_Selection.gameObject != null && s_Selection.gameObject.GetComponent<ProBuilderMesh>() != null;
+
             if (!appendModifier)
             {
                 if(s_Selection.mesh != null)
                     s_Selection.mesh.ClearSelection();
-                MeshSelection.SetSelection((GameObject)null);
+                if (s_Selection.gameObject == null || !isProBuilderMesh)
+                {
+                    // Don't clear object selection if we are in the PB Context, just clear sub-elements selection
+                    MeshSelection.ClearElementSelection();
+                }
+                else
+                    MeshSelection.SetSelection((GameObject)null);
             }
+
+            if (!isProBuilderMesh)
+                return null;
 
             if (pickedElementDistance > ScenePickerPreferences.maxPointerDistance)
             {
@@ -303,19 +311,10 @@ namespace UnityEditor.ProBuilder
                         {
                             common = mesh.GetSharedVertexHandles(mesh.selectedIndexesInternal);
 
-#if UNITY_2023_2_OR_NEWER
                             if(isSelectionAddModifier)
                                 common.UnionWith(kvp.Value);
                             else if(isSelectionRemoveModifier)
                                 common.RemoveWhere(x => kvp.Value.Contains(x));
-#else
-                            if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Add)
-                                common.UnionWith(kvp.Value);
-                            else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Subtract)
-                                common.RemoveWhere(x => kvp.Value.Contains(x));
-                            else if (scenePickerPreferences.selectionModifierBehavior  == SelectionModifierBehavior.Difference)
-                                common.SymmetricExceptWith(kvp.Value);
-#endif
                         }
                         else
                         {
@@ -346,19 +345,11 @@ namespace UnityEditor.ProBuilder
                         if (isAppendModifier)
                         {
                             current = new HashSet<Face>(kvp.Key.selectedFacesInternal);
-#if UNITY_2023_2_OR_NEWER
+
                             if(isSelectionAddModifier)
                                 current.UnionWith(kvp.Value);
                             else if(isSelectionRemoveModifier)
                                 current.RemoveWhere(x => kvp.Value.Contains(x));
-#else
-                            if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
-                                current.UnionWith(kvp.Value);
-                            else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
-                                current.RemoveWhere(x => kvp.Value.Contains(x));
-                            else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
-                                current.SymmetricExceptWith(kvp.Value);
-#endif
                         }
                         else
                         {
@@ -392,19 +383,11 @@ namespace UnityEditor.ProBuilder
                         if (isAppendModifier)
                         {
                             current = EdgeLookup.GetEdgeLookupHashSet(mesh.selectedEdges, common);
-#if UNITY_2023_2_OR_NEWER
+
                             if(isSelectionAddModifier)
                                 current.UnionWith(selectedEdges);
                             else if(isSelectionRemoveModifier)
                                 current.RemoveWhere(x => selectedEdges.Contains(x));
-#else
-                            if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Add)
-                                current.UnionWith(selectedEdges);
-                            else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Subtract)
-                                current.RemoveWhere(x => selectedEdges.Contains(x));
-                            else if (scenePickerPreferences.selectionModifierBehavior == SelectionModifierBehavior.Difference)
-                                current.SymmetricExceptWith(selectedEdges);
-#endif
                         }
                         else
                         {
@@ -418,10 +401,6 @@ namespace UnityEditor.ProBuilder
                     break;
                 }
             }
-
-            // if nothing was selected in the drag rect, clear the object selection too
-            if (!elementsInDragRect && !isAppendModifier)
-                MeshSelection.ClearElementAndObjectSelection();
 
             ProBuilderEditor.Refresh();
             SceneView.RepaintAll();

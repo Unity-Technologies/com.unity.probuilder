@@ -1,15 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 using Math = UnityEngine.ProBuilder.Math;
-#if UNITY_2020_2_OR_NEWER
-using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
-    internal class ShapeState_InitShape : ShapeState
+    class ShapeState_InitShape : ShapeState
     {
         //NOTE: All class attributes are used for handle display
         EditorShapeUtility.FaceData[] m_Faces;
@@ -33,23 +29,16 @@ namespace UnityEditor.ProBuilder
         public override ShapeState DoState(Event evt)
         {
             tool.handleSelectionChange = true;
-            if(evt.type == EventType.KeyDown)
-            {
-                switch(evt.keyCode)
-                {
-                    case KeyCode.Escape:
-                        ToolManager.RestorePreviousTool();
-                        break;
-                }
-            }
-
             if(tool.m_LastShapeCreated != null)
-                EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, true);
+                EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, tool);
+
+            // Scene View in use or pressing alt to orbit
+            if(EditorHandleUtility.SceneViewInUse(evt))
+                return this;
 
             if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
                 var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
-
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 float hit;
 
@@ -83,7 +72,7 @@ namespace UnityEditor.ProBuilder
                     m_HitPosition = tool.GetPoint(ray.GetPoint(hit));
 
                     //Click has been done => Define a plane for the tool
-                    if(evt.type == EventType.MouseDown)
+                    if(evt.type == EventType.MouseDown && evt.button == 0)
                     {
                         //BB init
                         tool.m_BB_Origin = m_HitPosition;

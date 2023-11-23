@@ -13,15 +13,8 @@ using UnityEditor.SettingsManagement;
 using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
-#if !UNITY_2019_1_OR_NEWER
-using System.Reflection;
-#endif
 
-#if UNITY_2021_2_OR_NEWER
 using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
-#else
-using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageUtility;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -239,14 +232,12 @@ namespace UnityEditor.ProBuilder
         /// <param name="gameObject"></param>
         internal static void MoveToActiveRoot(GameObject gameObject)
         {
-#if UNITY_2020_2_OR_NEWER
             var parent = SceneView.GetDefaultParentObjectIfSet();
             if (parent != null)
             {
                 gameObject.transform.SetParent(parent);
                 return;
             }
-#endif
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
             var activeScene = SceneManager.GetActiveScene();
 
@@ -279,9 +270,7 @@ namespace UnityEditor.ProBuilder
             ScreenCenter(pb.gameObject);
             SnapInstantiatedObject(pb);
 
-#if UNITY_2019_1_OR_NEWER
             ComponentUtility.MoveComponentRelativeToComponent(pb, pb.transform, false);
-#endif
             pb.renderer.shadowCastingMode = s_ShadowCastingMode;
             pb.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
 
@@ -356,48 +345,6 @@ namespace UnityEditor.ProBuilder
         {
             return SceneView.lastActiveSceneView == null ? EditorWindow.GetWindow<SceneView>() : SceneView.lastActiveSceneView;
         }
-
-#if !UNITY_2019_1_OR_NEWER
-        const BindingFlags k_BindingFlagsAll = BindingFlags.NonPublic
-            | BindingFlags.Public
-            | BindingFlags.Instance
-            | BindingFlags.Static;
-
-        static SceneView.OnSceneFunc onPreSceneGuiDelegate
-        {
-            get
-            {
-                var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
-                return fi != null ? fi.GetValue(null) as SceneView.OnSceneFunc : null;
-            }
-
-            set
-            {
-                var fi = typeof(SceneView).GetField("onPreSceneGUIDelegate", k_BindingFlagsAll);
-
-                if (fi != null)
-                    fi.SetValue(null, value);
-            }
-        }
-
-        internal static void RegisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
-        {
-            var del = onPreSceneGuiDelegate;
-
-            if (del == null)
-                onPreSceneGuiDelegate = func;
-            else
-                del += func;
-        }
-
-        internal static void UnregisterOnPreSceneGUIDelegate(SceneView.OnSceneFunc func)
-        {
-            var del = onPreSceneGuiDelegate;
-
-            if (del != null)
-                del -= func;
-        }
-#endif
 
         internal static bool IsUnix()
         {
@@ -481,62 +428,7 @@ namespace UnityEditor.ProBuilder
         /// <returns></returns>
         internal static bool ContainsFlag(this SelectMode target, SelectMode value)
         {
-            return (target & value) != SelectMode.None;
-        }
-        internal static SelectMode GetSelectMode(EditLevel edit, ComponentMode component)
-        {
-            switch (edit)
-            {
-                case EditLevel.Top:
-                    return SelectMode.Object;
-
-                case EditLevel.Geometry:
-                {
-                    switch (component)
-                    {
-                        case ComponentMode.Vertex:
-                            return SelectMode.Vertex;
-                        case ComponentMode.Edge:
-                            return SelectMode.Edge;
-                        default:
-                            return SelectMode.Face;
-                    }
-                }
-
-                case EditLevel.Texture:
-                    return SelectMode.TextureFace;
-
-                default:
-                    return SelectMode.None;
-            }
-        }
-
-        internal static EditLevel GetEditLevel(SelectMode mode)
-        {
-            switch (mode)
-            {
-                case SelectMode.Object:
-                    return EditLevel.Top;
-                case SelectMode.TextureFace:
-                    return EditLevel.Texture;
-                case SelectMode.None:
-                    return EditLevel.Plugin;
-                default:
-                    return EditLevel.Geometry;
-            }
-        }
-
-        internal static ComponentMode GetComponentMode(SelectMode mode)
-        {
-            switch (mode)
-            {
-                case SelectMode.Vertex:
-                    return ComponentMode.Vertex;
-                case SelectMode.Edge:
-                    return ComponentMode.Edge;
-                default:
-                    return ComponentMode.Face;
-            }
+            return (target & value) != 0;
         }
 
         internal static bool IsDeveloperMode()
@@ -551,29 +443,14 @@ namespace UnityEditor.ProBuilder
         /// <param name="enabled">True to render the gizmo (for example, while selected); false to not render it.</param>
         public static void SetGizmoIconEnabled(Type script, bool enabled)
         {
-#if UNITY_2019_1_OR_NEWER
             var annotations = AnnotationUtility.GetAnnotations();
             var annotation = annotations.FirstOrDefault(x => x.scriptClass.Contains(script.Name));
             AnnotationUtility.SetIconEnabled(annotation.classID, annotation.scriptClass, enabled ? 1 : 0);
-#else
-            Type annotationUtility = typeof(Editor).Assembly.GetType("UnityEditor.AnnotationUtility");
-            MethodInfo setGizmoIconEnabled = annotationUtility.GetMethod("SetIconEnabled",
-                BindingFlags.Static | BindingFlags.NonPublic,
-                null,
-                new Type[] { typeof(int), typeof(string), typeof(int) },
-                null);
-            var name = script.Name;
-            setGizmoIconEnabled.Invoke(null, new object[] { 114, name, enabled ? 1 : 0});
-#endif
         }
 
         internal static T[] FindObjectsByType<T>() where T : UObject
         {
-#if UNITY_2023_1_OR_NEWER
             return UObject.FindObjectsByType<T>(FindObjectsSortMode.None);
-#else
-            return UObject.FindObjectsOfType<T>();
-#endif
         }
 
         internal static string GetActiveSceneAssetsPath()

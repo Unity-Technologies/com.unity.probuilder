@@ -3,11 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-
-#if UNITY_2023_2_OR_NEWER
 using UnityEditor.Actions;
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -37,8 +34,8 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ToolbarGroup.Object; }
         }
-
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Object_ProBuilderize"); } }
+        internal override string iconPath => "Toolbar/Object_ProBuilderize";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
         {
@@ -69,14 +66,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
-
-        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true)]
-        static bool ValidateProBuilderizeMeshAction()
-        {
-            return EditorToolbarLoader.GetInstance<ProBuilderize>().enabled;
-        }
-
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
@@ -94,7 +83,7 @@ namespace UnityEditor.ProBuilder.Actions
                 //Once again, delayCall is necessary to prevent multiple call in case of multi-selection
                 EditorApplication.delayCall += () =>
                 {
-                    EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<ProBuilderize>()));
+                    EditorAction.Start(new MenuActionSettings(new ProBuilderize()));
                     s_ActionAlreadyTriggered = false;
                 };
             }
@@ -153,7 +142,6 @@ namespace UnityEditor.ProBuilder.Actions
 
             return root;
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

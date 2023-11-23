@@ -1,50 +1,56 @@
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-#if UNITY_2020_2_OR_NEWER
+using UnityEngine.ProBuilder.Shapes;
+using UObject = UnityEngine.Object;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 public class EditorToolTests
 {
-    [SetUp]
+    ProBuilderMesh m_PBMesh;
+
+    [OneTimeSetUp]
     public void SetUp()
     {
-        var windows = Resources.FindObjectsOfTypeAll<ProBuilderEditor>();
-        for (int i = windows.Length - 1; i > -1; i--)
-            windows[i].Close();
+        m_PBMesh = ShapeFactory.Instantiate(typeof(Cube));
+        MeshSelection.SetSelection(m_PBMesh.gameObject);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+
+        ToolManager.SetActiveContext<PositionToolContext>();
+    }
+
+    [OneTimeTearDown]
+    public void TearDown()
+    {
+        ToolManager.SetActiveContext<GameObjectToolContext>();
+
+        if (m_PBMesh != null)
+            UObject.DestroyImmediate(m_PBMesh.gameObject);
     }
 
     [Test]
     public void SetToolKeepsContext()
     {
-        var editor = EditorWindow.GetWindow<ProBuilderEditor>();
-        Assume.That(editor, Is.Not.Null);
         ProBuilderEditor.selectMode = SelectMode.Face;
         Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Face));
         Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
         Tools.current = Tool.Rotate;
-        ProBuilderEditor.SyncEditorToolSelectMode();
         Assert.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderRotateTool)));
     }
 
     [Test]
     public void SetSelectModeSetsTool()
     {
-        var editor = EditorWindow.GetWindow<ProBuilderEditor>();
-        Assume.That(editor, Is.Not.Null);
-        ProBuilderEditor.selectMode = SelectMode.Object;
-        Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.Object));
+        Assume.That(ProBuilderEditor.instance, Is.Not.Null);
+        ProBuilderEditor.selectMode = SelectMode.None;
+        Assume.That(ProBuilderEditor.selectMode, Is.EqualTo(SelectMode.None));
+        ToolManager.SetActiveContext<PositionToolContext>();
         Tools.current = Tool.Move;
 
         ProBuilderEditor.selectMode = SelectMode.Face;
-        // this is here to avoid race conditions when testing
-        ProBuilderEditor.SyncEditorToolSelectMode();
-
         Assert.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
     }
 }

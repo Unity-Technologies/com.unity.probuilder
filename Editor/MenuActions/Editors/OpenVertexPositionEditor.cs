@@ -9,7 +9,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenVertexPositionEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        public override Texture2D icon { get { return null; } }
+        internal override string iconPath => string.Empty;
+        public override Texture2D icon => null;
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Vertex Editor"; } }
 
@@ -19,15 +20,8 @@ namespace UnityEditor.ProBuilder.Actions
                 "Opens the vertex positions editor window."
             );
 
-        public override bool enabled
-        {
-            get { return ProBuilderEditor.instance != null; }
-        }
-
-        public override bool hidden
-        {
-            get { return true; }
-        }
+        public override bool enabled => true;
+        public override bool hidden => true;
 
         protected override ActionResult PerformActionImplementation()
         {

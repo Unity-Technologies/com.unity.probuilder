@@ -128,11 +128,7 @@ namespace UnityEditor.ProBuilder
 
                     m_Mesh.SetVertices(m_Points);
 
-#if UNITY_2019_3_OR_NEWER
                     m_Mesh.SetIndices(m_Indices, MeshTopology.Points, 0, false);
-#else
-                    m_Mesh.SetIndices(m_Indices.ToArray(), MeshTopology.Points, 0, false);
-#endif
                 }
                 else
                 {
@@ -234,27 +230,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (m_Wire || !lineMaterial.SetPass(0))
-                {
-#if UNITY_2019_1_OR_NEWER
                     HandleUtility.ApplyWireMaterial(zTest);
-#else
-                    if (s_ApplyWireMaterial == null)
-                    {
-                        s_ApplyWireMaterial = typeof(HandleUtility).GetMethod(
-                                "ApplyWireMaterial",
-                                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic,
-                                null,
-                                new System.Type[] { typeof(CompareFunction) },
-                                null);
-
-                        if (s_ApplyWireMaterial == null)
-                            throw new Exception("Failed to find wire material, stopping draw lines.");
-                    }
-
-                    s_ApplyWireMaterialArgs[0] = zTest;
-                    s_ApplyWireMaterial.Invoke(null, s_ApplyWireMaterialArgs);
-#endif
-                }
             }
 
             void End()
@@ -266,11 +242,7 @@ namespace UnityEditor.ProBuilder
                 else
                     m_LineMesh.SetTangents(m_Tangents);
                 m_LineMesh.subMeshCount = 1;
-#if UNITY_2019_3_OR_NEWER
                 m_LineMesh.SetIndices(m_Indices, m_LineTopology ? MeshTopology.Lines : MeshTopology.Quads, 0);
-#else
-                m_LineMesh.SetIndices(m_Indices.ToArray(), m_LineTopology ? MeshTopology.Lines : MeshTopology.Quads, 0);
-#endif
 
                 Graphics.DrawMeshNow(m_LineMesh, m_Matrix);
 

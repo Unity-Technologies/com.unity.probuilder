@@ -6,11 +6,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.SettingsManagement;
 using UnityEditor.ShortcutManagement;
-#if UNITY_2020_2_OR_NEWER
 using ToolManager = UnityEditor.EditorTools.ToolManager;
-#else
-using ToolManager = UnityEditor.EditorTools.EditorTools;
-#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -272,7 +268,7 @@ namespace UnityEditor.ProBuilder
             if (uv2Editor != null)
                 DestroyImmediate(uv2Editor);
 
-            var selectMode = ProBuilderToolManager.selectMode;
+            var selectMode = ProBuilderEditor.selectMode;
             if (selectMode.IsTextureMode())
                 ProBuilderEditor.selectMode = selectMode.GetPositionMode();
 
@@ -863,7 +859,7 @@ namespace UnityEditor.ProBuilder
                         else
                         {
                             if ((ProBuilderEditor.selectMode == SelectMode.Face || ProBuilderEditor.selectMode == SelectMode.TextureFace) &&
-                                editor && IsCopyUVSettingsModifiers(e.modifiers))
+                                editor != null && IsCopyUVSettingsModifiers(e.modifiers))
                             {
                                 Face targetFace;
                                 for (int i = 0; i < selection.Length; i++)
@@ -879,7 +875,7 @@ namespace UnityEditor.ProBuilder
 
                             UndoUtility.RecordSelection(selection, "Change Selection");
 
-                            if (Event.current.modifiers == (EventModifiers)0 && editor)
+                            if (Event.current.modifiers == (EventModifiers)0 && editor != null)
                                 editor.ClearElementSelection();
 
                             OnMouseClick(e.mousePosition);
@@ -1112,7 +1108,7 @@ namespace UnityEditor.ProBuilder
                     break;
             }
 
-            if (editor)
+            if (editor != null)
             {
                 ProBuilderEditor.Refresh();
                 SceneView.RepaintAll();
@@ -1127,7 +1123,7 @@ namespace UnityEditor.ProBuilder
         {
             Event e = Event.current;
 
-            if (editor && !e.shift && !e.control && !e.command)
+            if (editor != null && !e.shift && !e.control && !e.command)
             {
                 UndoUtility.RecordSelection(selection, "Change Selection");
                 editor.ClearElementSelection();
@@ -2028,7 +2024,7 @@ namespace UnityEditor.ProBuilder
         {
             needsRepaint = true;
 
-            if (selection == null || selection.Length < 1 || (editor && MeshSelection.selectedVertexCount < 1))
+            if (selection == null || selection.Length < 1 || (editor != null && MeshSelection.selectedVertexCount < 1))
             {
                 SetCanvasCenter(Event.current.mousePosition - UVGraphCenter - uvGraphOffset);
                 return;
@@ -2449,7 +2445,7 @@ namespace UnityEditor.ProBuilder
             // begin Editor pref toggles (Show Texture, Lock UV sceneview handle, etc)
             Rect editor_toggles_rect = new Rect(toolbarRect_select.x + 140, PAD - 1, 36f, 22f);
 
-            if (editor)
+            if (editor != null)
             {
                 gc_SceneViewUVHandles.image = ProBuilderEditor.selectMode.IsTextureMode() ? icon_sceneUV_on : icon_sceneUV_off;
 
@@ -3271,11 +3267,7 @@ namespace UnityEditor.ProBuilder
         Color screenshot_backgroundColor = Color.black;
         string screenShotPath = "";
 
-        #if UNITY_2021_3_OR_NEWER
         readonly Color32 UV_FILL_COLOR = new Color32(49, 49, 49, 255);
-        #else
-        readonly Color UV_FILL_COLOR = (Color) new Color32(49, 49, 49, 255);
-        #endif
 
         // This is the default background of the UV editor - used to compare bacground pixels when rendering UV template
         void InitiateScreenshot(int ImageSize, bool HideGrid, Color LineColor, bool TransparentBackground, Color BackgroundColor, bool RenderTexture)
@@ -3328,22 +3320,13 @@ namespace UnityEditor.ProBuilder
                     screenshotStatus = ScreenshotStatus.PrepareCanvas;
 
                     m_HorizontalOffset = 0;
-
-#if UNITY_2019_3_OR_NEWER
                     m_VerticalOffset = 0;
-#else
-                    m_VerticalOffset = 1;
-#endif
 
                     m_Docked = (bool) ReflectionUtility.GetValue(this, this.GetType(), "docked");
                     // set the current rect pixel bounds to the largest possible size.  if some parts are out of focus, they'll be grabbed in subsequent passes
                     if(m_Docked)
                     {
-#if UNITY_2019_3_OR_NEWER
                         m_HorizontalOffset = 1;
-#else
-                        m_HorizontalOffset = 2;
-#endif
                         m_VerticalOffset = 2;
                     }
 

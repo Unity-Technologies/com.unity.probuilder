@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-#if UNITY_2023_2_OR_NEWER
 using UnityEngine.UIElements;
-#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -12,9 +10,10 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_ExtrudeEdgeDistance = new Pref<float>("ExtrudeEdges.distance", .5f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        public override Texture2D icon { get { return IconUtility.GetIcon("Toolbar/Edge_Extrude"); } }
+        internal override string iconPath => "Toolbar/Edge_Extrude";
+        public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
-        protected override bool hasFileMenuEntry { get { return false; } }
+        protected internal override bool hasFileMenuEntry { get { return false; } }
 
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
@@ -39,7 +38,6 @@ namespace UnityEditor.ProBuilder.Actions
             get { return MenuActionState.VisibleAndEnabled; }
         }
 
-#if UNITY_2023_2_OR_NEWER
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
@@ -69,7 +67,6 @@ namespace UnityEditor.ProBuilder.Actions
         {
             m_ExtrudeEdgeDistance.SetValue(evt.newValue);
         }
-#endif
 
         protected override void OnSettingsGUI()
         {

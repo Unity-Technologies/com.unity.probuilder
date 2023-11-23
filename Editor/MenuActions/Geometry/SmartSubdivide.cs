@@ -14,10 +14,9 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        public override Texture2D icon
-        {
-            get { return null; }
-        }
+
+        internal override string iconPath => string.Empty;
+        public override Texture2D icon => null;
 
         public override TooltipContent tooltip
         {
@@ -56,6 +55,19 @@ namespace UnityEditor.ProBuilder.Actions
                 default:
                     return EditorToolbarLoader.GetInstance<SubdivideFaces>().PerformAction();
             }
+        }
+
+        internal override string GetMenuItemOverride()
+        {
+            return @"                switch (ProBuilderEditor.selectMode)
+                {
+                    case SelectMode.Edge:
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideEdges>(), true));
+                        break;
+                    default:
+                        EditorAction.Start(new MenuActionSettings(EditorToolbarLoader.GetInstance<SubdivideFaces>(), true));
+                        break;
+                }";
         }
     }
 }

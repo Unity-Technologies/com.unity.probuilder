@@ -1,7 +1,10 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
 {
+    [EditorTool("ProBuilder Scale Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
     class ProbuilderScaleTool : PositionTool
     {
         Vector3 m_Scale;

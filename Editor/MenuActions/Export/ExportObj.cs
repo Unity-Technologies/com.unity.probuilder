@@ -11,7 +11,8 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class ExportObj : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
-        public override Texture2D icon { get { return null; } }
+        internal override string iconPath => string.Empty;
+        public override Texture2D icon => null;
         public override TooltipContent tooltip { get { return _tooltip; } }
 
         static readonly TooltipContent _tooltip = new TooltipContent
