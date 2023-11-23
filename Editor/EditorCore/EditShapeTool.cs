@@ -364,43 +364,6 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
-        public static float CalcLineTranslation(Vector2 src, Vector2 dest, Vector3 srcPosition, Vector3 constraintDir)
-        {
-            // The constrained direction is facing towards the camera, THATS BAD when the handle is close to the camera
-            // The srcPosition  goes through to the other side of the camera
-            float invert = 1.0F;
-            Vector3 cameraForward = Camera.current == null ? Vector3.forward : Camera.current.transform.forward;
-            if (Vector3.Dot(constraintDir, cameraForward) < 0.0F)
-                invert = -1.0F;
-
-            // Ok - Get the parametrization of the line
-            // p1 = src position, p2 = p1 + ConstraintDir.
-            // we then parametrise the perpendicular position of dest into the line (p1-p2)
-            Vector3 cd = constraintDir;
-            cd.y = -cd.y;
-            Camera cam = Camera.current;
-            // if camera is null, then we are drawing in OnGUI, where y-coordinate goes top-to-bottom
-            Vector2 p1 = cam == null
-                ? Vector2.Scale(srcPosition, new Vector2(1f, -1f))
-                : EditorGUIUtility.PixelsToPoints(cam.WorldToScreenPoint(srcPosition));
-            Vector2 p2 = cam == null
-                ? Vector2.Scale(srcPosition + constraintDir * invert, new Vector2(1f, -1f))
-                : EditorGUIUtility.PixelsToPoints(cam.WorldToScreenPoint(srcPosition + constraintDir * invert));
-            Vector2 p3 = dest;
-            Vector2 p4 = src;
-
-            if (p1 == p2)
-                return 0;
-
-            p3.y = -p3.y;
-            p4.y = -p4.y;
-            float t0 = -(Vector2.Dot(p1 - p4, p2 - p1) / (p2 - p1).sqrMagnitude);
-            float t1 = -(Vector2.Dot(p1 - p3, p2 - p1) / (p2 - p1).sqrMagnitude);
-
-            float output = (t1 - t0) * invert;
-            return output;
-        }
-
         static void DoOrientationHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool)
         {
             if( GUIUtility.hotControl != 0 && !k_OrientationControlIDs.Contains(GUIUtility.hotControl) )
