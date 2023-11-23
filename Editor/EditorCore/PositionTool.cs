@@ -18,8 +18,8 @@ namespace UnityEditor.ProBuilder
                 yield return "Tool Settings/Pivot Mode";
                 yield return "ProBuilder Settings/Handle Orientation";
                 yield return "ProBuilder Settings/Select Mode";
-                yield return "ProBuilder Settings/Drag Rect Mode";
                 yield return "ProBuilder Settings/Select Back Faces";
+                yield return "ProBuilder Settings/Drag Rect Mode";
             }
         }
     }
