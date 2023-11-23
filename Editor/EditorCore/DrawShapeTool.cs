@@ -841,7 +841,7 @@ namespace UnityEditor.ProBuilder
 
         void OnOverlayGUI(UObject overlayTarget, SceneView view)
         {
-            string foldoutName = "Shape Properties (New Shape)";
+            string foldoutName = $"Shape Properties (New {currentShapeInOverlay.shape.GetType().Name})";
             if(currentShapeInOverlay == m_LastShapeCreated)
                 foldoutName = "Shape Properties (" + m_LastShapeCreated.name + ")";
 
