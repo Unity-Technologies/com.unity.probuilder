@@ -8,7 +8,7 @@ namespace UnityEngine.ProBuilder.Debug
         void OnTriggerEnter(Collider collider)
         {
             transform.position = m_Destination.position;
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         }
     }
 }
