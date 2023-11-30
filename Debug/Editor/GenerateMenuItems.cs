@@ -187,10 +187,7 @@ namespace UnityEditor.ProBuilder
             sb.AppendLine();
 
             // Action
-            if(string.IsNullOrEmpty(data.iconPath))
-                sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
-            else
-                sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority}, \"\",\"Packages/com.unity.probuilder/Content/Icons/{data.iconPath}.png\")]");
+            sb.AppendLine($"\t\t[MenuItem(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", false, {priority})]");
             sb.AppendLine($"\t\tstatic void MenuPerform_{data.typeString}()");
             sb.AppendLine("\t\t{");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
