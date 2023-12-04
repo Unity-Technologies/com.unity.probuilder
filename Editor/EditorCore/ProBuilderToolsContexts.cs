@@ -63,29 +63,6 @@ namespace UnityEditor.ProBuilder
 
         public override void PopulateMenu(DropdownMenu menu)
         {
-            menu.SetDescriptor(new DropdownMenuDescriptor()
-                {
-                    title = BuildMenuTitle()
-                }
-            );
-
-            //Headers area is for ProBuilder modes
-            menu.AppendHeaderAction(UI.EditorGUIUtility.Styles.VertexIcon,
-                x => { ProBuilderEditor.selectMode = SelectMode.Vertex; },
-                x => ProBuilderEditor.selectMode == SelectMode.Vertex
-                    ? DropdownMenuAction.Status.Checked
-                    : DropdownMenuAction.Status.Normal);
-            menu.AppendHeaderAction(UI.EditorGUIUtility.Styles.EdgeIcon,
-                x => { ProBuilderEditor.selectMode = SelectMode.Edge; },
-                x => ProBuilderEditor.selectMode == SelectMode.Edge
-                    ? DropdownMenuAction.Status.Checked
-                    : DropdownMenuAction.Status.Normal);
-            menu.AppendHeaderAction(UI.EditorGUIUtility.Styles.FaceIcon,
-                x => { ProBuilderEditor.selectMode = SelectMode.Face; },
-                x => ProBuilderEditor.selectMode == SelectMode.Face
-                    ? DropdownMenuAction.Status.Checked
-                    : DropdownMenuAction.Status.Normal);
-
             var actions = EditorToolbarLoader.GetActions();
             var group = ToolbarGroup.Tool;
 
@@ -173,7 +150,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11, "Conform object normals","Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_ConformNormals.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", false, 11)]
         static void ConformObjectNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -194,7 +171,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12, "Export ProBuilder mesh to another format", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Export.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Export", false, 12)]
         public static void ExportAction(MenuCommand command)
         {
             EditorToolbarLoader.GetInstance<Export>().PerformAltAction();
@@ -206,7 +183,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13,  "Triangulate ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Triangulate.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Triangulate", false, 13)]
         public static void TriangulateObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -227,7 +204,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14, "Center object pivot", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_CenterOnObject.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Center Pivot", false, 14)]
         static void CenterPivotAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -248,7 +225,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16, "Invert object normals", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_FlipNormals.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Flip Normals", false, 16)]
         static void FlipNormalsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -269,7 +246,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15, "Subdivide ProBuilder mesh", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Subdivide.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Subdivide Object", false, 15)]
         public static void SubdivideObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -290,7 +267,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17, "Mirror object faces", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Mirror.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Mirror Objects", false, 17)]
         static void MirrorObjectAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -311,7 +288,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 1 && MeshSelection.activeMesh != null;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18, "Merge ProBuilder meshes", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Object_Merge.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Merge Objects", false, 18)]
         static void MergeObjectsAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
@@ -332,7 +309,7 @@ namespace UnityEditor.ProBuilder
             return MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19, "Set pivot point to (0,0,0)", "Packages/com.unity.probuilder/Content/Icons/Toolbar/Pivot_FreezeTransform.png")]
+        [MenuItem("CONTEXT/ProBuilderMesh/Freeze Transform", false, 19)]
         static void FreezeTransformAction(MenuCommand command)
         {
             if (!s_ActionAlreadyTriggered)
