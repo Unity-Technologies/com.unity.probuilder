@@ -156,7 +156,9 @@ namespace UnityEngine.ProBuilder.Shapes
                 size = newSize;
                 m_Size.y = 0;
             }
-            Rebuild();
+            UpdateShape();
+
+            m_UnmodifiedMeshVersion = mesh.versionIndex;
         }
 
         /// <summary>
