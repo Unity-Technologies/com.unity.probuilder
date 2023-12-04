@@ -22,10 +22,11 @@ namespace UnityEditor.ProBuilder
             displayName = action.menuTitle;
             m_CurrentAction = action;
 
-            if(hasPreview)
+            if (hasPreview)
+            {
                 UndoUtility.StartPreview();
-
-            m_CurrentAction.PerformAction();
+                m_CurrentAction.PerformAction();
+            }
 
             SceneView.AddOverlayToActiveView(this);
             displayed = true;
@@ -87,14 +88,18 @@ namespace UnityEditor.ProBuilder
 
         internal void Validate()
         {
-            UndoUtility.ExitAndValidatePreview();
             Clear();
+            if(m_HasPreview)
+                UndoUtility.ExitAndValidatePreview();
+            else
+                m_CurrentAction.PerformAction();
         }
 
         void Cancel()
         {
-            UndoUtility.UndoPreview();
             Clear();
+            if(m_HasPreview)
+                UndoUtility.UndoPreview();
         }
 
         void SelectModeChanged(SelectMode _) => Validate();
