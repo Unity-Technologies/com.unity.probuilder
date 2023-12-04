@@ -61,29 +61,6 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleXRay)
         };
 
-        static string BuildMenuTitle()
-        {
-            var title = "ProBuilder";
-            switch (ProBuilderEditor.selectMode)
-            {
-                case SelectMode.Vertex:
-                    title = MeshSelection.selectedSharedVertexCount.ToString();
-                    title += MeshSelection.selectedSharedVertexCount == 1 ? " Vertex" : " Vertices";
-                    break;
-                case SelectMode.Edge:
-                    title = MeshSelection.selectedEdgeCount.ToString();
-                    title += MeshSelection.selectedEdgeCount == 1 ? " Edge" : " Edges";
-                    break;
-                case SelectMode.Face:
-                    title = MeshSelection.selectedFaceCount.ToString();
-                    title += MeshSelection.selectedFaceCount == 1 ? " Face" : " Faces";
-                    break;
-            }
-
-            return title;
-        }
-
-
         public override void PopulateMenu(DropdownMenu menu)
         {
             menu.SetDescriptor(new DropdownMenuDescriptor()
@@ -129,21 +106,21 @@ namespace UnityEditor.ProBuilder
 
                 var title = action.menuTitle;
 
-                if (action.hasFileMenuEntry)
+                if (GetStatus(action) == DropdownMenuAction.Status.Normal || GetStatus(action) == DropdownMenuAction.Status.Disabled)
                 {
-                    string path = EditorToolbarMenuItem.k_MenuPrefix+action.group+"/"+title;
-                    if (GetStatus(action) == DropdownMenuAction.Status.Normal || GetStatus(action) == DropdownMenuAction.Status.Disabled)
+                    if (action.hasFileMenuEntry)
                     {
+                        string path = EditorToolbarMenuItem.k_MenuPrefix + action.group + "/" + title;
                         ContextMenuUtility.AddMenuItem(menu, path, GetMenuTitle(action, title));
                     }
-                }else
-                if (action.optionsEnabled)
-                {
-                    title = GetMenuTitle(action, title);
-                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))), GetStatus(action), action.icon);
+                    else if (action.optionsEnabled)
+                    {
+                        title = GetMenuTitle(action, title);
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))));
+                    }
+                    else
+                        menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction());
                 }
-                else
-                    menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction(), GetStatus(action), action.icon);
             }
 
             var trs = Selection.transforms;
