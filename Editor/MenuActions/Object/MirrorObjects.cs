@@ -140,6 +140,7 @@ namespace UnityEditor.ProBuilder.Actions
                 res.Add(Mirror(pb, scale, duplicate).gameObject);
 
             MeshSelection.SetSelection(res);
+            MenuActionSettingsOverlay.selectionChangedByAction = true;
 
             ProBuilderEditor.Refresh();
 

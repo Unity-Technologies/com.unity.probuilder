@@ -15,12 +15,20 @@ namespace UnityEditor.ProBuilder
         bool m_HasPreview = false;
         MenuAction m_CurrentAction;
 
+        static bool s_SelectionChangedByAction = false;
+        internal static bool selectionChangedByAction
+        {
+            set => s_SelectionChangedByAction = value;
+        }
+
         public MenuActionSettingsOverlay(MenuAction action, bool hasPreview)
         {
             m_CurrentAction = action;
             m_HasPreview = hasPreview;
             displayName = action.menuTitle;
             m_CurrentAction = action;
+
+            s_SelectionChangedByAction = false;
 
             if (hasPreview)
             {
@@ -32,7 +40,7 @@ namespace UnityEditor.ProBuilder
             displayed = true;
 
             // Changing selection/tool/context should apply the preview and exit the current action
-            Selection.selectionChanged += Validate;
+            Selection.selectionChanged += ObjectSelectionChanged;
             ToolManager.activeContextChanged += Validate;
             ToolManager.activeToolChanged += Validate;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
@@ -41,11 +49,13 @@ namespace UnityEditor.ProBuilder
 
         void Clear()
         {
+            s_SelectionChangedByAction = false;
+
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
-            Selection.selectionChanged -= Validate;
+            Selection.selectionChanged -= ObjectSelectionChanged;
             SceneView.RemoveOverlayFromActiveView(this);
             MenuActionSettings.s_ActionSettingsOverlay = null;
         }
@@ -102,6 +112,14 @@ namespace UnityEditor.ProBuilder
                 UndoUtility.UndoPreview();
         }
 
+        void ObjectSelectionChanged()
+        {
+            if (!s_SelectionChangedByAction)
+                Validate();
+
+            s_SelectionChangedByAction = false;
+        }
+
         void SelectModeChanged(SelectMode _) => Validate();
 
         void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _) => Validate();
@@ -110,9 +128,11 @@ namespace UnityEditor.ProBuilder
         {
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
+            Selection.selectionChanged -= ObjectSelectionChanged;
             UndoUtility.StartPreview();
             m_CurrentAction.PerformAction();
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+            Selection.selectionChanged += ObjectSelectionChanged;
         }
     }
 
