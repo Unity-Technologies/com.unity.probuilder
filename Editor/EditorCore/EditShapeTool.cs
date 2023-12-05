@@ -200,12 +200,10 @@ namespace UnityEditor.ProBuilder
         /// these handles allow to modified the last created shape.
         /// </summary>
         /// <param name="proBuilderShape">The Shape on which to attach the handles</param>
-        /// <param name="updatePrefs">Parameter used to update the DrawShapeTool when needed</param>
         internal static void DoEditingHandles(ProBuilderShape proBuilderShape, DrawShapeTool tool = null)
         {
             if(proBuilderShape == null)
                 return;
-
 
             var matrix = Matrix4x4.TRS(proBuilderShape.shapeWorldCenter, proBuilderShape.transform.rotation, Vector3.one);
 
