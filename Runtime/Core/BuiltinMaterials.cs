@@ -80,7 +80,7 @@ namespace UnityEngine.ProBuilder
 
         static void Init()
         {
-            if (s_IsInitialized && VerifyAllMaterials())
+            if (s_IsInitialized)
                 return;
 
             s_IsInitialized = true;
@@ -93,19 +93,19 @@ namespace UnityEngine.ProBuilder
             // SelectionPicker shader
             s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
 
-            if (s_FacePickerMaterial == null && (s_FacePickerMaterial = Resources.Load<Material>(k_FacePickerMaterial)) == null)
+            if ((s_FacePickerMaterial = Resources.Load<Material>(k_FacePickerMaterial)) == null)
             {
                 Log.Error("FacePicker material not loaded... please re-install ProBuilder to fix this error.");
                 s_FacePickerMaterial = new Material(Shader.Find(k_FacePickerShader));
             }
 
-            if (s_VertexPickerMaterial == null && (s_VertexPickerMaterial = Resources.Load<Material>(k_VertexPickerMaterial)) == null)
+            if ((s_VertexPickerMaterial = Resources.Load<Material>(k_VertexPickerMaterial)) == null)
             {
                 Log.Error("VertexPicker material not loaded... please re-install ProBuilder to fix this error.");
                 s_VertexPickerMaterial = new Material(Shader.Find(k_VertexPickerShader));
             }
 
-            if (s_EdgePickerMaterial == null && (s_EdgePickerMaterial = Resources.Load<Material>(k_EdgePickerMaterial)) == null)
+            if ((s_EdgePickerMaterial = Resources.Load<Material>(k_EdgePickerMaterial)) == null)
             {
                 Log.Error("EdgePicker material not loaded... please re-install ProBuilder to fix this error.");
                 s_EdgePickerMaterial = new Material(Shader.Find(k_EdgePickerShader));
@@ -121,12 +121,6 @@ namespace UnityEngine.ProBuilder
 
             if (s_ShapePreviewMaterial.HasProperty("_Color"))
                 s_ShapePreviewMaterial.SetColor("_Color", previewColor);
-        }
-
-        static bool VerifyAllMaterials()
-        {
-            return s_DefaultMaterial != null && s_UnlitVertexColorMaterial != null && s_ShapePreviewMaterial != null
-                && s_FacePickerMaterial != null && s_EdgePickerMaterial != null && s_VertexPickerMaterial != null;
         }
 
         /// <summary>
