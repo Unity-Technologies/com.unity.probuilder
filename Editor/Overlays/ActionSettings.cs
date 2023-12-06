@@ -92,7 +92,6 @@ namespace UnityEditor.ProBuilder
             }
 
             root.Add(lastLine);
-
             return root;
         }
 
@@ -140,13 +139,27 @@ namespace UnityEditor.ProBuilder
     {
         internal static MenuActionSettingsOverlay s_ActionSettingsOverlay;
 
+        static bool s_CanTriggerNewAction = true;
+
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
         {
+            if (!s_CanTriggerNewAction)
+            {
+                Finish(EditorActionResult.Canceled);
+                return;
+            }
+
+            s_CanTriggerNewAction = false;
             if (s_ActionSettingsOverlay != null)
                 s_ActionSettingsOverlay.Validate();
 
             // Creating the overlay based on the action to fill the settings
             s_ActionSettingsOverlay = new MenuActionSettingsOverlay(action, hasPreview);
+
+            // Ensure we are not calling the action again in the same frame
+            // Needed because Menu Items are called once per selected object while PB actions are acting on the entire selection at once
+            EditorApplication.delayCall += () => { s_CanTriggerNewAction = true; };
+
             Finish(EditorActionResult.Success);
         }
     }
