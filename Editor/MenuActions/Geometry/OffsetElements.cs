@@ -22,7 +22,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
 
-        internal override string iconPath => "Toolbar/OffsetElements";
+        public override string iconPath => "Toolbar/OffsetElements";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip => new TooltipContent ( "Offset Elements", "Move the selected elements by a set amount." );

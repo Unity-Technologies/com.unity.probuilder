@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        internal override string iconPath => "Toolbar/DragSelect_Off";
+        public override string iconPath => "Toolbar/DragSelect_Off";
         public override Texture2D icon => m_Icons[mode == RectSelectMode.Partial ? 0 : 1];
 
         internal Texture2D[] icons => m_Icons;

@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<DuplicateFaceSetting> m_DuplicateFaceSetting = new Pref<DuplicateFaceSetting>("DuplicateFaces.target", DuplicateFaceSetting.GameObject);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        internal override string iconPath => "Toolbar/Face_Duplicate";
+        public override string iconPath => "Toolbar/Face_Duplicate";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 

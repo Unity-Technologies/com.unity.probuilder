@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class ExportStlAscii : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Export; } }
-        internal override string iconPath => string.Empty;
+        public override string iconPath => string.Empty;
         public override Texture2D icon => null;
         public override TooltipContent tooltip { get { return _tooltip; } }
 

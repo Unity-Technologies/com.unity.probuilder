@@ -13,7 +13,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<DetachSetting> m_DetachSetting = new Pref<DetachSetting>("DetachFaces.target", DetachSetting.GameObject);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        internal override string iconPath => "Toolbar/Face_Detach";
+        public override string iconPath => "Toolbar/Face_Detach";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 

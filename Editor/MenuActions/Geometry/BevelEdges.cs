@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_BevelSize = new Pref<float>("BevelEdges.size", .2f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        internal override string iconPath => "Toolbar/Edge_Bevel";
+        public override string iconPath => "Toolbar/Edge_Bevel";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
 

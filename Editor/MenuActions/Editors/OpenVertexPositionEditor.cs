@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class OpenVertexPositionEditor : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Tool; } }
-        internal override string iconPath => string.Empty;
+        public override string iconPath => string.Empty;
         public override Texture2D icon => null;
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         public override string menuTitle { get { return "Vertex Editor"; } }

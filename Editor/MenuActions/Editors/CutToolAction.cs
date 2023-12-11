@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Tool; }
         }
 
-        internal override string iconPath => "Toolbar/CutTool";
+        public override string iconPath => "Toolbar/CutTool";
 
         /// <inheritdoc/>
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
