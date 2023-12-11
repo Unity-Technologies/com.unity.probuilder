@@ -28,6 +28,7 @@ namespace ProBuilder.Examples
 		{
 			// Generate a 50x50 plane with 25 subdivisions, facing up, with no smoothing applied.
 			target = ShapeGenerator.GeneratePlane(PivotLocation.Center, travel, travel, 25, 25, Axis.Up);
+			target.gameObject.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.defaultMaterial;
 
 			target.transform.position = new Vector3(travel * .5f, 0f, travel * .5f);
 
