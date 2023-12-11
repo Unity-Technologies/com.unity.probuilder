@@ -2452,10 +2452,14 @@ namespace UnityEditor.ProBuilder
                 if (GUI.Button(editor_toggles_rect, gc_SceneViewUVHandles))
                 {
                     if (ProBuilderEditor.selectMode.IsTextureMode())
+                    {
+                        ToolManager.SetActiveContext<PositionToolContext>();
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetPositionMode();
+                    }
                     else
                     {
                         VertexManipulationTool.handleOrientation = HandleOrientation.ActiveElement;
+                        ToolManager.SetActiveContext<TextureToolContext>();
                         ProBuilderEditor.selectMode = ProBuilderEditor.selectMode.GetTextureMode();
                     }
 

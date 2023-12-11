@@ -369,6 +369,8 @@ namespace UnityEditor.ProBuilder
 
     class TextureToolContext : EditorToolContext
     {
+        ProBuilderEditor m_Editor;
+
         TextureToolContext() { }
 
         protected override Type GetEditorToolType(Tool tool)
@@ -385,5 +387,23 @@ namespace UnityEditor.ProBuilder
                     return null;
             }
         }
+
+        public override void OnActivated()
+        {
+            m_Editor = new ProBuilderEditor();
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            m_Editor.Dispose();
+        }
+
+        public override void OnToolGUI(EditorWindow window)
+        {
+            if (!(window is SceneView view))
+                return;
+            m_Editor.OnSceneGUI(view);
+        }
+
     }
 }

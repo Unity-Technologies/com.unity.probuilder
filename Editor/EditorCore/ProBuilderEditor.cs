@@ -150,8 +150,11 @@ namespace UnityEditor.ProBuilder
 
             set
             {
-                s_SelectMode.SetValue(value);
-                selectModeChanged?.Invoke(value);
+                if (s_SelectMode != value)
+                {
+                    s_SelectMode.SetValue(value);
+                    selectModeChanged?.Invoke(value);
+                }
             }
         }
 
