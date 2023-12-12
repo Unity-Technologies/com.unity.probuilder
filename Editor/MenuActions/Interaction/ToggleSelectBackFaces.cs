@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        internal override string iconPath => "Toolbar/Selection_SelectHidden-Off";
+        public override string iconPath => "Toolbar/Selection_SelectHidden-Off";
         public override Texture2D icon => ProBuilderEditor.backfaceSelectionEnabled ? m_Icons[1] : m_Icons[0];
 
         public override TooltipContent tooltip

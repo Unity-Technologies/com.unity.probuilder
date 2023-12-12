@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
     sealed class SmartConnect : MenuAction
     {
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        internal override string iconPath => string.Empty;
+        public override string iconPath => string.Empty;
         public override Texture2D icon => null;
         public override TooltipContent tooltip { get { return _tooltip; } }
 

@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        internal override string iconPath => "Toolbar/Selection_ShiftDifference";
+        public override string iconPath => "Toolbar/Selection_ShiftDifference";
         public override Texture2D icon => IconUtility.GetIcon(iconPath, IconSkin.Pro);
 
         public override TooltipContent tooltip => _tooltip;

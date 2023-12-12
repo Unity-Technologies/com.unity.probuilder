@@ -15,6 +15,12 @@ namespace UnityEditor.ProBuilder
         bool m_HasPreview = false;
         MenuAction m_CurrentAction;
 
+        static bool s_SelectionChangedByAction = false;
+        internal static bool selectionChangedByAction
+        {
+            set => s_SelectionChangedByAction = value;
+        }
+
         public MenuActionSettingsOverlay(MenuAction action, bool hasPreview)
         {
             m_CurrentAction = action;
@@ -22,16 +28,19 @@ namespace UnityEditor.ProBuilder
             displayName = action.menuTitle;
             m_CurrentAction = action;
 
-            if(hasPreview)
-                UndoUtility.StartPreview();
+            s_SelectionChangedByAction = false;
 
-            m_CurrentAction.PerformAction();
+            if (hasPreview)
+            {
+                UndoUtility.StartPreview();
+                m_CurrentAction.PerformAction();
+            }
 
             SceneView.AddOverlayToActiveView(this);
             displayed = true;
 
             // Changing selection/tool/context should apply the preview and exit the current action
-            Selection.selectionChanged += Validate;
+            Selection.selectionChanged += ObjectSelectionChanged;
             ToolManager.activeContextChanged += Validate;
             ToolManager.activeToolChanged += Validate;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
@@ -40,11 +49,13 @@ namespace UnityEditor.ProBuilder
 
         void Clear()
         {
+            s_SelectionChangedByAction = false;
+
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
-            Selection.selectionChanged -= Validate;
+            Selection.selectionChanged -= ObjectSelectionChanged;
             SceneView.RemoveOverlayFromActiveView(this);
             MenuActionSettings.s_ActionSettingsOverlay = null;
         }
@@ -81,20 +92,31 @@ namespace UnityEditor.ProBuilder
             }
 
             root.Add(lastLine);
-
             return root;
         }
 
         internal void Validate()
         {
-            UndoUtility.ExitAndValidatePreview();
             Clear();
+            if(m_HasPreview)
+                UndoUtility.ExitAndValidatePreview();
+            else
+                m_CurrentAction.PerformAction();
         }
 
         void Cancel()
         {
-            UndoUtility.UndoPreview();
             Clear();
+            if(m_HasPreview)
+                UndoUtility.UndoPreview();
+        }
+
+        void ObjectSelectionChanged()
+        {
+            if (!s_SelectionChangedByAction)
+                Validate();
+
+            s_SelectionChangedByAction = false;
         }
 
         void SelectModeChanged(SelectMode _) => Validate();
@@ -105,9 +127,11 @@ namespace UnityEditor.ProBuilder
         {
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
+            Selection.selectionChanged -= ObjectSelectionChanged;
             UndoUtility.StartPreview();
             m_CurrentAction.PerformAction();
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+            Selection.selectionChanged += ObjectSelectionChanged;
         }
     }
 
@@ -115,13 +139,27 @@ namespace UnityEditor.ProBuilder
     {
         internal static MenuActionSettingsOverlay s_ActionSettingsOverlay;
 
+        static bool s_CanTriggerNewAction = true;
+
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
         {
+            if (!s_CanTriggerNewAction)
+            {
+                Finish(EditorActionResult.Canceled);
+                return;
+            }
+
+            s_CanTriggerNewAction = false;
             if (s_ActionSettingsOverlay != null)
                 s_ActionSettingsOverlay.Validate();
 
             // Creating the overlay based on the action to fill the settings
             s_ActionSettingsOverlay = new MenuActionSettingsOverlay(action, hasPreview);
+
+            // Ensure we are not calling the action again in the same frame
+            // Needed because Menu Items are called once per selected object while PB actions are acting on the entire selection at once
+            EditorApplication.delayCall += () => { s_CanTriggerNewAction = true; };
+
             Finish(EditorActionResult.Success);
         }
     }

@@ -20,7 +20,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Selection; }
         }
 
-        internal override string iconPath => "Toolbar/Selection_SelectByVertexColor";
+        public override string iconPath => "Toolbar/Selection_SelectByVertexColor";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip

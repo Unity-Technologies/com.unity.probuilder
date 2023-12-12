@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using Math = UnityEngine.ProBuilder.Math;
@@ -29,8 +30,16 @@ namespace UnityEditor.ProBuilder
         public override ShapeState DoState(Event evt)
         {
             tool.handleSelectionChange = true;
-            if(tool.m_LastShapeCreated != null)
+            if (tool.m_LastShapeCreated != null)
+            {
                 EditShapeTool.DoEditingHandles(tool.m_LastShapeCreated, tool);
+
+                if(evt.isKey && evt.type == EventType.KeyDown && evt.keyCode == KeyCode.Return)
+                {
+                    ToolManager.RestorePreviousPersistentTool();
+                    return ResetState();
+                }
+            }
 
             // Scene View in use or pressing alt to orbit
             if(EditorHandleUtility.SceneViewInUse(evt))

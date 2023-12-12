@@ -61,29 +61,6 @@ namespace UnityEditor.ProBuilder
             typeof(Actions.ToggleXRay)
         };
 
-        static string BuildMenuTitle()
-        {
-            var title = "ProBuilder";
-            switch (ProBuilderEditor.selectMode)
-            {
-                case SelectMode.Vertex:
-                    title = MeshSelection.selectedSharedVertexCount.ToString();
-                    title += MeshSelection.selectedSharedVertexCount == 1 ? " Vertex" : " Vertices";
-                    break;
-                case SelectMode.Edge:
-                    title = MeshSelection.selectedEdgeCount.ToString();
-                    title += MeshSelection.selectedEdgeCount == 1 ? " Edge" : " Edges";
-                    break;
-                case SelectMode.Face:
-                    title = MeshSelection.selectedFaceCount.ToString();
-                    title += MeshSelection.selectedFaceCount == 1 ? " Face" : " Faces";
-                    break;
-            }
-
-            return title;
-        }
-
-
         public override void PopulateMenu(DropdownMenu menu)
         {
             var actions = EditorToolbarLoader.GetActions();
@@ -106,21 +83,21 @@ namespace UnityEditor.ProBuilder
 
                 var title = action.menuTitle;
 
-                if (action.hasFileMenuEntry)
+                if (GetStatus(action) == DropdownMenuAction.Status.Normal || GetStatus(action) == DropdownMenuAction.Status.Disabled)
                 {
-                    string path = EditorToolbarMenuItem.k_MenuPrefix+action.group+"/"+title;
-                    if (GetStatus(action) == DropdownMenuAction.Status.Normal || GetStatus(action) == DropdownMenuAction.Status.Disabled)
+                    if (action.hasFileMenuEntry)
                     {
+                        string path = EditorToolbarMenuItem.k_MenuPrefix + action.group + "/" + title;
                         ContextMenuUtility.AddMenuItem(menu, path, GetMenuTitle(action, title));
                     }
-                }else
-                if (action.optionsEnabled)
-                {
-                    title = GetMenuTitle(action, title);
-                    menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))));
+                    else if (action.optionsEnabled)
+                    {
+                        title = GetMenuTitle(action, title);
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))));
+                    }
+                    else
+                        menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction());
                 }
-                else
-                    menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction());
             }
 
             var trs = Selection.transforms;
@@ -392,6 +369,8 @@ namespace UnityEditor.ProBuilder
 
     class TextureToolContext : EditorToolContext
     {
+        ProBuilderEditor m_Editor;
+
         TextureToolContext() { }
 
         protected override Type GetEditorToolType(Tool tool)
@@ -408,5 +387,23 @@ namespace UnityEditor.ProBuilder
                     return null;
             }
         }
+
+        public override void OnActivated()
+        {
+            m_Editor = new ProBuilderEditor();
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            m_Editor.Dispose();
+        }
+
+        public override void OnToolGUI(EditorWindow window)
+        {
+            if (!(window is SceneView view))
+                return;
+            m_Editor.OnSceneGUI(view);
+        }
+
     }
 }

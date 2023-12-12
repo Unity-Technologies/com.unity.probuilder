@@ -17,7 +17,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ToolbarGroup.Object; }
         }
-        internal override string iconPath => "Toolbar/Object_Mirror";
+        public override string iconPath => "Toolbar/Object_Mirror";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
@@ -140,6 +140,7 @@ namespace UnityEditor.ProBuilder.Actions
                 res.Add(Mirror(pb, scale, duplicate).gameObject);
 
             MeshSelection.SetSelection(res);
+            MenuActionSettingsOverlay.selectionChangedByAction = true;
 
             ProBuilderEditor.Refresh();
 
@@ -157,40 +158,40 @@ namespace UnityEditor.ProBuilder.Actions
          */
         public static ProBuilderMesh Mirror(ProBuilderMesh pb, Vector3 scale, bool duplicate = true)
         {
-            ProBuilderMesh mirredObject;
+            ProBuilderMesh mirroredObject;
 
             if (duplicate)
             {
-                mirredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<ProBuilderMesh>();
-                mirredObject.MakeUnique();
-                mirredObject.transform.parent = pb.transform.parent;
-                mirredObject.transform.localRotation = pb.transform.localRotation;
-                Undo.RegisterCreatedObjectUndo(mirredObject.gameObject, "Mirror Object");
+                mirroredObject = Object.Instantiate(pb.gameObject, pb.transform.parent, false).GetComponent<ProBuilderMesh>();
+                mirroredObject.MakeUnique();
+                mirroredObject.transform.parent = pb.transform.parent;
+                mirroredObject.transform.localRotation = pb.transform.localRotation;
+                Undo.RegisterCreatedObjectUndo(mirroredObject.gameObject, "Mirror Object");
             }
             else
             {
                 UndoUtility.RecordObject(pb, "Mirror");
-                mirredObject = pb;
+                mirroredObject = pb;
             }
 
-            Vector3 lScale = mirredObject.gameObject.transform.localScale;
-            mirredObject.transform.localScale = scale;
+            Vector3 lScale = mirroredObject.gameObject.transform.localScale;
+            mirroredObject.transform.localScale = scale;
 
             // if flipping on an odd number of axes, flip winding order
             if ((scale.x * scale.y * scale.z) < 0)
             {
-                foreach (var face in mirredObject.facesInternal)
+                foreach (var face in mirroredObject.facesInternal)
                     face.Reverse();
             }
 
-            mirredObject.FreezeScaleTransform();
-            mirredObject.transform.localScale = lScale;
+            mirroredObject.FreezeScaleTransform();
+            mirroredObject.transform.localScale = lScale;
 
-            mirredObject.ToMesh();
-            mirredObject.Refresh();
-            mirredObject.Optimize();
+            mirroredObject.ToMesh();
+            mirroredObject.Refresh();
+            mirroredObject.Optimize();
 
-            return mirredObject;
+            return mirroredObject;
         }
     }
 }

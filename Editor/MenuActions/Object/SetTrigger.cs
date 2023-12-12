@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Entity; }
         }
 
-        internal override string iconPath => string.Empty;
+        public override string iconPath => string.Empty;
         public override Texture2D icon => null;
 
         public override TooltipContent tooltip

@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        internal override string iconPath => "Toolbar/Edge_InsertLoop";
+        public override string iconPath => "Toolbar/Edge_InsertLoop";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip

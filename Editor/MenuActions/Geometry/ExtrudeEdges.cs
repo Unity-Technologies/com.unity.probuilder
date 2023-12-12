@@ -10,7 +10,7 @@ namespace UnityEditor.ProBuilder.Actions
         Pref<float> m_ExtrudeEdgeDistance = new Pref<float>("ExtrudeEdges.distance", .5f);
 
         public override ToolbarGroup group { get { return ToolbarGroup.Geometry; } }
-        internal override string iconPath => "Toolbar/Edge_Extrude";
+        public override string iconPath => "Toolbar/Edge_Extrude";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
         public override TooltipContent tooltip { get { return s_Tooltip; } }
         protected internal override bool hasFileMenuEntry { get { return false; } }

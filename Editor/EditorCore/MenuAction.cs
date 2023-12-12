@@ -134,7 +134,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets the local path of the icon to display in the Context Menu for this action.
         /// </summary>
-        internal abstract string iconPath { get; }
+        public abstract string iconPath { get; }
 
         /// <summary>
         /// Gets the contents of the tooltip to display for this menu action.

@@ -11,7 +11,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Geometry; }
         }
 
-        internal override string iconPath => "Toolbar/Face_FlipTri";
+        public override string iconPath => "Toolbar/Face_FlipTri";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip

@@ -9,7 +9,7 @@ namespace UnityEditor.ProBuilder.Actions
         {
             get { return ToolbarGroup.Object; }
         }
-        internal override string iconPath => "Toolbar/Object_GenerateUV2";
+        public override string iconPath => "Toolbar/Object_GenerateUV2";
         public override Texture2D icon => IconUtility.GetIcon(iconPath);
 
         public override TooltipContent tooltip
