@@ -85,6 +85,7 @@ namespace UnityEditor.ProBuilder.Actions
                     extrudeMethod = newValue;
                     extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
                     ProBuilderSettings.Save();
+                    PreviewActionManager.UpdatePreview();
                 }
             });
             extrudeMethodField.style.flexGrow = 1;
@@ -97,10 +98,11 @@ namespace UnityEditor.ProBuilder.Actions
             var distanceField = new FloatField("Distance");
             distanceField.tooltip = "Extrude Amount determines how far a face will be moved along it's normal when extruding. This value can be negative.";
             distanceField.SetValueWithoutNotify(m_ExtrudeDistance.value);
-            distanceField.isDelayed = true;
+            distanceField.isDelayed = PreviewActionManager.autoUpdatePreview;
             distanceField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
                 m_ExtrudeDistance.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(distanceField);
 

@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.Add(toggle);
 
             var floatField = new FloatField("Distance");
-            floatField.isDelayed = true;
+            floatField.isDelayed = PreviewActionManager.autoUpdatePreview;
             floatField.tooltip = "Extrude Amount determines how far an edge will be moved along it's normal when extruding. This value can be negative.";
             floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
             floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
@@ -61,11 +61,13 @@ namespace UnityEditor.ProBuilder.Actions
         void OnEdgesAsGroupChanged(ChangeEvent<bool> evt)
         {
             VertexManipulationTool.s_ExtrudeEdgesAsGroup.SetValue(evt.newValue);
+            PreviewActionManager.UpdatePreview();
         }
 
         void OnExtrudeChanged(ChangeEvent<float> evt)
         {
             m_ExtrudeEdgeDistance.SetValue(evt.newValue);
+            PreviewActionManager.UpdatePreview();
         }
 
         protected override void OnSettingsGUI()

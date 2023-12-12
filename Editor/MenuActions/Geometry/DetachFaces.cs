@@ -54,6 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 Enum.TryParse(evt.newValue, out DetachSetting newValue);
                 m_DetachSetting.SetValue(newValue);
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(detachFace);
 

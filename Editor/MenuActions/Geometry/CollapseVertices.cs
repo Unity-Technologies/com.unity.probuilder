@@ -57,6 +57,7 @@ namespace UnityEditor.ProBuilder.Actions
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 m_CollapseToFirst.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(toggle);
 

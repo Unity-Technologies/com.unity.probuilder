@@ -936,7 +936,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 			if(instance != null && instance.enabled)
 			{
-				instance.PerformAction();
+				EditorAction.Start(new MenuActionSettings(instance,true));
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
@@ -1066,7 +1066,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 			if(instance != null && instance.enabled)
 			{
-				instance.PerformAction();
+				EditorAction.Start(new MenuActionSettings(instance,true));
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}

@@ -58,6 +58,8 @@ namespace UnityEditor.ProBuilder.Actions
 
                 m_DuplicateFaceSetting.value = newValue;
                 ProBuilderSettings.Save();
+
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(duplicateType);
 

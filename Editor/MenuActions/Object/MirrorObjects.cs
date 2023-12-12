@@ -64,29 +64,41 @@ namespace UnityEditor.ProBuilder.Actions
             var toggle = new Toggle("X");
             toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(x);
-            toggle.RegisterValueChangedCallback( evt =>
-                m_MirrorAxes.SetValue((evt.newValue ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            toggle.RegisterValueChangedCallback(evt =>
+            {
+                m_MirrorAxes.SetValue((evt.newValue ? MirrorSettings.X : 0) | m_MirrorAxes & MirrorSettings.Y | m_MirrorAxes & MirrorSettings.Z | m_MirrorAxes & MirrorSettings.Duplicate);
+                PreviewActionManager.UpdatePreview();
+            });
             root.Add(toggle);
 
             toggle = new Toggle("Y");
             toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(y);
-            toggle.RegisterValueChangedCallback( evt =>
-                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (evt.newValue ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            toggle.RegisterValueChangedCallback(evt =>
+            {
+                m_MirrorAxes.SetValue(m_MirrorAxes & MirrorSettings.X | (evt.newValue ? MirrorSettings.Y : 0) | m_MirrorAxes & MirrorSettings.Z | m_MirrorAxes & MirrorSettings.Duplicate);
+                PreviewActionManager.UpdatePreview();
+            });
             root.Add(toggle);
 
             toggle = new Toggle("Z");
             toggle.tooltip = tooltip;
             toggle.SetValueWithoutNotify(z);
-            toggle.RegisterValueChangedCallback( evt =>
-                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (evt.newValue ? MirrorSettings.Z : 0) | (d ? MirrorSettings.Duplicate : 0)));
+            toggle.RegisterValueChangedCallback(evt =>
+            {
+                m_MirrorAxes.SetValue(m_MirrorAxes & MirrorSettings.X | m_MirrorAxes & MirrorSettings.Y | (evt.newValue ? MirrorSettings.Z : 0) | m_MirrorAxes & MirrorSettings.Duplicate);
+                PreviewActionManager.UpdatePreview();
+            });
             root.Add(toggle);
 
             toggle = new Toggle("Duplicate");
             toggle.tooltip = "If Duplicate is toggled a new object will be instantiated from the selection and mirrored, or if disabled the selection will be moved.";
             toggle.SetValueWithoutNotify(d);
-            toggle.RegisterValueChangedCallback( evt =>
-                m_MirrorAxes.SetValue((x ? MirrorSettings.X : 0) | (y ? MirrorSettings.Y : 0) | (z ? MirrorSettings.Z : 0) | (evt.newValue ? MirrorSettings.Duplicate : 0)));
+            toggle.RegisterValueChangedCallback(evt =>
+            {
+                m_MirrorAxes.SetValue(m_MirrorAxes & MirrorSettings.X | m_MirrorAxes & MirrorSettings.Y | m_MirrorAxes & MirrorSettings.Z | (evt.newValue ? MirrorSettings.Duplicate : 0));
+                PreviewActionManager.UpdatePreview();
+            });
             root.Add(toggle);
 
             return root;
@@ -100,10 +112,10 @@ namespace UnityEditor.ProBuilder.Actions
 
             MirrorSettings scale = m_MirrorAxes;
 
-            bool x = (scale & MirrorSettings.X) != 0 ? true : false;
-            bool y = (scale & MirrorSettings.Y) != 0 ? true : false;
-            bool z = (scale & MirrorSettings.Z) != 0 ? true : false;
-            bool d = (scale & MirrorSettings.Duplicate) != 0 ? true : false;
+            bool x = (scale & MirrorSettings.X) != 0;
+            bool y = (scale & MirrorSettings.Y) != 0;
+            bool z = (scale & MirrorSettings.Z) != 0;
+            bool d = (scale & MirrorSettings.Duplicate) != 0;
 
             EditorGUI.BeginChangeCheck();
 
@@ -132,7 +144,8 @@ namespace UnityEditor.ProBuilder.Actions
                     (m_MirrorAxes & MirrorSettings.Y) > 0 ? -1f : 1f,
                     (m_MirrorAxes & MirrorSettings.Z) > 0 ? -1f : 1f);
 
-            bool duplicate = (m_MirrorAxes & MirrorSettings.Duplicate) > 0;
+            bool duplicate = (m_MirrorAxes & MirrorSettings.Duplicate) != 0;
+            Debug.Log("Duplicate ? "+duplicate);
 
             List<GameObject> res  = new List<GameObject>();
 
@@ -140,7 +153,7 @@ namespace UnityEditor.ProBuilder.Actions
                 res.Add(Mirror(pb, scale, duplicate).gameObject);
 
             MeshSelection.SetSelection(res);
-            MenuActionSettingsOverlay.selectionChangedByAction = true;
+            PreviewActionManager.selectionChangedByAction = true;
 
             ProBuilderEditor.Refresh();
 

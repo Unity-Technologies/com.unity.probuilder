@@ -4,40 +4,51 @@ using System.Threading;
 using UnityEditor.Actions;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.Profiling;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder
 {
-    class MenuActionSettingsOverlay : Overlay
+    static class PreviewActionManager
     {
-        bool m_HasPreview = false;
-        MenuAction m_CurrentAction;
+        [UserSetting("Mesh Editing", "Auto Update Action Preview", "Automatically update the action preview, without delay. This operation is costly and can cause lag when working with large selections.")]
+        static Pref<bool> s_AutoUpdatePreview = new Pref<bool>("editor.autoUpdatePreview", false, SettingsScope.Project);
+        internal static bool autoUpdatePreview => s_AutoUpdatePreview.value;
 
-        static bool s_SelectionChangedByAction = false;
+        static MenuAction s_CurrentAction;
+        internal static MenuAction currentAction => s_CurrentAction;
+
+        static bool s_HasPreview;
+        internal static bool hasPreview => s_HasPreview;
+
+        static bool s_SelectionChangedByAction;
         internal static bool selectionChangedByAction
         {
             set => s_SelectionChangedByAction = value;
         }
 
-        public MenuActionSettingsOverlay(MenuAction action, bool hasPreview)
+        static Overlay s_Overlay;
+
+        internal static void DoAction(MenuAction action, bool preview)
         {
-            m_CurrentAction = action;
-            m_HasPreview = hasPreview;
-            displayName = action.menuTitle;
-            m_CurrentAction = action;
-
-            s_SelectionChangedByAction = false;
-
-            if (hasPreview)
+            if (s_CurrentAction != null)
             {
-                UndoUtility.StartPreview();
-                m_CurrentAction.PerformAction();
+                Validate();
+                Clear();
             }
 
-            SceneView.AddOverlayToActiveView(this);
-            displayed = true;
+            s_CurrentAction = action;
+            s_HasPreview = preview;
+            s_SelectionChangedByAction = false;
+
+            if (preview)
+            {
+                UndoUtility.StartPreview();
+                s_CurrentAction.PerformAction();
+            }
 
             // Changing selection/tool/context should apply the preview and exit the current action
             Selection.selectionChanged += ObjectSelectionChanged;
@@ -45,10 +56,15 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += Validate;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
+
+            SceneView.AddOverlayToActiveView(s_Overlay = new MenuActionSettingsOverlay());
         }
 
-        void Clear()
+        static void Clear()
         {
+            SceneView.RemoveOverlayFromActiveView(s_Overlay);
+            s_Overlay = null;
+            s_CurrentAction = null;
             s_SelectionChangedByAction = false;
 
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
@@ -56,13 +72,65 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             Selection.selectionChanged -= ObjectSelectionChanged;
-            SceneView.RemoveOverlayFromActiveView(this);
-            MenuActionSettings.s_ActionSettingsOverlay = null;
+        }
+
+        internal static void Validate()
+        {
+            Clear();
+            if(s_HasPreview)
+                UndoUtility.ExitAndValidatePreview();
+            else
+                s_CurrentAction.PerformAction();
+        }
+
+        internal static void Cancel()
+        {
+            Clear();
+            if(s_HasPreview)
+                UndoUtility.UndoPreview();
+        }
+
+        static void ObjectSelectionChanged()
+        {
+            if (!s_SelectionChangedByAction)
+                Validate();
+
+            s_SelectionChangedByAction = false;
+        }
+
+        static void SelectModeChanged(SelectMode _) => Validate();
+
+        static void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _) => Validate();
+
+        internal static void UpdatePreview()
+        {
+            Profiler.BeginSample("UpdatingPreview");
+            //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
+            ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
+            Selection.selectionChanged -= ObjectSelectionChanged;
+            Profiler.BeginSample("Undo");
+            UndoUtility.StartPreview();
+            Profiler.EndSample();
+            Profiler.BeginSample("PerformAction");
+            s_CurrentAction.PerformAction();
+            Profiler.EndSample();
+            ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+            Selection.selectionChanged += ObjectSelectionChanged;
+            Profiler.EndSample();
+        }
+    }
+
+    class MenuActionSettingsOverlay : Overlay
+    {
+        public MenuActionSettingsOverlay()
+        {
+            displayName = PreviewActionManager.currentAction.menuTitle;
+            displayed = true;
         }
 
         public override VisualElement CreatePanelContent()
         {
-            rootVisualElement.tooltip = m_CurrentAction.tooltip.summary;
+            rootVisualElement.tooltip = PreviewActionManager.currentAction.tooltip.summary;
 
             var root = new VisualElement();
             root.style.flexDirection = FlexDirection.Column;
@@ -70,21 +138,21 @@ namespace UnityEditor.ProBuilder
 
             var lastLine = new VisualElement();
             lastLine.style.flexDirection = FlexDirection.Row;
-            var okButton = new Button(() => Validate());
+            var okButton = new Button(PreviewActionManager.Validate);
             okButton.text = "Validate";
             okButton.style.flexGrow = 1;
-            var cancelButton = new Button(() => Cancel());
+            var cancelButton = new Button(PreviewActionManager.Cancel);
             cancelButton.text = "Cancel";
             cancelButton.style.flexGrow = 1;
             lastLine.Add(okButton);
             lastLine.Add(cancelButton);
 
-            var settingsElement = m_CurrentAction.CreateSettingsContent();
+            var settingsElement = PreviewActionManager.currentAction.CreateSettingsContent();
             root.Add(settingsElement);
 
-            if (m_HasPreview)
+            if (PreviewActionManager.hasPreview)
             {
-                var previewButton = new Button(UpdatePreview);
+                var previewButton = new Button(PreviewActionManager.UpdatePreview);
                 previewButton.text = "Preview";
                 previewButton.style.flexDirection = FlexDirection.Row;
                 previewButton.style.flexGrow = 1;
@@ -94,51 +162,10 @@ namespace UnityEditor.ProBuilder
             root.Add(lastLine);
             return root;
         }
-
-        internal void Validate()
-        {
-            Clear();
-            if(m_HasPreview)
-                UndoUtility.ExitAndValidatePreview();
-            else
-                m_CurrentAction.PerformAction();
-        }
-
-        void Cancel()
-        {
-            Clear();
-            if(m_HasPreview)
-                UndoUtility.UndoPreview();
-        }
-
-        void ObjectSelectionChanged()
-        {
-            if (!s_SelectionChangedByAction)
-                Validate();
-
-            s_SelectionChangedByAction = false;
-        }
-
-        void SelectModeChanged(SelectMode _) => Validate();
-
-        void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _) => Validate();
-
-        void UpdatePreview()
-        {
-            //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
-            ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
-            Selection.selectionChanged -= ObjectSelectionChanged;
-            UndoUtility.StartPreview();
-            m_CurrentAction.PerformAction();
-            ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
-            Selection.selectionChanged += ObjectSelectionChanged;
-        }
     }
 
     public class MenuActionSettings : EditorAction
     {
-        internal static MenuActionSettingsOverlay s_ActionSettingsOverlay;
-
         static bool s_CanTriggerNewAction = true;
 
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
@@ -150,11 +177,7 @@ namespace UnityEditor.ProBuilder
             }
 
             s_CanTriggerNewAction = false;
-            if (s_ActionSettingsOverlay != null)
-                s_ActionSettingsOverlay.Validate();
-
-            // Creating the overlay based on the action to fill the settings
-            s_ActionSettingsOverlay = new MenuActionSettingsOverlay(action, hasPreview);
+            PreviewActionManager.DoAction(action, hasPreview);
 
             // Ensure we are not calling the action again in the same frame
             // Needed because Menu Items are called once per selected object while PB actions are acting on the entire selection at once
