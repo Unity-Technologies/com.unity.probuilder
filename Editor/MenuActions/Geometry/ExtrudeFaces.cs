@@ -98,7 +98,7 @@ namespace UnityEditor.ProBuilder.Actions
             var distanceField = new FloatField("Distance");
             distanceField.tooltip = "Extrude Amount determines how far a face will be moved along it's normal when extruding. This value can be negative.";
             distanceField.SetValueWithoutNotify(m_ExtrudeDistance.value);
-            distanceField.isDelayed = PreviewActionManager.autoUpdatePreview;
+            distanceField.isDelayed = PreviewActionManager.delayedPreview;
             distanceField.RegisterCallback<ChangeEvent<float>>(evt =>
             {
                 m_ExtrudeDistance.SetValue(evt.newValue);

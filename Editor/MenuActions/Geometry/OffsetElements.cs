@@ -62,7 +62,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             var distField = new Vector3Field("Translate");
             distField.SetValueWithoutNotify(dist);
-            if(PreviewActionManager.autoUpdatePreview)
+            if(PreviewActionManager.delayedPreview)
                 distField.Query<FloatField>().ForEach(ff => ff.isDelayed = true);
             root.Add(distField);
             distField.RegisterCallback<ChangeEvent<Vector3>>(evt =>

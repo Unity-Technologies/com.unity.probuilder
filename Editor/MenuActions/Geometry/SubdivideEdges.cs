@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder.Actions
             m_Slider.RegisterCallback<ChangeEvent<int>>(OnSliderChanged);
             m_Slider.style.flexGrow = 1f;
             m_SubdivCount = new IntegerField();
-            m_SubdivCount.isDelayed = PreviewActionManager.autoUpdatePreview;
+            m_SubdivCount.isDelayed = PreviewActionManager.delayedPreview;
             m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
             m_SubdivCount.tooltip = tooltip;
             m_SubdivCount.RegisterCallback<ChangeEvent<int>>(OnCountChanged);

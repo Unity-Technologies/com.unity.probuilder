@@ -45,7 +45,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             var floatField = new FloatField(gc_BevelDistance.text);
             floatField.tooltip = gc_BevelDistance.tooltip;
-            floatField.isDelayed = PreviewActionManager.autoUpdatePreview;
+            floatField.isDelayed = PreviewActionManager.delayedPreview;
             floatField.SetValueWithoutNotify(m_BevelSize.value);
             floatField.RegisterCallback<ChangeEvent<float>>(evt =>
             {

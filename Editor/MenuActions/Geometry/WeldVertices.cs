@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder.Actions
             root.style.minWidth = 150;
 
             var floatField = new FloatField(gc_weldDistance.text);
-            floatField.isDelayed = PreviewActionManager.autoUpdatePreview;
+            floatField.isDelayed = PreviewActionManager.delayedPreview;
             floatField.tooltip = gc_weldDistance.tooltip;
             floatField.SetValueWithoutNotify(m_WeldDistance);
             floatField.Q("unity-text-input").style.minWidth = 50;

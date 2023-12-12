@@ -58,7 +58,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             var floatField = new FloatField("Max Angle");
             floatField.SetValueWithoutNotify(m_GrowSelectionAngleValue);
-            floatField.isDelayed = PreviewActionManager.autoUpdatePreview;
+            floatField.isDelayed = PreviewActionManager.delayedPreview;
             floatField.SetEnabled(m_GrowSelectionWithAngle);
             root.Add(floatField);
 

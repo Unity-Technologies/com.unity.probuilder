@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
     {
         [UserSetting("Mesh Editing", "Auto Update Action Preview", "Automatically update the action preview, without delay. This operation is costly and can cause lag when working with large selections.")]
         static Pref<bool> s_AutoUpdatePreview = new Pref<bool>("editor.autoUpdatePreview", false, SettingsScope.Project);
-        internal static bool autoUpdatePreview => s_AutoUpdatePreview.value;
+        internal static bool delayedPreview => !s_AutoUpdatePreview.value;
 
         static MenuAction s_CurrentAction;
         internal static MenuAction currentAction => s_CurrentAction;
@@ -31,6 +31,18 @@ namespace UnityEditor.ProBuilder
         }
 
         static Overlay s_Overlay;
+
+        internal static void SetPreviewUpdate(bool value)
+        {
+            if(s_AutoUpdatePreview.value == value)
+                return;
+
+            s_AutoUpdatePreview.value = value;
+
+            SceneView.RemoveOverlayFromActiveView(s_Overlay);
+            s_Overlay = null;
+            SceneView.AddOverlayToActiveView(s_Overlay = new MenuActionSettingsOverlay());
+        }
 
         internal static void DoAction(MenuAction action, bool preview)
         {
@@ -130,6 +142,13 @@ namespace UnityEditor.ProBuilder
             root.style.flexDirection = FlexDirection.Column;
             root.style.minWidth = root.style.maxWidth = 300;
 
+            var toggle = new Toggle("Live Preview");
+            toggle.SetValueWithoutNotify(!PreviewActionManager.delayedPreview);
+            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                PreviewActionManager.SetPreviewUpdate(evt.newValue);
+            });
+
             var lastLine = new VisualElement();
             lastLine.style.flexDirection = FlexDirection.Row;
             var okButton = new Button(PreviewActionManager.Validate);
@@ -143,6 +162,7 @@ namespace UnityEditor.ProBuilder
 
             var settingsElement = PreviewActionManager.currentAction.CreateSettingsContent();
             root.Add(settingsElement);
+            root.Add(toggle);
             root.Add(lastLine);
             return root;
         }
