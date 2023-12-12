@@ -11,9 +11,6 @@ apiRules:
       uidRegex: Tests(.Framework)$
       type: Namespace
   - exclude:
-      uidRegex: ^Global Namespace.*
-      type: Namespace
-  - exclude:
       uidRegex: ^ProBuilder.Example*
       type: Namespace
   - exclude:
