@@ -58,8 +58,6 @@ namespace UnityEditor.ProBuilder.Actions
 
                 m_DuplicateFaceSetting.value = newValue;
                 ProBuilderSettings.Save();
-
-                PreviewActionManager.UpdatePreview();
             });
             root.Add(duplicateType);
 
@@ -168,6 +166,7 @@ namespace UnityEditor.ProBuilder.Actions
             }
 
             MeshSelection.SetSelection(duplicated);
+            PreviewActionManager.selectionChangedByAction = true;
             ProBuilderEditor.Refresh();
 
             if (duplicatedFaceCount > 0)

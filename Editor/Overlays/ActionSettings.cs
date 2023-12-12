@@ -88,11 +88,16 @@ namespace UnityEditor.ProBuilder
 
         internal static void Validate()
         {
-            Clear();
-            if(s_HasPreview)
+            if (s_HasPreview)
+            {
+                Clear();
                 UndoUtility.ExitAndValidatePreview();
+            }
             else
+            {
                 s_CurrentAction.PerformAction();
+                Clear();
+            }
         }
 
         internal static void Cancel()
@@ -112,7 +117,12 @@ namespace UnityEditor.ProBuilder
 
         static void SelectModeChanged(SelectMode _) => Validate();
 
-        static void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _) => Validate();
+        static void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _)
+        {
+            if (!s_SelectionChangedByAction)
+               Validate();
+            s_SelectionChangedByAction = false;
+        }
 
         internal static void UpdatePreview()
         {
@@ -142,13 +152,6 @@ namespace UnityEditor.ProBuilder
             root.style.flexDirection = FlexDirection.Column;
             root.style.minWidth = root.style.maxWidth = 300;
 
-            var toggle = new Toggle("Live Preview");
-            toggle.SetValueWithoutNotify(!PreviewActionManager.delayedPreview);
-            toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
-            {
-                PreviewActionManager.SetPreviewUpdate(evt.newValue);
-            });
-
             var lastLine = new VisualElement();
             lastLine.style.flexDirection = FlexDirection.Row;
             var okButton = new Button(PreviewActionManager.Validate);
@@ -162,7 +165,17 @@ namespace UnityEditor.ProBuilder
 
             var settingsElement = PreviewActionManager.currentAction.CreateSettingsContent();
             root.Add(settingsElement);
-            root.Add(toggle);
+            if (PreviewActionManager.hasPreview)
+            {
+                var toggle = new Toggle("Live Preview");
+                toggle.SetValueWithoutNotify(!PreviewActionManager.delayedPreview);
+                toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+                {
+                    PreviewActionManager.SetPreviewUpdate(evt.newValue);
+                });
+                root.Add(toggle);
+            }
+
             root.Add(lastLine);
             return root;
         }

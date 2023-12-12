@@ -48,13 +48,12 @@ namespace UnityEditor.ProBuilder.Actions
         {
             var root = new VisualElement();
 
-            var detachFace = new EnumField("Duplicate To", m_DetachSetting);
+            var detachFace = new EnumField("Detach To", m_DetachSetting);
             detachFace.tooltip = "You can create a new Game Object with the selected face(s), or keep them as part of this object by using a Submesh.";
             detachFace.RegisterCallback<ChangeEvent<string>>(evt =>
             {
                 Enum.TryParse(evt.newValue, out DetachSetting newValue);
                 m_DetachSetting.SetValue(newValue);
-                PreviewActionManager.UpdatePreview();
             });
             root.Add(detachFace);
 

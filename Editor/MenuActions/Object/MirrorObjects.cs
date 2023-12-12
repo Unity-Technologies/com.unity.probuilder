@@ -145,8 +145,6 @@ namespace UnityEditor.ProBuilder.Actions
                     (m_MirrorAxes & MirrorSettings.Z) > 0 ? -1f : 1f);
 
             bool duplicate = (m_MirrorAxes & MirrorSettings.Duplicate) != 0;
-            Debug.Log("Duplicate ? "+duplicate);
-
             List<GameObject> res  = new List<GameObject>();
 
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
