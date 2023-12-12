@@ -58,7 +58,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             var floatField = new FloatField("Max Angle");
             floatField.SetValueWithoutNotify(m_GrowSelectionAngleValue);
-            floatField.isDelayed = true;
+            floatField.isDelayed = PreviewActionManager.autoUpdatePreview;
             floatField.SetEnabled(m_GrowSelectionWithAngle);
             root.Add(floatField);
 
@@ -73,14 +73,17 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
                 floatField.SetEnabled(m_GrowSelectionWithAngle);
                 iterativeToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true);
                 iterativeToggle.SetEnabled(m_GrowSelectionWithAngle);
+                PreviewActionManager.UpdatePreview();
             });
             floatField.RegisterValueChangedCallback(evt =>
             {
                 m_GrowSelectionAngleValue.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             iterativeToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 m_GrowSelectionAngleIterative.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
 
             return root;

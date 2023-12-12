@@ -104,19 +104,13 @@ namespace UnityEditor.ProBuilder
 
         internal static void UpdatePreview()
         {
-            Profiler.BeginSample("UpdatingPreview");
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             Selection.selectionChanged -= ObjectSelectionChanged;
-            Profiler.BeginSample("Undo");
             UndoUtility.StartPreview();
-            Profiler.EndSample();
-            Profiler.BeginSample("PerformAction");
             s_CurrentAction.PerformAction();
-            Profiler.EndSample();
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
             Selection.selectionChanged += ObjectSelectionChanged;
-            Profiler.EndSample();
         }
     }
 
@@ -149,16 +143,6 @@ namespace UnityEditor.ProBuilder
 
             var settingsElement = PreviewActionManager.currentAction.CreateSettingsContent();
             root.Add(settingsElement);
-
-            if (PreviewActionManager.hasPreview)
-            {
-                var previewButton = new Button(PreviewActionManager.UpdatePreview);
-                previewButton.text = "Preview";
-                previewButton.style.flexDirection = FlexDirection.Row;
-                previewButton.style.flexGrow = 1;
-                root.Add(previewButton);
-            }
-
             root.Add(lastLine);
             return root;
         }
