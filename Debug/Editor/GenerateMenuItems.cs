@@ -208,8 +208,11 @@ namespace UnityEditor.ProBuilder
                     sb.AppendLine($"\t\t\t\tEditorAction.Start(new MenuActionSettings(instance,{data.hasPreview.ToString().ToLower()}));");
                 }
                 else // Last case, just perform the action if this is an instant action with no options
+                {
+                    sb.AppendLine("\t\t\t\tPreviewActionManager.EndPreview();");
                     sb.AppendLine("\t\t\t\tinstance.PerformAction();");
-            }
+                }
+        }
 
             sb.AppendLine( "\t\t\t\tProBuilderAnalytics.SendActionEvent(instance);");
             sb.AppendLine( "\t\t\t}");

@@ -72,6 +72,12 @@ namespace UnityEditor.ProBuilder
             SceneView.AddOverlayToActiveView(s_Overlay = new MenuActionSettingsOverlay());
         }
 
+        internal static void EndPreview()
+        {
+            if (s_CurrentAction != null)
+                Clear();
+        }
+
         static void Clear()
         {
             SceneView.RemoveOverlayFromActiveView(s_Overlay);
