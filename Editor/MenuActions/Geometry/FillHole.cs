@@ -64,6 +64,7 @@ namespace UnityEditor.ProBuilder.Actions
         void OnFillHoleToggleChanged(ChangeEvent<bool> evt)
         {
             m_SelectEntirePath.SetValue(evt.newValue);
+            PreviewActionManager.UpdatePreview();
         }
 
         protected override void OnSettingsGUI()

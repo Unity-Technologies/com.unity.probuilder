@@ -110,6 +110,7 @@ namespace UnityEditor.ProBuilder.Actions
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 m_SelectIterative.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(toggle);
 

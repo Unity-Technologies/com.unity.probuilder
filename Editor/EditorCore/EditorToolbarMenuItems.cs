@@ -30,6 +30,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -48,6 +49,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -66,6 +68,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -84,6 +87,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -102,6 +106,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -120,6 +125,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -138,6 +144,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -156,6 +163,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ExportAsset>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -174,6 +182,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ExportObj>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -192,6 +201,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ExportPly>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -210,6 +220,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -228,6 +239,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -266,6 +278,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -304,6 +317,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -323,6 +337,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -426,6 +441,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -445,6 +461,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -464,6 +481,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -483,6 +501,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<MergeFaces>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -521,6 +540,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -540,6 +560,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SmartConnect>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -586,6 +607,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SplitVertices>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -605,6 +627,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -643,6 +666,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -662,6 +686,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -681,6 +706,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -700,6 +726,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -719,6 +746,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -737,6 +765,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<CenterPivot>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -755,6 +784,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -773,6 +803,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -791,6 +822,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -809,6 +841,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<MergeObjects>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -863,6 +896,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SetCollider>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -881,6 +915,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SetTrigger>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -899,6 +934,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -917,6 +953,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -936,7 +973,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<GrowSelection>();
 			if(instance != null && instance.enabled)
 			{
-				instance.PerformAction();
+				EditorAction.Start(new MenuActionSettings(instance,true));
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
@@ -955,6 +992,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectHole>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
@@ -1047,7 +1085,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 			if(instance != null && instance.enabled)
 			{
-				instance.PerformAction();
+				EditorAction.Start(new MenuActionSettings(instance,true));
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
@@ -1066,7 +1104,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 			if(instance != null && instance.enabled)
 			{
-				instance.PerformAction();
+				EditorAction.Start(new MenuActionSettings(instance,true));
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
@@ -1085,6 +1123,7 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
 			if(instance != null && instance.enabled)
 			{
+				PreviewActionManager.EndPreview();
 				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}

@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder.Actions
             m_Slider.RegisterCallback<ChangeEvent<int>>(OnSliderChanged);
             m_Slider.style.flexGrow = 1f;
             m_SubdivCount = new IntegerField();
-            m_SubdivCount.isDelayed = true;
+            m_SubdivCount.isDelayed = PreviewActionManager.delayedPreview;
             m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
             m_SubdivCount.tooltip = tooltip;
             m_SubdivCount.RegisterCallback<ChangeEvent<int>>(OnCountChanged);
@@ -143,6 +143,7 @@ namespace UnityEditor.ProBuilder.Actions
 
             m_SubdivisionCount.SetValue(evt.newValue);
             m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
+            PreviewActionManager.UpdatePreview();
         }
 
         void OnCountChanged(ChangeEvent<int> evt)
@@ -164,6 +165,7 @@ namespace UnityEditor.ProBuilder.Actions
                 m_RangeField.SetValueWithoutNotify(new Vector2Int(m_SubdivisionUIMin.value, m_SubdivisionUIMax.value));
             }
             m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+            PreviewActionManager.UpdatePreview();
         }
 
         void OnMinChanged(ChangeEvent<int> evt)
@@ -179,6 +181,7 @@ namespace UnityEditor.ProBuilder.Actions
                 m_SubdivisionCount.SetValue(m_SubdivisionUIMin.value);
                 m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+                PreviewActionManager.UpdatePreview();
             }
         }
 
@@ -195,6 +198,7 @@ namespace UnityEditor.ProBuilder.Actions
                 m_SubdivisionCount.SetValue(m_SubdivisionUIMax.value);
                 m_SubdivCount.SetValueWithoutNotify(m_SubdivisionCount.value);
                 m_Slider.SetValueWithoutNotify(m_SubdivisionCount.value);
+                PreviewActionManager.UpdatePreview();
             }
         }
 

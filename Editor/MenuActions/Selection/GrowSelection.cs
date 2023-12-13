@@ -45,20 +45,12 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
             get { return base.enabled && VerifyGrowSelection(); }
         }
 
-        protected override MenuActionState optionsMenuState
-        {
-            get
-            {
-                if (enabled && ProBuilderEditor.selectMode == SelectMode.Face)
-                    return MenuActionState.VisibleAndEnabled;
-
-                return MenuActionState.Hidden;
-            }
-        }
+        protected override MenuActionState optionsMenuState => MenuActionState.VisibleAndEnabled;
 
         public override VisualElement CreateSettingsContent()
         {
             var root = new VisualElement();
+            root.enabledSelf = enabled && ProBuilderEditor.selectMode == SelectMode.Face;
 
             var angleToggle = new Toggle("Restrict to Angle");
             angleToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle);
@@ -66,7 +58,7 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
 
             var floatField = new FloatField("Max Angle");
             floatField.SetValueWithoutNotify(m_GrowSelectionAngleValue);
-            floatField.isDelayed = true;
+            floatField.isDelayed = PreviewActionManager.delayedPreview;
             floatField.SetEnabled(m_GrowSelectionWithAngle);
             root.Add(floatField);
 
@@ -81,14 +73,17 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
                 floatField.SetEnabled(m_GrowSelectionWithAngle);
                 iterativeToggle.SetValueWithoutNotify(m_GrowSelectionWithAngle ? m_GrowSelectionAngleIterative : true);
                 iterativeToggle.SetEnabled(m_GrowSelectionWithAngle);
+                PreviewActionManager.UpdatePreview();
             });
             floatField.RegisterValueChangedCallback(evt =>
             {
                 m_GrowSelectionAngleValue.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             iterativeToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 m_GrowSelectionAngleIterative.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
 
             return root;

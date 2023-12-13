@@ -4,40 +4,52 @@ using System.Threading;
 using UnityEditor.Actions;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
+using UnityEditor.ProBuilder.Actions;
+using UnityEditor.SettingsManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.Profiling;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder
 {
-    class MenuActionSettingsOverlay : Overlay
+    class PreviewActionManager : IDisposable
     {
-        bool m_HasPreview = false;
+        [UserSetting("Mesh Editing", "Auto Update Action Preview", "Automatically update the action preview, without delay. This operation is costly and can cause lag when working with large selections.")]
+        static Pref<bool> s_AutoUpdatePreview = new Pref<bool>("editor.autoUpdatePreview", false, SettingsScope.Project);
+        internal static bool delayedPreview => !s_AutoUpdatePreview.value;
+
         MenuAction m_CurrentAction;
 
-        static bool s_SelectionChangedByAction = false;
-        internal static bool selectionChangedByAction
+        bool m_HasPreview;
+        internal static bool hasPreview => s_Instance?.m_HasPreview ?? false;
+
+        bool m_SelectionUpdateDisabled = false;
+        internal static bool selectionUpdateDisabled
         {
-            set => s_SelectionChangedByAction = value;
+            set
+            {
+                if (s_Instance != null)
+                    s_Instance.m_SelectionUpdateDisabled = value;
+            }
         }
 
-        public MenuActionSettingsOverlay(MenuAction action, bool hasPreview)
+        Overlay m_Overlay;
+
+        static PreviewActionManager s_Instance;
+        internal static string actionName => s_Instance?.m_CurrentAction?.menuTitle ?? "";
+        internal static string actionTooltip => s_Instance?.m_CurrentAction?.tooltip.summary ?? "";
+
+        void Init(MenuAction action, bool preview)
         {
             m_CurrentAction = action;
-            m_HasPreview = hasPreview;
-            displayName = action.menuTitle;
-            m_CurrentAction = action;
+            m_HasPreview = preview;
 
-            s_SelectionChangedByAction = false;
-
-            if (hasPreview)
+            if (preview)
             {
                 UndoUtility.StartPreview();
                 m_CurrentAction.PerformAction();
             }
-
-            SceneView.AddOverlayToActiveView(this);
-            displayed = true;
 
             // Changing selection/tool/context should apply the preview and exit the current action
             Selection.selectionChanged += ObjectSelectionChanged;
@@ -45,85 +57,100 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += Validate;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
+
+            SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
         }
 
-        void Clear()
+        public void Dispose()
         {
-            s_SelectionChangedByAction = false;
+            s_Instance = null;
+            SceneView.RemoveOverlayFromActiveView(m_Overlay);
 
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             Selection.selectionChanged -= ObjectSelectionChanged;
-            SceneView.RemoveOverlayFromActiveView(this);
-            MenuActionSettings.s_ActionSettingsOverlay = null;
         }
 
-        public override VisualElement CreatePanelContent()
+        internal static void DoAction(MenuAction action, bool preview)
         {
-            rootVisualElement.tooltip = m_CurrentAction.tooltip.summary;
+            Validate();
+            s_Instance = new PreviewActionManager();
+            s_Instance.Init(action, preview);
+        }
 
-            var root = new VisualElement();
-            root.style.flexDirection = FlexDirection.Column;
-            root.style.minWidth = root.style.maxWidth = 300;
+        internal static VisualElement GetContent()
+        {
+            return s_Instance?.m_CurrentAction?.CreateSettingsContent() ?? new VisualElement();
+        }
 
-            var lastLine = new VisualElement();
-            lastLine.style.flexDirection = FlexDirection.Row;
-            var okButton = new Button(() => Validate());
-            okButton.text = "Validate";
-            okButton.style.flexGrow = 1;
-            var cancelButton = new Button(() => Cancel());
-            cancelButton.text = "Cancel";
-            cancelButton.style.flexGrow = 1;
-            lastLine.Add(okButton);
-            lastLine.Add(cancelButton);
+        internal static void SetPreviewUpdate(bool value)
+        {
+            if(s_AutoUpdatePreview.value == value)
+                return;
 
-            var settingsElement = m_CurrentAction.CreateSettingsContent();
-            root.Add(settingsElement);
+            s_AutoUpdatePreview.value = value;
 
+            if (s_Instance == null)
+                return;
+
+            SceneView.RemoveOverlayFromActiveView(s_Instance.m_Overlay);
+            SceneView.AddOverlayToActiveView(s_Instance.m_Overlay = new MenuActionSettingsOverlay());
+        }
+
+        internal static void EndPreview()
+        {
+            s_Instance?.Dispose();
+        }
+
+        internal static void Validate()
+        {
+            s_Instance?.ValidateInternal();
+        }
+
+        void ValidateInternal()
+        {
+            Dispose();
             if (m_HasPreview)
-            {
-                var previewButton = new Button(UpdatePreview);
-                previewButton.text = "Preview";
-                previewButton.style.flexDirection = FlexDirection.Row;
-                previewButton.style.flexGrow = 1;
-                root.Add(previewButton);
-            }
-
-            root.Add(lastLine);
-            return root;
-        }
-
-        internal void Validate()
-        {
-            Clear();
-            if(m_HasPreview)
                 UndoUtility.ExitAndValidatePreview();
             else
                 m_CurrentAction.PerformAction();
         }
 
-        void Cancel()
+        internal static void Cancel()
         {
-            Clear();
+            s_Instance?.CancelInternal();
+        }
+
+        void CancelInternal()
+        {
+            Dispose();
             if(m_HasPreview)
                 UndoUtility.UndoPreview();
         }
 
         void ObjectSelectionChanged()
         {
-            if (!s_SelectionChangedByAction)
+            if (!m_SelectionUpdateDisabled)
                 Validate();
 
-            s_SelectionChangedByAction = false;
+            m_SelectionUpdateDisabled = false;
         }
 
         void SelectModeChanged(SelectMode _) => Validate();
 
-        void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _) => Validate();
+        void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _)
+        {
+            Validate();
+        }
 
-        void UpdatePreview()
+        internal static void UpdatePreview()
+        {
+            s_Instance?.UpdatePreviewInternal();
+        }
+
+        internal void UpdatePreviewInternal()
         {
             //Undo action might be triggering a refresh of the mesh and of the selection, so we need to temporarily unregister to these events
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
@@ -135,10 +162,53 @@ namespace UnityEditor.ProBuilder
         }
     }
 
+    class MenuActionSettingsOverlay : Overlay
+    {
+        public MenuActionSettingsOverlay()
+        {
+            displayName = PreviewActionManager.actionName;
+            displayed = true;
+        }
+
+        public override VisualElement CreatePanelContent()
+        {
+            rootVisualElement.tooltip = PreviewActionManager.actionTooltip;
+
+            var root = new VisualElement();
+            root.style.flexDirection = FlexDirection.Column;
+            root.style.minWidth = root.style.maxWidth = 300;
+
+            var lastLine = new VisualElement();
+            lastLine.style.flexDirection = FlexDirection.Row;
+            var okButton = new Button(PreviewActionManager.Validate);
+            okButton.text = "Confirm";
+            okButton.style.flexGrow = 1;
+            var cancelButton = new Button(PreviewActionManager.Cancel);
+            cancelButton.text = "Cancel";
+            cancelButton.style.flexGrow = 1;
+            lastLine.Add(okButton);
+            lastLine.Add(cancelButton);
+
+            var settingsElement = PreviewActionManager.GetContent();
+            root.Add(settingsElement);
+            if (PreviewActionManager.hasPreview)
+            {
+                var toggle = new Toggle("Live Preview");
+                toggle.SetValueWithoutNotify(!PreviewActionManager.delayedPreview);
+                toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+                {
+                    PreviewActionManager.SetPreviewUpdate(evt.newValue);
+                });
+                root.Add(toggle);
+            }
+
+            root.Add(lastLine);
+            return root;
+        }
+    }
+
     public class MenuActionSettings : EditorAction
     {
-        internal static MenuActionSettingsOverlay s_ActionSettingsOverlay;
-
         static bool s_CanTriggerNewAction = true;
 
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
@@ -150,11 +220,7 @@ namespace UnityEditor.ProBuilder
             }
 
             s_CanTriggerNewAction = false;
-            if (s_ActionSettingsOverlay != null)
-                s_ActionSettingsOverlay.Validate();
-
-            // Creating the overlay based on the action to fill the settings
-            s_ActionSettingsOverlay = new MenuActionSettingsOverlay(action, hasPreview);
+            PreviewActionManager.DoAction(action, hasPreview);
 
             // Ensure we are not calling the action again in the same frame
             // Needed because Menu Items are called once per selected object while PB actions are acting on the entire selection at once

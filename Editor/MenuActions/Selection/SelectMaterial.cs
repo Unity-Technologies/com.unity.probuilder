@@ -55,6 +55,7 @@ namespace UnityEditor.ProBuilder.Actions
             toggle.RegisterCallback<ChangeEvent<bool>>(evt =>
             {
                 m_RestrictToSelectedObjects.SetValue(evt.newValue);
+                PreviewActionManager.UpdatePreview();
             });
             root.Add(toggle);
 

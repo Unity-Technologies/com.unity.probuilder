@@ -57,14 +57,18 @@ namespace UnityEditor.ProBuilder.Actions
                 if (s_CoordinateSpace.value == newValue)
                     return;
                 s_CoordinateSpace.SetValue(newValue);
+                PreviewActionManager.UpdatePreview();
             });
 
             var distField = new Vector3Field("Translate");
             distField.SetValueWithoutNotify(dist);
+            if(PreviewActionManager.delayedPreview)
+                distField.Query<FloatField>().ForEach(ff => ff.isDelayed = true);
             root.Add(distField);
             distField.RegisterCallback<ChangeEvent<Vector3>>(evt =>
             {
                 s_Translation.SetValue(evt.newValue, true);
+                PreviewActionManager.UpdatePreview();
             });
 
             return root;
