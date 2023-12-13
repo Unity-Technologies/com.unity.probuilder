@@ -140,20 +140,22 @@ namespace UnityEditor.ProBuilder.Actions
         protected override ActionResult PerformActionImplementation()
         {
             Vector3 scale = new Vector3(
-                    (m_MirrorAxes & MirrorSettings.X) > 0 ? -1f : 1f,
-                    (m_MirrorAxes & MirrorSettings.Y) > 0 ? -1f : 1f,
-                    (m_MirrorAxes & MirrorSettings.Z) > 0 ? -1f : 1f);
+                (m_MirrorAxes & MirrorSettings.X) > 0 ? -1f : 1f,
+                (m_MirrorAxes & MirrorSettings.Y) > 0 ? -1f : 1f,
+                (m_MirrorAxes & MirrorSettings.Z) > 0 ? -1f : 1f);
 
             bool duplicate = (m_MirrorAxes & MirrorSettings.Duplicate) != 0;
-            List<GameObject> res  = new List<GameObject>();
+            List<GameObject> res = new List<GameObject>();
 
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
                 res.Add(Mirror(pb, scale, duplicate).gameObject);
 
-            MeshSelection.SetSelection(res);
-            PreviewActionManager.selectionChangedByAction = true;
-
-            ProBuilderEditor.Refresh();
+            using (new PreviewActionManager.SelectionScope())
+            {
+                PreviewActionManager.disableSelectionUpdate = true;
+                MeshSelection.SetSelection(res);
+                ProBuilderEditor.Refresh();
+            }
 
             return res.Count > 0 ?
                 new ActionResult(ActionResult.Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :

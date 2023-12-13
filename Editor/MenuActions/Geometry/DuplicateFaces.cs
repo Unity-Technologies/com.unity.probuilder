@@ -112,7 +112,10 @@ namespace UnityEditor.ProBuilder.Actions
                 count += pb.selectedFaceCount;
             }
 
-            ProBuilderEditor.Refresh();
+            using (new PreviewActionManager.SelectionScope())
+            {
+                ProBuilderEditor.Refresh();
+            }
 
             if (count > 0)
                 return new ActionResult(ActionResult.Status.Success, "Duplicate " + count + (count > 1 ? " Faces" : " Face"));
@@ -165,9 +168,11 @@ namespace UnityEditor.ProBuilder.Actions
                 duplicated.Add(copy.gameObject);
             }
 
-            MeshSelection.SetSelection(duplicated);
-            PreviewActionManager.selectionChangedByAction = true;
-            ProBuilderEditor.Refresh();
+            using (new PreviewActionManager.SelectionScope())
+            {
+                MeshSelection.SetSelection(duplicated);
+                ProBuilderEditor.Refresh();
+            }
 
             if (duplicatedFaceCount > 0)
                 return new ActionResult(ActionResult.Status.Success, "Duplicate " + duplicatedFaceCount + " faces to new Object");

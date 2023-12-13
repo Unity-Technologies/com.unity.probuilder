@@ -108,7 +108,10 @@ namespace UnityEditor.ProBuilder.Actions
                 count += pb.selectedFaceCount;
             }
 
-            ProBuilderEditor.Refresh();
+            using (new PreviewActionManager.SelectionScope())
+            {
+                ProBuilderEditor.Refresh();
+            }
 
             if (count > 0)
                 return new ActionResult(ActionResult.Status.Success, "Detach " + count + (count > 1 ? " Faces" : " Face"));
@@ -170,8 +173,11 @@ namespace UnityEditor.ProBuilder.Actions
                 detached.Add(copy.gameObject);
             }
 
-            MeshSelection.SetSelection(detached);
-            ProBuilderEditor.Refresh();
+            using (new PreviewActionManager.SelectionScope())
+            {
+                MeshSelection.SetSelection(detached);
+                ProBuilderEditor.Refresh();
+            }
 
             if (detachedFaceCount > 0)
                 return new ActionResult(ActionResult.Status.Success, "Detach " + detachedFaceCount + " faces to new Object");
