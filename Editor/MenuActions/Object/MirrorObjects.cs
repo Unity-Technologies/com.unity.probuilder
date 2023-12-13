@@ -150,12 +150,9 @@ namespace UnityEditor.ProBuilder.Actions
             foreach (ProBuilderMesh pb in MeshSelection.topInternal)
                 res.Add(Mirror(pb, scale, duplicate).gameObject);
 
-            using (new PreviewActionManager.SelectionScope())
-            {
-                PreviewActionManager.disableSelectionUpdate = true;
-                MeshSelection.SetSelection(res);
-                ProBuilderEditor.Refresh();
-            }
+            MeshSelection.SetSelection(res);
+            PreviewActionManager.selectionUpdateDisabled = true;
+            ProBuilderEditor.Refresh();
 
             return res.Count > 0 ?
                 new ActionResult(ActionResult.Status.Success, string.Format("Mirror {0} {1}", res.Count, res.Count > 1 ? "Objects" : "Object")) :

@@ -19,36 +19,18 @@ namespace UnityEditor.ProBuilder
         static Pref<bool> s_AutoUpdatePreview = new Pref<bool>("editor.autoUpdatePreview", false, SettingsScope.Project);
         internal static bool delayedPreview => !s_AutoUpdatePreview.value;
 
-        internal class SelectionScope : IDisposable
-        {
-            public SelectionScope()
-            {
-                if(s_Instance != null)
-                    s_Instance.m_SelectionChangedByAction = true;
-            }
-
-            public void Dispose()
-            {
-                if(s_Instance != null)
-                    s_Instance.m_SelectionChangedByAction = false;
-            }
-        }
-
         MenuAction m_CurrentAction;
-        internal MenuAction currentAction => m_CurrentAction;
 
         bool m_HasPreview;
         internal static bool hasPreview => s_Instance?.m_HasPreview ?? false;
 
-        bool m_SelectionChangedByAction = false;
-        bool m_DisableSelectionUpdate = false;
-
-        internal static bool disableSelectionUpdate
+        bool m_SelectionUpdateDisabled = false;
+        internal static bool selectionUpdateDisabled
         {
             set
             {
                 if (s_Instance != null)
-                    s_Instance.m_DisableSelectionUpdate = value;
+                    s_Instance.m_SelectionUpdateDisabled = value;
             }
         }
 
@@ -129,16 +111,11 @@ namespace UnityEditor.ProBuilder
 
         void ValidateInternal()
         {
+            Dispose();
             if (m_HasPreview)
-            {
-                Dispose();
                 UndoUtility.ExitAndValidatePreview();
-            }
             else
-            {
                 m_CurrentAction.PerformAction();
-                Dispose();
-            }
         }
 
         internal static void Cancel()
@@ -155,18 +132,17 @@ namespace UnityEditor.ProBuilder
 
         void ObjectSelectionChanged()
         {
-            if (!m_SelectionChangedByAction && !m_DisableSelectionUpdate)
+            if (!m_SelectionUpdateDisabled)
                 Validate();
 
-            m_DisableSelectionUpdate = false;
+            m_SelectionUpdateDisabled = false;
         }
 
         void SelectModeChanged(SelectMode _) => Validate();
 
         void OnSelectionUpdated(IEnumerable<ProBuilderMesh> _)
         {
-            if (!m_SelectionChangedByAction)
-               Validate();
+            Validate();
         }
 
         internal static void UpdatePreview()
