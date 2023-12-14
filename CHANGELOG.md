@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.1-pre.1] - 2023-12-14
+
+### Changes
+
+- Updated context menu to use the new API for Unity 2023.3.
+- Improved the action preview UX.
+
 ## [6.0.0] - 2023-11-27
 
 ### Changes
