@@ -378,7 +378,7 @@ namespace UnityEditor.ProBuilder
 
             foreach (var mesh in selection)
             {
-                var applyPerFace = ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Face) && mesh.faceCount > 0;
+                var applyPerFace = ProBuilderEditor.instance != null && ProBuilderEditor.selectMode.ContainsFlag(SelectMode.Face) && mesh.faceCount > 0;
                 mesh.SetMaterial(applyPerFace ? mesh.GetSelectedFaces() : mesh.facesInternal, mat);
                 InternalMeshUtility.FilterUnusedSubmeshIndexes(mesh);
                 mesh.Rebuild();
