@@ -23,6 +23,8 @@ namespace UnityEditor.ProBuilder
         ProBuilderEditor m_Editor;
         ProBuilderEditor editor => m_Editor ??= new ProBuilderEditor();
 
+        EditorSceneViewPicker.ProBuilderSelectPathContext m_PathContext;
+
         protected override Type GetEditorToolType(Tool tool)
         {
             switch(tool)
@@ -126,11 +128,14 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_Editor = new ProBuilderEditor();
+
+            ShortcutManager.RegisterContext(m_PathContext ??= new EditorSceneViewPicker.ProBuilderSelectPathContext());
         }
 
         public override void OnWillBeDeactivated()
         {
             m_Editor.Dispose();
+            ShortcutManager.UnregisterContext(m_PathContext);
         }
 
         public override void OnToolGUI(EditorWindow window)

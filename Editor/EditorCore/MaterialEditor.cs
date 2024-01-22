@@ -20,6 +20,19 @@ namespace UnityEditor.ProBuilder
         // Reference to the currently open pb_Material_Editor
         public static MaterialEditor instance { get; private set; }
 
+        const string k_QuickMaterialPath = "Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Quick Material";
+        [MenuItem(k_QuickMaterialPath+" %#M2", true, PreferenceKeys.menuMaterialColors)]
+        public static bool VerifyQuickMaterialAction()
+        {
+            return ProBuilderEditor.instance != null && MeshSelection.selectedObjectCount > 0 && instance != null && instance.m_QueuedMaterial.value != null;
+        }
+
+        [MenuItem(k_QuickMaterialPath+" %#M2", false, PreferenceKeys.menuMaterialColors)]
+        public static void ApplyQuickMaterial()
+        {
+            ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
+        }
+
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", true, PreferenceKeys.menuMaterialColors)]
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2 &2", true, PreferenceKeys.menuMaterialColors)]
         [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3 &3", true, PreferenceKeys.menuMaterialColors)]
@@ -197,19 +210,22 @@ namespace UnityEditor.ProBuilder
             GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width - 74));
             GUILayout.BeginVertical();
 
+            GUILayout.BeginHorizontal();
             m_QueuedMaterial.value = (Material)EditorGUILayout.ObjectField(m_QueuedMaterial.value, typeof(Material), true);
 
             GUILayout.Space(2);
 
-            if (GUILayout.Button("Apply (Ctrl+Shift+Click)"))
-                ApplyMaterial(MeshSelection.topInternal, m_QueuedMaterial.value);
-
             GUI.enabled = editor != null && MeshSelection.selectedFaceCount > 0;
-            if (GUILayout.Button("Match Selection"))
+            if (GUILayout.Button("Match Selection", GUILayout.MaxWidth(120)))
             {
                 m_QueuedMaterial.SetValue(EditorMaterialUtility.GetActiveSelection());
             }
             GUI.enabled = true;
+            GUILayout.EndHorizontal();
+
+            var quickMatShortcut = ShortcutManager.instance.GetShortcutBinding("Main Menu/"+k_QuickMaterialPath).ToString();
+            if (GUILayout.Button("Apply ("+quickMatShortcut+")"))
+                ApplyMaterial(MeshSelection.topInternal, m_QueuedMaterial.value);
 
             GUILayout.EndVertical();
 
@@ -327,31 +343,31 @@ namespace UnityEditor.ProBuilder
             GUILayout.EndScrollView();
         }
 
-        /// <summary>
-        /// Applies the currently queued material to the selected face and eats the event.
-        /// </summary>
-        /// <param name="em"></param>
-        /// <param name="pb"></param>
-        /// <param name="quad"></param>
-        /// <returns></returns>
-        public bool ClickShortcutCheck(EventModifiers em, ProBuilderMesh pb, Face quad)
-        {
-            if (UVEditor.instance == null)
-            {
-                if (em == (EventModifiers.Control | EventModifiers.Shift))
-                {
-                    UndoUtility.RecordObject(pb, "Quick Apply");
-                    quad.material = m_QueuedMaterial;
-                    pb.ToMesh();
-                    pb.Refresh();
-                    pb.Optimize();
-                    EditorUtility.ShowNotification("Quick Apply Material");
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        // /// <summary>
+        // /// Applies the currently queued material to the selected face and eats the event.
+        // /// </summary>
+        // /// <param name="em"></param>
+        // /// <param name="pb"></param>
+        // /// <param name="quad"></param>
+        // /// <returns></returns>
+        // public bool ClickShortcutCheck(EventModifiers em, ProBuilderMesh pb, Face quad)
+        // {
+        //     if (instance == null)
+        //     {
+        //         if (em == (EventModifiers.Control | EventModifiers.Shift))
+        //         {
+        //             UndoUtility.RecordObject(pb, "Quick Apply");
+        //             quad.material = m_QueuedMaterial;
+        //             pb.ToMesh();
+        //             pb.Refresh();
+        //             pb.Optimize();
+        //             EditorUtility.ShowNotification("Quick Apply Material");
+        //             return true;
+        //         }
+        //     }
+        //
+        //     return false;
+        // }
 
         static void ApplyMaterial(IEnumerable<ProBuilderMesh> selection, Material mat)
         {

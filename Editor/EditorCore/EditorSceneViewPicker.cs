@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
@@ -31,6 +32,8 @@ namespace UnityEditor.ProBuilder
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
 
+        static List<int> s_HoveredPath = new List<int>();
+
         public static void DoMouseHover(SceneSelection selection)
         {
             if (selection.faces.Count == 0)
@@ -42,17 +45,53 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var faces = mesh.facesInternal;
-            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
+            s_HoveredPath = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
 
-            if (pathFaces != null)
+            if (s_HoveredPath != null)
             {
-                foreach (var path in pathFaces)
+                foreach (var path in s_HoveredPath)
                     selection.faces.Add(faces[path]);
+            }
+        }
+
+        internal class ProBuilderSelectPathContext : IShortcutContext
+        {
+            public bool active
+                => EditorWindow.focusedWindow is SceneView
+                && ProBuilderEditor.instance != null
+                && s_Selection.mesh != null;
+        }
+
+        static bool s_SkipNextMouseClick = false;
+        [Shortcut("ProBuilder/Selection/Select Path", typeof(ProBuilderSelectPathContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
+        static void DoPathSelection(ShortcutArguments args)
+        {
+            var mesh = s_Selection.mesh;
+            if (mesh.GetActiveFace() != null)
+            {
+                UndoUtility.RecordSelection(mesh, "Select Face");
+                if (s_HoveredPath != null)
+                {
+                    foreach (var pathFace in s_HoveredPath)
+                    {
+                        Debug.Log("Adding Face " + pathFace);
+                        mesh.AddToFaceSelection(pathFace);
+                    }
+
+                    // Event.current.Use();
+                    s_SkipNextMouseClick = true;
+                }
             }
         }
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
+            if (s_SkipNextMouseClick)
+            {
+                s_SkipNextMouseClick = false;
+                return null;
+            }
+
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
@@ -106,14 +145,7 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var face in s_Selection.faces)
                 {
-                    // Check for other editor mouse shortcuts first (todo proper event handling for mouse shortcuts)
-                    MaterialEditor matEditor = MaterialEditor.instance;
-
-                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, face))
-                        return null;
-
                     UVEditor uvEditor = UVEditor.instance;
-
                     if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, face))
                         return null;
 
@@ -122,12 +154,12 @@ namespace UnityEditor.ProBuilder
                     var sel = mesh.selectedFaceIndexes.IndexOf(ind);
 
                     UndoUtility.RecordSelection(mesh, "Select Face");
-
                     if (sel > -1)
                     {
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
                             (addToSelectionModifier && face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
                         {
+                            Debug.Log("Remove selected face "+sel);
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
 
                             if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
@@ -150,18 +182,22 @@ namespace UnityEditor.ProBuilder
                         else
                         {
                             mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
+
+                            Debug.Log("set selected face "+ind);
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
                         }
                     }
-                    else if (pathSelectionModifier && mesh.GetActiveFace() != null)
-                    {
-                        var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
-                            Array.IndexOf<Face>(faces, face));
-                        foreach (var pathFace in pathFaces)
-                        {
-                            mesh.AddToFaceSelection(pathFace);
-                        }
-                    }
+                    // else  if (pathSelectionModifier && mesh.GetActiveFace() != null)
+                    // {
+                        // Debug.Log("Trying to select a path to "+mesh.GetActiveFace());
+                        // var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                        //     Array.IndexOf<Face>(faces, face));
+                        // foreach (var pathFace in pathFaces)
+                        // {
+                        //     Debug.Log("Adding Face "+pathFace);
+                        //     mesh.AddToFaceSelection(pathFace);
+                        // }
+                    // }
                     else
                         mesh.AddToFaceSelection(ind);
                 }
