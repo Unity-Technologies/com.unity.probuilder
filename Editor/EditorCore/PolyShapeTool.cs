@@ -3,9 +3,11 @@ using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Csg;
 using UnityEngine.ProBuilder.MeshOperations;
 
 using Math = UnityEngine.ProBuilder.Math;
+using Plane = UnityEngine.Plane;
 using UObject = UnityEngine.Object;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
@@ -59,6 +61,7 @@ namespace UnityEditor.ProBuilder
         public override void OnWillBeDeactivated()
         {
             m_PolyShape = null;
+
             base.OnWillBeDeactivated();
         }
 
@@ -74,6 +77,10 @@ namespace UnityEditor.ProBuilder
                 {
                     evt.Use();
                     UndoUtility.RecordObject(polygon, "Set Height");
+
+                    SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    polygon = null;
+
                     m_CanCreatePolyShape = TryCreatePolyShape();
                 }
             }
@@ -84,8 +91,23 @@ namespace UnityEditor.ProBuilder
             base.OnToolGUI(window);
         }
 
+        protected override void OnObjectSelectionChanged()
+        {
+            if(polygon == null || (Selection.activeObject is GameObject go && go == polygon.gameObject))
+                return;
+
+            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                DestroyImmediate(polygon.gameObject);
+
+            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            LeaveTool();
+        }
+
         bool TryCreatePolyShape()
         {
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             var newPolyshape = CanCreateNewPolyShape();
             if (newPolyshape)
             {
@@ -110,9 +132,10 @@ namespace UnityEditor.ProBuilder
 
                 UpdateTarget(m_PolyShape);
 
-                Selection.activeObject = activeShape;
+                // Selection.activeObject = activeShape;
             }
 
+            MeshSelection.objectSelectionChanged+= OnObjectSelectionChanged;
             return newPolyshape;
         }
 
@@ -319,7 +342,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void LeaveTool()
+        protected void LeaveTool()
         {
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -395,7 +418,6 @@ namespace UnityEditor.ProBuilder
 
             DoPointPlacement();
             DoExistingPointsGUI();
-
             if(evt.type == EventType.Repaint)
             {
                 DoExistingLinesGUI();
@@ -648,8 +670,8 @@ namespace UnityEditor.ProBuilder
                             return;
                         }
 
-                        if(polygon.m_Points.Count == 0)
-                            Selection.activeObject = polygon;
+                        // if(polygon.m_Points.Count == 0)
+                        //     Selection.activeObject = polygon;
 
                         polygon.m_Points.Add(point);
 
@@ -1067,7 +1089,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void OnObjectSelectionChanged()
+        protected virtual void OnObjectSelectionChanged()
         {
             if(polygon == null)
                 return;
