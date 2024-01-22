@@ -227,6 +227,7 @@ namespace UnityEditor.ProBuilder
         }
 
         int m_ControlId;
+        int m_ControlId0;
         int m_SelectedIndex = -2;
         bool m_IsModifyingVertices = false;
         bool m_NextMouseUpAdvancesMode = false;
@@ -382,7 +383,7 @@ namespace UnityEditor.ProBuilder
             if(evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
 
-            if(polygon.polyEditMode == PolyShape.PolyEditMode.Path && !m_PlacingPoint)
+            if(polygon.polyEditMode == PolyShape.PolyEditMode.Path && HandleUtility.nearestControl == m_ControlId && !m_PlacingPoint)
                 m_MouseCursor = MouseCursor.ArrowPlus;
             else if((GUIUtility.hotControl != 0) || m_PlacingPoint)
                 m_MouseCursor = MouseCursor.MoveArrow;
@@ -436,7 +437,9 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
                         LeaveTool();
-                    EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
+                    EditorGUILayout.HelpBox("Move Poly Shape points to update the shape." +
+                        "\nClick on an edge to add new points, press 'Backspace' to remove selected point." +
+                        "\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
                 }
             }
@@ -600,7 +603,6 @@ namespace UnityEditor.ProBuilder
                 {
                     evt.Use();
                     m_PlacingPoint = false;
-                    m_SelectedIndex = -1;
                     SceneView.RepaintAll();
                 }
             }
@@ -786,10 +788,13 @@ namespace UnityEditor.ProBuilder
 
             if(evt.type == EventType.Repaint && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
-                Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
-                Handles.color = k_HandleColor;
-                Handles.DotHandleCap(-1, currentPos, Quaternion.identity, HandleUtility.GetHandleSize(currentPos) * k_HandleSize, evt.type);
-                Handles.color = Color.white;
+                if (HandleUtility.nearestControl == m_ControlId)
+                {
+                    Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
+                    Handles.color = k_HandleColor;
+                    Handles.DotHandleCap(-1, currentPos, Quaternion.identity, HandleUtility.GetHandleSize(currentPos) * k_HandleSize, evt.type);
+                    Handles.color = Color.white;
+                }
             }
 
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
@@ -845,11 +850,14 @@ namespace UnityEditor.ProBuilder
 
                     float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
 
-                    Handles.color = ii == m_SelectedIndex ? k_HandleSelectedColor : k_HandleColor;
-
                     EditorGUI.BeginChangeCheck();
 
-                    point = Handles.Slider2D(point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
+                    int id = GUIUtility.GetControlID(FocusType.Passive);
+                    Handles.color = ii == m_SelectedIndex || HandleUtility.nearestControl == id ? k_HandleSelectedColor : k_HandleColor;
+                    point = Handles.Slider2D(id, point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
+
+                    if (ii == 0)
+                        m_ControlId0 = id;
 
                     if (EditorGUI.EndChangeCheck())
                     {
@@ -910,7 +918,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-
         /// <summary>
         /// Display lines of the poly shape
         /// </summary>
@@ -950,11 +957,13 @@ namespace UnityEditor.ProBuilder
                || polygon.polyEditMode != PolyShape.PolyEditMode.Path)
                 return;
 
-            if(polygon.controlPoints.Count > 0)
+            if((polygon.controlPoints.Count > 0 && HandleUtility.nearestControl == m_ControlId) // the cursor is not on any other knot
+               || (polygon.controlPoints.Count > 2 && HandleUtility.nearestControl == m_ControlId0)) // or the cursor is hovering the first knot and we can close the shape
             {
+                var closestPoint = (polygon.controlPoints.Count > 2 && HandleUtility.nearestControl == m_ControlId0) ? polygon.controlPoints[0] : m_CurrentPosition;
                 Handles.color = k_DrawingLineColor;
                 Handles.DrawDottedLine(m_Polygon.transform.TransformPoint(polygon.controlPoints[polygon.controlPoints.Count - 1]),
-                    m_Polygon.transform.TransformPoint(m_CurrentPosition), 5f);
+                    m_Polygon.transform.TransformPoint(closestPoint), 5f);
                 Handles.color = Color.white;
             }
         }

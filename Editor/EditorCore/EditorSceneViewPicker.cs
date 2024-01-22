@@ -73,10 +73,7 @@ namespace UnityEditor.ProBuilder
                 if (s_HoveredPath != null)
                 {
                     foreach (var pathFace in s_HoveredPath)
-                    {
-                        Debug.Log("Adding Face " + pathFace);
                         mesh.AddToFaceSelection(pathFace);
-                    }
 
                     // Event.current.Use();
                     s_SkipNextMouseClick = true;
@@ -95,7 +92,6 @@ namespace UnityEditor.ProBuilder
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
-            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(evt.modifiers);
 
             float pickedElementDistance;
 
@@ -159,7 +155,6 @@ namespace UnityEditor.ProBuilder
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
                             (addToSelectionModifier && face == mesh.GetActiveFace() && !activeObjectSelectionChanged))
                         {
-                            Debug.Log("Remove selected face "+sel);
                             mesh.RemoveFromFaceSelectionAtIndex(sel);
 
                             if (addOrRemoveIfPresentFromSelectionModifier && activeObjectSelectionChanged)
@@ -183,21 +178,9 @@ namespace UnityEditor.ProBuilder
                         {
                             mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
 
-                            Debug.Log("set selected face "+ind);
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
                         }
                     }
-                    // else  if (pathSelectionModifier && mesh.GetActiveFace() != null)
-                    // {
-                        // Debug.Log("Trying to select a path to "+mesh.GetActiveFace());
-                        // var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
-                        //     Array.IndexOf<Face>(faces, face));
-                        // foreach (var pathFace in pathFaces)
-                        // {
-                        //     Debug.Log("Adding Face "+pathFace);
-                        //     mesh.AddToFaceSelection(pathFace);
-                        // }
-                    // }
                     else
                         mesh.AddToFaceSelection(ind);
                 }
