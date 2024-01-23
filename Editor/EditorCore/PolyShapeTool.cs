@@ -28,13 +28,11 @@ namespace UnityEditor.ProBuilder
         }
 
         PolyShape m_PolyShape = null;
-        bool m_CanCreatePolyShape = false;
-
-        static GUIContent s_IconContent;
 
         /// <summary>
         /// Gets the icon and tooltip for the PolyShapeTool.
         /// </summary>
+        static GUIContent s_IconContent;
         public override GUIContent toolbarIcon
         {
             get
@@ -61,14 +59,19 @@ namespace UnityEditor.ProBuilder
         public override void OnWillBeDeactivated()
         {
             m_PolyShape = null;
-
             base.OnWillBeDeactivated();
         }
 
         public override void OnToolGUI(EditorWindow window)
         {
             if (m_PolyShape == null)
-                m_CanCreatePolyShape = TryCreatePolyShape();
+            {
+                if (!TryCreatePolyShape())
+                {
+                    ToolManager.RestorePreviousTool();
+                    return;
+                }
+            }
 
             var evt = Event.current;
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
@@ -81,12 +84,13 @@ namespace UnityEditor.ProBuilder
                     SetPolyEditMode(PolyShape.PolyEditMode.None);
                     polygon = null;
 
-                    m_CanCreatePolyShape = TryCreatePolyShape();
+                    if (!TryCreatePolyShape())
+                    {
+                        ToolManager.RestorePreviousTool();
+                        return;
+                    }
                 }
             }
-
-            if (!m_CanCreatePolyShape)
-                ToolManager.RestorePreviousTool();
 
             base.OnToolGUI(window);
         }
@@ -128,11 +132,7 @@ namespace UnityEditor.ProBuilder
                 }
 
                 m_PolyShape.polyEditMode = PolyShape.PolyEditMode.Path;
-                var activeShape = polygon == null ? m_PolyShape : polygon;
-
                 UpdateTarget(m_PolyShape);
-
-                // Selection.activeObject = activeShape;
             }
 
             MeshSelection.objectSelectionChanged+= OnObjectSelectionChanged;
