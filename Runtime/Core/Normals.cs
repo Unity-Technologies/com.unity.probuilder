@@ -227,8 +227,7 @@ namespace UnityEngine.ProBuilder
 
                     // Ideally this should only continue on group == NONE, but historically negative values have also
                     // been treated as no smoothing.
-                    if (group <= Smoothing.smoothingGroupNone ||
-                        (group > Smoothing.smoothRangeMax && group < Smoothing.hardRangeMax))
+                    if (group <= Smoothing.smoothingGroupNone)
                         continue;
 
                     s_SmoothAvg[group].x += normals[index].x;
@@ -242,8 +241,7 @@ namespace UnityEngine.ProBuilder
                     int index = sharedVertices[i][n];
                     int group = s_CachedIntArray[index];
 
-                    if (group <= Smoothing.smoothingGroupNone ||
-                        (group > Smoothing.smoothRangeMax && group < Smoothing.hardRangeMax))
+                    if (group <= Smoothing.smoothingGroupNone)
                         continue;
 
                     normals[index].x = s_SmoothAvg[group].x / s_SmoothAvgCount[group];

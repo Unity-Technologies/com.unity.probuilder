@@ -555,7 +555,7 @@ namespace UnityEditor.ProBuilder
 
                         GUILayout.BeginHorizontal();
 
-                        for (int i = 1; i < Smoothing.smoothRangeMax; i++)
+                        for (int i = 1; i <= Smoothing.smoothRangeMax; i++)
                         {
                             bool isSelected = data.selected.Contains(i);
 
