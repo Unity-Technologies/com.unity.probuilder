@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+
+## [Unreleased]
+
+### Fixed
+
+- [PBLD-93] Fixed a bug where entering the PolyShape tool with a docked inspector would throw errors.
+- Fixed a bug where creating a polyshape mesh was not properly finalizing the mesh creation. 
+- Fixed a bug where assigning a material from the Material Editor was not working in GameObject mode.
+- 
+### Changes
+
+- Removed the Edit Mesh button from ProBuilderMesh Inspector.
+- Added a close loop feedback with PolyShape tool and improve the handles.
+- Added better tooltips when adding removing vertices using the PolyShape tool.
+- Material editor: Changed Quick material shortcut to Ctrl + Shift + Mouse2, and add it to the shortcut manager.
+- Material editor: Improved the 'Match selection' button position to make it more self-explanatory.
+- Smooth Group editor: Update the number of smoothing group to 30.
+- Vertex Position Editor: Slightly moved the Vertex IDs labels positions to make then more readable in the Scene View.
+- Vertex Position Editor: Improved the World/Model Space button. 
+- Interaction tool states are now shown in the main menu.
+
 ## [6.0.1-pre.1] - 2023-12-14
 
 ### Changes
