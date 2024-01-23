@@ -111,11 +111,13 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+            GUILayout.Label("Coordinates: "+ (m_WorldSpace ? "World Space" : "Model Space"));
+
             GUILayout.FlexibleSpace();
 
             GUIStyle style = m_WorldSpace ? EditorStyles.toolbarButton : UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
 
-            if (GUILayout.Button(m_WorldSpace ? "World Space" : "Model Space", style))
+            if (GUILayout.Button(m_WorldSpace ? "Switch to Model Space" : "Switch to World Space", style))
                 m_WorldSpace = !m_WorldSpace;
 
             GUILayout.EndHorizontal();

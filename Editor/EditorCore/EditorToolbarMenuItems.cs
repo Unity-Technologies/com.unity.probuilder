@@ -21,6 +21,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_NewBezierShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/New Bezier Shape", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -40,6 +41,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenLightmapUVEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenLightmapUVEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open Lightmap UV Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -59,6 +61,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenMaterialEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenMaterialEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open Material Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -78,6 +81,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenSmoothingEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenSmoothingEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open Smoothing Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -97,6 +101,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenUVEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenUVEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open UV Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -116,6 +121,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenVertexColorEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexColorEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open Vertex Color Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -135,6 +141,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_OpenVertexPositionEditor()
 		{
 			var instance = EditorToolbarLoader.GetInstance<OpenVertexPositionEditor>();
+			Menu.SetChecked(k_MenuPrefix + "Editors/Open Vertex Position Editor", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -154,6 +161,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ExportAsset()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportAsset>();
+			Menu.SetChecked(k_MenuPrefix + "Export/Export Asset", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -173,6 +181,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ExportObj()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportObj>();
+			Menu.SetChecked(k_MenuPrefix + "Export/Export Obj", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -192,6 +201,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ExportPly()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportPly>();
+			Menu.SetChecked(k_MenuPrefix + "Export/Export Ply", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -211,6 +221,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ExportStlAscii()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportStlAscii>();
+			Menu.SetChecked(k_MenuPrefix + "Export/Export Stl Ascii", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -230,6 +241,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ExportStlBinary()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ExportStlBinary>();
+			Menu.SetChecked(k_MenuPrefix + "Export/Export Stl Binary", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -250,6 +262,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<BevelEdges>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Bevel Edges", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -269,6 +282,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<BridgeEdges>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Bridge Edges &B", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -289,6 +303,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Collapse Vertices &C", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -308,6 +323,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ConformFaceNormals>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Conform Face Normals", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -328,6 +344,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<DeleteFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Delete Faces _BACKSPACE", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -348,6 +365,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<DetachFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Detach Faces", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -367,6 +385,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<DuplicateFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Duplicate Faces", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -386,6 +405,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<Extrude>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Extrude %E", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -413,6 +433,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<FillHole>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Fill Hole", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -432,6 +453,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceEdge>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Flip Face Edge", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -452,6 +474,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<FlipFaceNormals>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Flip Face Normals &N", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -472,6 +495,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<InsertEdgeLoop>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Insert Edge Loop &U", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -492,6 +516,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<MergeFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Merge Faces", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -512,6 +537,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<OffsetElements>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Offset Elements", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -531,6 +557,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Set Pivot To Selection %J", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -551,6 +578,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SmartConnect>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Smart Connect &E", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -571,6 +599,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SmartSubdivide>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Smart Subdivide &S", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -598,6 +627,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SplitVertices>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Split Vertices &X", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -618,6 +648,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<TriangulateFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Triangulate Faces", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -638,6 +669,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<WeldVertices>();
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Weld Vertices &V", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -657,6 +689,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ToggleDragRectMode>();
+			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle Drag Rect Mode", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -672,31 +705,12 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode", true, PreferenceKeys.menuSelection + 1)]
-		static bool MenuVerify_ToggleDragSelectionMode()
-		{
-			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
-			var instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
-			return instance != null && instance.enabled;
-		}
-
-		[MenuItem(k_MenuPrefix + "Interaction/Toggle Drag Selection Mode", false, PreferenceKeys.menuSelection + 1)]
-		static void MenuPerform_ToggleDragSelectionMode()
-		{
-			var instance = EditorToolbarLoader.GetInstance<ToggleDragSelectionMode>();
-			if(instance != null && instance.enabled)
-			{
-				PreviewActionManager.EndPreview();
-				instance.PerformAction();
-				ProBuilderAnalytics.SendActionEvent(instance);
-			}
-		}
-
 		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation _P", true, PreferenceKeys.menuSelection + 1)]
 		static bool MenuVerify_ToggleHandleOrientation()
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
+			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle Handle Orientation _P", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -717,6 +731,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ToggleSelectBackFaces>();
+			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle Select Back Faces", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -737,6 +752,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ToggleXRay>();
+			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle X Ray &#X", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -756,6 +772,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_CenterPivot()
 		{
 			var instance = EditorToolbarLoader.GetInstance<CenterPivot>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Center Pivot", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -775,6 +792,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ConformObjectNormals()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ConformObjectNormals>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Conform Object Normals", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -794,6 +812,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_FlipObjectNormals()
 		{
 			var instance = EditorToolbarLoader.GetInstance<FlipObjectNormals>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Flip Object Normals", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -813,6 +832,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_FreezeTransform()
 		{
 			var instance = EditorToolbarLoader.GetInstance<FreezeTransform>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Freeze Transform", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -832,6 +852,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_MergeObjects()
 		{
 			var instance = EditorToolbarLoader.GetInstance<MergeObjects>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Merge Objects", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -851,6 +872,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_MirrorObjects()
 		{
 			var instance = EditorToolbarLoader.GetInstance<MirrorObjects>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Mirror Objects", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -869,6 +891,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_ProBuilderize()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ProBuilderize>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Pro Builderize", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -887,6 +910,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_SetCollider()
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetCollider>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Set Collider", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -906,6 +930,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_SetTrigger()
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetTrigger>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Set Trigger", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -925,6 +950,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_SubdivideObject()
 		{
 			var instance = EditorToolbarLoader.GetInstance<SubdivideObject>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Subdivide Object", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -944,6 +970,7 @@ namespace UnityEditor.ProBuilder
 		static bool MenuVerify_TriangulateObject()
 		{
 			var instance = EditorToolbarLoader.GetInstance<TriangulateObject>();
+			Menu.SetChecked(k_MenuPrefix + "Object/Triangulate Object", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -964,6 +991,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<GrowSelection>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Grow Selection &G", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -983,6 +1011,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectHole>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Hole", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1003,6 +1032,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectLoop>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Loop &L", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1030,6 +1060,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectMaterial>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Material", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1049,6 +1080,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectRing>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Ring &R", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1076,6 +1108,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Smoothing Group", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1085,7 +1118,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectSmoothingGroup>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance,true));
+				PreviewActionManager.EndPreview();
+				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}
@@ -1095,6 +1129,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Select Vertex Color", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
@@ -1114,6 +1149,7 @@ namespace UnityEditor.ProBuilder
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ShrinkSelection>();
+			Menu.SetChecked(k_MenuPrefix + "Selection/Shrink Selection &#G", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 

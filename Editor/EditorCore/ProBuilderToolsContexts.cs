@@ -58,7 +58,6 @@ namespace UnityEditor.ProBuilder
 
             typeof(Actions.ToggleSelectBackFaces),
             typeof(Actions.ToggleHandleOrientation),
-            typeof(Actions.ToggleDragSelectionMode),
             typeof(Actions.ToggleDragRectMode),
             typeof(Actions.ToggleXRay)
         };
