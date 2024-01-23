@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
@@ -236,7 +233,7 @@ namespace UnityEditor.ProBuilder
 
                     Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
-                    UI.EditorGUIUtility.SceneLabel(i.ToString(), cen);
+                    UI.EditorGUIUtility.SceneLabel(i.ToString(), cen, false);
 
                     if (++labelCount > k_MaxSelectableVertices) break;
                 }
