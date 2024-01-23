@@ -18,10 +18,16 @@ namespace UnityEditor.ProBuilder
         {
             static bool s_Initialized;
             public static GUIStyle miniButton;
+            public static GUIStyle helpBox;
 
             public static readonly GUIContent lightmapStatic = EditorGUIUtility.TrTextContent("Lightmap Static", "Controls whether the geometry will be marked as Static for lightmapping purposes. When enabled, this mesh will be present in lightmap calculations.");
             public static readonly GUIContent sharedMesh = EditorGUIUtility.TrTextContent("Mesh");
-            public static readonly GUIContent editMesh = EditorGUIUtility.TrTextContent("Edit Mesh", "Enables mesh edit mode.");
+
+            const string k_IconPath = "EditableMesh/EditMeshContext";
+            const string k_ComponentMessage = "Use the ProBuilder Edit Mode in the Scene Tools Overlay to edit this Mesh.";
+            public static readonly GUIContent helpLabelContentIcon = new GUIContent(IconUtility.GetIcon(k_IconPath));
+            public static readonly GUIContent helpLabelContent = EditorGUIUtility.TrTextContent(k_ComponentMessage);
+
 
             public static void Init()
             {
@@ -32,6 +38,9 @@ namespace UnityEditor.ProBuilder
                 miniButton.stretchHeight = false;
                 miniButton.stretchWidth = false;
                 miniButton.padding = new RectOffset(6, 6, 3, 3);
+
+                helpBox = new GUIStyle(EditorStyles.helpBox);
+                helpBox.padding = new RectOffset(2, 2, 2, 2);
             }
         }
 
@@ -97,9 +106,21 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            if (ToolManager.activeContextType != typeof(PositionToolContext))
-                if (GUILayout.Button(Styles.editMesh))
-                    ToolManager.SetActiveContext<PositionToolContext>();
+            // if (ToolManager.activeContextType != typeof(PositionToolContext))
+            //     if (GUILayout.Button(Styles.editMesh))
+            //         ToolManager.SetActiveContext<PositionToolContext>();
+            // [SPLB-132] Reverting to custom helpbox as the default helpbox style as a trouble to handle custom icons
+            // when using a screen with PixelPerPoints different than 1. This is done in trunk by setting the
+            // Texture2d.pixelsPerPoints which is an internal property than cannot be access from here.
+            EditorGUILayout.BeginHorizontal(Styles.helpBox);
+            EditorGUIUtility.SetIconSize(new Vector2(32f, 32f));
+            EditorGUILayout.LabelField(Styles.helpLabelContentIcon,
+                GUILayout.Width(34), GUILayout.MinHeight(34), GUILayout.ExpandHeight(true));
+            EditorGUIUtility.SetIconSize(Vector2.zero);
+            EditorGUILayout.LabelField(Styles.helpLabelContent,
+                new GUIStyle(EditorStyles.label){wordWrap = Styles.helpBox.wordWrap, fontSize = Styles.helpBox.fontSize, padding = new RectOffset(-2, 0, 0, 0)},
+                GUILayout.ExpandHeight(true));
+            EditorGUILayout.EndHorizontal();
 
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;
