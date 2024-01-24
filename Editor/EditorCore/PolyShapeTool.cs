@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Csg;
 using UnityEngine.ProBuilder.MeshOperations;
 
 using Math = UnityEngine.ProBuilder.Math;
@@ -13,11 +12,11 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape", toolPriority = 1001)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
     public class DrawPolyShapeTool : PolyShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New PolyShape", false, PreferenceKeys.menuEditor + 1)]
@@ -28,25 +27,6 @@ namespace UnityEditor.ProBuilder
         }
 
         PolyShape m_PolyShape = null;
-
-        /// <summary>
-        /// Gets the icon and tooltip for the PolyShapeTool.
-        /// </summary>
-        static GUIContent s_IconContent;
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = String.Empty,
-                        tooltip = "Create PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
 
         public override void OnActivated()
         {
@@ -171,6 +151,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
     [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
@@ -204,26 +185,6 @@ namespace UnityEditor.ProBuilder
         const float k_HandleSize = .05f;
 
         GUIContent m_OverlayTitle;
-
-        static GUIContent s_IconContent;
-
-        /// <summary>
-        /// Gets the icon and tooltip for the PolyShapeTool.
-        /// </summary>
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = "Edit PolyShape",
-                        tooltip = "Edit PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
 
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
