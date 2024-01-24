@@ -33,76 +33,76 @@ namespace UnityEditor.ProBuilder
             ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2 &2", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3 &3", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4 &4", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5 &5", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6 &6", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7 &7", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8 &8", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9 &9", true, PreferenceKeys.menuMaterialColors)]
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10 &0", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10", true, PreferenceKeys.menuMaterialColors)]
         public static bool VerifyMaterialAction()
         {
             return ProBuilderEditor.instance != null && MeshSelection.selectedObjectCount > 0;
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1 &1", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 1", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial0()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[0]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2 &2", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 2", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial1()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[1]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3 &3", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 3", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial2()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[2]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4 &4", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 4", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial3()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[3]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5 &5", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 5", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial4()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[4]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6 &6", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 6", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial5()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[5]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7 &7", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 7", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial6()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[6]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8 &8", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 8", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial7()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[7]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9 &9", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 9", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial8()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[8]);
         }
 
-        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10 &0", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem("Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset 10", false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyMaterial9()
         {
             ApplyMaterial(MeshSelection.topInternal, CurrentPalette[9]);
@@ -342,32 +342,6 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.EndScrollView();
         }
-
-        // /// <summary>
-        // /// Applies the currently queued material to the selected face and eats the event.
-        // /// </summary>
-        // /// <param name="em"></param>
-        // /// <param name="pb"></param>
-        // /// <param name="quad"></param>
-        // /// <returns></returns>
-        // public bool ClickShortcutCheck(EventModifiers em, ProBuilderMesh pb, Face quad)
-        // {
-        //     if (instance == null)
-        //     {
-        //         if (em == (EventModifiers.Control | EventModifiers.Shift))
-        //         {
-        //             UndoUtility.RecordObject(pb, "Quick Apply");
-        //             quad.material = m_QueuedMaterial;
-        //             pb.ToMesh();
-        //             pb.Refresh();
-        //             pb.Optimize();
-        //             EditorUtility.ShowNotification("Quick Apply Material");
-        //             return true;
-        //         }
-        //     }
-        //
-        //     return false;
-        // }
 
         static void ApplyMaterial(IEnumerable<ProBuilderMesh> selection, Material mat)
         {

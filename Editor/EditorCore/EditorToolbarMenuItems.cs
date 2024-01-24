@@ -298,16 +298,16 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &C", true, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices", true, PreferenceKeys.menuGeometry + 3)]
 		static bool MenuVerify_CollapseVertices()
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
-			Menu.SetChecked(k_MenuPrefix + "Geometry/Collapse Vertices &C", instance.IsMenuItemChecked() );
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Collapse Vertices", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices &C", false, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Collapse Vertices", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_CollapseVertices()
 		{
 			var instance = EditorToolbarLoader.GetInstance<CollapseVertices>();
@@ -552,16 +552,16 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %J", true, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection", true, PreferenceKeys.menuGeometry + 3)]
 		static bool MenuVerify_SetPivotToSelection()
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
-			Menu.SetChecked(k_MenuPrefix + "Geometry/Set Pivot To Selection %J", instance.IsMenuItemChecked() );
+			Menu.SetChecked(k_MenuPrefix + "Geometry/Set Pivot To Selection", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection %J", false, PreferenceKeys.menuGeometry + 3)]
+		[MenuItem(k_MenuPrefix + "Geometry/Set Pivot To Selection", false, PreferenceKeys.menuGeometry + 3)]
 		static void MenuPerform_SetPivotToSelection()
 		{
 			var instance = EditorToolbarLoader.GetInstance<SetPivotToSelection>();
@@ -705,16 +705,16 @@ namespace UnityEditor.ProBuilder
 			}
 		}
 
-		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation _P", true, PreferenceKeys.menuSelection + 1)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation", true, PreferenceKeys.menuSelection + 1)]
 		static bool MenuVerify_ToggleHandleOrientation()
 		{
 			if (ToolManager.activeContextType != typeof(PositionToolContext)) return false;
 			var instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
-			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle Handle Orientation _P", instance.IsMenuItemChecked() );
+			Menu.SetChecked(k_MenuPrefix + "Interaction/Toggle Handle Orientation", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation _P", false, PreferenceKeys.menuSelection + 1)]
+		[MenuItem(k_MenuPrefix + "Interaction/Toggle Handle Orientation", false, PreferenceKeys.menuSelection + 1)]
 		static void MenuPerform_ToggleHandleOrientation()
 		{
 			var instance = EditorToolbarLoader.GetInstance<ToggleHandleOrientation>();
@@ -1139,7 +1139,8 @@ namespace UnityEditor.ProBuilder
 			var instance = EditorToolbarLoader.GetInstance<SelectVertexColor>();
 			if(instance != null && instance.enabled)
 			{
-				EditorAction.Start(new MenuActionSettings(instance,true));
+				PreviewActionManager.EndPreview();
+				instance.PerformAction();
 				ProBuilderAnalytics.SendActionEvent(instance);
 			}
 		}

@@ -3,7 +3,6 @@ using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder.Actions
 {
-    [MenuActionShortcut(typeof(SceneView), KeyCode.P)]
     sealed class ToggleHandleOrientation : MenuAction
     {
         Texture2D[] m_Icons;
@@ -39,9 +38,9 @@ namespace UnityEditor.ProBuilder.Actions
         internal static TooltipContent[] tooltips => k_Tooltips;
         static readonly TooltipContent[] k_Tooltips = new TooltipContent[]
         {
-            new TooltipContent("Global", "The transform handle is oriented in a fixed direction.", 'P'),
-            new TooltipContent("Local", "The transform handle is aligned with the active object rotation.", 'P'),
-            new TooltipContent("Element", "The transform handle is aligned with the active element selection.", 'P')
+            new TooltipContent("Global", "The transform handle is oriented in a fixed direction."),
+            new TooltipContent("Local", "The transform handle is aligned with the active object rotation."),
+            new TooltipContent("Element", "The transform handle is aligned with the active element selection.")
         };
 
         public override string menuTitle
