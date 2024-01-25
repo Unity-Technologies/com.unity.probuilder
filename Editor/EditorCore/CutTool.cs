@@ -5,6 +5,8 @@ using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 using Edge = UnityEngine.ProBuilder.Edge;
 using Math = UnityEngine.ProBuilder.Math;
 using UObject = UnityEngine.Object;
@@ -12,6 +14,7 @@ using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 using UHandleUtility = UnityEditor.HandleUtility;
 
 using ToolManager = UnityEditor.EditorTools.ToolManager;
+using Vertex = UnityEngine.ProBuilder.Vertex;
 
 namespace UnityEditor.ProBuilder
 {
@@ -335,7 +338,7 @@ namespace UnityEditor.ProBuilder
                 if(currentEvent.type == EventType.Layout)
                     HandleUtility.AddDefaultControl(m_ControlId);
 
-                DoPointPlacement();
+                DoPointPlacement(window);
 
                 //Refresh the cut shape if points have been added to it or removed.
                 if(m_Dirty)
@@ -358,6 +361,22 @@ namespace UnityEditor.ProBuilder
                 }
             }
         }
+
+        bool IsCursorInSceneView(EditorWindow window)
+        {
+            if (!(window is SceneView sceneView))
+                return false;
+
+            var mousePos = Event.current.mousePosition;
+            mousePos = VisualElementExtensions.LocalToWorld(sceneView.cameraViewVisualElement, mousePos);
+
+            var ve = window.rootVisualElement.panel.Pick(mousePos);
+            if (ve == null)
+                return false;
+
+            return (ve == sceneView.cameraViewVisualElement);
+        }
+
 
         /// <summary>
         /// Overlay GUI
@@ -460,7 +479,7 @@ namespace UnityEditor.ProBuilder
         /// And check as well if the user is moving existing positions of the cut path.
         /// The method is also in charge to add the new positions to the CutPath on user clicks
         /// </summary>
-        void DoPointPlacement()
+        void DoPointPlacement(EditorWindow window)
         {
             Event evt = Event.current;
             EventType evtType = evt.type;
@@ -468,7 +487,7 @@ namespace UnityEditor.ProBuilder
             bool hasHitPosition = UpdateHitPosition();
 
             //Updating visual helpers to get the right position and color to help in the placement
-            if (evtType== EventType.Repaint)
+            if (evtType == EventType.Repaint)
             {
                 m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
                 m_ModifyingPoint = evt.shift;
@@ -478,7 +497,7 @@ namespace UnityEditor.ProBuilder
                    !m_PlacingPoint)
                     m_SelectedIndex = -1;
 
-                if (hasHitPosition)
+                if (hasHitPosition && IsCursorInSceneView(window))
                 {
                     m_CurrentCutCursor = cursorTexture;
                     if( (m_CurrentVertexTypes & (VertexTypes.ExistingVertex | VertexTypes.VertexInShape)) != 0)
