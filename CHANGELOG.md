@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-98] Fixed a bug where the cut tool cursor would appear on top of overlays.
 - [PBLD-95] Fixed several errors messages spamming the console on package import.
 - [PBLD-93] Fixed a bug where entering the PolyShape tool with a docked inspector would throw errors.
 - Fixed a bug where creating a polyshape mesh was not properly finalizing the mesh creation. 
