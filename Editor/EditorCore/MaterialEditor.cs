@@ -207,7 +207,7 @@ namespace UnityEditor.ProBuilder
             Rect r = GUILayoutUtility.GetLastRect();
             int left = (int)position.width - 68;
 
-            GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width - 74));
+            GUILayout.BeginHorizontal(GUILayout.MaxWidth(position.width - 74), GUILayout.MinHeight(64));
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
@@ -303,7 +303,8 @@ namespace UnityEditor.ProBuilder
                 {
                     var shortcutPath = "Main Menu/Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Material Preset " + (i + 1);
                     var shortcut = ShortcutManager.instance.GetShortcutBinding(shortcutPath).ToString();
-                    if (GUILayout.Button(shortcut, EditorStyles.miniButton, GUILayout.MaxWidth(58)))
+                    var buttonLabel = string.IsNullOrEmpty(shortcut) ? $"Apply {i}" : $"Apply {i} ({shortcut})";
+                    if (GUILayout.Button(buttonLabel, EditorStyles.miniButton, GUILayout.MinWidth(50), GUILayout.MaxWidth(150)))
                         ApplyMaterial(MeshSelection.topInternal, materials[i]);
                 }
                 else
