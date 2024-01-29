@@ -77,7 +77,13 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnObjectSelectionChanged()
         {
-            if(polygon == null || (Selection.activeObject is GameObject go && go == polygon.gameObject))
+            if(polygon == null)
+            {
+                ToolManager.RestorePreviousTool();
+                return;
+            }
+
+            if((Selection.activeObject is GameObject go && go == polygon.gameObject))
                 return;
 
             if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-103] Fixed a bug where deleting a PolyShape while creating it would create a new GameObject.
 - [PBLD-99] Removed ProBuilder shortcut conflicting with new default shortcuts in the Editor.
 - [PBLD-98] Fixed a bug where the cut tool cursor would appear on top of overlays.
 - [PBLD-95] Fixed several errors messages spamming the console on package import.
