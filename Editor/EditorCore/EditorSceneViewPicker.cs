@@ -32,8 +32,6 @@ namespace UnityEditor.ProBuilder
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
 
-        static List<int> s_HoveredPath = new List<int>();
-
         public static void DoMouseHover(SceneSelection selection)
         {
             if (selection.faces.Count == 0)
@@ -45,11 +43,11 @@ namespace UnityEditor.ProBuilder
                 return;
 
             var faces = mesh.facesInternal;
-            s_HoveredPath = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
+            var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
 
-            if (s_HoveredPath != null)
+            if (pathFaces != null)
             {
-                foreach (var path in s_HoveredPath)
+                foreach (var path in pathFaces)
                     selection.faces.Add(faces[path]);
             }
         }
@@ -62,33 +60,31 @@ namespace UnityEditor.ProBuilder
                 && s_Selection.mesh != null;
         }
 
-        static bool s_SkipNextMouseClick = false;
         [Shortcut("ProBuilder/Selection/Select Path", typeof(ProBuilderSelectPathContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
         static void DoPathSelection(ShortcutArguments args)
         {
             var mesh = s_Selection.mesh;
-            if (mesh.GetActiveFace() != null)
+            var activeFace = mesh.GetActiveFace();
+            if (activeFace != null)
             {
+                var faces = mesh.facesInternal;
+                var face = ProBuilderEditor.instance.hovering.faces[0];
+
                 UndoUtility.RecordSelection(mesh, "Select Face");
-                if (s_HoveredPath != null)
+                var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
+                if (pathFaces != null)
                 {
-                    foreach (var pathFace in s_HoveredPath)
+                    foreach (var pathFace in pathFaces)
                         mesh.AddToFaceSelection(pathFace);
 
-                    // Event.current.Use();
-                    s_SkipNextMouseClick = true;
+                    Event.current.Use();
+                    ProBuilderEditor.instance.ResetMouseEvent();
                 }
             }
         }
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
         {
-            if (s_SkipNextMouseClick)
-            {
-                s_SkipNextMouseClick = false;
-                return null;
-            }
-
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);

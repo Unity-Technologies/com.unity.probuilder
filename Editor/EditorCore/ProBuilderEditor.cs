@@ -106,6 +106,7 @@ namespace UnityEditor.ProBuilder
 
         int m_DefaultControl;
         SceneSelection m_Hovering = new SceneSelection();
+        internal SceneSelection hovering => m_Hovering;
         SceneSelection m_HoveringPrevious = new SceneSelection();
         ScenePickerPreferences m_ScenePickerPreferences;
 
@@ -395,6 +396,19 @@ namespace UnityEditor.ProBuilder
             HandleMouseEvent(sceneView, m_DefaultControl);
         }
 
+        internal void ResetMouseEvent()
+        {
+            if(GUIUtility.hotControl == m_DefaultControl)
+            {
+                GUIUtility.hotControl = 0;
+
+                m_WasDoubleClick = false;
+                m_IsDragging = false;
+                m_IsReadyForMouseDrag = false;
+                Refresh();
+            }
+        }
+
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
             if ((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt && !m_IsDragging)
@@ -446,7 +460,6 @@ namespace UnityEditor.ProBuilder
             if(m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == controlID)
             {
                 GUIUtility.hotControl = 0;
-
                 if(m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;
