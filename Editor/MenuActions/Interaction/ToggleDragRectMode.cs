@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder.Actions
 
         internal override bool IsMenuItemChecked()
         {
-            return mode == RectSelectMode.Complete;;
+            return mode == RectSelectMode.Complete;
         }
 
         protected override ActionResult PerformActionImplementation()

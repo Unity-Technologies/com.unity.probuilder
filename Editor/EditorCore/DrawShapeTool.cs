@@ -485,10 +485,10 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                if(m_CurrentState is ShapeState_InitShape  && m_LastShapeCreated != null)
+                if (m_CurrentState is ShapeState_InitShape  && m_LastShapeCreated != null)
                     return m_LastShapeCreated;
 
-                if(m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
+                if (m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
                     return m_DuplicateGO.GetComponent<ProBuilderShape>();
 
                 return proBuilderShape;
@@ -499,7 +499,7 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                if(m_ProBuilderShape == null)
+                if (m_ProBuilderShape == null)
                 {
                     m_ProBuilderShape = new GameObject("Shape", typeof(ProBuilderShape)).GetComponent<ProBuilderShape>();
                     m_ProBuilderShape.gameObject.hideFlags = HideFlags.HideAndDontSave;
@@ -517,7 +517,7 @@ namespace UnityEditor.ProBuilder
 
         void OnDisable()
         {
-            if(m_ShapeEditor != null)
+            if (m_ShapeEditor != null)
                 DestroyImmediate(m_ShapeEditor);
         }
 
@@ -539,7 +539,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged += OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
 
-            if(m_CurrentState == null)
+            if (m_CurrentState == null)
                 m_CurrentState = InitStateMachine();
             else
                 m_CurrentState = ShapeState.ResetTool(this);
@@ -557,14 +557,13 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
 
-            if(m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
+            if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
                 m_CurrentState = ShapeState.ResetState();
         }
 
         void OnDestroy()
         {
-            if(shapePreviewMaterial)
-                DestroyImmediate(shapePreviewMaterial);
+            DestroyImmediate(shapePreviewMaterial);
         }
 
         void OnSelectModeChanged(SelectMode mode)

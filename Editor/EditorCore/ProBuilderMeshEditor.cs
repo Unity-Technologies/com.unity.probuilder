@@ -106,9 +106,6 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
-            // if (ToolManager.activeContextType != typeof(PositionToolContext))
-            //     if (GUILayout.Button(Styles.editMesh))
-            //         ToolManager.SetActiveContext<PositionToolContext>();
             // [SPLB-132] Reverting to custom helpbox as the default helpbox style as a trouble to handle custom icons
             // when using a screen with PixelPerPoints different than 1. This is done in trunk by setting the
             // Texture2d.pixelsPerPoints which is an internal property than cannot be access from here.

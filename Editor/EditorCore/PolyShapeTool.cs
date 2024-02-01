@@ -637,9 +637,6 @@ namespace UnityEditor.ProBuilder
                             return;
                         }
 
-                        // if(polygon.m_Points.Count == 0)
-                        //     Selection.activeObject = polygon;
-
                         polygon.m_Points.Add(point);
 
                         m_PlacingPoint = true;
