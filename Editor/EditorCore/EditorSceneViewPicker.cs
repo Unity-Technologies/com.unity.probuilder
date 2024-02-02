@@ -32,6 +32,8 @@ namespace UnityEditor.ProBuilder
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
 
+        static bool s_ComputePath = false;
+
         public static void DoMouseHover(SceneSelection selection)
         {
             if (selection.faces.Count == 0)
@@ -63,24 +65,7 @@ namespace UnityEditor.ProBuilder
         [Shortcut("ProBuilder/Selection/Select Path", typeof(ProBuilderSelectPathContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
         static void DoPathSelection(ShortcutArguments args)
         {
-            var mesh = s_Selection.mesh;
-            var activeFace = mesh.GetActiveFace();
-            if (activeFace != null)
-            {
-                var faces = mesh.facesInternal;
-                var face = ProBuilderEditor.instance.hovering.faces[0];
-
-                UndoUtility.RecordSelection(mesh, "Select Face");
-                var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
-                if (pathFaces != null)
-                {
-                    foreach (var pathFace in pathFaces)
-                        mesh.AddToFaceSelection(pathFace);
-
-                    Event.current.Use();
-                    ProBuilderEditor.instance.ResetMouseEvent();
-                }
-            }
+            s_ComputePath = true;
         }
 
         public static ProBuilderMesh DoMouseClick(Event evt, SelectMode selectionMode, ScenePickerPreferences pickerPreferences)
@@ -177,8 +162,22 @@ namespace UnityEditor.ProBuilder
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
                         }
                     }
+                    else if (s_ComputePath && mesh.GetActiveFace() != null)
+                    {
+                        var pathFaces = SelectPathFaces.GetPath(
+                            mesh,
+                            Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
+                            Array.IndexOf<Face>(faces, face));
+                        if (pathFaces != null)
+                        {
+                            foreach (var pathFace in pathFaces)
+                                mesh.AddToFaceSelection(pathFace);
+                        }
+                    }
                     else
                         mesh.AddToFaceSelection(ind);
+
+                    s_ComputePath = false;
                 }
 
                 foreach(var edge in s_Selection.edges)
