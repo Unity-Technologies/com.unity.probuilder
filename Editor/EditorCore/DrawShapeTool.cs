@@ -771,10 +771,6 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
-            //A current problem on EditorTools with MacOS seems to be calling OnToolGUI before OnActivated after a domain reload.
-            if(s_Instance == null)
-                return;
-
             // todo refactor overlays to use `Overlay` class
 #pragma warning disable 618
             SceneViewOverlay.Window(k_ShapeTitle, OnOverlayGUI, 0, SceneViewOverlay.WindowDisplayOption.OneWindowPerTitle);
