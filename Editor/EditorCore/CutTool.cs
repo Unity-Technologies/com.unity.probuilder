@@ -1063,9 +1063,12 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     bestFace = face;
-                    Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
-                    int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
-                    bestArea = Math.PolygonArea(vertices, indexes);
+                    if (face.indexesInternal != null)
+                    {
+                        Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
+                        int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
+                        bestArea = Math.PolygonArea(vertices, indexes);
+                    }
                 }
             }
 
