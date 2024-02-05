@@ -330,13 +330,10 @@ namespace UnityEditor.ProBuilder
                     EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
-                if (!m_Hovering.Equals(m_HoveringPrevious))
-                {
-                    if (pathSelectionModifier)
-                        EditorSceneViewPicker.DoMouseHover(m_Hovering);
+                if (pathSelectionModifier)
+                    EditorSceneViewPicker.DoMouseHover(m_Hovering);
 
-                    SceneView.RepaintAll();
-                }
+                SceneView.RepaintAll();
             }
 
             m_wasSelectingPath = pathSelectionModifier;
@@ -396,7 +393,7 @@ namespace UnityEditor.ProBuilder
             HandleMouseEvent(sceneView, m_DefaultControl);
         }
 
-        internal void ResetMouseEvent()
+        internal void ResetSceneGUIEvent()
         {
             if(GUIUtility.hotControl == m_DefaultControl)
             {
@@ -405,8 +402,8 @@ namespace UnityEditor.ProBuilder
                 m_WasDoubleClick = false;
                 m_IsDragging = false;
                 m_IsReadyForMouseDrag = false;
-                Refresh();
             }
+            Refresh();
         }
 
         internal void HandleMouseEvent(SceneView sceneView, int controlID)

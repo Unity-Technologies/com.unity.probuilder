@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -39,9 +40,33 @@ namespace UnityEditor.ProBuilder
 
         public static bool IsSelectionPathModifier(EventModifiers em)
         {
-            return (em & EventModifiers.Shift) == EventModifiers.Shift &&
-                ((em & EventModifiers.Control) == EventModifiers.Control ||
-                    (em & EventModifiers.Command) == EventModifiers.Command);
+            var binding = ShortcutManager.instance.GetShortcutBinding("ProBuilder/Selection/Select Path");
+            var combination = binding.keyCombinationSequence.First();
+
+            //At least one modifier is required for the path selection
+            if (combination.modifiers.Equals(ShortcutModifiers.None))
+            {
+                Debug.LogWarning("The shortcut 'ProBuilder/Selection/Select Path' must have at least one modifier, otherwise path selection will not work.");
+                return false;
+            }
+
+            // Check if all desired modifiers are pressed
+            if (combination.modifiers.HasFlag(ShortcutModifiers.Shift) && (em & EventModifiers.Shift) != EventModifiers.Shift)
+                return false;
+#if UNITY_EDITOR_OSX
+            if (combination.modifiers.HasFlag(ShortcutModifiers.Control) && (em & EventModifiers.Control) != EventModifiers.Control)
+                return false;
+            if (combination.modifiers.HasFlag(ShortcutModifiers.Action) && (em & EventModifiers.Command) != EventModifiers.Command)
+                return false;
+#else
+            if ((combination.modifiers.HasFlag(ShortcutModifiers.Control) || combination.modifiers.HasFlag(ShortcutModifiers.Action))
+                && (em & EventModifiers.Control) != EventModifiers.Control)
+                return false;
+#endif
+            if (combination.modifiers.HasFlag(ShortcutModifiers.Alt) && (em & EventModifiers.Alt) != EventModifiers.Alt)
+                return false;
+
+            return true;
         }
 
         const int HANDLE_PADDING = 8;

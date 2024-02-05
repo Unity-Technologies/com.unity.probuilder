@@ -78,7 +78,7 @@ namespace UnityEditor.ProBuilder
                         mesh.AddToFaceSelection(pathFace);
 
                     Event.current.Use();
-                    ProBuilderEditor.instance.ResetMouseEvent();
+                    ProBuilderEditor.instance.ResetSceneGUIEvent();
                 }
             }
         }
