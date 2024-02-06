@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - 
 ### Changes
 
+- Unifying shaders and simplify code for the different render pipelines.
 - Removed the Edit Mesh button from ProBuilderMesh Inspector.
 - Added a close loop feedback with PolyShape tool and improve the handles.
 - Added better tooltips when adding removing vertices using the PolyShape tool.
