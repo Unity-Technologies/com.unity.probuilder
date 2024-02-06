@@ -88,8 +88,6 @@ namespace UnityEngine.ProBuilder
             var geo = Shader.Find(lineShader);
             s_GeometryShadersSupported = geo != null && geo.isSupported;
 
-            s_DefaultMaterial = GetDefaultMaterial();
-
             // SelectionPicker shader
             s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
 
@@ -112,15 +110,6 @@ namespace UnityEngine.ProBuilder
             }
 
             s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
-
-            s_ShapePreviewMaterial = new Material(s_DefaultMaterial.shader);
-            s_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
-
-            if (s_ShapePreviewMaterial.HasProperty("_MainTex"))
-                s_ShapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
-
-            if (s_ShapePreviewMaterial.HasProperty("_Color"))
-                s_ShapePreviewMaterial.SetColor("_Color", previewColor);
         }
 
         /// <summary>
@@ -147,6 +136,9 @@ namespace UnityEngine.ProBuilder
             get
             {
                 Init();
+                if(s_DefaultMaterial == null)
+                    s_DefaultMaterial = GetDefaultMaterial();
+
                 return s_DefaultMaterial;
             }
         }
@@ -267,18 +259,28 @@ namespace UnityEngine.ProBuilder
 
         internal static Material GetDefaultMaterial()
         {
-            Material material = null;
+            var material = (Material) Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+            material.shader = Shader.Find("ProBuilder6/Standard Vertex Color");
 
-            if (GraphicsSettings.renderPipelineAsset != null)
-                material = GraphicsSettings.renderPipelineAsset.defaultMaterial;
+            if (material == null || !material.shader.isSupported)
+                material = GetLegacyDiffuse();
 
-            if (material == null)
-            {
-                material = (Material) Resources.Load("Materials/ProBuilderDefault", typeof(Material));
+            return material;
+        }
 
-                if (material == null || !material.shader.isSupported)
-                    material = GetLegacyDiffuse();
-            }
+        static Material GetPreviewMaterial()
+        {
+            if (defaultMaterial == null)
+                return null;
+
+            var material = new Material(defaultMaterial.shader);
+            material.hideFlags = HideFlags.HideAndDontSave;
+
+            if (material.HasProperty("_MainTex"))
+                material.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
+
+            if (material.HasProperty("_Color"))
+                material.SetColor("_Color", previewColor);
 
             return material;
         }
@@ -299,7 +301,9 @@ namespace UnityEngine.ProBuilder
         {
             get
             {
-                Init();
+                if(s_ShapePreviewMaterial == null)
+                    s_ShapePreviewMaterial = GetPreviewMaterial();
+
                 return s_ShapePreviewMaterial;
             }
         }
