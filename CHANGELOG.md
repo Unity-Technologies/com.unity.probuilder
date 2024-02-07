@@ -10,22 +10,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [PBLD-103] Fixed a bug where deleting a PolyShape while creating it would create a new GameObject.
-- [PBLD-99] Removed ProBuilder shortcut conflicting with new default shortcuts in the Editor.
-- [PBLD-98] Fixed a bug where the cut tool cursor would appear on top of overlays.
-- [PBLD-95] Fixed several errors messages spamming the console on package import.
-- [PBLD-93] Fixed a bug where entering the PolyShape tool with a docked inspector would throw errors.
-- Fixed a bug where creating a polyshape mesh was not properly finalizing the mesh creation. 
+- [PBLD-103] Fixed a bug where creating a PolyShape, then immediately deleting it  would create a new GameObject.
+- [PBLD-99] Removed ProBuilder shortcut that conflicted with default shortcuts in the Editor.
+- [PBLD-98] Fixed a bug where the cut tool cursor appeared on top of overlays.
+- [PBLD-95] Fixed several errors messages that spammed the console when a package was imported.
+- [PBLD-93] Fixed a bug where activating the PolyShape tool with a docked inspector would throw errors.
+- Fixed a bug where creating a PolyShape mesh was not properly finalizing the mesh creation. 
 - Fixed a bug where assigning a material from the Material Editor was not working in GameObject mode.
 - 
 ### Changes
 
 - Removed the Edit Mesh button from ProBuilderMesh Inspector.
-- Added a close loop feedback with PolyShape tool and improve the handles.
-- Added better tooltips when adding removing vertices using the PolyShape tool.
-- Material editor: Changed Quick material shortcut to Ctrl + Shift + Mouse2, and add it to the shortcut manager.
+- Added a close loop feedback with PolyShape tool and improved the handles.
+- Improved tooltips for adding and removing vertices with the PolyShape tool.
+- Material editor: Changed the Quick material shortcut to **Ctrl+Shift+Mouse2**, and add this new shortcut to the Shortcut Manager.
 - Material editor: Improved the 'Match selection' button position to make it more self-explanatory.
-- Smooth Group editor: Update the number of smoothing group to 30.
+- Smooth Group editor: Updated the number of smoothing groups to 30.
 - Vertex Position Editor: Slightly moved the Vertex IDs labels positions to make then more readable in the Scene View.
 - Vertex Position Editor: Improved the World/Model Space button. 
 - Interaction tool states are now shown in the main menu.
