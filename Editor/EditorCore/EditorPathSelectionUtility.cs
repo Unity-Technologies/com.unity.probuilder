@@ -9,14 +9,6 @@ namespace UnityEditor.ProBuilder
 {
     static class EditorPathSelectionUtility
     {
-        internal class ProBuilderSelectPathContext : IShortcutContext
-        {
-            public bool active
-                => EditorWindow.focusedWindow is SceneView
-                    && ProBuilderEditor.instance != null
-                    && EditorSceneViewPicker.selection?.mesh != null;
-        }
-
         const string k_ShortcutId = "ProBuilder/Selection/Select Path";
 
         [InitializeOnLoadMethod]
@@ -63,7 +55,7 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-        [Shortcut("ProBuilder/Selection/Select Path", typeof(ProBuilderSelectPathContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
+        [Shortcut("ProBuilder/Selection/Select Path", typeof(PositionToolContext.ProBuilderShortcutContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
         static void DoPathSelection(ShortcutArguments args)
         {
             var mesh = EditorSceneViewPicker.selection?.mesh;
