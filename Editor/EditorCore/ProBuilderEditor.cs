@@ -106,6 +106,7 @@ namespace UnityEditor.ProBuilder
 
         int m_DefaultControl;
         SceneSelection m_Hovering = new SceneSelection();
+        internal SceneSelection hovering => m_Hovering;
         SceneSelection m_HoveringPrevious = new SceneSelection();
         ScenePickerPreferences m_ScenePickerPreferences;
 
@@ -316,7 +317,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
+            bool pathSelectionModifier = EditorPathSelectionUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
 
             // Check mouse position in scene and determine if we should highlight something
             if (s_ShowHoverHighlight
@@ -329,13 +330,10 @@ namespace UnityEditor.ProBuilder
                     EditorSceneViewPicker.MouseRayHitTest(m_CurrentEvent.mousePosition, selectMode, m_ScenePickerPreferences, m_Hovering) > ScenePickerPreferences.maxPointerDistance)
                     m_Hovering.Clear();
 
-                if (!m_Hovering.Equals(m_HoveringPrevious))
-                {
-                    if (pathSelectionModifier)
-                        EditorSceneViewPicker.DoMouseHover(m_Hovering);
+                if (pathSelectionModifier)
+                    EditorSceneViewPicker.DoMouseHover(m_Hovering);
 
-                    SceneView.RepaintAll();
-                }
+                SceneView.RepaintAll();
             }
 
             m_wasSelectingPath = pathSelectionModifier;
@@ -395,6 +393,19 @@ namespace UnityEditor.ProBuilder
             HandleMouseEvent(sceneView, m_DefaultControl);
         }
 
+        internal void ResetSceneGUIEvent()
+        {
+            if(GUIUtility.hotControl == m_DefaultControl)
+            {
+                GUIUtility.hotControl = 0;
+
+                m_WasDoubleClick = false;
+                m_IsDragging = false;
+                m_IsReadyForMouseDrag = false;
+            }
+            Refresh();
+        }
+
         internal void HandleMouseEvent(SceneView sceneView, int controlID)
         {
             if ((Event.current.modifiers & EventModifiers.Alt) == EventModifiers.Alt && !m_IsDragging)
@@ -446,7 +457,6 @@ namespace UnityEditor.ProBuilder
             if(m_CurrentEvent.type == EventType.MouseUp && GUIUtility.hotControl == controlID)
             {
                 GUIUtility.hotControl = 0;
-
                 if(m_WasDoubleClick)
                 {
                     m_WasDoubleClick = false;

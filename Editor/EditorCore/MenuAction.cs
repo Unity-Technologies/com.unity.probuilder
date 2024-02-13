@@ -220,6 +220,12 @@ namespace UnityEditor.ProBuilder
         internal bool optionsEnabled => optionsMenuState == MenuActionState.VisibleAndEnabled;
 
         /// <summary>
+        /// Adds a checkmark status to the MenuItem generated in the GenerateMenuItems.cs script.
+        /// </summary>
+        /// <returns></returns>
+        internal virtual bool IsMenuItemChecked() => false;
+
+        /// <summary>
         /// Override the action automatically generated in the GenerateMenuItems.cs script.
         /// </summary>
         /// <returns></returns>

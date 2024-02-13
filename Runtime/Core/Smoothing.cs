@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder
     /// 1. Calculates the normals for every face.
     /// 2. Applies the results of those calculations to each vertex on the face.
     /// 3. Averages each vertex normal with coincident vertices belonging to the same smoothing group.
-    /// 
+    ///
     /// </summary>
     public static class Smoothing
     {
@@ -21,24 +21,14 @@ namespace UnityEngine.ProBuilder
         internal const int smoothingGroupNone = 0;
 
         /// <summary>
-        /// Smoothing groups 1-24 are smooth.
+        /// Smoothing groups 1-30 are smooth.
         /// </summary>
         internal const int smoothRangeMin = 1;
 
         /// <summary>
-        /// Smoothing groups 1-24 are smooth.
+        /// Smoothing groups 1-30 are smooth.
         /// </summary>
-        internal const int smoothRangeMax = 24;
-
-        /// <summary>
-        /// Smoothing groups 25-42 are hard. Note that this is obsolete, and generally hard faces should be marked smoothingGroupNone.
-        /// </summary>
-        internal const int hardRangeMin = 25;
-
-        /// <summary>
-        /// Smoothing groups 25-42 are hard. Note that this is soon to be obsolete, and generally hard faces should be marked smoothingGroupNone.
-        /// </summary>
-        internal const int hardRangeMax = 42;
+        internal const int smoothRangeMax = 30;
 
         /// <summary>
         /// Returns the first available unused smoothing group.
@@ -64,9 +54,6 @@ namespace UnityEngine.ProBuilder
             while (used.Contains(start) && start < int.MaxValue - 1)
             {
                 start++;
-
-                if (start > smoothRangeMax && start < hardRangeMax)
-                    start = hardRangeMax + 1;
             }
 
             return start;
@@ -79,7 +66,7 @@ namespace UnityEngine.ProBuilder
         /// <returns>True if the smoothing group value is smoothed; false otherwise.</returns>
         public static bool IsSmooth(int index)
         {
-            return (index > smoothingGroupNone && (index < hardRangeMin || index > hardRangeMax));
+            return index > smoothingGroupNone;
         }
 
         /// <summary>

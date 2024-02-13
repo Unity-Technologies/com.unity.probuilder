@@ -45,7 +45,6 @@ namespace UnityEditor.ProBuilder
 
                 new Actions.ToggleSelectBackFaces(),
                 new Actions.ToggleHandleOrientation(),
-                new Actions.ToggleDragSelectionMode(),
                 new Actions.ToggleDragRectMode(),
                 new Actions.ToggleXRay(),
 

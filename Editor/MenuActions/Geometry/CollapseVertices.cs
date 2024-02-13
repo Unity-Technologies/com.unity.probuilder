@@ -25,8 +25,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Collapse Vertices",
-                @"Merge all selected vertices into a single vertex, centered at the first vertex or average position of all selected points.",
-                keyCommandAlt, 'C'
+                @"Merge all selected vertices into a single vertex, centered at the first vertex or average position of all selected points."
             );
 
         public override SelectMode validSelectModes

@@ -54,6 +54,8 @@ namespace UnityEditor.ProBuilder.Actions
             };
         }
 
+        internal override bool IsMenuItemChecked() => EditorHandleDrawing.xRay;
+
         protected override ActionResult PerformActionImplementation()
         {
             EditorHandleDrawing.xRay = !EditorHandleDrawing.xRay;

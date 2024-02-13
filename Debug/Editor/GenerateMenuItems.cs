@@ -181,6 +181,7 @@ namespace UnityEditor.ProBuilder
             if (!k_GlobalActionList.Contains(category))
                 sb.AppendLine($"\t\t\tif (ToolManager.activeContextType != typeof(PositionToolContext)) return false;");
             sb.AppendLine($"\t\t\tvar instance = EditorToolbarLoader.GetInstance<{data.typeString}>();");
+            sb.AppendLine($"\t\t\tMenu.SetChecked(k_MenuPrefix + \"{data.path}{menuItemShortcut}\", instance.IsMenuItemChecked() );");
             sb.AppendLine("\t\t\treturn instance != null && instance.enabled;");
             sb.AppendLine("\t\t}");
 

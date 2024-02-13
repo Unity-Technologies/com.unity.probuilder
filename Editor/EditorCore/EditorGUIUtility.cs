@@ -472,15 +472,15 @@ namespace UnityEditor.ProBuilder.UI
         /**
          *  Draw a label in the scene view with a solid color background.
          */
-        public static void SceneLabel(string text, Vector2 position)
+        public static void SceneLabel(string text, Vector2 position, bool center = true)
         {
             GUIContent gc = TempContent(text);
 
             float width = UnityEditor.EditorStyles.boldLabel.CalcSize(gc).x;
             float height = UnityEditor.EditorStyles.label.CalcHeight(gc, width) + 4;
 
-            sceneLabelRect.x = position.x - width * .5f;
-            sceneLabelRect.y = position.y - height * .5f;
+            sceneLabelRect.x = center ? position.x - width * .5f : position.x;
+            sceneLabelRect.y = center ? position.y - height * .5f : position.y - height;
             sceneLabelRect.width = width;
             sceneLabelRect.height = height;
 

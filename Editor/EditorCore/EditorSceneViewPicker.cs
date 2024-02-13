@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using PHandleUtility = UnityEngine.ProBuilder.HandleUtility;
@@ -23,6 +24,7 @@ namespace UnityEditor.ProBuilder
         static int s_DeepSelectionPrevious = 0x0;
         static bool s_AppendModifierPreviousState = false;
         static SceneSelection s_Selection = new SceneSelection();
+        internal static SceneSelection selection => s_Selection;
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
         static readonly List<int> s_IndexBuffer = new List<int>(16);
@@ -56,7 +58,6 @@ namespace UnityEditor.ProBuilder
             bool appendModifier = EditorHandleUtility.IsAppendModifier(evt.modifiers);
             bool addToSelectionModifier = EditorHandleUtility.IsSelectionAddModifier(evt.modifiers);
             bool addOrRemoveIfPresentFromSelectionModifier = EditorHandleUtility.IsSelectionAppendOrRemoveIfPresentModifier(evt.modifiers);
-            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(evt.modifiers);
 
             float pickedElementDistance;
 
@@ -106,14 +107,7 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var face in s_Selection.faces)
                 {
-                    // Check for other editor mouse shortcuts first (todo proper event handling for mouse shortcuts)
-                    MaterialEditor matEditor = MaterialEditor.instance;
-
-                    if (matEditor != null && matEditor.ClickShortcutCheck(Event.current.modifiers, mesh, face))
-                        return null;
-
                     UVEditor uvEditor = UVEditor.instance;
-
                     if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, face))
                         return null;
 
@@ -122,7 +116,6 @@ namespace UnityEditor.ProBuilder
                     var sel = mesh.selectedFaceIndexes.IndexOf(ind);
 
                     UndoUtility.RecordSelection(mesh, "Select Face");
-
                     if (sel > -1)
                     {
                         if (!appendModifier || addOrRemoveIfPresentFromSelectionModifier ||
@@ -150,16 +143,8 @@ namespace UnityEditor.ProBuilder
                         else
                         {
                             mesh.selectedFaceIndicesInternal = mesh.selectedFaceIndicesInternal.Remove(ind);
+
                             mesh.SetSelectedFaces(mesh.selectedFaceIndicesInternal.Add(ind));
-                        }
-                    }
-                    else if (pathSelectionModifier && mesh.GetActiveFace() != null)
-                    {
-                        var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, mesh.GetActiveFace()),
-                            Array.IndexOf<Face>(faces, face));
-                        foreach (var pathFace in pathFaces)
-                        {
-                            mesh.AddToFaceSelection(pathFace);
                         }
                     }
                     else

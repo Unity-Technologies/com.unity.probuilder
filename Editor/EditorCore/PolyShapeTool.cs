@@ -6,16 +6,17 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
 using Math = UnityEngine.ProBuilder.Math;
+using Plane = UnityEngine.Plane;
 using UObject = UnityEngine.Object;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
 {
-
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape", toolPriority = 1001)]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
     public class DrawPolyShapeTool : PolyShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New PolyShape", false, PreferenceKeys.menuEditor + 1)]
@@ -26,27 +27,6 @@ namespace UnityEditor.ProBuilder
         }
 
         PolyShape m_PolyShape = null;
-        bool m_CanCreatePolyShape = false;
-
-        static GUIContent s_IconContent;
-
-        /// <summary>
-        /// Gets the icon and tooltip for the PolyShapeTool.
-        /// </summary>
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = String.Empty,
-                        tooltip = "Create PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
 
         public override void OnActivated()
         {
@@ -65,7 +45,13 @@ namespace UnityEditor.ProBuilder
         public override void OnToolGUI(EditorWindow window)
         {
             if (m_PolyShape == null)
-                m_CanCreatePolyShape = TryCreatePolyShape();
+            {
+                if (!TryCreatePolyShape())
+                {
+                    ToolManager.RestorePreviousTool();
+                    return;
+                }
+            }
 
             var evt = Event.current;
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
@@ -74,18 +60,44 @@ namespace UnityEditor.ProBuilder
                 {
                     evt.Use();
                     UndoUtility.RecordObject(polygon, "Set Height");
-                    m_CanCreatePolyShape = TryCreatePolyShape();
+
+                    SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    polygon = null;
+
+                    if (!TryCreatePolyShape())
+                    {
+                        ToolManager.RestorePreviousTool();
+                        return;
+                    }
                 }
             }
-
-            if (!m_CanCreatePolyShape)
-                ToolManager.RestorePreviousTool();
 
             base.OnToolGUI(window);
         }
 
+        protected override void OnObjectSelectionChanged()
+        {
+            if(polygon == null)
+            {
+                ToolManager.RestorePreviousTool();
+                return;
+            }
+
+            if((Selection.activeObject is GameObject go && go == polygon.gameObject))
+                return;
+
+            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                DestroyImmediate(polygon.gameObject);
+
+            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                SetPolyEditMode(PolyShape.PolyEditMode.None);
+
+            LeaveTool();
+        }
+
         bool TryCreatePolyShape()
         {
+            MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             var newPolyshape = CanCreateNewPolyShape();
             if (newPolyshape)
             {
@@ -106,13 +118,10 @@ namespace UnityEditor.ProBuilder
                 }
 
                 m_PolyShape.polyEditMode = PolyShape.PolyEditMode.Path;
-                var activeShape = polygon == null ? m_PolyShape : polygon;
-
                 UpdateTarget(m_PolyShape);
-
-                Selection.activeObject = activeShape;
             }
 
+            MeshSelection.objectSelectionChanged+= OnObjectSelectionChanged;
             return newPolyshape;
         }
 
@@ -148,6 +157,7 @@ namespace UnityEditor.ProBuilder
     /// <summary>
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
     [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
@@ -182,26 +192,6 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_OverlayTitle;
 
-        static GUIContent s_IconContent;
-
-        /// <summary>
-        /// Gets the icon and tooltip for the PolyShapeTool.
-        /// </summary>
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = "Edit PolyShape",
-                        tooltip = "Edit PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
-
         Plane m_Plane = new Plane(Vector3.up, Vector3.zero);
 
         Plane plane
@@ -227,6 +217,7 @@ namespace UnityEditor.ProBuilder
         }
 
         int m_ControlId;
+        int m_ControlId0;
         int m_SelectedIndex = -2;
         bool m_IsModifyingVertices = false;
         bool m_NextMouseUpAdvancesMode = false;
@@ -318,7 +309,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void LeaveTool()
+        protected void LeaveTool()
         {
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -382,7 +373,7 @@ namespace UnityEditor.ProBuilder
             if(evt.type == EventType.Layout)
                 HandleUtility.AddDefaultControl(m_ControlId);
 
-            if(polygon.polyEditMode == PolyShape.PolyEditMode.Path && !m_PlacingPoint)
+            if(polygon.polyEditMode == PolyShape.PolyEditMode.Path && HandleUtility.nearestControl == m_ControlId && !m_PlacingPoint)
                 m_MouseCursor = MouseCursor.ArrowPlus;
             else if((GUIUtility.hotControl != 0) || m_PlacingPoint)
                 m_MouseCursor = MouseCursor.MoveArrow;
@@ -394,7 +385,6 @@ namespace UnityEditor.ProBuilder
 
             DoPointPlacement();
             DoExistingPointsGUI();
-
             if(evt.type == EventType.Repaint)
             {
                 DoExistingLinesGUI();
@@ -436,7 +426,9 @@ namespace UnityEditor.ProBuilder
                 {
                     if(GUILayout.Button("Quit Editing", UI.EditorGUIUtility.GetActiveStyle("Button")))
                         LeaveTool();
-                    EditorGUILayout.HelpBox("Move Poly Shape points to update the shape\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
+                    EditorGUILayout.HelpBox("Move Poly Shape points to update the shape." +
+                        "\nClick on an edge to add new points, press 'Backspace' to remove selected point." +
+                        "\nPress 'Enter' or 'Space' to Finalize", MessageType.Info);
                     break;
                 }
             }
@@ -600,7 +592,6 @@ namespace UnityEditor.ProBuilder
                 {
                     evt.Use();
                     m_PlacingPoint = false;
-                    m_SelectedIndex = -1;
                     SceneView.RepaintAll();
                 }
             }
@@ -645,9 +636,6 @@ namespace UnityEditor.ProBuilder
                             m_NextMouseUpAdvancesMode = true;
                             return;
                         }
-
-                        if(polygon.m_Points.Count == 0)
-                            Selection.activeObject = polygon;
 
                         polygon.m_Points.Add(point);
 
@@ -786,10 +774,13 @@ namespace UnityEditor.ProBuilder
 
             if(evt.type == EventType.Repaint && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
-                Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
-                Handles.color = k_HandleColor;
-                Handles.DotHandleCap(-1, currentPos, Quaternion.identity, HandleUtility.GetHandleSize(currentPos) * k_HandleSize, evt.type);
-                Handles.color = Color.white;
+                if (HandleUtility.nearestControl == m_ControlId)
+                {
+                    Vector3 currentPos = polygon.transform.TransformPoint(m_CurrentPosition);
+                    Handles.color = k_HandleColor;
+                    Handles.DotHandleCap(-1, currentPos, Quaternion.identity, HandleUtility.GetHandleSize(currentPos) * k_HandleSize, evt.type);
+                    Handles.color = Color.white;
+                }
             }
 
             if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
@@ -845,11 +836,14 @@ namespace UnityEditor.ProBuilder
 
                     float size = HandleUtility.GetHandleSize(point) * k_HandleSize;
 
-                    Handles.color = ii == m_SelectedIndex ? k_HandleSelectedColor : k_HandleColor;
-
                     EditorGUI.BeginChangeCheck();
 
-                    point = Handles.Slider2D(point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
+                    int id = GUIUtility.GetControlID(FocusType.Passive);
+                    Handles.color = ii == m_SelectedIndex || HandleUtility.nearestControl == id ? k_HandleSelectedColor : k_HandleColor;
+                    point = Handles.Slider2D(id, point, up, right, forward, size, Handles.DotHandleCap, Vector2.zero, true);
+
+                    if (ii == 0)
+                        m_ControlId0 = id;
 
                     if (EditorGUI.EndChangeCheck())
                     {
@@ -910,7 +904,6 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-
         /// <summary>
         /// Display lines of the poly shape
         /// </summary>
@@ -950,11 +943,13 @@ namespace UnityEditor.ProBuilder
                || polygon.polyEditMode != PolyShape.PolyEditMode.Path)
                 return;
 
-            if(polygon.controlPoints.Count > 0)
+            if((polygon.controlPoints.Count > 0 && HandleUtility.nearestControl == m_ControlId) // the cursor is not on any other knot
+               || (polygon.controlPoints.Count > 2 && HandleUtility.nearestControl == m_ControlId0)) // or the cursor is hovering the first knot and we can close the shape
             {
+                var closestPoint = (polygon.controlPoints.Count > 2 && HandleUtility.nearestControl == m_ControlId0) ? polygon.controlPoints[0] : m_CurrentPosition;
                 Handles.color = k_DrawingLineColor;
                 Handles.DrawDottedLine(m_Polygon.transform.TransformPoint(polygon.controlPoints[polygon.controlPoints.Count - 1]),
-                    m_Polygon.transform.TransformPoint(m_CurrentPosition), 5f);
+                    m_Polygon.transform.TransformPoint(closestPoint), 5f);
                 Handles.color = Color.white;
             }
         }
@@ -1058,7 +1053,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void OnObjectSelectionChanged()
+        protected virtual void OnObjectSelectionChanged()
         {
             if(polygon == null)
                 return;

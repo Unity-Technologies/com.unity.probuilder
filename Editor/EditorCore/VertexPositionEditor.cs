@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.ProBuilder;
-using UnityEditor.ProBuilder.UI;
 
 namespace UnityEditor.ProBuilder
 {
@@ -20,7 +17,9 @@ namespace UnityEditor.ProBuilder
 
         Vector2 m_Scroll = Vector2.zero;
         bool m_IsActive;
+
         public bool m_WorldSpace = true;
+        static readonly string[] k_Spaces    = new string[2] { "World Space", "Model Space" };
 
         class VertexEditorSelection
         {
@@ -116,10 +115,14 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.FlexibleSpace();
 
-            GUIStyle style = m_WorldSpace ? EditorStyles.toolbarButton : UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
+            //GUIStyle style = m_WorldSpace ? EditorStyles.toolbarButton : UI.EditorGUIUtility.GetOnStyle(EditorStyles.toolbarButton);
+            //if (GUILayout.Button(m_WorldSpace ? "Switch to Model Space" : "Switch to World Space", style))
+            //    m_WorldSpace = !m_WorldSpace;
 
-            if (GUILayout.Button(m_WorldSpace ? "World Space" : "Model Space", style))
-                m_WorldSpace = !m_WorldSpace;
+            EditorGUI.BeginChangeCheck();
+            var newSpace = EditorGUILayout.Popup(m_WorldSpace ? 0 : 1, k_Spaces, EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
+            if (EditorGUI.EndChangeCheck())
+                m_WorldSpace = newSpace == 0;
 
             GUILayout.EndHorizontal();
 
@@ -236,7 +239,7 @@ namespace UnityEditor.ProBuilder
 
                     Vector2 cen = HandleUtility.WorldToGUIPoint(point);
 
-                    UI.EditorGUIUtility.SceneLabel(i.ToString(), cen);
+                    UI.EditorGUIUtility.SceneLabel(i.ToString(), cen, false);
 
                     if (++labelCount > k_MaxSelectableVertices) break;
                 }

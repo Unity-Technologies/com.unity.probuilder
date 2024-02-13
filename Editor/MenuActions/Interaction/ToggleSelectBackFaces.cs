@@ -56,6 +56,8 @@ The default value is <b>On</b>.
             };
         }
 
+        internal override bool IsMenuItemChecked() => ProBuilderEditor.backfaceSelectionEnabled;
+
         protected override ActionResult PerformActionImplementation()
         {
             ProBuilderEditor.backfaceSelectionEnabled = !ProBuilderEditor.backfaceSelectionEnabled;

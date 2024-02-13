@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using RaycastHit = UnityEngine.ProBuilder.RaycastHit;
 
@@ -35,13 +36,6 @@ namespace UnityEditor.ProBuilder
         {
             return (((Application.platform == RuntimePlatform.OSXEditor)  && (em & EventModifiers.Command) == EventModifiers.Command) ||
                 ((Application.platform != RuntimePlatform.OSXEditor) && (em & EventModifiers.Control) == EventModifiers.Control));
-        }
-
-        public static bool IsSelectionPathModifier(EventModifiers em)
-        {
-            return (em & EventModifiers.Shift) == EventModifiers.Shift &&
-                ((em & EventModifiers.Control) == EventModifiers.Control ||
-                    (em & EventModifiers.Command) == EventModifiers.Command);
         }
 
         const int HANDLE_PADDING = 8;
