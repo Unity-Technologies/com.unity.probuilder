@@ -317,7 +317,7 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            bool pathSelectionModifier = EditorHandleUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
+            bool pathSelectionModifier = EditorPathSelectionUtility.IsSelectionPathModifier(m_CurrentEvent.modifiers);
 
             // Check mouse position in scene and determine if we should highlight something
             if (s_ShowHoverHighlight
