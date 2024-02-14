@@ -10,16 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [PBLD-103] Fixed a bug where creating a PolyShape, then immediately deleting it  would create a new GameObject.
+- [PBLD-102] Fixed a bug where some materials assets were unexpectedly altered and rebuilt. 
+- [PBLD-103] Fixed a bug where creating a PolyShape, then immediately deleting it would create a new GameObject.
 - [PBLD-99] Removed ProBuilder shortcut that conflicted with default shortcuts in the Editor.
 - [PBLD-98] Fixed a bug where the cut tool cursor appeared on top of overlays.
 - [PBLD-95] Fixed several errors messages that spammed the console when a package was imported.
 - [PBLD-93] Fixed a bug where activating the PolyShape tool with a docked inspector would throw errors.
 - Fixed a bug where creating a PolyShape mesh was not properly finalizing the mesh creation. 
 - Fixed a bug where assigning a material from the Material Editor was not working in GameObject mode.
-- 
+ 
 ### Changes
 
+- Unified shaders and simplify code for the different render pipelines.
 - Removed the Edit Mesh button from ProBuilderMesh Inspector.
 - Added a close loop feedback with PolyShape tool and improved the handles.
 - Improved tooltips for adding and removing vertices with the PolyShape tool.
