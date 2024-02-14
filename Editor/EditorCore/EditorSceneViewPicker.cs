@@ -24,6 +24,7 @@ namespace UnityEditor.ProBuilder
         static int s_DeepSelectionPrevious = 0x0;
         static bool s_AppendModifierPreviousState = false;
         static SceneSelection s_Selection = new SceneSelection();
+        internal static SceneSelection selection => s_Selection;
         static List<VertexPickerEntry> s_NearestVertices = new List<VertexPickerEntry>();
         static List<GameObject> s_OverlappingGameObjects = new List<GameObject>();
         static readonly List<int> s_IndexBuffer = new List<int>(16);
@@ -49,37 +50,6 @@ namespace UnityEditor.ProBuilder
             {
                 foreach (var path in pathFaces)
                     selection.faces.Add(faces[path]);
-            }
-        }
-
-        internal class ProBuilderSelectPathContext : IShortcutContext
-        {
-            public bool active
-                => EditorWindow.focusedWindow is SceneView
-                && ProBuilderEditor.instance != null
-                && s_Selection.mesh != null;
-        }
-
-        [Shortcut("ProBuilder/Selection/Select Path", typeof(ProBuilderSelectPathContext), KeyCode.Mouse0, ShortcutModifiers.Shift | ShortcutModifiers.Action)]
-        static void DoPathSelection(ShortcutArguments args)
-        {
-            var mesh = s_Selection.mesh;
-            var activeFace = mesh.GetActiveFace();
-            if (activeFace != null)
-            {
-                var faces = mesh.facesInternal;
-                var face = ProBuilderEditor.instance.hovering.faces[0];
-
-                UndoUtility.RecordSelection(mesh, "Select Face");
-                var pathFaces = SelectPathFaces.GetPath(mesh, Array.IndexOf<Face>(faces, activeFace), Array.IndexOf<Face>(faces, face));
-                if (pathFaces != null)
-                {
-                    foreach (var pathFace in pathFaces)
-                        mesh.AddToFaceSelection(pathFace);
-
-                    Event.current.Use();
-                    ProBuilderEditor.instance.ResetSceneGUIEvent();
-                }
             }
         }
 

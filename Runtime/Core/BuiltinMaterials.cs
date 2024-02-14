@@ -67,7 +67,6 @@ namespace UnityEngine.ProBuilder
         static Material s_VertexPickerMaterial;
         static Material s_EdgePickerMaterial;
         static Material s_UnityDefaultDiffuse;
-        static Material s_UnlitVertexColorMaterial;
         static Material s_ShapePreviewMaterial;
 
         static string k_EdgePickerMaterial = "Materials/EdgePicker";
@@ -108,8 +107,6 @@ namespace UnityEngine.ProBuilder
                 Log.Error("EdgePicker material not loaded... please re-install ProBuilder to fix this error.");
                 s_EdgePickerMaterial = new Material(Shader.Find(k_EdgePickerShader));
             }
-
-            s_UnlitVertexColorMaterial = (Material)Resources.Load("Materials/UnlitVertexColor", typeof(Material));
         }
 
         /// <summary>
@@ -218,20 +215,6 @@ namespace UnityEngine.ProBuilder
         }
 
         /// <summary>
-        /// Represents the ProBuilder "NoDraw" material. Faces with this material
-        /// are hidden when the game is played.
-        /// </summary>
-        [Obsolete("NoDraw is no longer supported.")]
-        internal static Material noDrawMaterial
-        {
-            get
-            {
-                Init();
-                return (Material)Resources.Load("Materials/NoDraw", typeof(Material));
-            }
-        }
-
-        /// <summary>
         /// Represents the default Unity diffuse material.
         /// </summary>
         internal static Material GetLegacyDiffuse()
@@ -283,18 +266,6 @@ namespace UnityEngine.ProBuilder
                 material.SetColor("_Color", previewColor);
 
             return material;
-        }
-
-        /// <summary>
-        /// Represents an unlit vertex color material.
-        /// </summary>
-        internal static Material unlitVertexColor
-        {
-            get
-            {
-                Init();
-                return s_UnlitVertexColorMaterial;
-            }
         }
 
         internal static Material ShapePreviewMaterial
