@@ -25,7 +25,6 @@ namespace UnityEditor.ProBuilder
             public bool active
                 => EditorWindow.focusedWindow is SceneView
                    && ProBuilderEditor.instance != null;
-            //&& EditorSceneViewPicker.selection?.mesh != null;
         }
 
         ProBuilderEditor m_Editor;
