@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  
 ### Changes
 
+- Removed tools icons as they are not used in ProBuilder 6 Context Menu.
+- Unifying shaders and simplify code for the different render pipelines.
 - Unified shaders and simplify code for the different render pipelines.
 - Removed the Edit Mesh button from ProBuilderMesh Inspector.
 - Added a close loop feedback with PolyShape tool and improved the handles.
