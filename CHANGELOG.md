@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [PBLD-108] Fixed a bug where trigger ProBuilder shortcut outside of the ProBuilder context would throw an error.
+- [PBLD-108] Fixed a bug where triggering a ProBuilder shortcut outside of the ProBuilder context would throw an error.
 - [PBLD-103] Fixed a bug where creating a PolyShape, then immediately deleting it would create a new GameObject.
 - [PBLD-102] Fixed a bug where some materials assets were unexpectedly altered and rebuilt. 
 - [PBLD-99] Removed ProBuilder shortcut that conflicted with default shortcuts in the Editor.
