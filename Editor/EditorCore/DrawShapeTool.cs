@@ -398,22 +398,6 @@ namespace UnityEditor.ProBuilder
 
         // Shape's duplicate
         internal GameObject m_DuplicateGO = null;
-        Material m_ShapePreviewMaterial;
-        Material shapePreviewMaterial
-        {
-            get
-            {
-                if (m_ShapePreviewMaterial == null)
-                {
-                    m_ShapePreviewMaterial = new Material(BuiltinMaterials.defaultMaterial.shader);
-                    m_ShapePreviewMaterial.hideFlags = HideFlags.HideAndDontSave;
-                }
-
-                return m_ShapePreviewMaterial;
-            }
-        }
-
-        static readonly Color k_PreviewColor = new Color(.5f, .9f, 1f, .56f);
 
         //Shape's properties
         internal bool m_IsOnGrid;
@@ -525,12 +509,6 @@ namespace UnityEditor.ProBuilder
         {
             m_ProBuilderShape = null;
 
-            if (shapePreviewMaterial.HasProperty("_MainTex"))
-                shapePreviewMaterial.mainTexture = (Texture2D)Resources.Load("Textures/GridBox_Default");
-
-            if (shapePreviewMaterial.HasProperty("_Color"))
-                shapePreviewMaterial.SetColor("_Color", k_PreviewColor);
-
             MeshSelection.SetSelection((GameObject)null);
             handleSelectionChange = true;
 
@@ -559,11 +537,6 @@ namespace UnityEditor.ProBuilder
 
             if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
                 m_CurrentState = ShapeState.ResetState();
-        }
-
-        void OnDestroy()
-        {
-            DestroyImmediate(shapePreviewMaterial);
         }
 
         void OnSelectModeChanged(SelectMode mode)
@@ -696,7 +669,7 @@ namespace UnityEditor.ProBuilder
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 ApplyPrefsSettings(shape);
-                shape.GetComponent<MeshRenderer>().sharedMaterial = m_ShapePreviewMaterial;
+                shape.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
 
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
                 shape.Rebuild(m_Bounds, m_PlaneRotation);

@@ -1,4 +1,6 @@
-﻿using UObject = UnityEngine.Object;
+﻿using UnityEngine.Rendering;
+using UnityEngine.Rendering.RendererUtils;
+using UObject = UnityEngine.Object;
 
 namespace UnityEngine.ProBuilder
 {
@@ -75,24 +77,21 @@ namespace UnityEngine.ProBuilder
             }
 
 #if HDRP_7_1_0_OR_NEWER
-            static void CustomRenderPass(Rendering.ScriptableRenderContext ctx, Rendering.HighDefinition.HDCamera camera)
+            static void CustomRenderPass(ScriptableRenderContext ctx, Rendering.HighDefinition.HDCamera camera)
             {
                 ctx.SetupCameraProperties(camera.camera);
 
-                Rendering.CommandBuffer cb = new Rendering.CommandBuffer();
+                CommandBuffer cb = new CommandBuffer();
                 cb.ClearRenderTarget(true, true, Color.white);
                 ctx.ExecuteCommandBuffer(cb);
                 ctx.Submit();
 
-                Rendering.DrawingSettings drawSettings = new Rendering.DrawingSettings();
-                drawSettings.SetShaderPassName(0, new Rendering.ShaderTagId("Always"));
-
-                Rendering.FilteringSettings filterSettings = Rendering.FilteringSettings.defaultValue;
-
                 if (camera.camera.TryGetCullingParameters(out Rendering.ScriptableCullingParameters cullParams))
                 {
-                    Rendering.CullingResults cullResuts = ctx.Cull(ref cullParams);
-                    ctx.DrawRenderers(cullResuts, ref drawSettings, ref filterSettings);
+                    CullingResults cullResuts = ctx.Cull(ref cullParams);
+                    var listDesc = new RendererListDesc(new ShaderTagId("Always"), cullResuts, camera.camera);
+                    var list = ctx.CreateRendererList(listDesc);
+                    cb.DrawRendererList(list);
                 }
             }
 #endif
