@@ -32,9 +32,9 @@ namespace UnityEditor.ProBuilder
 
         public override void OnActivated()
         {
+            m_LastPolyShape = null;
             MeshSelection.SetSelection((GameObject)null);
             ToolManager.SetActiveContext<GameObjectToolContext>();
-
             base.OnActivated();
         }
 
@@ -83,13 +83,14 @@ namespace UnityEditor.ProBuilder
 
         protected override void OnObjectSelectionChanged()
         {
-            if(polygon == null)
+            if(Selection.activeObject != null && polygon == null)
             {
                 ToolManager.RestorePreviousTool();
                 return;
             }
 
-            if((Selection.activeObject is GameObject go && go == polygon.gameObject))
+            if((Selection.activeObject == null && polygon == null) ||
+               (Selection.activeObject is GameObject go && go == polygon.gameObject))
                 return;
 
             if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
