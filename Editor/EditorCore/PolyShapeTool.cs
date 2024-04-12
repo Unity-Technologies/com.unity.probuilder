@@ -19,6 +19,8 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CreatePolyShape.png")]
     public class DrawPolyShapeTool : PolyShapeTool
     {
+        GameObject m_LastPolyShape = null;
+
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New PolyShape", false, PreferenceKeys.menuEditor + 1)]
         static void MenuPerform_NewShape()
         {
@@ -39,6 +41,8 @@ namespace UnityEditor.ProBuilder
         public override void OnWillBeDeactivated()
         {
             m_PolyShape = null;
+            if (m_LastPolyShape)
+                Selection.activeObject = m_LastPolyShape;
             base.OnWillBeDeactivated();
         }
 
@@ -62,6 +66,8 @@ namespace UnityEditor.ProBuilder
                     UndoUtility.RecordObject(polygon, "Set Height");
 
                     SetPolyEditMode(PolyShape.PolyEditMode.None);
+                    polygon.gameObject.hideFlags = HideFlags.None;
+                    m_LastPolyShape = polygon.gameObject;
                     polygon = null;
 
                     if (!TryCreatePolyShape())
@@ -102,6 +108,7 @@ namespace UnityEditor.ProBuilder
             if (newPolyshape)
             {
                 GameObject go = new GameObject("PolyShape");
+                go.hideFlags = HideFlags.HideAndDontSave | HideFlags.HideInInspector;
                 UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
                 m_PolyShape = Undo.AddComponent<PolyShape>(go);
                 ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
