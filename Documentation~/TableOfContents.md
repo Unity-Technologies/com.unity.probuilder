@@ -1,4 +1,5 @@
 * [About ProBuilder](index)
+	* [What's new in version 5.0](whats-new)
 	* [Getting started](overview)
 	* [Edit modes](modes)
 	* [Tools vs. actions](tools)
