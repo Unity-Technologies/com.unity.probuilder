@@ -18,7 +18,9 @@ Summary of changes in ProBuilder package version 6.0:
 	* Select Hidden
 	* Orientation: Normal
 	* Rect: intersect
-* Improved the PolyShape workflow. 
+* Improved creation tools:
+	* Hold **Shift** after using a create shape tool to create a copy of the shape you just created. 
+	* After you use **Create PolyShape**, you can now draw multiple shapes without leaving the tool. 
 
 ## What's new in version 5.0
 
