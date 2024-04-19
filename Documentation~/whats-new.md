@@ -1,4 +1,28 @@
-# What's new in version 5.0
+# What's New in ProBuilder
+
+For a full list of changes and updates in this version, refer to the [ProBuilder package changelog](https://docs.unity3d.com/Packages/com.unity.probuilder@latest/index.html?subfolder=/changelog/CHANGELOG.html).
+
+
+## What's new in version 6.0
+
+Summary of changes in ProBuilder package version 6.0:
+
+* Created the ProBuilder tool context which you can activate in the Tools overlay in the Scene view. The ProBuilder tool context enables ProBuilder-specific actions in the Scene view.
+* Removed the ProBuilder window. The ProBuilder tool context used in conjunction with the [Scene view context menu](xref:SceneViewContextMenu) provides a more streamlined workflow for ProBuilder actions.
+* Moved the Vertex, Edge, and Face edit modes to the Tool Settings overlay in the Scene view. To display ProBuilder edit modes in the Tool Settings overlay, enable the ProBuilder tool context in the Tools overlay.  
+* Moved ProBuilder actions that rely on element selection, such as Bridge, Weld Vertices, and Grow Selection, to the [Scene view context menu](xref:SceneViewContextMenu) when the ProBuilder tool context is active in the Tools overlay. 
+* Moved ProBuilder actions that apply to the entire ProBuilder mesh component, such as Export, Subdivide, and Center Pivot, to the [Scene view context menu](xref:SceneViewContextMenu). 
+* Moved creation and editing tools to the Tools overlay. 
+* Added a preview option for most ProBuilder actions.
+* Moved these tool options from the ProBuilder toolbar to the Tool Settings overlay:
+	* Select Hidden
+	* Orientation: Normal
+	* Rect: intersect
+* Improved creation tools:
+	* Hold **Shift** after using a create shape tool to create a copy of the shape you just created. 
+	* After you use **Create PolyShape**, you can now draw multiple shapes without leaving the tool. 
+
+## What's new in version 5.0
 
 Summary of changes in ProBuilder package version 5.0.
 
@@ -21,4 +45,3 @@ The main updates in this release include:
 * Fixed Undo so that it only reverts the last action, instead of all actions performed.
 * Selection, picking and highlight shaders have been updated to be compatible with SRPs as well as with orthographic cameras (there are several bug fixes that directly support these adjustments).
 
-For a full list of changes and updates in this version, see the [ProBuilder package changelog](xref:pb-changelog).
