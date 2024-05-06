@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Moved package out of preview.
 
+## [Unreleased]
+
+### Fixed
+
+- [PBLD-113] Fixed a bug where the Polyshape tool would create temporary objects in the hierarchy.
+
 ## [6.0.1-pre.2] - 2024-02-16
 
 ### Fixed
