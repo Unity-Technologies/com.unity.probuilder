@@ -7,12 +7,15 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 
 class MeshSyncTests : TemporaryAssetTest
 {
     static readonly string copyPasteTestScene = $"{TestUtility.testsRootDirectory}/Scenes/CopyPasteDuplicate.unity";
+
+    private Scene m_Scene;
 
     [SetUp]
     public void Setup()
@@ -22,7 +25,13 @@ class MeshSyncTests : TemporaryAssetTest
         window.Repaint();
         window.Focus();
 
-        OpenScene(copyPasteTestScene);
+        m_Scene = OpenScene(copyPasteTestScene);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        CloseScene(m_Scene);
     }
 
     static IEnumerable CopyPasteDuplicate
