@@ -28,12 +28,6 @@ class MeshSyncTests : TemporaryAssetTest
         m_Scene = OpenScene(copyPasteTestScene);
     }
 
-    [TearDown]
-    public void TearDown()
-    {
-        CloseScene(m_Scene);
-    }
-
     #if UNITY_2020_2_OR_NEWER
     static IEnumerable CopyPasteDuplicate
     {
