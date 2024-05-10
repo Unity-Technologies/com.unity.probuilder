@@ -750,7 +750,7 @@ namespace UnityEditor.ProBuilder
             }
             else if(m_SceneInfoOverlay != null)
             {
-                SceneView.AddOverlayToActiveView(m_SceneInfoOverlay);
+                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
             }
         }
 

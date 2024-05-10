@@ -30,6 +30,9 @@ namespace Editor.Overlays
             root.Add(CreateLabelLine(m_FaceCountLabel, "Faces:"));
             root.Add(CreateLabelLine(m_TriCountLabel, "Triangles:"));
             root.Add(CreateLabelLine(m_VertCountLabel, "Vertices:"));
+            var spacer = new VisualElement();
+            spacer.style.height = 10;
+            root.Add(spacer); // Spacer line
             root.Add(CreateLabelLine(m_SelectedFaceCountLabel, "Selected Faces:"));
             root.Add(CreateLabelLine(m_SelectedEdgeCountLabel, "Selected Edges:"));
             root.Add(CreateLabelLine(m_SelectedVertCountLabel, "Selected Vertices:"));
@@ -43,10 +46,10 @@ namespace Editor.Overlays
         {
             m_FaceCountLabel.text = MeshSelection.totalFaceCount.ToString();
             m_TriCountLabel.text = MeshSelection.totalTriangleCountCompiled.ToString();
-            m_VertCountLabel.text = MeshSelection.totalCommonVertexCount + "(" + MeshSelection.totalVertexCountOptimized + ")";
+            m_VertCountLabel.text = MeshSelection.totalCommonVertexCount + " (" + MeshSelection.totalVertexCountOptimized + ")";
             m_SelectedFaceCountLabel.text = MeshSelection.selectedFaceCount.ToString();
             m_SelectedEdgeCountLabel.text = MeshSelection.selectedEdgeCount.ToString();
-            m_SelectedVertCountLabel.text = MeshSelection.selectedSharedVertexCount + "(" + MeshSelection.selectedVertexCount+ ")";
+            m_SelectedVertCountLabel.text = MeshSelection.selectedSharedVertexCount + " (" + MeshSelection.selectedVertexCount+ ")";
         }
 
         VisualElement CreateLabelLine(Label targetLabel, string displayName)
@@ -54,9 +57,6 @@ namespace Editor.Overlays
             var line = new VisualElement();
             line.style.flexDirection = FlexDirection.Row;
             line.Add(new Label(displayName));
-            var spacer = new VisualElement();
-            spacer.style.flexGrow = 1;
-            line.Add(spacer);
             targetLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
             line.Add(targetLabel);
             return line;
