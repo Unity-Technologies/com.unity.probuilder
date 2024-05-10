@@ -2,14 +2,9 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using Editor.Overlays;
 using UnityEditor.EditorTools;
-using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
-using PMesh = UnityEngine.ProBuilder.ProBuilderMesh;
-using UObject = UnityEngine.Object;
 using UnityEditor.SettingsManagement;
-using UnityEngine.Assertions;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
@@ -48,10 +43,9 @@ namespace UnityEditor.ProBuilder
 
         GUIStyle VertexTranslationInfoStyle;
 
-        SceneInformationOverlay m_SceneInfoOverlay;
         [UserSetting("General", "Show Scene Info",
             "Toggle the display of information about selected meshes in the Scene View.")]
-        static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
+        internal static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
 
         [UserSetting("Mesh Editing", "Allow non-manifold actions",
             "Enables advanced mesh editing techniques that may create non-manifold geometry.")]
@@ -129,8 +123,6 @@ namespace UnityEditor.ProBuilder
         Vector3[][] m_VertexPositions;
         Vector3[] m_VertexOffset;
 
-        GUIContent m_SceneInfo = new GUIContent();
-
         bool m_wasSelectingPath;
 
         // All selected pb_Objects
@@ -203,8 +195,6 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             selectModeChanged += OnSelectModeChanged;
 
-            ProBuilderSettings.instance.afterSettingsSaved += UpdateSceneInfoOverlay;
-
             VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
 
@@ -212,7 +202,6 @@ namespace UnityEditor.ProBuilder
             InitGUI();
             UpdateMeshHandles();
             SetOverrideWireframe(true);
-            UpdateSceneInfoOverlay();
             EditorApplication.delayCall += () => UpdateSelection();
         }
 
@@ -229,9 +218,6 @@ namespace UnityEditor.ProBuilder
             SetOverrideWireframe(false);
             OnSelectModeChanged(SelectMode.None);
             SceneView.RepaintAll();
-
-            if(m_SceneInfoOverlay != null)
-                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
 
             if(s_Instance == this)
                 s_Instance = null;
@@ -736,21 +722,6 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Face:
                     selectMode = SelectMode.Vertex;
                     break;
-            }
-        }
-
-        void UpdateSceneInfoOverlay()
-        {
-            if (s_ShowSceneInfo)
-            {
-                if(m_SceneInfoOverlay == null)
-                    m_SceneInfoOverlay = new SceneInformationOverlay();
-
-                SceneView.AddOverlayToActiveView(m_SceneInfoOverlay);
-            }
-            else if(m_SceneInfoOverlay != null)
-            {
-                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
             }
         }
 
