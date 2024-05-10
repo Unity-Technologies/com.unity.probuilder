@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using Editor.Overlays;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder;
@@ -47,6 +48,7 @@ namespace UnityEditor.ProBuilder
 
         GUIStyle VertexTranslationInfoStyle;
 
+        SceneInformationOverlay m_SceneInfoOverlay;
         [UserSetting("General", "Show Scene Info",
             "Toggle the display of information about selected meshes in the Scene View.")]
         static Pref<bool> s_ShowSceneInfo = new Pref<bool>("editor.showSceneInfo", false);
@@ -129,8 +131,6 @@ namespace UnityEditor.ProBuilder
 
         GUIContent m_SceneInfo = new GUIContent();
 
-        Rect m_SceneInfoRect = new Rect(10, 10, 200, 40);
-
         bool m_wasSelectingPath;
 
         // All selected pb_Objects
@@ -200,11 +200,10 @@ namespace UnityEditor.ProBuilder
 
             SceneView.duringSceneGui += OnSceneGUI;
             ProGridsInterface.SubscribePushToGridEvent(PushToGrid);
-            ProGridsInterface.SubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             selectModeChanged += OnSelectModeChanged;
 
-            ProGridsToolbarOpen(ProGridsInterface.SceneToolbarIsExtended());
+            ProBuilderSettings.instance.afterSettingsSaved += UpdateSceneInfoOverlay;
 
             VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
@@ -213,8 +212,8 @@ namespace UnityEditor.ProBuilder
             InitGUI();
             UpdateMeshHandles();
             SetOverrideWireframe(true);
+            UpdateSceneInfoOverlay();
             EditorApplication.delayCall += () => UpdateSelection();
-
         }
 
         public void Dispose()
@@ -225,12 +224,14 @@ namespace UnityEditor.ProBuilder
 
             SceneView.duringSceneGui -= OnSceneGUI;
             ProGridsInterface.UnsubscribePushToGridEvent(PushToGrid);
-            ProGridsInterface.UnsubscribeToolbarEvent(ProGridsToolbarOpen);
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
 
             SetOverrideWireframe(false);
             OnSelectModeChanged(SelectMode.None);
             SceneView.RepaintAll();
+
+            if(m_SceneInfoOverlay != null)
+                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
 
             if(s_Instance == this)
                 s_Instance = null;
@@ -698,14 +699,6 @@ namespace UnityEditor.ProBuilder
 
             using (new HandleGUI())
             {
-                if (s_ShowSceneInfo)
-                {
-                    Vector2 size = UI.EditorStyles.sceneTextBox.CalcSize(m_SceneInfo);
-                    m_SceneInfoRect.width = size.x;
-                    m_SceneInfoRect.height = size.y;
-                    GUI.Label(m_SceneInfoRect, m_SceneInfo, UI.EditorStyles.sceneTextBox);
-                }
-
                 if (m_IsDragging)
                 {
                     if (m_CurrentEvent.type == EventType.Repaint)
@@ -746,12 +739,24 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        void UpdateSceneInfoOverlay()
+        {
+            if (s_ShowSceneInfo)
+            {
+                if(m_SceneInfoOverlay == null)
+                    m_SceneInfoOverlay = new SceneInformationOverlay();
+
+                SceneView.AddOverlayToActiveView(m_SceneInfoOverlay);
+            }
+            else if(m_SceneInfoOverlay != null)
+            {
+                SceneView.AddOverlayToActiveView(m_SceneInfoOverlay);
+            }
+        }
+
         void UpdateSelection(bool selectionChanged = true)
         {
             UpdateMeshHandles();
-
-            if (selectionChanged)
-                UpdateSceneInfo();
 
             if (selectionUpdated != null)
                 selectionUpdated(selection);
@@ -773,20 +778,6 @@ namespace UnityEditor.ProBuilder
                 // happens on undo when c++ object is gone but c# isn't in the know
                 EditorHandleDrawing.ClearHandles();
             }
-        }
-
-        void UpdateSceneInfo()
-        {
-            m_SceneInfo.text = string.Format(
-                    "Faces: <b>{0}</b>\nTriangles: <b>{1}</b>\nVertices: <b>{2} ({3})</b>\n\nSelected Faces: <b>{4}</b>\nSelected Edges: <b>{5}</b>\nSelected Vertices: <b>{6} ({7})</b>",
-                    MeshSelection.totalFaceCount.ToString(),
-                    MeshSelection.totalTriangleCountCompiled.ToString(),
-                    MeshSelection.totalCommonVertexCount.ToString(),
-                    MeshSelection.totalVertexCountOptimized.ToString(),
-                    MeshSelection.selectedFaceCount.ToString(),
-                    MeshSelection.selectedEdgeCount.ToString(),
-                    MeshSelection.selectedSharedVertexCount.ToString(),
-                    MeshSelection.selectedVertexCount.ToString());
         }
 
         internal void ClearElementSelection()
@@ -847,13 +838,6 @@ namespace UnityEditor.ProBuilder
             }
 
             UpdateSelection();
-        }
-
-        void ProGridsToolbarOpen(bool menuOpen)
-        {
-            bool active = ProGridsInterface.IsActive();
-            m_SceneInfoRect.y = active && !menuOpen ? 28 : 10;
-            m_SceneInfoRect.x = active ? (menuOpen ? 64 : 8) : 10;
         }
     }
 }
