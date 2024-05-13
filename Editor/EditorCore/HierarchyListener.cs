@@ -157,11 +157,8 @@ namespace UnityEditor.ProBuilder
             foreach (var mesh in go.GetComponentsInChildren<ProBuilderMesh>())
             {
                 EditorUtility.SynchronizeWithMeshFilter(mesh);
-                #if !UNITY_2020_2_OR_NEWER
-                mesh.ToMesh();
-                mesh.Refresh();
+                mesh.Rebuild();
                 mesh.Optimize();
-                #endif
             }
 
             ProBuilderEditor.Refresh();

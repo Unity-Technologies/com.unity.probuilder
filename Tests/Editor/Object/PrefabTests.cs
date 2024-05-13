@@ -9,11 +9,25 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
 public class PrefabTests
 {
     List<string> m_CreatedAssets = new List<string>();
+
+    private Scene m_Scene;
+
+    [SetUp]
+    public void Setup()
+    {
+        var window = EditorWindow.GetWindow<SceneView>();
+        window.Show(false);
+        window.Repaint();
+        window.Focus();
+
+        m_Scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    }
 
     GameObject CreatePrefab()
     {
@@ -93,10 +107,16 @@ public class PrefabTests
         Assume.That(instance2, Is.Not.Null);
         var mesh1 = instance1.GetComponent<ProBuilderMesh>();
         var mesh2 = instance2.GetComponent<ProBuilderMesh>();
+
         mesh1.Extrude(new [] { mesh1.faces[0] }, ExtrudeMethod.FaceNormal, .25f);
+        mesh1.Rebuild();
+
         PrefabUtility.ApplyPrefabInstance(instance1, InteractionMode.AutomatedAction);
 
         Assert.That(mesh1.mesh.vertexCount, Is.EqualTo(mesh2.mesh.vertexCount));
+
+        Assert.That(mesh1.versionIndex, Is.Not.EqualTo(ProBuilderMesh.k_UnitializedVersionIndex));
+        Assert.That(mesh2.versionIndex, Is.Not.EqualTo(ProBuilderMesh.k_UnitializedVersionIndex));
     }
 
     [Test, Ignore("Requires ENABLE_DRIVEN_PROPERTIES feature")]
