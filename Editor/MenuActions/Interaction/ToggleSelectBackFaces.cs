@@ -26,10 +26,7 @@ namespace UnityEditor.ProBuilder.Actions
         static readonly TooltipContent s_Tooltip = new TooltipContent
             (
                 "Set Hidden Element Selection",
-                @"Setting Hidden Element Selection to <b>On</b> allows you to select faces that are either obscured by geometry or facing away from the scene camera (backfaces).
-
-The default value is <b>On</b>.
-");
+                "Setting Hidden Element Selection to On allows you to select faces that are either obscured by geometry or facing away from the scene camera (backfaces).\n\nThe default value is On.");
 
         public override string menuTitle
         {
