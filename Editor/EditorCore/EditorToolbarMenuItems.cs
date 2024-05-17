@@ -17,15 +17,15 @@ namespace UnityEditor.ProBuilder
     {
         internal const string k_MenuPrefix = "Tools/ProBuilder/";
 
-		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", true, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/Create Bezier Shape", true, PreferenceKeys.menuEditor + 1)]
 		static bool MenuVerify_NewBezierShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
-			Menu.SetChecked(k_MenuPrefix + "Editors/New Bezier Shape", instance.IsMenuItemChecked() );
+			Menu.SetChecked(k_MenuPrefix + "Editors/Create Bezier Shape", instance.IsMenuItemChecked() );
 			return instance != null && instance.enabled;
 		}
 
-		[MenuItem(k_MenuPrefix + "Editors/New Bezier Shape", false, PreferenceKeys.menuEditor + 1)]
+		[MenuItem(k_MenuPrefix + "Editors/Create Bezier Shape", false, PreferenceKeys.menuEditor + 1)]
 		static void MenuPerform_NewBezierShape()
 		{
 			var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-121] Fixed edit mode and context shortcuts and settings tooltips.
 - [PBLD-110] Fixed a bug where the prefab instances of ProBuilder meshes where not updating after applying all the overrides.
 - [PBLD-113] Fixed a bug where the Polyshape tool would create temporary objects in the hierarchy.
+- Edited Create Shape tool menu labels so they match their tooltips in the Scene view. 
 
 ## [6.0.1] - 2024-03-25
 
