@@ -6,7 +6,7 @@ ProBuilder also comes with a [Scripting API](api.md), so that you can write C# s
 
 To add ProBuilder to Unity, refer to [Installing ProBuilder](installing.md). 
 
-![ProBuilder and Unity](images/probuilder_unitylogo.png)
+![The Unity logo built with ProBuilder, with the Tools and Tool Settings overlays.](images/probuilder_unitylogo.png)
 
 Some of the advanced features include:
 
