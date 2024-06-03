@@ -15,7 +15,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cube  %#K", false, PreferenceKeys.menuEditor + 1)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cube  %#K", false, PreferenceKeys.menuEditor + 1)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateCubeTool>();
@@ -44,7 +44,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Sphere", false, PreferenceKeys.menuEditor + 2)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sphere", false, PreferenceKeys.menuEditor + 2)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateSphereTool>();
@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
     class CreatePlaneTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Plane", false, PreferenceKeys.menuEditor + 3)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Plane", false, PreferenceKeys.menuEditor + 3)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreatePlaneTool>();
@@ -102,7 +102,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
     class CreateCylinderTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cylinder", false, PreferenceKeys.menuEditor + 4)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cylinder", false, PreferenceKeys.menuEditor + 4)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateCylinderTool>();
@@ -131,7 +131,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
     class CreateConeTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Cone", false, PreferenceKeys.menuEditor + 5)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cone", false, PreferenceKeys.menuEditor + 5)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateConeTool>();
@@ -160,7 +160,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
     class CreatePrismTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Prism", false, PreferenceKeys.menuEditor + 6)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Prism", false, PreferenceKeys.menuEditor + 6)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreatePrismTool>();
@@ -189,7 +189,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
     class CreateStairsTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Stairs", false, PreferenceKeys.menuEditor + 7)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Stairs", false, PreferenceKeys.menuEditor + 7)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateStairsTool>();
@@ -218,7 +218,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
     class CreateTorusTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Torus", false, PreferenceKeys.menuEditor + 8)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Torus", false, PreferenceKeys.menuEditor + 8)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateTorusTool>();
@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
     class CreatePipeTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Pipe", false, PreferenceKeys.menuEditor + 9)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Pipe", false, PreferenceKeys.menuEditor + 9)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreatePipeTool>();
@@ -276,7 +276,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
     class CreateArchTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Arch", false, PreferenceKeys.menuEditor + 10)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Arch", false, PreferenceKeys.menuEditor + 10)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateArchTool>();
@@ -305,7 +305,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
     class CreateDoorTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Door", false, PreferenceKeys.menuEditor + 11)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Door", false, PreferenceKeys.menuEditor + 11)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateDoorTool>();
@@ -334,7 +334,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
     class CreateSpriteTool : DrawShapeTool
     {
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New Shape/Sprite", false, PreferenceKeys.menuEditor + 12)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sprite", false, PreferenceKeys.menuEditor + 12)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<CreateSpriteTool>();

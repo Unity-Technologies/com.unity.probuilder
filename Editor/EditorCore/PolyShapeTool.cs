@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
     {
         GameObject m_LastPolyShape = null;
 
-        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/New PolyShape", false, PreferenceKeys.menuEditor + 1)]
+        [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create PolyShape", false, PreferenceKeys.menuEditor + 1)]
         static void MenuPerform_NewShape()
         {
             ToolManager.SetActiveTool<DrawPolyShapeTool>();
@@ -145,7 +145,7 @@ namespace UnityEditor.ProBuilder
             {
                 if (UnityEditor.EditorUtility.DisplayDialog(
                         L10n.Tr("Inspector Locked"),
-                        L10n.Tr("To create new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inpsectors?"),
+                        L10n.Tr("To create a new Poly Shape you need access to all Inspectors, which are currently locked. Do you wish to unlock all Inspectors?"),
                         L10n.Tr("Unlock"),
                         L10n.Tr("Cancel")))
                 {
