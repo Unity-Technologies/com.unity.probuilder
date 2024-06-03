@@ -23,8 +23,7 @@ namespace UnityEditor.ProBuilder
                 return;
 
             foreach(var mesh in Selection.GetFiltered<ProBuilderMesh>(SelectionMode.TopLevel))
-                using (new ProBuilderMesh.NonVersionedEditScope(mesh))
-                    EditorUtility.SynchronizeWithMeshFilter(mesh);
+                EditorUtility.SynchronizeWithMeshFilter(mesh);
 
             ProBuilderEditor.Refresh();
         }
