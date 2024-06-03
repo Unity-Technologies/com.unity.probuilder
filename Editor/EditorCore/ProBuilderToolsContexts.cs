@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Editor.Overlays;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
@@ -31,6 +32,8 @@ namespace UnityEditor.ProBuilder
         ProBuilderEditor editor => m_Editor ??= new ProBuilderEditor();
 
         ProBuilderShortcutContext m_ShortcutContext;
+
+        SceneInformationOverlay m_SceneInfoOverlay;
 
         protected override Type GetEditorToolType(Tool tool)
         {
@@ -134,13 +137,37 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_Editor = new ProBuilderEditor();
+
+            ProBuilderSettings.instance.afterSettingsSaved += UpdateSceneInfoOverlay;
+            UpdateSceneInfoOverlay();
+
             ShortcutManager.RegisterContext(m_ShortcutContext ??= new ProBuilderShortcutContext());
         }
 
         public override void OnWillBeDeactivated()
         {
             m_Editor.Dispose();
+            ProBuilderSettings.instance.afterSettingsSaved -= UpdateSceneInfoOverlay;
+
+            if(m_SceneInfoOverlay != null)
+                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
+
             ShortcutManager.UnregisterContext(m_ShortcutContext);
+        }
+
+        void UpdateSceneInfoOverlay()
+        {
+            if (ProBuilderEditor.s_ShowSceneInfo)
+            {
+                if(m_SceneInfoOverlay == null)
+                    m_SceneInfoOverlay = new SceneInformationOverlay();
+
+                SceneView.AddOverlayToActiveView(m_SceneInfoOverlay);
+            }
+            else if(m_SceneInfoOverlay != null)
+            {
+                SceneView.RemoveOverlayFromActiveView(m_SceneInfoOverlay);
+            }
         }
 
         public override void OnToolGUI(EditorWindow window)

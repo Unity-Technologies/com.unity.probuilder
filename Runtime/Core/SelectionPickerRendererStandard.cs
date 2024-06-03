@@ -87,12 +87,12 @@ namespace UnityEngine.ProBuilder
                 // to avoid disposing and re-assigning the pipeline, as the RenderEditorCamera function has some logic
                 // that switches rendering path if replacement shaders are in use, but I wasn't able to get that
                 // approach to work without also requiring that the drawing happen during a repaint event.
-                var currentRenderPipeline = GraphicsSettings.renderPipelineAsset;
+                var currentRenderPipeline = GraphicsSettings.defaultRenderPipeline;
                 var qualitySettingsRenderPipeline = QualitySettings.renderPipeline;
-                GraphicsSettings.renderPipelineAsset = null;
+                GraphicsSettings.defaultRenderPipeline = null;
                 QualitySettings.renderPipeline = null;
                 renderCam.RenderWithShader(shader, tag);
-                GraphicsSettings.renderPipelineAsset = currentRenderPipeline;
+                GraphicsSettings.defaultRenderPipeline = currentRenderPipeline;
                 QualitySettings.renderPipeline = qualitySettingsRenderPipeline;
 
                 Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
