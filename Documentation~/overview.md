@@ -5,6 +5,7 @@ You can access all of ProBuilder's editing tools and actions from:
 * The right-click menu for a ProBuilder Mesh in the Scene view.
 * The Tool Settings overlay.
 * The Tools overlay in both GameObject and ProBuilder context.
+* **Main Menu** > **Tools** > **ProBuilder**.
 
 ## Building and editing complex Meshes
 
