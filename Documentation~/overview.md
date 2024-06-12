@@ -1,10 +1,11 @@
 # Getting started 
 
-You can access all of ProBuilder's editing tools and actions from the [ProBuilder toolbar](toolbar.md), which dynamically adapts to your [Edit mode](edit-mode-toolbar.md) and your current selection.
+You can access all of ProBuilder's editing tools and actions from:
 
-![Toolbar Example](images/ProBuilderToolbar_GeoActionsArea.png)
-
-Every toolbar button has a tooltip that shows a short summary about its use. Viewing tooltips is a great way to start learning about ProBuilder's functionality.
+* The context menu (right-click) for a ProBuilder Mesh in the Scene view.
+* The Tool Settings overlay.
+* The Tools overlay in both GameObject and ProBuilder context.
+* **Main Menu** > **Tools** > **ProBuilder**.
 
 ## Building and editing complex Meshes
 
