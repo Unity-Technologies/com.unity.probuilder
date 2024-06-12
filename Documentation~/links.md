@@ -6,3 +6,4 @@ If you are new to 3D modeling, ProBuilder is a great way to learn. You can watch
 
 * [Support forum](https://forum.unity.com/forums/world-building.146/)
 * [ProBuilder 3D on X](https://x.com/probuilder3d)
+* [The ProBuilder Discord channel](https://discord.com/channels/489222168727519232/892763390563467326)
