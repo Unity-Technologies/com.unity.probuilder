@@ -10,6 +10,7 @@ Each type of operation takes two ProBuilder Mesh objects as the left and right i
 
 You can only access this feature from the menu, because it is experimental:
 
+1. Turn on [experimental features](/preferences.md).
 1. To open the Boolean (Experimental) window, navigate to Unity's top menu and go to **Tools** > **ProBuilder** > **Experimental** > **Boolean (CSG) Tool**.
 2. Set references to the ProBuilder Meshes just under the preview windows on the left and the right side.
 3. Select one of the boolean operation types from the **Operation** drop-down menu: [Intersection](#intersect), [Union](#union), or [Subtraction](#subtract).
