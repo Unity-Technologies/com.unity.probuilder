@@ -6,7 +6,7 @@ The Bezier Shape tool uses a Bezier spline (curve) and extrudes along it to crea
 
 To define a Mesh based on a bezier (curve) shape:
 
-1. Make sure the [Experimental Features Enabled](preferences.md#experimental) preference is enabled (go to **Edit** > **Preferences** in Windows or **Unity** > **Preferences** in macOS from the main menu in Unity, then select the **ProBuilder** category from the list).
+1. [Enable experimental features](preferences.md#experimental).
 
 2. Open the ProBuilder window (in Unity's top menu: **Tools** > **ProBuilder window**).
 
