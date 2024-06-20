@@ -71,9 +71,6 @@ namespace UnityEngine.ProBuilder
                     Rebuild();
                     meshWasInitialized?.Invoke(this);
                 }
-
-                // only sync instance version index when a new mesh is created
-                m_InstanceVersionIndex = m_VersionIndex;
             }
         }
 
