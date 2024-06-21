@@ -1,11 +1,16 @@
+using System.Collections;
 using UnityEngine;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEditor.ProBuilder.Actions;
+
+
+using UnityEngine.TestTools;
 
 static class UndoTests
 {
@@ -157,5 +162,51 @@ static class UndoTests
 
         UnityEngine.Object.DestroyImmediate(cube.gameObject);
         UnityEngine.Object.DestroyImmediate(duplicate.gameObject);
+    }
+
+    [UnityTest]
+    public static IEnumerator PerformUndoRedo_VersionIndexIsUpdated()
+    {
+        ProBuilderMesh cube = ShapeFactory.Instantiate<Cube>();
+
+        // Select the mesh
+        MeshSelection.SetSelection(cube.gameObject);
+        Assume.That(MeshSelection.selectedObjectCount, Is.EqualTo(1));
+
+        // Select a face
+        cube.SetSelectedFaces(new Face[]{cube.facesInternal[0]});
+        Assume.That(cube.selectedFacesInternal.Length, Is.EqualTo(1));
+
+        var originalVersionIndex = cube.versionIndex;
+        Assume.That(cube.meshSyncState, Is.EqualTo(MeshSyncState.InSync));
+
+        Undo.IncrementCurrentGroup();
+
+        // Perform `delete Faces` action
+        var deleteAction = new DeleteFaces();
+        var result = deleteAction.PerformAction();
+        Assume.That(result.status, Is.EqualTo(ActionResult.Status.Success));
+
+        var performedVersionIndex = cube.versionIndex;
+        Assert.That(cube.meshSyncState, Is.EqualTo(MeshSyncState.InSync));
+        Assert.That(performedVersionIndex, Is.GreaterThan(originalVersionIndex));
+
+        Undo.PerformUndo();
+        //Wait a Frame to trigger auto rebuild
+        yield return null;
+
+        // Assert that the new status of the mesh is correct and that the version index is updated after undoing
+        Assert.That(cube.meshSyncState, Is.EqualTo(MeshSyncState.InSync));
+        Assert.That(cube.versionIndex, Is.EqualTo(originalVersionIndex));
+
+        Undo.PerformRedo();
+        //Wait a Frame to trigger auto rebuild
+        yield return null;
+
+        // Assert that the new status of the mesh is correct and that the version index is updated after undoing
+        Assert.That(cube.meshSyncState, Is.EqualTo(MeshSyncState.InSync));
+        Assert.That(cube.versionIndex, Is.EqualTo(performedVersionIndex));
+
+        Object.DestroyImmediate(cube.gameObject);
     }
 }

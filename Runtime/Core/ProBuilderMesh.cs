@@ -193,19 +193,18 @@ namespace UnityEngine.ProBuilder
         internal struct NonVersionedEditScope : IDisposable
         {
             readonly ProBuilderMesh m_Mesh;
-            readonly ushort m_VersionIndex, m_InstanceVersionIndex;
+            readonly ushort m_VersionIndex;
 
             public NonVersionedEditScope(ProBuilderMesh mesh)
             {
                 m_Mesh = mesh;
                 m_VersionIndex = mesh.versionIndex;
-                m_InstanceVersionIndex = mesh.m_InstanceVersionIndex;
             }
 
             public void Dispose()
             {
                 m_Mesh.m_VersionIndex = m_VersionIndex;
-                m_Mesh.m_InstanceVersionIndex = m_InstanceVersionIndex;
+                m_Mesh.m_InstanceVersionIndex = m_VersionIndex;
             }
         }
 
