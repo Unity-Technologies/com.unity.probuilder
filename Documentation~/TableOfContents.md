@@ -6,7 +6,6 @@
 	* [Installing ProBuilder](installing)
 	* [Helpful links](links)
 * [Interacting with ProBuilder](overview-ui)
-	* [The Edit mode toolbar](edit-mode-toolbar)
 	* [The ProBuilder toolbar](toolbar)
 		* [Tool panels](tool-panels)
 		* [Selection actions](selection-tools)
