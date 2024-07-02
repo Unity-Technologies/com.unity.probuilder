@@ -2,8 +2,6 @@
 
 This sub-menu provides access to selection modifiers and actions.
 
-![Tools > ProBuilder > Selection menu](images/menu-selection.png)
-
 ## Grow Selection
 
 Use the **Grow Selection** action to expand the selection outward to adjacent faces, edges, or vertices.

@@ -2,8 +2,6 @@
 
 This sub-menu provides access to tools and editor windows.
 
-![Tools > ProBuilder > Editors menu](images/menu-editors.png)
-
 ## New Bezier Shape
 
 Use the **Bezier Shape** tool to define a Bezier curve around which ProBuilder extrudes a Mesh.

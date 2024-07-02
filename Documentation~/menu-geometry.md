@@ -2,8 +2,6 @@
 
 This sub-menu provides access to Vertex, Edge, and Face edit mode actions.
 
-![Tools > ProBuilder > Geometry menu](images/menu-geometry.png)
-
 ## Bevel Edges
 
 Use the **Bevel** action to [bevel](Edge_Bevel.md) every edge on the selected face(s).
