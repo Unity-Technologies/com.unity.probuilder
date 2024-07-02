@@ -4,8 +4,6 @@ Use this sub-menu to [export selected ProBuilder Meshes](workflow-exporting.md) 
 
 > **Tip:** When you perform an export using one of these menu items, Unity uses the default export options for the specific format. If you want to view or change the default export options, **Alt/Opt+Click** over the ![Export Icon](images/icons/Object_Export.png)**Export** button on the ProBuilder toolbar.
 
-![Tools > ProBuilder > Export menu](images/menu-export.png)
-
 ## Export Asset
 
 Saves the selection as Unity Mesh `.asset` files. This format is only readable in Unity.

@@ -2,8 +2,6 @@
 
 This sub-menu provides access to selection interaction actions.
 
-![Tools > ProBuilder > Interaction menu](images/menu-interaction.png)
-
 ## Toggle Drag Rect Mode
 
 Use this to set the **Rect** action to **Complete**. This means that drag selection only selects elements that are fully inside the drag rectangle.
