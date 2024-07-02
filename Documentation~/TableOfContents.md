@@ -15,7 +15,6 @@
 		* [Edge actions](edge)
 		* [Face actions](face)
 	* [The ProBuilder menu](menu)
-		* [ProBuilder Window](menu-open)
 		* [Editors](menu-editors)
 		* [Dimensions Overlay](menu-dimover)
 		* [Selection](menu-selection)
