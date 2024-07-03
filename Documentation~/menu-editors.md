@@ -10,7 +10,7 @@ Use the **Bezier Shape** tool to define a Bezier curve around which ProBuilder e
 
 For more information, see the [Bezier Shape tool](bezier.md) documentation.
 
-## New Poly Shape
+## Create Poly Shape
 
 Use the **Poly Shape** tool to create custom ProBuilder Mesh shapes.
 
@@ -28,7 +28,7 @@ Use the **Material Editor** window to apply materials to objects or faces.
 
 For more information, see the [Material Editor](material-tools.md) window documentation.
 
-## New Shape
+## Create Shape
 
 Use the **New Shape** tool to create new ProBuilder Mesh shapes such as cylinders, arches, and stairs.
 
