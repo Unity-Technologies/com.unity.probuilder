@@ -1,59 +1,48 @@
-# Smoothing hard edges on Meshes
+# Smooth hard edges on meshes
 
-You can define **Smoothing Groups** to create a smooth and rounded look on part or all of your Mesh. If you include only a portion of your Mesh, the rest of the Mesh has more of a sharp and hard-cornered look.
+To create a smooth and rounded look on part or all of your mesh, define a Smoothing Group. If you include only a part of your mesh, the rest of the mesh has more of a sharp and hard-cornered look.
 
-Smoothing does not subdivide the Mesh: it controls whether vertices are split for hard edges. This often works well for simpler Meshes, so it's great for anything that is isn't simple geometry. For example, you can use this on cylinders or more organic shapes, on curved walls, or on Mesh terrain chunks.
+Smoothing doesn't subdivide the mesh; it controls whether vertices are split for hard edges. This often works well for simpler meshes, like cylinders or more organic shapes, curved walls, or meshes for Terrain.
 
-![Smoothing Groups Example](images/Smoothing_Editor.png)
+![One quarter of the torus - shown in yellow - is smoothed](images/Smoothing_Editor.png)
 
-> **Note:** This produces a fairly subtle smoothing. If you need something that turns sharp edges into smooth curves, you need to either [bevel those edges](Edge_Bevel.md) or [subdivide the faces](Face_Subdivide.md) around them for greater control.
+> **Note:** This feature produces a subtle smoothing. If you want to turn sharp edges into smooth curves, you need to either [bevel those edges](Edge_Bevel.md) or [subdivide the faces](Face_Subdivide.md) around them for greater control.
 
-Some of the tasks you can perform include:
+You can do the following:
 
-* [Defining a smoothing group](#define)
-* [Removing smoothing groups](#clear)
-* [Selecting faces in the groups](#select)
-
-
+* [Create a smoothing group](#)
+* [Remove faces from a group](#clear)
+* [Select all faces in a group](#select)
 
 <a name="define"></a>
 
-## Defining a smoothing group
+## Create a smoothing group
 
-You can define up to 23 groups per Mesh in order to control the degree of smoothness.
+To control the degree of smoothness of complex meshes, you can define up to 30 smoothing groups for each mesh. 
 
-To smooth a portion of your Mesh:
+To smooth a part of your mesh:
 
-1. Select the **Face** editing mode from the [Edit Mode toolbar](edit-mode-toolbar.md).
+1. From the main menu, select **Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor** to open the [Smooth Group Editor](smoothing-groups.md).
+1. In the **Scene** view, in the **Tools** overlay, enable the **ProBuilder** tool context.
+1. In the **Tool Settings** overlay, select the **Face** editing mode.
+1. Select the faces that you want to have smooth adjoining edges. Use **Shift** to select multiple faces.
+1. Click an unused smooth group number on the [Smooth Group Editor](smoothing-groups.md) window.
 
-2. Select the faces that you want to have smooth adjoining edges.
+    > **Tip:** Smooth groups already in use appear with a color below the button, which corresponds to the color of the group in the **Scene** view.
 
-3. Click the ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) **Smoothing** action from the [The ProBuilder toolbar](toolbar.md).
-
-4. Click an unused smooth group number on the [Smooth Group Editor](smoothing-groups.md) window.
-
-	> **Tip:** Smooth groups already in use appear with a light blue highlight on the button.
-
-	The selected faces now appear smoother.
-
-You can repeat these steps using different number buttons.
-
-
+You can repeat these steps using different number buttons to create more groups.
 
 <a name="clear"></a>
 
-## Removing smoothing groups
+## Remove faces from a group
 
-To clear selected face smoothing groups:
+To clear selected smoothing groups:
 
-1. Select the faces with the group defined.
-2. Click the ![break smooth groups](images/icons/Face_BreakSmoothing.png) Clear Smoothing Group button on the [Smooth Group Editor](smoothing-groups.md) window.
-
-
+1. Select the faces you want to clear.
+1. In the Smooth Group Editor window, select ![break smooth groups](images/icons/Face_BreakSmoothing.png) **Clear Smoothing Group**.
 
 <a name="select"></a>
 
-## Selecting faces in the groups
+## Select all faces in a group
 
-To select all faces matching the current smoothing group index, click the ![select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) Select Faces button on the [Smooth Group Editor](smoothing-groups.md) window.
-
+To select all faces matching the current smoothing group index, in the Smooth Group Editor window, select ![select by smooth group](images/icons/Selection_SelectBySmoothingGroup.png) **Select Faces**.
