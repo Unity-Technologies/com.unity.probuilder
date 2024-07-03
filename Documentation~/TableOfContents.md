@@ -8,7 +8,6 @@
 * [Interacting with ProBuilder](overview-ui)
 	* [The Edit mode toolbar](edit-mode-toolbar)
 	* [The ProBuilder menu](menu)
-		* [ProBuilder Window](menu-open)
 		* [Editors](menu-editors)
 		* [Dimensions Overlay](menu-dimover)
 		* [Selection](menu-selection)
