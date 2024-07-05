@@ -16,20 +16,19 @@ namespace UnityEditor.ProBuilder
             var shape = tool.currentShapeInOverlay.gameObject;
             UndoUtility.RegisterCreatedObjectUndo(shape, "Draw Shape");
 
-            //Actually generate the shape
-            tool.m_ProBuilderShape.pivotGlobalPosition = tool.m_BB_Origin;
+            // Actually generate the shape
             tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
 
             EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
-
             tool.RebuildShape();
             Selection.activeObject = shape;
-            // make sure that the whole shape creation process is a single undo group
+
+            // Make sure that the whole shape creation process is a single undo group
             Undo.CollapseUndoOperations(group);
 
-            //Update tool
+            // Update tool
             DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, tool.m_ProBuilderShape.shape.GetType());
-            DrawShapeTool.SaveShapeParams(tool.m_ProBuilderShape);
+            tool.SaveShapeParams(tool.m_ProBuilderShape);
             tool.m_LastShapeCreated = tool.m_ProBuilderShape;
             tool.m_ProBuilderShape = null;
         }
