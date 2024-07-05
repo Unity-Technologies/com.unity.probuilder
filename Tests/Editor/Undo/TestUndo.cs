@@ -44,7 +44,10 @@ static class UndoTests
     [Test]
     public static void CreateShape_UndoDoesRemoveTheGameObject()
     {
-        EditorApplication.ExecuteMenuItem("Tools/ProBuilder/Editors/New Bezier Shape");
+        var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
+        Assume.That(instance, Is.Not.Null);
+        instance.PerformAction();
+
         var shapes = GameObject.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
         Assume.That(shapes.Length, Is.EqualTo(1));
 
