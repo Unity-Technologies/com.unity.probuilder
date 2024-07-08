@@ -2,8 +2,8 @@
 
 There are two active contexts when editing in the Unity Editor:
 
-* The GameObject context, which controls the entire Mesh.
-* The ProBuilder context, which controls the individual elements of the Mesh. The ProBuilder context is further divided into edit modes that define what you are selecting and editing:
+* The GameObject context, which allows you to control the entire Mesh.
+* The ProBuilder context, which allows you to control the individual elements of the mesh. The ProBuilder context is further divided into edit modes that define what you are selecting and editing:
 
     * Vertex Selection: Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
     * Edge selection: Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
