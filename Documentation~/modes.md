@@ -1,6 +1,6 @@
 # Edit modes and active contexts
 
-There are two active contexts when editing in the Unity Editor:
+You can use ProBuilder tools in two tool contexts:
 
 * The GameObject context, which allows you to control the entire Mesh.
 * The ProBuilder context, which allows you to control the individual elements of the mesh. The ProBuilder context is further divided into edit modes that define what you are selecting and editing:
