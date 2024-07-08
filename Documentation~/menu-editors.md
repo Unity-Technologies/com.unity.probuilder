@@ -1,8 +1,6 @@
 # Editors
 
-This sub-menu provides access to tools and editor windows.
-
-![Tools > ProBuilder > Editors menu](images/menu-editors.png)
+This submenu provides access to tools and editor windows.
 
 ## New Bezier Shape
 

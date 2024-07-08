@@ -9,6 +9,7 @@
 	* [The Edit mode toolbar](edit-mode-toolbar)
 	* [The ProBuilder menu](menu)
 		* [Editors](menu-editors)
+		* [Edit](menu-edit)
 		* [Dimensions Overlay](menu-dimover)
 		* [Selection](menu-selection)
 		* [Interaction](menu-interaction)

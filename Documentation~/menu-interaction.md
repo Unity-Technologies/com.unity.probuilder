@@ -1,8 +1,6 @@
 # Interaction
 
-This sub-menu provides access to selection interaction actions.
-
-![Tools > ProBuilder > Interaction menu](images/menu-interaction.png)
+This submenu provides access to selection interaction actions.
 
 ## Toggle Drag Rect Mode
 

@@ -1,8 +1,6 @@
 # Actions
 
-Use this sub-menu to access helper functions for stripping out ProBuilder scripts.
-
-![Tools > ProBuilder > Actions menu](images/menu-actions.png)
+Use this submenu to access helper functions for stripping out ProBuilder scripts.
 
 ## Strip All ProBuilder Scripts in Scene
 

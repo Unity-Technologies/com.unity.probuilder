@@ -1,8 +1,6 @@
 # Object
 
-This sub-menu provides access to Object edit mode actions.
-
-![Tools > ProBuilder > Object menu](images/menu-object.png)
+This submenu provides access to Object edit mode actions.
 
 ## Center Pivot
 

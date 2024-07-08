@@ -1,8 +1,6 @@
 # Selection
 
-This sub-menu provides access to selection modifiers and actions.
-
-![Tools > ProBuilder > Selection menu](images/menu-selection.png)
+This submenu provides access to selection modifiers and actions.
 
 ## Grow Selection
 

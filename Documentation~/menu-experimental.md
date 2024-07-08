@@ -1,10 +1,8 @@
 # Experimental
 
-This sub-menu provides access to experimental features.
+This submenu provides access to experimental features.
 
-![Tools > ProBuilder > Experimental menu](images/menu-experimental.png)
-
-> **Note**: This sub-menu is only available when you enable the [experimental features preference](preferences.md#experimental).
+> **Note**: This submenu is only available when you enable the [experimental features preference](preferences.md#experimental).
 
 Experimental features aren’t ready for public use, but are included for users to try out early, and report issues/feedback. 
 

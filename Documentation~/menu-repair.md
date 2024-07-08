@@ -1,8 +1,6 @@
 # Repair
 
-Use this sub-menu to access several helper scripts that repair problems with ProBuilder Meshes in the scene.
-
-![Tools > ProBuilder > Repair menu](images/menu-repair.png)
+Use this submenu to access several helper scripts that repair problems with ProBuilder Meshes in the scene.
 
 ## Rebuild All ProBuilder Objects
 
@@ -14,7 +12,7 @@ Discards all shared vertex position data and rebuilds based on proximity.
 
 ## Remove Degenerate Triangles
 
-Deletes triangles on a Mesh that are either taking up no space, or are duplicates.
+Deletes triangles on a mesh that are either taking up no space, or are duplicates.
 
 ## Check for Broken ProBuilder References
 

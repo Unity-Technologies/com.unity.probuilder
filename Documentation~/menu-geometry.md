@@ -1,8 +1,6 @@
 # Geometry
 
-This sub-menu provides access to Vertex, Edge, and Face edit mode actions.
-
-![Tools > ProBuilder > Geometry menu](images/menu-geometry.png)
+This submenu provides access to Vertex, Edge, and Face edit mode actions.
 
 ## Bevel Edges
 

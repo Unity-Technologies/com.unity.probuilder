@@ -1,14 +1,13 @@
 # Debug
 
-Use this sub-menu to access the **Log Preferences** window. 
-
-![Debug Window Example](images/menu-debug.png)
+Use this submenu to access the **Log Preferences** window. 
 
 Use the **Log Preferences** window to customize how ProBuilder logs messages. The darker color indicates that the setting is enabled (ON); the lighter color indicates that the setting is disabled (OFF).
 
-**(A)** [Log Output](#output) defines where ProBuilder writes messages to.
+The available settings are:
 
-**(B)** [Chatty-ness](#chattyness) defines which kind of messages ProBuilder logs.
+* [Log Output](#output) defines where ProBuilder writes messages to.
+* [Chatty-ness](#chattyness) defines which kind of messages ProBuilder logs.
 
 <a name="output"></a>
 
