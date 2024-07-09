@@ -8,7 +8,7 @@ This page describes some of the most common ways you can use the ProBuilder tool
 
 - **Transforming:** You can translate, rotate, and scale geometry elements to change the shape of a basic Mesh. For example, if you use the basic Stairs shape but you want to give it a crooked look, you could move some edges or vertices.
 
-- **Extruding:** "Extruding" refers to dragging a face out from the Mesh. To do this, click the ![Face edit mode](images/icons/EditModes_Face.png) [Face editing mode](modes.md) button on the Edit modes toolbar, select a face, hold Shift, and use the Transform controls.
+- **Extruding:** "Extruding" refers to dragging a face out from the Mesh. To do this, select ![Face edit mode](images/icons/EditModes_Face.png) [Face editing mode](modes.md) in the Tool Settings overlay after you activate the ProBuilde tool context. Then, select a face, hold Shift, and use the Transform controls.
 
   Alternatively, you can [extrude edges](Edge_Extrude.md) (for example, if you want to build a ski slope, you could extrude an edge and then [smooth it](smoothing-groups.md)).
 
