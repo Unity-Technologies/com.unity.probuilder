@@ -48,7 +48,11 @@ static class UndoTests
         Assume.That(instance, Is.Not.Null);
         instance.PerformAction();
 
-        var shapes = GameObject.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#if UNITY_2020_3_OR_NEWER
+        var shapes = Object.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#else
+        var shapes = Object.FindObjectsOfType<ProBuilderMesh>();
+#endif
         Assume.That(shapes.Length, Is.EqualTo(1));
 
         Undo.PerformUndo();
