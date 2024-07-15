@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [5.2.3] - 2023-12-12
+## [Unreleased]
 
 ### Fixed
 
+- [PBLD-127] Fixed a bug where undoing a shape creation would reset the deleted shape in the scene.
 - [PBLD-110] Fixed a bug where the prefab instances of ProBuilder meshes where not updating after applying all the overrides.
 - [WEBDOCS-1036] Fixed a documentation generation problem where a setting in the filter.yml file was preventing the ProBuilder API documentation from being generated.
 

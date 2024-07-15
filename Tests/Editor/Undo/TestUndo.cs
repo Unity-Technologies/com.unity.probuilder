@@ -1,5 +1,6 @@
 using UnityEngine;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
@@ -25,7 +26,7 @@ static class UndoTests
 
         Assert.IsFalse(TestUtility.MeshesAreEqual(cube.mesh, duplicate.mesh));
 
-        UnityEditor.Undo.PerformUndo();
+        Undo.PerformUndo();
 
         // this is usually caught by UndoUtility
         cube.InvalidateCaches();
@@ -35,8 +36,33 @@ static class UndoTests
 
         TestUtility.AssertAreEqual(duplicate.mesh, cube.mesh);
 
-        UnityEngine.Object.DestroyImmediate(cube.gameObject);
-        UnityEngine.Object.DestroyImmediate(duplicate.gameObject);
+        Object.DestroyImmediate(cube.gameObject);
+        Object.DestroyImmediate(duplicate.gameObject);
+    }
+
+    // PBLD-127: Undoing shape creation and BezierShape leaves a PB Mesh in the scene
+    [Test]
+    public static void CreateShape_UndoDoesRemoveTheGameObject()
+    {
+        var instance = EditorToolbarLoader.GetInstance<NewBezierShape>();
+        Assume.That(instance, Is.Not.Null);
+        instance.PerformAction();
+
+#if UNITY_2020_3_OR_NEWER
+        var shapes = Object.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#else
+        var shapes = Object.FindObjectsOfType<ProBuilderMesh>();
+#endif
+        Assume.That(shapes.Length, Is.EqualTo(1));
+
+        Undo.PerformUndo();
+
+#if UNITY_2020_3_OR_NEWER
+        shapes = GameObject.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#else
+        shapes = Object.FindObjectsOfType<ProBuilderMesh>();
+#endif
+        Assert.That(shapes.Length, Is.EqualTo(0));
     }
 
     [Test]
