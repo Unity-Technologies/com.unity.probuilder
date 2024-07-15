@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-127] Fixed a bug where undoing a shape creation would reset the deleted shape in the scene.
 - [PBLD-129] Fixed a bug where redoing actions was not updating the ProBuilder mesh in the scene.
 - [PBLD-120] Replaced the former scene info by a scene view overlay.
 - [PBLD-121] Fixed edit mode and context shortcuts and settings tooltips.

@@ -9,29 +9,32 @@ namespace UnityEditor.ProBuilder
     {
         protected override void EndState()
         {
+            tool.handleSelectionChange = false;
+
+            // Get the current undo group
+            var group = Undo.GetCurrentGroup();
+            var shape = tool.currentShapeInOverlay.gameObject;
+            UndoUtility.RegisterCreatedObjectUndo(shape, "Draw Shape");
+
+            // Actually generate the shape
+            tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
+
+            EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
             tool.RebuildShape();
-            UndoUtility.RegisterCreatedObjectUndo(tool.currentShapeInOverlay.gameObject, "Draw Shape");
+            Selection.activeObject = shape;
+
+            // Make sure that the whole shape creation process is a single undo group
+            Undo.CollapseUndoOperations(group);
+
+            // Update tool
+            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, tool.m_ProBuilderShape.shape.GetType());
+            tool.SaveShapeParams(tool.m_ProBuilderShape);
             tool.m_LastShapeCreated = tool.m_ProBuilderShape;
             tool.m_ProBuilderShape = null;
         }
 
         ShapeState ValidateShape()
         {
-            tool.handleSelectionChange = false;
-
-            tool.RebuildShape();
-            tool.m_ProBuilderShape.gameObject.hideFlags = HideFlags.None;
-
-            EditorUtility.InitObject(tool.m_ProBuilderShape.mesh);
-
-            DrawShapeTool.s_ActiveShapeIndex.value = Array.IndexOf(EditorShapeUtility.availableShapeTypes, tool.m_ProBuilderShape.shape.GetType());
-            tool.SaveShapeParams(tool.m_ProBuilderShape);
-
-            // make sure that the whole shape creation process is a single undo group
-            var group = Undo.GetCurrentGroup() - 1;
-            Selection.activeObject = tool.m_ProBuilderShape.gameObject;
-            Undo.CollapseUndoOperations(group);
-
             return NextState();
         }
 

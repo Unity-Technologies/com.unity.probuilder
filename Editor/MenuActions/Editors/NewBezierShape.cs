@@ -38,9 +38,9 @@ namespace UnityEditor.ProBuilder.Actions
             go.GetComponent<MeshRenderer>().sharedMaterial = EditorMaterialUtility.GetUserMaterial();
             bezier.Init();
             bezier.Refresh();
+            UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
             EditorUtility.InitObject(bezier.GetComponent<ProBuilderMesh>());
             MeshSelection.SetSelection(go);
-            UndoUtility.RegisterCreatedObjectUndo(go, "Create Bezier Shape");
             bezier.isEditing = true;
 
             return new ActionResult(ActionResult.Status.Success, "Create Bezier Shape");
