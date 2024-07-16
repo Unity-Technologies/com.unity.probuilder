@@ -62,7 +62,8 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            tool.DrawBoundingBox();
+            if(evt.type == EventType.Repaint)
+                tool.DrawBoundingBox();
 
             if(evt.isMouse)
             {
