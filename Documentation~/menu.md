@@ -25,7 +25,7 @@ Edit shapes.
 | **Menu item** | **Description** |
 | --- | --- |
 | **Edit PolyShape** | |
-| **Edit shape** | |
+| **Edit shape** |  Edit a shape you created with **Tools** > ProBuilder** > **Editors** > **New Shape**. |
 
 ## Dimensions Overlay
 
