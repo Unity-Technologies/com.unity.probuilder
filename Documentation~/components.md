@@ -9,7 +9,7 @@ For a GameObject to be a ProBuilder object, it needs the following components:
 
 
 
-When you first activate a creation tool, Unity adds these components to the new GameObject. They expose specific properties defined in the corresponding scripts which help define the topology. After you create the new Mesh, you can re-activate the tool for the same Mesh and change these properties to modify the Mesh's shape.
+When you first activate a creation tool, the Editor adds the appropriate ProBuilder components to the new GameObject. They expose specific properties defined in the corresponding scripts which help define the topology. After you create the new mesh, you can re-activate the tool for the same mesh and change these properties to modify the mesh's shape.
 
 > **Note**: When you re-activate one of these tools, you lose any modifications you made to the Mesh through an action or through the [Cut](cut-tool.md) tool. For example, imagine you create a new Poly Shape with five points, and then extrude one of the faces. Next, you decide to remove one of the points, so you enter Poly Shape editing mode again. The extrusion disappears as soon as you re-enter Poly Shape editing mode.
 
