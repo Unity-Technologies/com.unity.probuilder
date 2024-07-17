@@ -1,6 +1,6 @@
 # Scene Information
 
-![The Scene Information Overlay](images/show-scene-info.png)
+![The Scene Information overlay](images/show-scene-info.png)
 
 The **Scene Information** overlay displays information about the selected mesh and selected elements of that mesh.
 
