@@ -737,6 +737,10 @@ namespace UnityEditor.ProBuilder
             }
 
             proBuilderShape.Rebuild(pivotLocation == PivotLocation.Center ? m_Bounds.center : m_BB_Origin, m_PlaneRotation, m_Bounds);
+            // PBLD-137 - continously refresh the material, otherwise if Resident Drawer is on, new faces are drawn without material applied until there's some other trigger:
+            // renderer enable/disable, material re-apply, etc.
+            m_ProBuilderShape.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
+
             ProBuilderEditor.Refresh(false);
 
             SceneView.RepaintAll();

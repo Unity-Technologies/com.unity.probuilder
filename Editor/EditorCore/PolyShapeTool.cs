@@ -533,6 +533,11 @@ namespace UnityEditor.ProBuilder
 
             if (polygon.polyEditMode != PolyShape.PolyEditMode.Path)
             {
+                // PBLD-137 - continously refresh the material, otherwise if Resident Drawer is on, new faces are drawn without material applied until there's some other trigger:
+                // renderer enable/disable, material re-apply, etc.
+                if (polygon.polyEditMode == PolyShape.PolyEditMode.Height && polygon.m_Points != null && polygon.m_Points.Count >= 3)
+                    polygon.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
+                
                 var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {

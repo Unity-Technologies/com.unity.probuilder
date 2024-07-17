@@ -5,8 +5,10 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder.Tests.Framework;
 using UnityEngine.TestTools;
 using UnityEditor;
+using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.MeshOperations;
 
 static class CreateDestroy
 {
@@ -61,5 +63,23 @@ static class CreateDestroy
         Assume.That(mesh.filter, Is.Not.Null);
         Assert.That(mesh.filter.hideFlags & HideFlags.DontSave, Is.EqualTo(HideFlags.DontSave));
         UObject.DestroyImmediate(mesh.gameObject);
+    }
+    
+    [Test]
+    public static void CreateEmptyPolyShape_SubmeshCountIsZero_MaterialCountIsZero()
+    {
+        GameObject go = new GameObject("PolyShape");
+        var polyShape = go.AddComponent<PolyShape>();
+        ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+
+        Assume.That(polyShape, Is.Not.Null, "PolyShape should not be null at this point.");
+        Assume.That(pb, Is.Not.Null, "ProBuilderMesh should not be null at this point.");
+        
+        pb.CreateShapeFromPolygon(polyShape.m_Points, polyShape.extrude, polyShape.flipNormals);
+        UnityEditor.ProBuilder.EditorUtility.InitObject(pb);
+        
+        var zeroSubmeshAndMaterials = (pb.renderer.sharedMaterial == null && pb.mesh.subMeshCount == 0);
+        
+        Assert.That(zeroSubmeshAndMaterials, Is.True, "Creating empty PolyShape should result in mesh with zero sub meshes and zero materials.");
     }
 }
