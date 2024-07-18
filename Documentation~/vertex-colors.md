@@ -1,10 +1,8 @@
-# ![Vertex Color Editor icon](images/icons/Panel_VertColors.png) Vertex Colors window
+# Vertex Colors window
 
 Use the **Vertex Colors** window to [apply vertex colors](workflow-vertexcolors.md#apply) onto an entire Mesh or only a portion.
 
-To open this window, click the **Vertex Colors** button ( ![Vertex Color Editor icon](images/icons/Panel_VertColors.png) ) from the [ProBuilder toolbar](toolbar.md).
-
-> **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Vertex Color Editor**).
+To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open Vertex Color Editor**.
 
 ![Vertex Colors window](images/VertexColors.png)
 
