@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-115] Fixed a bug where using the 'Create PolyShape' tool when GPU Resident Drawer was enabled would throw warnings.
 - [PBLD-134] Fixed a bug where drawing ProBuilder shapes would cause temporary visual glitches on macOS.
 - [PBLD-127] Fixed a bug where undoing a shape creation would reset the deleted shape in the scene.
 - [PBLD-129] Fixed a bug where redoing actions was not updating the ProBuilder mesh in the scene.

@@ -299,8 +299,11 @@ namespace UnityEditor.ProBuilder
             }
 
             pb.unwrapParameters = new UnwrapParameters(Lightmapping.s_UnwrapParameters);
-
             pb.Optimize();
+            
+            // PBLD-137 - if Resident Drawer is on, it will start throwing errors if submeshCount != materialCount
+            if (pb.mesh.subMeshCount == 0)
+                pb.renderer.sharedMaterial = null;
 
             if (meshCreated != null)
                 meshCreated(pb);
