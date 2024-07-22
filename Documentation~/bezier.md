@@ -1,6 +1,6 @@
 # Bezier Shape component
 
-> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution.
+> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Please use with caution. To enable this feature, go to **Preferences** > **ProBuilder** > **Experimental Features Enabled**. 
 
 Use the Bezier Shape tool to [create a more organic shape](workflow-create-bezier.md) by defining a spline along which ProBuilder extrudes a 3-dimensional Mesh. When you activate the Bezier Shape tool to create a new shape, the **Bezier Shape** component provides properties that help you customize the new shape. After you activate the tool, the Bezier Shape is ready for editing:
 
