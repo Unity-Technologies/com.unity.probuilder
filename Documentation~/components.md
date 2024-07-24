@@ -4,7 +4,6 @@ For a GameObject to be a ProBuilder object, it needs the following components:
 
 * [ProBuilder MeshFilter](ProBuilderMesh.md): All ProBuilder shapes have this components. It displays the **Object Size** of the ProBuilder Mesh in **X**, **Y**, and **Z**. It also allows you to generate lightmap UVs for the Mesh, and customize how ProBuilder generates them. 
 * [PolyShape (script)](polyshape.md): For custom shapes.
-* [Bezier shape (script)](bezier.md) (Experimental)
 * Mesh Renderer and Mesh Collider. These components are standard for 3D objects. For more information, refer to [GameObjects](https://docs.unity3d.com/6000.0/Documentation/Manual/GameObjects.html). 
 
 
