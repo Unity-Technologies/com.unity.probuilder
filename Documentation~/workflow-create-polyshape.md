@@ -1,34 +1,29 @@
-# Creating a Mesh with the Poly Shape tool
+# Create a mesh with the Poly Shape tool
 
-Use the **Poly Shape** tool to define a 2-dimensional custom shape (depth and width) and then extrude a 3-dimensional shape to define its height. Like the [Shape tool](shape-tool.md), this is a modal tool that creates a new Mesh but also lets you re-activate the tool to edit the initial shape. 
+To create a custom shape, use the **Poly Shape** tool. Draw a 2D custom shape (depth and width) and then extrude that shape into a 3D mesh to define its height. 
 
-> **Note**: When you modify control points or settings, you lose any changes you made in editing the Mesh.
+![A Poly Shape is a 3D shape extruded from any 2D polygon](images/PolyShape_HeaderImage.png)
 
-![A Poly Shape is a 3-dimensional shape extruded from any 2-dimensional polygon](images/PolyShape_HeaderImage.png)
+To create a custom mesh:
 
-To define a custom Mesh:
+1. Use one of the following:
+    * In the **Scene** view > **Tools** overlay, select **Create PolyShape**.
+    * In the main menu, go to **Tools** > **ProBuilder** > **Editors** > **New Poly Shape**.
+1. To create the outer bounds of your mesh, click in the **Scene** view to create control points.
+    > **Note:** You can click directly on another surface to create an outgrowth, even when that surface is on the y-axis. 
+    ![Making a 2D shape on the wall](images/PolyShape_Draw1.png)
+1. To finish placing control points, press **Enter** or **Space**.
+    ![Extruding the 2D shape into a 3D Mesh](images/PolyShape_Draw2.png)
+1. To extrude a 3D shape, move your mouse up or down.
+1. To finish the shape, press **Enter** or **Space**. Your new mesh is now [in editing mode](polyshape.md) so you can continue to change it.
 
-1. Open the ProBuilder window (in Unity's top menu: **Tools** > **ProBuilder window**).
+![Finished Poly Shape](images/PolyShape_Draw3.png)
 
-  The [Edit Mode toolbar](edit-mode-toolbar.md) and the [ProBuilder toolbar](toolbar.md) appear.
+To edit a shape you created with the **Poly Shape** tool, in the **Scene** view:
 
-2. From the ProBuilder toolbar, click **New Poly Shape** (![Poly Shape Icon](images/icons/NewPolyShape.png)). 
+1. Select the shape.
+1. From the **Tools** overlay, select **Edit Poly Shape**.
 
-  > **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **New Poly Shape**).
+> **Note**: When you modify control points or settings, you lose any changes you made in editing the mesh.
 
-3. In the Scene view, click to create control points. Control points form the outer bounds of your Mesh.
-
-	You can click directly on another surface to create an outgrowth, even when that surface is on the y-axis. 
-
-	![Making a 2D shape on the wall](images/PolyShape_Draw1.png)
-
-4. When you finish placing points, use either **Enter** (Windows), **Return** (macOS), or **Spacebar** to finalize the shape.
-
-	![Extruding the 2D shape into a 3D Mesh](images/PolyShape_Draw2.png)
-
-5. Move the mouse up and down to set the Mesh height. This extrudes a 3D Mesh from the 2D shape you defined with your control points.
-
-6. Click to exit create mode. Your new Mesh is now [in editing mode](polyshape.md) so you can continue to modify it.
-
-	![Finished Poly Shape](images/PolyShape_Draw3.png)
-
+[[Jon: I don't understand this note. What is the timeline for losing changes? As in, does it only happen if *while I'm editing* I also change control points or settings? How do I change control points or settings? Whose settings?]]
