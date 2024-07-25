@@ -115,6 +115,7 @@
 		* [Stairs](Stair)
 		* [Torus](Torus)
 	* [Cut tool](cut-tool)
+	* [Snap to Grid](snap-to-grid)
 * [Editor window reference](ref_windows)
 	* [Lightmap UV Editor window](lightmap-uv)
 	* [Material Editor window](material-tools)
