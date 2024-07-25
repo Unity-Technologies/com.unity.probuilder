@@ -8,8 +8,8 @@ This table lists all the tools available in ProBuilder:
 
 | **Tool** | **Description** |
 | --- | --- |
-| [New Shape](shape-tool.md) | Creates a new mesh with the Shape component, which defines the mesh's shape primitive. |
-| [New Poly Shape](polyshape.md) | Creates a new mesh with the Poly Shape component. You then draw a 2D shape, and extrude it to a 3D shape. |
+| [New Shape and Edit Shape](shape-tool.md) | Creates a new mesh with the Shape component, which defines the mesh's shape primitive. |
+| [New Poly Shape and Edit Poly Shape](polyshape.md) | Creates a new mesh with the Poly Shape component. You then draw a 2D shape, and extrude it to a 3D shape. |
 | [Cut](cut-tool.md) | Creates a subface in an existing mesh face. You design the shape of the new face by defining points on the mesh, then move the face as you do any other face. <br /><br />You can use this tool on any face, regardless of whether you created the mesh with the [New Shape](shape-tool.md) tool, the [New Poly Shape](polyshape.md) tool, or by [probuilderizing](Object_ProBuilderize.md) a standard Unity mesh. |
 
 > **Note:** For documentation on the [Bezier Shape](bezier.md) tool, refer to [Experimental features](experimental.md).

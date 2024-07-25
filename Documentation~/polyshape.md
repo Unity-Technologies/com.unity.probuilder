@@ -1,4 +1,4 @@
-# ![Poly Shape Tool icon](images/icons/NewPolyShape.png) Poly Shape tool
+# New Poly Shape and Edit Poly Shape tools
 
 Use the Poly Shape tool to [create a custom polygonal shape](workflow-create-polyshape.md). When you activate the Poly Shape tool to create a new shape, the **Poly Shape Tool** panel appears in the bottom of the Scene view. After you initially [create a Poly Shape](workflow-create-polyshape.md), the Poly Shape is still active, but in editing mode:
 
