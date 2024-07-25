@@ -100,7 +100,7 @@
 	* [Triangulate - Objects](Object_Triangulate)
 	* [Weld Vertices](Vert_Weld)
 * [Tools reference](ref_tools)
-	* [New Poly Shape and Edit Poly Shape tools](polyshape)
+	* [New PolyShape and Edit PolyShape tools](polyshape)
 	* [New Shape and Edit Shape tools](shape-tool)
 		* [Arch](Arch)
 		* [Cone](Cone)
