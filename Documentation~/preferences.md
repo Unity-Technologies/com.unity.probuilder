@@ -4,21 +4,15 @@ To configure ProBuilder, go to **Edit** > **Preferences** (macOS: **Unity** > **
 
 ## Developer Mode
 
-**Individual origins:** rotate around the element's `0,0,0` coordinates.
-**Center:** rotate around the element's center.
+Set what an element rotates around. This setting has a different effect depending on the selection mode.
 
-individual origians means the choosen element rotation is around its own `0,0,0` coordinates. These are the coordinates from which you started drawing the element.
-center means the choosen element rotation is
+| **Pivote mode** | **Vertex selection mode** | **Edge selection mode** | **Face selection mode** |
+| --- | --- | --- | --- |
+| **Center** | | | | 
+| **Individual origins** | | | |
+| **Active Element** | | | |
 
-
-| **Property** | **Function** |
-| :--- | :--- |
-| **Pivot Mode** | Set where the pivot point of a rotating mesh element is, relative to the element's location. Changing the pivot point changes what rotates along each axis. [[not explaining it right... it's something like if you rotate along X, which bit of the element actually goes where]] Center, Individual Origins, Active Element |
-| **Show Internal Pivot and Orientation** | Displays the Pivot Point and Orientation controls in the Scene viewedit. |
-
-[["Choose the default pivot location for new ProBuilder objects." was for Pivot Location, which isn't a thing at this point]]
-[[First Corner: Use the "first corner" as the pivot point for the newly created Mesh. The first corner refers to where you first clicked in the Scene view to create it
-Center: Use the center of the newly instantiated object as the pivot point]]
+To see the pivot point and orientation controls in the Scene view, enable **Show Internal Pivot and Orientation**.
 
 ## Dimensions Overlay
 
@@ -30,7 +24,7 @@ Use these settings to enable and disable ProBuilder experimental features:
 
 * **Tools** > **ProBuilder** > **Editors** > [**New Bezier Shape**](bezier.md)
 * **Tools** > **ProBuilder** > **Experimental** > **Boolean (CSG)**.
-* **Preferences** window > **ProBuilder**: **Store Mesh as Asset**.
+* **Preferences** window > **ProBuilder** > **Store Mesh as Asset**.
 
 > **Warning:** Experimental features can have unpredictable results.
 
@@ -39,7 +33,7 @@ Use these settings to enable and disable ProBuilder experimental features:
 | **Experimental Features Enabled** | Add the experimental features to the Editor. |
 | **Store Meshes as Asset** | Store meshes as standalone assets in the Project folder, rather than as part of the Scene asset. |
 
-> **Note**: When you toggle Experimental Features on or off, the Editor has to recompile scripts. This means that there is a delay before this option appears to change.
+> **Note**: When you activate or deactivate experimental features, the Unity Editor has to recompile scripts, which causes a delay before changes apply.
 
 ## General
 
