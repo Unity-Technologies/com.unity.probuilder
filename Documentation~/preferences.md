@@ -51,7 +51,7 @@ Use these settings to enable and disable ProBuilder experimental features.
 
 | **Property:**                     | **Description:**                                             |
 | :-------------------------------- | :----------------------------------------------------------- |
-| __Experimental Features Enabled__ | Enable this option to access the [New Bezier Shape](bezier.md) experimental feature in the ProBuilder toolbar, and the __Store Mesh as Asset__ option. <br /><br />**Note:** This setting has no affect on access to the [Boolean (CSG) Tool](boolean.md), which is always available from the [Experimental menu](menu-experimental.md). |
+| __Experimental Features Enabled__ | Enable this option to access the [New Bezier Shape](workflow-create-bezier.md) experimental feature in the ProBuilder toolbar, and the __Store Mesh as Asset__ option. <br /><br />**Note:** This setting has no affect on access to the [Boolean (CSG) Tool](boolean.md), which is always available from the [Experimental menu](menu-experimental.md). |
 | __Meshes Are Assets__             | Enable this option to store Mesh information in the Project instead of in each separate Scene level. |
 
 > **Note**: When you toggle Experimental Features on or off, Unity has to recompile scripts because the changes add or remove functionality in Unity. This means that there is a delay before this option appears to change.

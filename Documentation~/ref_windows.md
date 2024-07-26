@@ -13,7 +13,7 @@ This section provides information on the following ProBuilder Editor [windows](o
 
 ## Additional references
 
-* [Bezier Shape Component](bezier).
+* [Bezier Shape Component](workflow-create-bezier).
 * [New PolyShape](shape-tool)
 * [New Shape Editor](workflow-create-predefined).
 * [Boolean (Experimental) window](boolean.md) and [Experimental features](experimental.md).

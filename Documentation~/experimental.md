@@ -1,14 +1,11 @@
 # Experimental features
 
-ProBuilder has these experimental features:
+ProBuilder includes three experimental features:
 
-- [Bezier Shape tool](workflow-create-bezier.md)
-- [Boolean operations](boolean.md)
+* [Create and edit Bezier Shapes](workflow-create-bezier.md)
+* [Perform Boolean operations](boolean.md)
+* [Store meshes as assets](meshes-as-assets.md)
 
-These features are still under development; they are not fully tested, and might reduce ProBuilder's stability. Use these with caution.
+These features are still under development; they're not fully tested, and might reduce ProBuilder's stability. They are disabled by default; use them with caution.
 
-By default, experimental features are disabled.
-
-To enable them, [enable the experimental features](preferences.md#experimental) preference:
-
-![Access ProBuilder-specific preferences on Unity's Preferences window](images/Experimental_Preferences.png)
+To enable experimental features, in the main menu, go to **Unity** > **Settings** > **ProBuilder** and enable **Experimental Features Enabled**.
