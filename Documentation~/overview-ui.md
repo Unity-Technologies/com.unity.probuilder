@@ -60,7 +60,7 @@ Most of these component sections appear in the Inspector when you create a Mesh 
 
 * [Shape](shape-tool.md)
 * [Poly Shape](polyshape.md)
-* [Bezier shape](bezier.md) (Experimental)
+* [Bezier shape](workflow-create-bezier.md) (Experimental)
 
 When you first activate a creation tool, Unity adds these components to the new GameObject. They expose specific properties defined in the corresponding scripts which help define the topology. After you create the new Mesh, you can re-activate the tool for the same Mesh and change these properties to modify the Mesh's shape.
 

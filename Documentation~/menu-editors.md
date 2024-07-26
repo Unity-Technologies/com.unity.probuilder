@@ -10,7 +10,7 @@ Use the **Bezier Shape** tool to define a Bezier curve around which ProBuilder e
 
 > **Warning:** This tool is experimental, meaning that it is still under development, and might reduce ProBuilder's stability. Use with caution.
 
-For more information, see the [Bezier Shape tool](bezier.md) documentation.
+For more information, see the [Bezier Shape tool](workflow-create-bezier.md) documentation.
 
 ## New Poly Shape
 

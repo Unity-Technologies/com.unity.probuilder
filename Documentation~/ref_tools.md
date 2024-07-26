@@ -15,4 +15,4 @@ This table lists all the tools available in ProBuilder:
 | [Cut](cut-tool.md) tool         | Cuts a sub-face into an existing Mesh face. You determine the shape of the new face by defining points on the Mesh to create the edges of the new face. <br /><br />You can use this tool on any face, regardless of whether you created the Mesh with the [New Shape](shape-tool.md) tool, the [Poly Shape](polyshape.md) tool, or by [probuilderizing](Object_ProBuilderize.md) a Unity Mesh. |
 
 
-> **Note:** For documentation on the [Bezier Shape](bezier.md) tool, refer to the [Experimental features](experimental.md) section of the documentation.
+> **Note:** For documentation on the [Bezier Shape](workflow-create-bezier.md) tool, refer to the [Experimental features](experimental.md) section of the documentation.
