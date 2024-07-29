@@ -24,7 +24,7 @@ The **New PolyShape** tool stays active until you deactivate it, so you can crea
 
 To edit an existing PolyShape:
 
-1. Select the PolyShape in the **Scene** view.
+1. Select the PolyShape in the Scene view.
 1. In the **Tools** overlay, set the active context to ProBuilder. 
 1. In the **Tools** overlay, click **Edit ProBuilder Shape** to:
     * Move existing control points.
