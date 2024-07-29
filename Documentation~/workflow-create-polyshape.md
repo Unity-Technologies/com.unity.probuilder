@@ -7,7 +7,7 @@ To create a custom shape, use the **Poly Shape** tool. Draw a 2D custom shape (d
 To create a custom mesh:
 
 1. Use one of the following:
-    * In the **Scene** view > **Tools** overlay, select **Create PolyShape**.
+    * In the **Scene** view, in the **Tools** overlay, select **Create PolyShape**.
     * In the main menu, go to **Tools** > **ProBuilder** > **Editors** > **New PolyShape**.
 1. To create the outer bounds of your mesh, click in the **Scene** view to create control points.
     > **Note:** You can click directly on another surface to create an outgrowth, even when that surface is on the y-axis. 
