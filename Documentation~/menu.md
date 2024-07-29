@@ -59,6 +59,8 @@ Interact with your selections.
 | **Toggle Select Back Faces** | Define whether drag selection selects or ignores hidden elements. For more information, refer to [Select Hidden](Selection_SelectHidden.md). |
 | **Toggle X Ray** | Show or hide any selected hidden geometry. For more information, refer to [Selection X-Ray](preferences.md#sel-xray). |
 
+**Note:** The **Toggle Drag Selection Mode** option is now in the **Tool Settings** overlay.
+
 ## Object
 
 Edit a ProBuilder object.
