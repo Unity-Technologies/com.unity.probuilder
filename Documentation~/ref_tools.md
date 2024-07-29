@@ -21,4 +21,4 @@ The ProBuilder tools are available in the **Tools** overlay in the **Scene** vie
 * You can create and edit shapes and PolyShapes from both the ProBuilder and GameObject contexts.
 * The Cut tool is available only when the context is ProBuilder.
 
-**Tip:** While a tool is active, performing any other task - a task that doesn't use the tool - deactivates the tool. For example, if while using the [Cut](cut-tool.md) tool on an object you click on a different object, the tool exits without performing the cut on the original object. 
+**Tip:** While a tool is active, performing any other task that doesn't use the tool deactivates the tool. For example, if while using the [Cut](cut-tool.md) tool on an object, you click on a different object, the tool exits without performing the cut on the original object. 
