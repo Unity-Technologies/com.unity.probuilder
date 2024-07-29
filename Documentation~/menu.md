@@ -55,7 +55,6 @@ Interact with your selections.
 | **Menu item** | **Description** |
 | --- | --- |
 | **Toggle Drag Rect Mode** | To limit the drag selection to elements that are fully inside the drag rectangle, set the **Rect** action to **Complete**. For more information, refer to [Rect](Selection_Rect_Intersect.md). |
-| **Toggle Drag Selection Mode** | To select any elements that intersect with the drag rectangle, set the **Rect** action to **Intersect**. For more information, refer to [Rect](Selection_Rect_Intersect.md). |
 | **Toggle Handle Orientation** | Toggle between the three orientation states for Scene handles (**Global**, **Local**, or **Normal**). For more information, refer to [Orientation](HandleAlign.md). |
 | **Toggle Select Back Faces** | Define whether drag selection selects or ignores hidden elements. For more information, refer to [Select Hidden](Selection_SelectHidden.md). |
 | **Toggle X Ray** | Show or hide any selected hidden geometry. For more information, refer to [Selection X-Ray](preferences.md#sel-xray). |
