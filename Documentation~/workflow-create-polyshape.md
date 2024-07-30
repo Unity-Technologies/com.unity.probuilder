@@ -25,5 +25,3 @@ To edit a shape you created with the **Poly Shape** tool, in the **Scene** view:
 1. From the **Tools** overlay, select **Edit Poly Shape**.
 
 > **Note**: When you modify control points or settings, you lose any changes you made in editing the mesh.
-
-[[Jon: I don't understand this note. What is the timeline for losing changes? As in, does it only happen if *while I'm editing* I also change control points or settings? How do I change control points or settings? Whose settings?]]
