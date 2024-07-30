@@ -1,4 +1,4 @@
-# ProBuilder Preferences window
+# ProBuilder Preferences 
 
 To define how you interact with ProBuilder, you can customize the user interface and how the tools work.
 

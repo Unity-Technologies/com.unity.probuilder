@@ -1,4 +1,4 @@
-# ![Material Editor icon](images/icons/Panel_Materials.png) Material Editor window
+# Material Editor window
 
 Use the **Material Editor** to apply Materials to objects or faces.
 
@@ -8,9 +8,7 @@ Use the **Material Editor** to apply Materials to objects or faces.
 
 **(B)** Use the [Material Palette](#palette) section to designate several Materials to use with buttons or shortcuts. You can also save and load new Palettes, and add more slots to use for Materials.
 
-To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **Material Editor** button ( ![Material Editor icon](images/icons/Panel_Materials.png) ).
-
-> **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Material Editor**).
+To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open Material Editor**.
 
 For an overview of working with Materials and texture mapping, see [Materials, Shaders, Textures, and UVs](workflow-texture-mapping.md).
 

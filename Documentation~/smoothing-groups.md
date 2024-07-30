@@ -1,8 +1,6 @@
-# ![Smoothing Groups icon](images/icons/Panel_Smoothing.png) Smooth Group Editor window
+# Smooth Group Editor window
 
 The **Smooth Group Editor** window allows you to [add and remove smoothing groups](workflow-edit-smoothing.md) across the faces of a ProBuilder Mesh.
-
-![Smoothing Groups Example](images/Smoothing_Editor_props.png)
 
 **(A)** The [toggle buttons](#toggle) control the visibility of some areas of the window.
 
@@ -14,8 +12,7 @@ The **Smooth Group Editor** window allows you to [add and remove smoothing group
 
 **(E)** The [main button panel](#main-panel) allows you to define up to 23 sets of smoothing groups.
 
-> **Tip:** You can also access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**).
-
+To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**.
 
 
 <a name="toggle"></a>
