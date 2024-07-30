@@ -16,7 +16,7 @@ This table lists all the tools available in ProBuilder:
 
 ## Active context in the Tools overlay
 
-The ProBuilder tools are available in the **Tools** overlay in the **Scene** view. The tools available depend on the active context: [[link to context]]
+The ProBuilder tools are available in the **Tools** overlay in the **Scene** view. The tools available depend on the active context: GameObject or ProBuilder.
 
 * You can create and edit shapes and PolyShapes from both the ProBuilder and GameObject contexts.
 * The Cut tool is available only when the context is ProBuilder.
