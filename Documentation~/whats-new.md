@@ -7,10 +7,10 @@ For a full list of changes and updates in this version, refer to the [ProBuilder
 
 Summary of changes in ProBuilder package version 6.0:
 
-* Created the ProBuilder tool context which you can activate in the Tools overlay in the Scene view. The ProBuilder tool context enables ProBuilder-specific actions in the Scene view.
-* Removed the ProBuilder window. The ProBuilder tool context used in conjunction with the [Scene view context menu](xref:SceneViewContextMenu) provides a more streamlined workflow for ProBuilder actions.
+* Created the [ProBuilder tool context](modes.md) which you can activate in the Tools overlay in the Scene view. The ProBuilder tool context enables ProBuilder-specific actions in the Scene view.
+* Removed the ProBuilder window. The [ProBuilder tool context](modes.md) used in conjunction with the [Scene view context menu](xref:SceneViewContextMenu) provides a more streamlined workflow for ProBuilder actions.
 * Moved the Vertex, Edge, and Face edit modes to the Tool Settings overlay in the Scene view. To display ProBuilder edit modes in the Tool Settings overlay, enable the ProBuilder tool context in the Tools overlay.  
-* Moved ProBuilder actions that rely on element selection, such as Bridge, Weld Vertices, and Grow Selection, to the [Scene view context menu](xref:SceneViewContextMenu) when the ProBuilder tool context is active in the Tools overlay. 
+* Moved ProBuilder actions that rely on element selection, such as Bridge, Weld Vertices, and Grow Selection, to the [Scene view context menu](xref:SceneViewContextMenu) when the [ProBuilder tool context](modes.md) is active in the Tools overlay. 
 * Moved ProBuilder actions that apply to the entire ProBuilder mesh component, such as Export, Subdivide, and Center Pivot, to the [Scene view context menu](xref:SceneViewContextMenu). 
 * Moved creation and editing tools to the Tools overlay. 
 * Added a preview option for most ProBuilder actions.
