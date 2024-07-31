@@ -14,8 +14,8 @@ This section provides information on which formats are available, how to export 
 
 ProBuilder allows you to export GameObjects to the following formats:
 
-| **Format:** | **Description:** |
-| :--- | :--- |
+| **Format** | **Description** |
+| --- | --- |
 | `OBJ` | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and mesh groups. |
 | `STL` | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
 | `PLY` | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
@@ -32,7 +32,7 @@ To export one or more objects to one of the [supported formats](#formats):
 1. Select **ProBuildermesh > Export** to open the **Editor Settings** window.
 1. Select the format you want to export to from the **Export Format** dropdown menu.
 1. If you're exporting an OBJ to use in Unity, disable the [Copy Textures](Object_Export.md) option. 
- > **Tip:** When you re-import the mesh, follow the instructions under [Re-importing an exported mesh](#reimport).
+	> **Tip:** When you re-import the mesh, follow the instructions under [Re-importing an exported mesh](#reimport).
 1. When you are finished setting export options, select **Export**.
 1. Use the file browser to save the exported 3D Model.
  
@@ -42,7 +42,7 @@ To export one or more objects to one of the [supported formats](#formats):
 
 When you import the OBJ format, select the 3D Model file from the Project view, and on the [Material tab](https://docs.unity3d.com/Manual/FBXImporter-Materials.html) of the **Model Import Settings** window, set the following options:
 
-- Choose **Use Embedded Materials** from the **Location** drop-down menu.
+- Choose **Use Embedded Materials** from the **Location** dropdown menu.
 - Inside the **Remapped Materials** section, expand the **On Demand Remap** option group.
-- Choose **From Model's Material** from the **Naming** drop-down menu.
-- Choose **Project-Wide** from the **Search** drop-down menu.
+- Choose **From Model's Material** from the **Naming** dropdown menu.
+- Choose **Project-Wide** from the **Search** dropdown menu.
