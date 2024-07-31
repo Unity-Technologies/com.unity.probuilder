@@ -52,6 +52,11 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             AssetDatabase.CopyAsset(path, tempPath);
             return EditorSceneManager.OpenScene(tempPath, openMode);
         }
+        
+        public bool CloseScene(Scene scene)
+        {
+            return EditorSceneManager.CloseScene(scene, true);
+        }
     }
 
     public static class TestUtility
