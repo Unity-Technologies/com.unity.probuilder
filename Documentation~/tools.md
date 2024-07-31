@@ -6,7 +6,7 @@ Tools provide a modal environment where you can perform complex tasks, such as c
 
 Actions are immediate changes, such as selecting all faces with a specific color or splitting a single edge. As soon as you initiate an action, ProBuilder performs that action. For example, [Grow Selection](Selection_Grow.md) is an action that you initiate from the menu or a shortcut and it finishes immediately. You can modify its options to change the behavior of the action, but the options appear in a non-modal window.
 
-Actions are often only available in specific [Edit modes](modes.md), whereas tools are generally available in all modes. For example, you can launch the Cut tool in every mode except the Object mode and it behaves exactly the same, but most actions are specific to the selected element and behave differently, such as subdividing an element:
+Actions are often only available in specific [Edit modes](modes.md), whereas tools are generally available in all modes. For example, you can launch the Cut tool in every edit mode and it behaves exactly the same, but most actions are specific to the selected element and behave differently, such as subdividing an element:
 
 * [Subdivide Edge](Edge_Subdivide.md) divides the selected edge(s) into multiple edges.
 * [Subdivide Face](Face_Subdivide.md) adds a vertex at the center of each selected face and connects them in the center.
