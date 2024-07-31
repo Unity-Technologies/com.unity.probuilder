@@ -1,6 +1,6 @@
 #  Interacting with ProBuilder
 
-ProBuilder objects are a type of GameObject, but ProBuilder includes tools and options to manipulate them in ways that are not possible with standard GameObjects. This section provides an overview of the ProBuilder UI and how to interact with ProBuilder objects.
+ProBuilder objects are a type of GameObject, but ProBuilder includes tools and options to manipulate them in ways that aren't possible with standard GameObjects. This section provides an overview of the ProBuilder UI and how to interact with ProBuilder objects.
 
 | **Topic** | **Description** |
 | --- | --- |
