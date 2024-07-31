@@ -5,7 +5,7 @@ For a GameObject to be a ProBuilder object, it needs the following components:
 * [ProBuilder MeshFilter](ProBuilderMesh.md): All ProBuilder shapes have this components. It displays the **Object Size** of the ProBuilder Mesh in **X**, **Y**, and **Z**. It also allows you to generate lightmap UVs for the Mesh, and customize how ProBuilder generates them. 
 * [PolyShape (script)](polyshape.md): For custom shapes.
 * A Mesh Renderer: A standard for 3D objects. For more information, refer to [GameObjects](xref:um-game-objects).  
-* [Mesh collider](xref:um-mesh-colliders): For actions the require collision detection. ProBuilder adds a Mesh collider automatically if it is required.
+* [Mesh collider](xref:um-mesh-colliders): For actions that require collision detection. ProBuilder adds a Mesh collider automatically if it is required.
 
 When you first activate a creation tool, the Editor adds the appropriate ProBuilder components to the new GameObject. They expose specific properties defined in the corresponding scripts which help define the topology. After you create the new mesh, you can re-activate the tool for the same mesh and change these properties to modify the mesh's shape.
 
