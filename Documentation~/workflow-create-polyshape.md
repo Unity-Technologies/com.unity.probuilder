@@ -24,4 +24,4 @@ To edit a shape you created with the **Poly Shape** tool, in the **Scene** view:
 1. Select the shape.
 1. From the **Tools** overlay, select **Edit Poly Shape**.
 
-> **Note**: When you modify control points or settings, you lose any changes you made in editing the mesh.
+> **Note**: If you apply procedural edits to the mesh, any manual changes are overwritten.
