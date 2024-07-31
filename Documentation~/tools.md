@@ -1,6 +1,6 @@
 # Tools vs. actions
 
-Tools provide a modal environment where you can perform complex tasks, such as creating new Meshes or defining precise cuts on an existing Mesh. For example, when you create Meshes, you can use the [New Shape](shape-tool.md) tool or the [Poly Shape](polyshape.md) tool. Both of these are modal tools so that you can define dimensions and set any shape-specific properties available before ProBuilder builds the final Mesh. The [Cut](cut-tool.md) tool is also modal because you have to define several points on a Mesh where you want to create a new edge before ProBuilder creates the new face.
+Tools provide a modal environment where you can perform complex tasks, such as creating new Meshes or defining precise cuts on an existing mesh. For example, when you create Meshes, you can use the [New Shape](shape-tool.md) tool or the [Poly Shape](polyshape.md) tool. Both of these are modal tools so that you can define dimensions and set any shape-specific properties available before ProBuilder builds the final mesh. The [Cut](cut-tool.md) tool is also modal because you have to define several points on a mesh where you want to create a new edge before ProBuilder creates the new face.
 
 > **Tip**: To use the tools, change the Active Context to ProBuilder from the Tools overlay. When you activate a tool, its Tools overlay button is highlighted. You can click the button again to close the tool.
 
@@ -12,6 +12,6 @@ Actions are often only available in specific [Edit modes](modes.md), whereas too
 * [Subdivide Face](Face_Subdivide.md) adds a vertex at the center of each selected face and connects them in the center.
 * [Subdivide Object](Object_Subdivide.md) divides every face on the selected objects.
 
-For a list of tools available in this version of ProBuilder, see [Tools reference](ref_tools.md).
+For a list of tools available in this version of ProBuilder, refer to [Tools reference](ref_tools.md).
 
-For a list of actions available in this version of ProBuilder, see [Action reference](ref_actions.md).
+For a list of actions available in this version of ProBuilder, refer to [Action reference](ref_actions.md).
