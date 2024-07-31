@@ -31,7 +31,7 @@ Enable or disable these ProBuilder experimental features:
 | **Property** | **Function** |
 | :--- | :--- |
 | **Experimental Features Enabled** | Add the experimental features to the Editor. |
-| **Store Meshes as Asset** | Store meshes as standalone assets in the Project folder, rather than as part of the Scene asset. |
+| **Store Meshes as Asset** | Store meshes as standalone assets in the Project folder, rather than as part of the Scene asset. This property is only visible when **Experimental Features Enabled** is enabled. |
 
 > **Note**: When you activate or deactivate experimental features, the Unity Editor has to recompile scripts, which causes a delay before changes apply.
 
