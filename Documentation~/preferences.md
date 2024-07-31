@@ -20,7 +20,7 @@ By default, the [Dimensions overlay](menu-dimover.md) displays the dimensions of
 
 ## Experimental
 
-Enable or disable ProBuilder experimental features:
+Enable or disable these ProBuilder experimental features:
 
 * **Tools** > **ProBuilder** > **Editors** > [**New Bezier Shape**](bezier.md)
 * **Tools** > **ProBuilder** > **Experimental** > **Boolean (CSG)**.
