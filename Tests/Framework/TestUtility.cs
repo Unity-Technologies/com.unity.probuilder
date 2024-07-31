@@ -46,11 +46,11 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             AssetDatabase.Refresh();
         }
 
-        public Scene OpenScene(string path)
+        public Scene OpenScene(string path, OpenSceneMode openMode = OpenSceneMode.Single)
         {
             var tempPath = $"{tempDirectory}/{Path.GetFileName(path)}";
             AssetDatabase.CopyAsset(path, tempPath);
-            return EditorSceneManager.OpenScene(tempPath);
+            return EditorSceneManager.OpenScene(tempPath, openMode);
         }
     }
 

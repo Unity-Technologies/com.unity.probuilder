@@ -14,6 +14,7 @@ using EditorUtility = UnityEditor.ProBuilder.EditorUtility;
 class MeshSyncTests : TemporaryAssetTest
 {
     static readonly string copyPasteTestScene = $"{TestUtility.testsRootDirectory}/Scenes/CopyPasteDuplicate.unity";
+    static readonly string emptyScene = $"{TestUtility.testsRootDirectory}/Scenes/EmptyScene.unity";
 
     private Scene m_Scene;
 
@@ -121,6 +122,60 @@ class MeshSyncTests : TemporaryAssetTest
         var mesh = cube.GetComponent<ProBuilderMesh>();
         EditorUtility.SynchronizeWithMeshFilter(mesh);
         Assert.That(EditorSceneManager.GetActiveScene().isDirty, Is.False);
+    }
+    
+    // [PBLD-138] Duplicating PBMesh would dirty all scenes
+    [UnityTest]
+    public IEnumerator GivenMultipleScenes_DuplicatePBMesh_OnlyOneSceneIsDirty()
+    {
+        // Load two scenes
+        Scene firstScene = EditorSceneManager.GetActiveScene();
+        Assume.That(firstScene, Is.Not.Null, "First scene should not be null.");
+        Assume.That(firstScene.isDirty, Is.False, "First scene should not be dirty.");        
+        
+        Scene secondScene = OpenScene(emptyScene, OpenSceneMode.Additive);
+        Assume.That(secondScene, Is.Not.Null, "Second scene should not be null");
+        Assume.That(secondScene.isDirty, Is.False, "Second scene should not be dirty.");        
+        
+        Assume.That(EditorSceneManager.sceneCount, Is.EqualTo(2), "There should be two scenes loaded.");        
+        
+        SceneManager.SetActiveScene(firstScene);
+        
+        // Create a cube in first scene
+        var cube = GameObject.Find("Cube");
+        Assume.That(cube, Is.Not.Null, "Finding Cube shape should succeed.");
+        
+        // Select cube
+        Selection.activeGameObject = cube.gameObject;
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+        
+        // Duplicate cube
+        var evt = new Event(){type = EventType.ExecuteCommand, commandName = "Duplicate"};
+        SceneView.lastActiveSceneView.SendEvent(evt);
+        
+        // Wait until we can confirm duplication command
+        var count = 0;
+        while (firstScene.rootCount < 2 && count < 100)
+        {
+            count++;
+            yield return null;
+        }
+        Assert.That(count, Is.Not.EqualTo(100), "Exiting from the duplicate loop after too many attempts.");
+
+        // Wait one frame for the Undo commands to flush
+        yield return null;
+        
+        // Second scene should stay untouched
+        Assert.That(firstScene.isDirty, Is.True, "First scene should be dirty after cube duplication.");
+        Assert.That(secondScene.isDirty, Is.False, "Second scene should remain clean after cube duplication.");
+        
+        // Clean-up
+        var rootGOs = firstScene.GetRootGameObjects();
+        for (int i = 0; i < rootGOs.Length; ++i)
+            GameObject.DestroyImmediate(rootGOs[i]);
+        
+        CloseScene(firstScene);
+        CloseScene(secondScene);
     }
 
     // Instantiating a ProBuilderMesh component should not automatically create a new mesh asset. In the editor, this
