@@ -4,5 +4,8 @@
 
 The **Scene Information** overlay displays information about the selected mesh and selected elements of that mesh.
 
-To display the Scene Information overlay, select the **Show Scene Info** setting in the [Preferences](preferences.md#info_overlay). Your [active context](modes.md) must be set to ProBuilder to display the Scene Information overlay.
+To display the **Scene Information** overlay:
+
+1. In the [Preferences](preferences.md#info_overlay) window, enable **Show Scene Info**.
+1. Set the [active context](modes.md) to ProBuilder.
 
