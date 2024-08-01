@@ -16,10 +16,12 @@ ProBuilder allows you to export GameObjects to the following formats:
 
 | **Format** | **Description** |
 | --- | --- |
-| `OBJ` | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and mesh groups. |
-| `STL` | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
-| `PLY` | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
-| `Asset` | Unity Asset format, only readable in Unity. |
+| **OBJ** | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and mesh groups. |
+| **STL** | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
+| **PLY** | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
+| **Asset** | Unity Asset format, only readable in Unity. |
+
+
  
  <a name="export"></a>
 
