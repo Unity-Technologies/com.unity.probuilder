@@ -2,18 +2,7 @@
 
 The **Smooth Group Editor** window allows you to [add and remove smoothing groups](workflow-edit-smoothing.md) across the faces of a ProBuilder Mesh.
 
-**(A)** The [toggle buttons](#toggle) control the visibility of some areas of the window.
-
-**(B)** The [Normals control](#normals) is a visual aid that allows you to change the length of the normals displayed on the Mesh in the Scene view.
-
-**(C)** The help button opens up a [quick reference panel](#quickref) for using this window.
-
-**(D)** The [overlay controls panel](#overlay) allows you to customize how ProBuilder previews the smoothing group changes on the Mesh in the Scene view.
-
-**(E)** The [main button panel](#main-panel) allows you to define up to 23 sets of smoothing groups.
-
 To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open Smoothing Editor**.
-
 
 <a name="toggle"></a>
 
@@ -25,8 +14,6 @@ The cluster of buttons in the top left corner of the window hide or display the 
 * The **Preview** button shows or hides the color cues for each smoothing group. The color for each defined group appears under the button in the [main button panel](#main-panel), and all the faces in the smoothing group display that color on the Mesh in the Scene view.
 * The **Normals** button shows or hides the [Normals control](#normals).
 
-
-
 <a name="normals"></a>
 
 ## Normals control
@@ -36,8 +23,6 @@ You can use the Normals slider control to change the length of the normals ProBu
 ![Normals control](images/Smoothing_Editor_props-pnlNormals.png)
 
 Move the slider position towards the left to shorten the length of the normals, or move them to the right to lengthen them. When the slider is all the way to the left, the normals are no longer visible.
-
-
 
 <a name="quickref"></a>
 
@@ -49,8 +34,6 @@ The following hints about using the smoothing panels appear when you click the h
 
 To access the online documentation for Smoothing Groups, at the bottom of the panel, click the **Open Documentation** button. 
 
-
-
 <a name="overlay"></a>
 
 ## Overlay controls
@@ -58,8 +41,6 @@ To access the online documentation for Smoothing Groups, at the bottom of the pa
 The overlay controls panel allows you to customize how ProBuilder previews the smoothing group changes on the Mesh in the Scene view.
 
 ![Overlay Preview controls](images/Smoothing_Editor_props-pnlOverlay.png)
-
-
 
 | **Property:**     | **Description:**                                           |
 | ------------------- | ------------------------------------------------------------ |
