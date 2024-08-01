@@ -12,5 +12,5 @@ You can customize ProBuilder and set preferences in the [ProBuilder Preferences]
 | [Mesh Settings](preferences.md#mesh-settings) | Define defaults for ProBuilder meshes (such as default material, collider type, and shadows). |
 | [Snap Settings](preferences.md#snapping) | Customize how snapping behaves with ProBuilder. |
 | [UV Editor](preferences.md#uv-editor) | Change the size of the grid on the [UV Editor](uv-editor.md) window. |
-| [Debug menu](menu-debug.md) | Control the level of logging ProBuilder uses (errors, warnings, debugs, basic, or a combination of these), and the output location. |
+| [Debug menu](menu.md#debug) | Control the level of logging ProBuilder uses (errors, warnings, debugs, basic, or a combination of these), and the output location. |
 
