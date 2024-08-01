@@ -4,9 +4,8 @@ ProBuilder objects are a type of GameObject, but ProBuilder includes tools and o
 
 | **Topic** | **Description** |
 | --- | --- |
-| **The ProBuilder menu** | A reference for the ProBuilder menu in the Unity Editor's main menu. |
-| **Editor Windows** | Access features with extended functionality. |
-| **Tool options overlays** | Access settings for ProBuilder tools. |
-| **Scene Information** | Display information about the selected mesh and selected elements of that mesh. |
-| **Transform tools in ProBuilder** | Use the transform tools to manipulate ProBuilder objects. |
-| **ProBuilder shortcuts** | Keyboard shortcuts for ProBuilder actions. |
+| [**The ProBuilder menu**](menu.md) | A reference for the ProBuilder menu in the Unity Editor's main menu. |
+| [**Tool options overlays**](tool-options-overlay.md) | Access settings for ProBuilder tools. |
+| [**Scene Information**](Scene_Information.md) | Display information about the selected mesh and selected elements of that mesh. |
+| [**Transform tools in ProBuilder**](Transform_Tools.md) | Use the transform tools to manipulate ProBuilder objects. |
+| [**ProBuilder shortcuts**](hotkeys.md) | Keyboard shortcuts for ProBuilder actions. |
