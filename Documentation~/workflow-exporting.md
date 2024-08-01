@@ -43,7 +43,7 @@ To export one or more objects to one of the [supported formats](#formats):
 
 When you import the OBJ format, select the 3D Model file from the Project view, and on the [Material tab](https://docs.unity3d.com/Manual/FBXImporter-Materials.html) of the **Model Import Settings** window, set the following options:
 
-- Choose **Use Embedded Materials** from the **Location** dropdown menu.
+- In **Location**, select **Use Embedded Materials**.
 - Inside the **Remapped Materials** section, expand the **On Demand Remap** option group.
-- Choose **From Model's Material** from the **Naming** dropdown menu.
-- Choose **Project-Wide** from the **Search** dropdown menu.
+- In **Naming**, select **From Model's Material**.
+- In **Search**, select **Project-Wide**.
