@@ -1,18 +1,6 @@
 # ProBuilder Preferences
 
-To configure ProBuilder, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**) in the main menu. In the **Prefereces** window, select **ProBuilder** from the list on the left.
-
-## Developer Mode
-
-Set what an element rotates around. This setting has a different effect depending on the selection mode. [[Jon I tried very hard to figure this out and couldn't; do you know?]]
-
-| **Pivote mode** | **Vertex selection mode** | **Edge selection mode** | **Face selection mode** |
-| --- | --- | --- | --- |
-| **Center** | | | | 
-| **Individual origins** | | | |
-| **Active Element** | | | |
-
-To add the pivot point and orientation status to the **Scene** view, enable **Show Internal Pivot and Orientation**.
+To configure ProBuilder, from the main menu, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**). In the **Preferences** window, select **ProBuilder** from the list.
 
 ## Dimensions Overlay
 
