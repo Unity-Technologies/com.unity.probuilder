@@ -9,7 +9,7 @@ You can use ProBuilder tools in two tool contexts:
     * Edge selection: Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
     * Face selection: Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
 
-To change context, in the **Tools** overlay, select the **Tool Context** button at the top of the overlay.
+To change context, in the **Tools** overlay, select the **Tool Context** at the top of the overlay.
 
 To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select the mode.
 
