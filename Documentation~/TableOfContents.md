@@ -11,7 +11,7 @@
 	* [Tool options overlays](tool-options-overlay)
 	* [Scene Information](Scene_Information)
 	* [Transform tools in ProBuilder](Transform_Tools)
-  * [ProBuilder shortcuts](hotkeys)
+    * [ProBuilder shortcuts](hotkeys)
 * [Creating meshes](workflow-create)
 	* [Pre-defined shape](workflow-create-predefined)
 	* [Polygon shape](workflow-create-polyshape)
