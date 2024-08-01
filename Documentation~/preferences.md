@@ -65,7 +65,7 @@ Customize how meshes behave when you edit them.
 | :--- | :--- |
 | **Auto Resize Colliders** | As you edit mesh bounds, colliders automatically resize to match the new bounds. |
 | **Allow non-manifold actions** | Allow advanced behaviours of editing actions so you can create [non-manifold geometry](gloss.html#manifold-and-non-manifold-geometry), such as [bridging closed edges](Edge_Bridge.md). Note that this can destabilize your project; use them only if you are sure of their concepts and how to apply them. |
-| **Auto Update Action Preview** | Smooth update for the preview of any final result as you edit [[Jon: I'm not sure about this and also it's badly written]]. This option can lead to a slower editing experience when editing large selections. |
+| **Auto Update Action Preview** | Smooth update for the preview of any final result as you edit. This option can lead to a slower editing experience when editing large selections. |
 
 ## Mesh Settings
 
