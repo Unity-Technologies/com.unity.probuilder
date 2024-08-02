@@ -8,7 +8,7 @@ Even if the vertex color isn't currently visible (for example, if it has a Mater
 
 This action is useful for grouping out sections of your Mesh with different vertex colors. It is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also access this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Vertex Color**).
+From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Select Vertex Color**.
 
 ## Select by Colors Options
 

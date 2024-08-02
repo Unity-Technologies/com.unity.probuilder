@@ -247,21 +247,6 @@ Use these properties to customize how snapping behaves with ProBuilder.
 
 
 
-<a name="toolbar"></a>
-
-## Toolbar
-
-Use these properties to set default behavior for the [ProBuilder toolbar](toolbar.md).
-
-![Toolbar section](images/prefs_toolbar.png)
-
-| **Property:** | **Description:** |
-| :--- | :--- |
-| __Shift Key Tooltips__ | Enable this option to only show tooltips when the mouse cursor is hovering over a button and you are holding down **Shift**.<br/>By default, tooltips appear when the mouse cursor hovers over a button for more than a second. |
-| <a name="icongui"></a>__Icon GUI__ | Enable this option to use toolbar buttons that [display icons only](toolbar.md#buttonmode). <br />Disable this option to use toolbar buttons that [display text only](toolbar.md#buttonmode).<br />**Note:** You can also [use the context menu](customizing.md#buttons) to switch between icons and text. |
-| <a name="toolbarloc"></a>__Toolbar Location__ | Choose the location where you want the [Edit Mode toolbar](edit-mode-toolbar.md) to appear in the Scene view. Possible locations are:<br /><br />- **Upper Center**<br />- **Upper Left**<br />- **Upper Right**<br />- **Bottom Center**<br />- **Bottom Left**<br />- **Bottom Right** |
-
-
 
 
 

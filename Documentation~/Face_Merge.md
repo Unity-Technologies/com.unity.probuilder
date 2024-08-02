@@ -2,7 +2,7 @@
 
 The __Merge Faces__ action merges selected faces into a single face, and removes any dividing edges.
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Merge Faces**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Merge Faces**.
 
 ![Material shows multiple faces become one](images/MergeFaces_Example.png)
 

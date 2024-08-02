@@ -13,7 +13,7 @@ To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editor
 * Choose **UV** to edit the UV mapping for shaders.
 * Choose **UV2 (read-only)** to regenerate your baked or realtime lightmaps.
 
-**(C)** The **Actions** panel is a dynamic panel, similar to the [ProBuilder toolbar](toolbar.md):
+**(C)** The **Actions** panel is a dynamic panel:
 
 * What kind of UVs you are editing (shader UVs or lightmap UV2s) determine which set of options appear in the panel. 
 * For shader UV options, you can switch between using manual UV editing or auto-texturing, and these each have their own specific options as well. For more information, see [UV editing modes](#uv-modes).

@@ -4,7 +4,9 @@ The __Orientation__ action sets the orientation of scene handles when you select
 
 ![Handle Orientation Examples](images/HandleAlign_ExamplesWithTextAndIcons.png)
 
-Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the action is in:
+Use this action with the **P** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Handle Orientation**).
+
+The button displays the following to indicate what state the action is in:
 
 | **Icon mode:**                                             | **Text mode:**            | **Description:**                                           |
 | :----------------------------------------------------------- | ----------------------- | ------------------------------------------------------------ |
@@ -14,4 +16,3 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 
 This action is available in all [edit modes](modes.md).
 
-> **Tip:** You can also use this action with the **P** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Handle Orientation**).

@@ -130,24 +130,10 @@ Repair problems with ProBuilder meshes in the scene.
 
 | **Menu item** | **Description** |
 | --- | --- |
+| **Fix Meshes in Selection** | Checks for degenerate triangles and removes them. A degenerate triangle is a triangle that has collinear vertices or one where two or more vertices are occupy the same point in space. |
 | **Rebuild All ProBuilder Objects** | Rebuilds mesh representations from stored ProBuilder data for each GameObject in the scene. If you have a lot of GameObjects in a scene, this can take a while. |
 | **Rebuild Shared Indexes Cache** | Discards all shared vertex position data and rebuilds based on proximity. |
-| **Remove Degenerate Triangles** | Deletes triangles on a mesh that are either taking up no space, or are duplicates. |
 | **Check for Broken ProBuilder References** | Checks for and repairs any missing or broken ProBuilder references in the scene. |
-
-## Debug
-
-Change logging preferences. 
-
-| **Menu item** | | **Description** |
-| --- | --- | --- |
-| **Log Output** | | Define where ProBuilder writes messages to: the Unity Console or to a log File. |
-| | **Console** |  Write to the Console. |
-| | **File** |  Write to a file. When you select **File**, you can also set the **Log Path** and **open** the log file. |
-| | **Log Path** | Set the log file path (select **...***). |
-| | **Open** | Open the saved **ProBuilderLog.txt** log file. |
-| **Chatty-ness** | | Define which kind of messages ProBuilder logs: Errors, Warnings, General information, Debug messages, or everything. |
-| **Clear Log File** | | Reset the saved log file. This action deletes all previously logged messages. |
 
 
 ## Export
@@ -170,4 +156,19 @@ Strip out ProBuilder scripts and leave only the models.
 | --- | --- |
 | **Strip All ProBuilder Scripts in Scene** | Remove all ProBuilder scripts from all GameObjects in the scene. |
 | **Strip ProBuilder Scripts in Selection** | Remove all ProBuilder scripts from selected GameObjects. |
+
+
+## Debug
+
+Change logging preferences. 
+
+| **Menu item** | | **Description** |
+| --- | --- | --- |
+| **Log Output** | | Define where ProBuilder writes messages to: the Unity Console or to a log File. |
+| | **Console** |  Write to the Console. |
+| | **File** |  Write to a file. When you select **File**, you can also set the **Log Path** and **open** the log file. |
+| | **Log Path** | Set the log file path (select **...***). |
+| | **Open** | Open the saved **ProBuilderLog.txt** log file. |
+| **Chatty-ness** | | Define which kind of messages ProBuilder logs: Errors, Warnings, General information, Debug messages, or everything. |
+| **Clear Log File** | | Reset the saved log file. This action deletes all previously logged messages. |
 

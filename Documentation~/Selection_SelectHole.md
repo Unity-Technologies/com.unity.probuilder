@@ -8,4 +8,4 @@ If you have no elements selected, this action automatically selects all holes in
 
 This action also tells you how many holes exist in the Mesh. It is only available in the [vertex and edge modes](modes.md).
 
-> **Tip:** You can also access this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Hole**).
+From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Select Hole**.

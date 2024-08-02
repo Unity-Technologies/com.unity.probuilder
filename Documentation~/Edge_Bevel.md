@@ -4,7 +4,7 @@ The __Bevel Edge__ action splits the selected edge(s) into two edges, with a new
 
 ![Bevel 3 edges on cube](images/BevelEdges_Example.png)
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Bevel Edges**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Bevel Edges**.
 
 ## Bevel Options
 
