@@ -88,7 +88,7 @@ Customize how snapping behaves with ProBuilder.
 | **Property** | **Function** |
 | :--- | :--- |
 | **Snap As Group** | All selected items keep the same relative position to each other while snapping. This is the default. Disable this option to snap each selected item to the grid independently. |
-| **Snap Axis** | Choose how vertices snap to the grid when you move them. **Active Axis**: Vertices snap only along the currently active axis [[Jon: what does "currently active" mean?]]. This is the default. **All Axes**: Vertices snap to all axes simultaneously. |
+| **Snap Axis** | Choose how mesh elements snap to the grid when you move them (if Snap to Grid is active). **Active Axis**: When you move an element along an axis, the element snaps to the next grid point on that axis. This is the default. **All Axes**: An element snaps to the nearest grid point, even if it's on a different axis to the one you're moving on. |
 
 ## UV Editor
 
