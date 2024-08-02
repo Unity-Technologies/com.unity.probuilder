@@ -121,7 +121,7 @@ namespace UnityEditor.ProBuilder
                 mesh.nonSerializedVersionIndex == ProBuilderMesh.k_UnitializedVersionIndex)
             {
                 mesh.MakeUnique();
-                Undo.RegisterCreatedObjectUndo(mesh.mesh, "Paste ProBuilderMesh");
+                Undo.RegisterCompleteObjectUndo( mesh.gameObject, "Paste ProBuilderMesh");
                 mesh.Optimize();
             }
         }
