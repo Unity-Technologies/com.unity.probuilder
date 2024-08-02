@@ -16,10 +16,12 @@ ProBuilder allows you to export GameObjects to the following formats:
 
 | **Format** | **Description** |
 | --- | --- |
-| `OBJ` | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and mesh groups. |
-| `STL` | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
-| `PLY` | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
-| `Asset` | Unity Asset format, only readable in Unity. |
+| **OBJ** | Wavefront OBJ. This is a widely supported model format. It supports multiple Textures and mesh groups. |
+| **STL** | A widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
+| **PLY** | Stanford PLY. Generally supported and very extensible. It supports quads and vertex colors, but not multiple Materials. |
+| **Asset** | Unity Asset format, only readable in Unity. |
+
+
  
  <a name="export"></a>
 
@@ -30,7 +32,7 @@ To export one or more objects to one of the [supported formats](#formats):
 1. Select the GameObject you want to export.
 1. Activate the GameObject tool context.
 1. Right-click in the **Scene** view to open the **Scene** view context menu. 
-1. Select **ProBuildermesh > Export** to open the **Editor Settings** window.
+1. Select **ProBuilderMesh > Export** to open the **Editor Settings** window.
 1. Select the format you want to export to from the **Export Format** dropdown menu.
 1. If you're exporting an OBJ to use in Unity, disable the [Copy Textures](Object_Export.md) option. 
 	> **Tip:** When you re-import the mesh, follow the instructions under [Re-importing an exported mesh](#reimport).

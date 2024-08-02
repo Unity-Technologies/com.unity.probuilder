@@ -10,13 +10,10 @@ To define the bounding box, you can either draw it in the Scene view or set the 
 
 To create a Mesh from a predefined shape:  
 
-1. Open the ProBuilder window (in Unity's top menu: **Tools** > **ProBuilder window**).
+1. Activate the New Shape tool in one of the following ways:
 
-  The [Edit Mode toolbar](edit-mode-toolbar.md) and the [ProBuilder toolbar](toolbar.md) appear.
-
-2. From the ProBuilder toolbar, click the **New Shape** (![Shape Tool icon](images/icons/Panel_Shapes.png)) tool. The [Create Shape](shape-tool.md) panel appears in the bottom of the Scene view and the **New Shape** text button is highlighted.
-
-  > **Tip:** You can also use the **Ctrl/Cmd+Shift+K** shortcut or use the menu (**Tools** > **ProBuilder** > **Editors** > **New Shape**) to activate the Shape tool.
+    * In the **Tools** overlay, click **New Shape**. A short click creates the selected shape; a long click opens a selection menu to choose a different shape.
+    * In the main menu, go to **Tools** > **ProBuilder** > **Editors** > **New Shape** and select a shape.
 
 3. From the top of the **Create Shape** panel, choose the icon that matches the shape you'd like to create. Any shape-specific properties appear under the **&lt;Shape&gt; Settings** section at the bottom.
 
