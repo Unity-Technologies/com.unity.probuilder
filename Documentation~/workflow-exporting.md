@@ -32,7 +32,7 @@ To export one or more objects to one of the [supported formats](#formats):
 1. Select the GameObject you want to export.
 1. Activate the GameObject tool context.
 1. Right-click in the **Scene** view to open the **Scene** view context menu. 
-1. Select **ProBuildermesh > Export** to open the **Editor Settings** window.
+1. Select **ProBuilderMesh > Export** to open the **Editor Settings** window.
 1. Select the format you want to export to from the **Export Format** dropdown menu.
 1. If you're exporting an OBJ to use in Unity, disable the [Copy Textures](Object_Export.md) option. 
 	> **Tip:** When you re-import the mesh, follow the instructions under [Re-importing an exported mesh](#reimport).
