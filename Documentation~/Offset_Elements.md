@@ -6,7 +6,7 @@ This tool is available in Vertex, Edge, and Face edit mode and appears as **Offs
 
 ![Examples of offsetting a vertex on the y-axis (A), 2 edges on the y-axis (B), and a face on the z-axis (C)](images/OffsetElements_Example.png)
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Offset Elements**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Offset Elements**.
 
 ## Offset Elements options
 

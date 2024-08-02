@@ -4,8 +4,9 @@ Use the __Shift__ action to change what happens to the selection when you **Shif
 
 ![Same Shift-drag action has different effect depending on Shift setting](images/ShiftModifier_Example.png)
 
+From the main menu, select **Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Selection Mode**.
 
-Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the action is in:
+The button displays the following to indicate what state the action is in:
 
 | **Icon mode:**                                             | **Text mode:**          | **Description:**                                           |
 | :----------------------------------------------------------- | --------------------- | ------------------------------------------------------------ |
@@ -15,4 +16,3 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 
 This action is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Selection Mode**).

@@ -4,15 +4,14 @@ Use the __Rect__ action to choose whether drag selection should only select elem
 
 ![Same drag action has different effect depending on Rect setting](images/DragRect_Example.png)
 
+From the main menu, select **Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Rect Mode**.
+
 This action is available only in the [edge and face modes](modes.md).
-
-> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Drag Rect Mode**).
-
 
 
 ## Visual cues
 
-Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the action is in:
+The button displays the following to indicate what state the action is in:
 
 | **Icon mode:**                                        | **Text mode:**       | **Description:**                                           |
 | :------------------------------------------------------ | ------------------- | ------------------------------------------------------------ |

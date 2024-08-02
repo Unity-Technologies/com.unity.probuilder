@@ -2,7 +2,6 @@
 
 ProBuilder provides some default "entity" behaviors. These are MonoBehaviours that provide some commonly used functionality.
 
-> **Note:** These actions are not available from the [The ProBuilder toolbar](toolbar.md) in [icon mode](toolbar.md#buttonmode).
 
 
 
