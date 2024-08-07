@@ -15,6 +15,9 @@ To change edit modes within the ProBuilder context, in the **Tool Settings** ove
 
 ## Keyboard shortcuts
 
-* **Escape** to return from the ProBuilder context to the GameObject context.
-* **G** to cycle through the ProBuilder edit modes.
-* **Shift+Drag** while using any of the standard Unity Transform controls to extrude or inset the element(s).
+For a list of all shortcuts, and to add shortcuts, go to **Edit > Shortcuts** to open the [Shortcuts Manager](xref:ShortcutsManager).
+
+These are some common shortcuts you can use with ProBuilder:
+
+* Press **Escape** to return from the ProBuilder context to the GameObject context.
+* Press **G** to cycle through the ProBuilder edit modes.
