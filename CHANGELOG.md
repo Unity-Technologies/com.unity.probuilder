@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- [PBLD-146] Added corrected SRP Standard Vertex Color sample shader for 2020.X editors and above.
+
 ### Fixed
 
 - [PBLD-138] Fixed a bug where duplicating a ProBuilder mesh would mark all scenes as dirty.
