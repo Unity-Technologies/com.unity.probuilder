@@ -1,5 +1,6 @@
 {
-	"displayName":"HDRP Support",
+	"displayName":"HDRP Support for 2020.X and later",
+
 	"description": "Shaders and materials for the High Definition Render Pipeline.",
 	"createSeparatePackage": false
 }

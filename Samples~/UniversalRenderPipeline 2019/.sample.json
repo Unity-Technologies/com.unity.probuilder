@@ -1,0 +1,5 @@
+{
+	"displayName":"URP Support for 2019.X",
+	"description": "Shaders and materials for the Universal Render Pipeline (for 2019.X editors).",
+	"createSeparatePackage": false
+}
