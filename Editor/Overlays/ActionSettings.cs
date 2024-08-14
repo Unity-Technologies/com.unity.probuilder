@@ -73,6 +73,14 @@ namespace UnityEditor.ProBuilder
             Selection.selectionChanged -= ObjectSelectionChanged;
         }
 
+        internal static bool IsCurrentAction(MenuAction action)
+        {
+            if(s_Instance == null || s_Instance.m_CurrentAction == null)
+                return false;
+
+            return s_Instance.m_CurrentAction.GetType() == action.GetType();
+        }
+
         internal static void DoAction(MenuAction action, bool preview)
         {
             Validate();
@@ -227,6 +235,11 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => { s_CanTriggerNewAction = true; };
 
             Finish(EditorActionResult.Success);
+        }
+
+        internal static bool IsCurrentAction(MenuAction action)
+        {
+            return PreviewActionManager.IsCurrentAction(action);
         }
     }
 }
