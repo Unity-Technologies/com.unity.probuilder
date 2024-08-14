@@ -4,11 +4,11 @@ To create a new face from an existing face or edge, use the __Bevel Edges__ acti
 
 ![Bevel 3 edges on cube](images/BevelEdges_Example.png)
 
-To bevel edges:
+To bevel edges or faces:
 
 1. In the **Tools** overlay, select the **ProBuilder** context.
 1. In the **Tool Settings** overlay, select either:
-    * The **Face** edit mode to bevel all edges on that face.
+    * The **Face** edit mode to bevel select faces.
     * The **Edge** edit mode to bevel selected edges.
 1. Select the face or edge to bevel. Hold **Shift** to select multiple faces or edges.
 1. Do one of the following:
