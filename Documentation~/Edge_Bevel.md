@@ -1,14 +1,14 @@
 # Bevel Edges
 
-To create a new face from an existing face or edge, use the __Bevel Edges__ action.
+To create a new face from an existing face or edge, use the __Bevel Edges__ action. If you bevel a face, all its edges create a new face. If you bevel an edge, only that edge creates a new face.
 
-![Bevel 3 edges on cube](images/BevelEdges_Example.png)
+![Beveling two doors. The left door has a bevel edge, and the right door has a bevel face](images/BevelEdges_Example.png)
 
 To bevel edges or faces:
 
 1. In the **Tools** overlay, select the **ProBuilder** context.
 1. In the **Tool Settings** overlay, select either:
-    * The **Face** edit mode to bevel select faces.
+    * The **Face** edit mode to bevel selected faces.
     * The **Edge** edit mode to bevel selected edges.
 1. Select the face or edge to bevel. Hold **Shift** to select multiple faces or edges.
 1. Do one of the following:
