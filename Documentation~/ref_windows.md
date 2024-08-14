@@ -15,6 +15,6 @@ This section provides information on the following ProBuilder Editor [windows](o
 
 * [Bezier Shape Component](bezier).
 * [New PolyShape](shape-tool)
-* [New Shape Editor](workflow-create-predefined).
+* [New Shape Editor](shape-tool).
 * [Boolean (Experimental) window](boolean.md) and [Experimental features](experimental.md).
 * [ProBuilder tab of the Preferences window](preferences.md)

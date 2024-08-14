@@ -2,7 +2,7 @@
 
 ProBuilder provides several different tools for creating editable meshes in Unity. 
 
-The most common approach is to [build a predefined shape](workflow-create-predefined.md) with the [Shape tool](shape-tool.md), which includes a library of shapes. These predefined shapes include:
+The most common approach is to [build a predefined shape](shape-tool.md) with the [Shape tool](shape-tool.md), which includes a library of shapes. These predefined shapes include:
 
 * Simple cubes, prisms, toruses, and other simple geometry that you can use to create buildings, vehicles, and other objects. 
 * Predefined shapes that are typically found in buildings, such as stairs, arches, and doors.
