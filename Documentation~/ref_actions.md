@@ -4,8 +4,7 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 
 | **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- | ---- |
-| [Bevel Edges](Edge_Bevel.md) | | | x | x |
-| [Bevel](Face_Bevel.md) (Faces) | | | | x |
+| [Bevel Edges](Edge_Bevel.md) (and faces) | | | x | x |
 | [Bridge Edges](Edge_Bridge.md) | | | x | |
 | [Center Pivot](CenterPivot.md) | x | | | |
 | [Collapse Vertices](Vert_Collapse.md) | | x | | |

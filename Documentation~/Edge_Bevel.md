@@ -1,6 +1,6 @@
 # Bevel Edges
 
-The __Bevel Edge__ action splits the selected edge(s) into two edges, with a new face between.
+To create a new face from an existing face or edge, use the __Bevel Edges__ action.
 
 ![Bevel 3 edges on cube](images/BevelEdges_Example.png)
 

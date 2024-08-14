@@ -26,7 +26,6 @@
 * [Exporting and re-importing](workflow-exporting)
 * [Action reference](ref_actions)
 	* [Bevel - Edges](Edge_Bevel)
-	* [Bevel - Faces](Face_Bevel)
 	* [Bridge Edges](Edge_Bridge)
 	* [Center Pivot](CenterPivot)
 	* [Collapse Vertices](Vert_Collapse)
