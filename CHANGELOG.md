@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.0.2] - 2024-08-08
 
 ### Fixed
 
+- [PBLD-138] Fixed a bug where duplicating a ProBuilder mesh would mark all scenes as dirty.
 - [PBLD-115] Fixed a bug where using the 'Create PolyShape' tool when GPU Resident Drawer was enabled would throw warnings.
 - [PBLD-134] Fixed a bug where drawing ProBuilder shapes would cause temporary visual glitches on macOS.
 - [PBLD-127] Fixed a bug where undoing a shape creation would reset the deleted shape in the scene.

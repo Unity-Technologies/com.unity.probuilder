@@ -4,4 +4,4 @@ The __Flip Normals__ action flips the normals of all faces on the selected objec
 
 ![Flip Object Normals Example](images/FlipObjectNormals_Example.png)
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Flip Object Normals**).
+From the main menu, select **Tools** > **ProBuilder** > **Object** > **Flip Object Normals**.

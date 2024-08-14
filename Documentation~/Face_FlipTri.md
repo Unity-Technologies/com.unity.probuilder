@@ -12,4 +12,4 @@ This action is often called **Turn Edges** in other 3D modeling applications.
 
 <!-- Formerly called **Flip Triangles**; also called **Turn Edges** in other DCCs) -->
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Flip Face Edge**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Flip Face Edge**.

@@ -6,4 +6,4 @@ The __Subdivide Object__ action divides every face on selected objects, allowing
 
 To do this, for each face, it adds a vertex at the center of each edge and connects them in the center of the face.
 
-> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Subdivide Object**).
+From the main menu, select **Tools** > **ProBuilder** > **Object** > **Subdivide Object**.

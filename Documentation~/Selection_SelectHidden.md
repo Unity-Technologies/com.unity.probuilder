@@ -4,7 +4,9 @@ Use the __Select Hidden__ action to determine whether ProBuilder selects or igno
 
 ![Select Hidden Examples](images/SelectHidden_Example.png)
 
-Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), the button displays the following to indicate what state the action is in:
+From the main menu, select **Tools** > **ProBuilder** > **Interaction** > **Toggle Select Back Faces**.
+
+The button displays the following to indicate what state the action is in:
 
 | **Icon mode:**                                             | **Text mode:**    | **Description:**                                           |
 | :----------------------------------------------------------- | --------------- | ------------------------------------------------------------ |
@@ -13,5 +15,4 @@ Depending whether you are in [text mode or icon mode](toolbar.md#buttonmode), th
 
 This action is available in all [edit modes](modes.md).
 
-> **Tip**: You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Interaction** > **Toggle Select Back Faces**).
 
