@@ -59,6 +59,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
+            m_Overlay.displayed = true;
         }
 
         public void Dispose()
@@ -105,6 +106,7 @@ namespace UnityEditor.ProBuilder
 
             SceneView.RemoveOverlayFromActiveView(s_Instance.m_Overlay);
             SceneView.AddOverlayToActiveView(s_Instance.m_Overlay = new MenuActionSettingsOverlay());
+            s_Instance.m_Overlay.displayed = true;
         }
 
         internal static void EndPreview()
@@ -175,7 +177,6 @@ namespace UnityEditor.ProBuilder
         public MenuActionSettingsOverlay()
         {
             displayName = PreviewActionManager.actionName;
-            displayed = true;
         }
 
         public override VisualElement CreatePanelContent()
