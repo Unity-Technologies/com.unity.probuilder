@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-158] Fixed a bug where ProBuilder would prevent classes inheriting from `UnityEditor.Editor` to compile.
 - [PBLD-151] Fixed a bug where the Action Settings overlay would not be displayed when used the first time.
 - [PBLD-141] Fixed a bug where the selection would be incorrect when entering PrefabStage.
 - [PBLD-142] Fixed a bug where it was possible to trigger the probuilderize action twice on the same object.
