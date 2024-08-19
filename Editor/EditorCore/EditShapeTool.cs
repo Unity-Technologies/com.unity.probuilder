@@ -244,9 +244,12 @@ namespace UnityEditor.ProBuilder
                 for(int i = 0; i <faces.Length; ++i)
                     s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
-                var absSize = Math.Abs(proBuilderShape.editionBounds.size);
-                if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandles(proBuilderShape, updatePrefs);
+                if (!(proBuilderShape.shape is Cube))
+                {
+                    var absSize = Math.Abs(proBuilderShape.editionBounds.size);
+                    if (absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon)
+                        DoOrientationHandles(proBuilderShape, updatePrefs);
+                }
 
                 DoSizeHandles(proBuilderShape, updatePrefs);
             }
