@@ -42,7 +42,14 @@ namespace UnityEditor.ProBuilder.UI
 
             RegisterCallback<AttachToPanelEvent>(evt => { ProBuilderEditor.selectModeChanged += UpdateSelectMode; });
             RegisterCallback<DetachFromPanelEvent>(evt => { ProBuilderEditor.selectModeChanged -= UpdateSelectMode; });
-            this.RegisterValueChangedCallback(evt => { ProBuilderEditor.selectMode = m_Mode; });
+            this.RegisterValueChangedCallback(evt =>
+            {
+                if(evt.newValue)
+                    ProBuilderEditor.selectMode = m_Mode;
+                //Trying to set the edit mode to false: Not allowed
+                else
+                    SetValueWithoutNotify(true);
+            });
 
             UpdateSelectMode(ProBuilderEditor.selectMode);
         }
