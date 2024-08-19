@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-142] Fixed a bug where it was possible to trigger the probuilderize action twice on the same object.
 - [PBLD-150] Fixed a bug where the orientation handles would not be useful when manipulating a cube shape.
 - [PBLD-149] Fixed a bug where the ProBuilder edit modes toggle could be disabled.
+- [PBLD-145] Fixed a bug where using the preview shape with HDRP would crash the editor.
+- Fixed a bug where moving the preview shape was not ignoring the preview shape to compute the correct placement.
 
 ### Added
 

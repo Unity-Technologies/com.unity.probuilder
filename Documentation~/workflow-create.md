@@ -23,3 +23,4 @@ Whichever method you use to create your mesh, you can:
 * [Apply vertex colors](workflow-vertexcolors.md).
 * [Smooth its sharp edges](workflow-edit-smoothing.md).
 * [Apply materials and textures](workflow-materials.md).
+
