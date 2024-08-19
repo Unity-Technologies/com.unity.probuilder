@@ -2,6 +2,8 @@
 
 This table lists all the actions available in ProBuilder, and indicates which [Edit modes](modes.md) support them.
 
+[[I get why this is a single table, but dividing by the menu categories also makes sense...]]
+
 | **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- | ---- |
 | [Bevel Edges](Edge_Bevel.md) (and faces) | | | x | x |
@@ -46,9 +48,7 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | [Select Holes](Selection_SelectHole.md) | | x | x | |
 | [Select Path](SelectPath.md) | |  |  | x |
 | [Set Collider](Entity_Trigger.md#Collider) | x | | | |
-| [Set Pivot](Edge_SetPivot.md) (Edges) | | | x | |
-| [Set Pivot](Face_SetPivot.md) (Faces) | | | | x |
-| [Set Pivot](Vert_SetPivot.md) (Vertices) | | x | | |
+| [Set Pivot To Selection](SetPivot.md) | | x | x | x |
 | [Set Trigger](Entity_Trigger.md) | x | | | |
 | [Shift](Selection_Shift.md) | | x | x | x |
 | [Shrink Selection](Selection_Shrink.md) | | x | x | x |

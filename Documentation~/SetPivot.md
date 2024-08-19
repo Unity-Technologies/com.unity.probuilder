@@ -1,6 +1,6 @@
 # ![Set Pivot icon](images/icons/SetPivot.png) Set Pivot (Faces)
 
-Use the __Set Pivot__ action to move the pivot point of this Mesh to the average center of the selected faces.
+Use the __Set Pivot__ action to move the pivot point of a mesh to the average center of the selected faces, edges, or vertices.
 
 You can launch this action with the **Ctrl/Cmd+J** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Set Pivot**). 
 
