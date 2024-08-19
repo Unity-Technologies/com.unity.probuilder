@@ -26,12 +26,13 @@ These options are never available in the GameObject tool context.
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
 | [Shrink Selection](Selection_Shrink.md) | | x | x | x |
 
+[[two select loop should be one, two select ring should be one]]
+
 The following action is available only through its keyboard shortcut, and never in the GameObject tool context:
 
 | **Property** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- |
 | [Select Path](SelectPath.md) | |  | x |
-
 
 ## Interaction actions
 
@@ -46,20 +47,26 @@ The following action is available only through its keyboard shortcut, and never 
 
 | **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- | ---- |
+| [Center Pivot](CenterPivot.md) | x | | | |
+| [Conform Object Normals](Object_ConformNormals.md) (Objects) | x | | | |
+| [Flip Normals](Object_FlipNormals.md) | x | | | |
+| [Freeze Transform](Freeze_Transform.md) | x | | | |
+| [Merge Objects](Object_Merge.md) | x | | | |
+| [Mirror Objects](Object_Mirror.md) | x | | | |
+| [ProBuilderize](Object_ProBuilderize.md) | x | | | |
+| [Set Collider](Entity_Trigger.md#Collider) | x | | | |
+| [Set Trigger](Entity_Trigger.md) | x | | | |
+| [Subdivide Object](Object_Subdivide.md) | x | | | |
+| [Triangulate](Object_Triangulate.md) (Object) | x | | | |
 
 ## Geometry actions
-
 
 | **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- | ---- |
 | [Bevel Edges](Edge_Bevel.md) (and faces) | | | x | x |
 | [Bridge Edges](Edge_Bridge.md) | | | x | |
-| [Center Pivot](CenterPivot.md) | x | | | |
 | [Collapse Vertices](Vert_Collapse.md) | | x | | |
-| [Conform Normals](Face_ConformNormals.md) (Faces) | | | | x |
-| [Conform Normals](Object_ConformNormals.md) (Objects) | x | | | |
-| [Connect Edges](Edge_Connect.md) | | | x | |
-| [Connect Vertices](Vert_Connect.md) | | x | | |
+| [Conform Face Normals](Face_ConformNormals.md) (Faces) | | | | x |
 | [Delete Faces](Face_Delete.md) | | | | x |
 | [Detach Faces](Face_Detach.md) | | | | x |
 | [Duplicate Faces](Face_Duplicate.md) | | | | x |
@@ -70,27 +77,28 @@ The following action is available only through its keyboard shortcut, and never 
 | [Fill Hole](Vert_FillHole.md) (Vertices) | | x | | |
 | [Flip Face Edge](Face_FlipTri.md)  | | | | x |
 | [Flip Face Normals](Face_FlipNormals.md) | | | | x |
-| [Flip Normals](Object_FlipNormals.md) | x | | | |
-| [Freeze Transform](Freeze_Transform.md) | x | | | |
-| **Handle** (refer to [Orientation](HandleAlign.md)) | x | x | x | x |
-| [Lightmap UVs](Object_LightmapUVs.md) | x | | | |
 | [Insert Edge Loop](Edge_InsertLoop.md)  | | | | |
-| [Inset](Face_Inset.md) | | | | x |
 | [Merge Faces](Face_Merge.md) | | | | x |
-| [Merge Objects](Object_Merge.md) | x | | | |
-| [Mirror Objects](Object_Mirror.md) | x | | | |
 | [Offset Elements](Offset_Elements.md) |  | x | x | x |
-| [ProBuilderize](Object_ProBuilderize.md) | x | | | |
-
-| [Set Collider](Entity_Trigger.md#Collider) | x | | | |
 | [Set Pivot To Selection](SetPivot.md) | | x | x | x |
-| [Set Trigger](Entity_Trigger.md) | x | | | |
-| [Shift](Selection_Shift.md) | | x | x | x |
+| [Smart Connect (Connect Edges)](Edge_Connect.md) | | | x | |
+| [Smart Connect (Connect Vertices)](Vert_Connect.md) | | x | | |
+| [Smart Subdivide (Subdivide Edges)](Edge_Subdivide.md) | | | x | |
+| [Smart Subdivide (Subdivide Faces)](Face_Subdivide.md) | | | | x |
 | [Split Vertices](Vert_Split.md) | | x | | |
-| [Subdivide Edges](Edge_Subdivide.md) | | | x | |
-| [Subdivide Faces](Face_Subdivide.md) | | | | x |
-| [Subdivide Object](Object_Subdivide.md) | x | | | |
 | [Triangulate Faces](Face_Triangulate.md) | | | | x |
-| [Triangulate](Object_Triangulate.md) (Object) | x | | | |
-| **Turn Edges** (see [Flip Face Edge](Face_FlipTri.md)) |  | | | x |
 | [Weld Vertices](Vert_Weld.md) | | x | | |
+
+
+
+[[
+There's only one extrude
+
+There's only one fill hole
+
+| [Inset](Face_Inset.md) | | | | x | this uses extrude - why is it here?
+
+| [Shift](Selection_Shift.md) | | x | x | x | doesn't exist?
+
+| [Lightmap UVs](Object_LightmapUVs.md) | x | | | | doesn't exist?
+]]
