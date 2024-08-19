@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [PBLD-151] Fixed a bug where the Action Settings overlay would not be displayed when used the first time.
-- [PBLD-141] Fixed a bug where selection would be incorrect when entering PrefabStage.
+- [PBLD-141] Fixed a bug where the selection would be incorrect when entering PrefabStage.
 - [PBLD-142] Fixed a bug where it was possible to trigger the probuilderize action twice on the same object.
 - [PBLD-150] Fixed a bug where the orientation handles would not be useful when manipulating a cube shape.
 - [PBLD-149] Fixed a bug where the ProBuilder edit modes toggle could be disabled.
