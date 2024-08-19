@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- [PBLD-145] Fixed a bug where using the preview shape with HDRP would crash the editor.
+- Fixed a bug where moving the preview shape was not ignoring the preview shape to compute the correct placement.
+
 ## [6.0.2] - 2024-08-08
 
 ### Fixed
