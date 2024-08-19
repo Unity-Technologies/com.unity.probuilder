@@ -8,4 +8,4 @@ ProBuilder only considers faces part of a ring if they are quads (contain exactl
 
 This action is available only in [face mode](modes.md).
 
-> **Tip:** You can also use this tool with the **Alt/Opt+R** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).
+You can use this tool with the **Alt/Opt+R** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Ring**).

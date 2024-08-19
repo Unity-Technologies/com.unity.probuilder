@@ -4,7 +4,7 @@ The __Duplicate Faces__ action copies each selected face and either creates a ne
 
 ![Example of duplicating some faces on a cylinder to create a curved panel](images/FaceDuplicate_Example.png)
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Duplicate Faces**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Duplicate Faces**.
 
 ## Duplicate Options
 

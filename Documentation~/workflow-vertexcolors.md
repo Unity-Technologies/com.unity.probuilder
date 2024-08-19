@@ -20,18 +20,17 @@ Depending on what [editing mode](modes.md) you are in and what you select on you
 
 <a name="apply"></a>
 
-## Applying a color
+## Apply a color
 
 To apply a vertex color:
 
-1. Select the [Editing mode](modes.md) you want from the [Edit mode toolbar](edit-mode-toolbar.md).
-
-2. Select the object(s) or element(s) that you want to apply a color to.
-
-3. Click the ![Vertex Colors icon](images/icons/Panel_VertColors.png) **Vertex Colors** button on the ProBuilder toolbar.
-
-	The [Vertex Colors window](vertex-colors.md) appears.
-
-4. Click the **Apply** button next to the color you want to apply. Alternatively, you can use the shortcut displayed on the button (**Alt/Opt+Shift+&lt;number&gt;**) or select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Vertex Colors** > **Set Selected Faces to Preset &lt;number&gt;**).
+1. In the **Scene** view > **Tools** overlay, enable the **ProBuilder** tool context.
+1. In the **Tool settings** overlay, select an [Editing mode](modes.md).
+1. Select the object or element that you want to apply a color to.
+1. In the main menu, go to **Tools** > **ProBuilder** > **Editors** > [**Open Vertex Color Editor**](vertex-colors.md).
+1. To apply a color, do one of the following:
+    * Select **Apply** next to the color. 
+	* Press **Alt**+**Shift**+**&lt;number&gt;** (macOS: **Opt**+**Shift**+**&lt;number&gt;**) 
+	* Select the preset from the ProBuilder menu (**Tools** > **ProBuilder** > **Vertex Colors** > **Set Selected Faces to Preset &lt;number&gt;**).
 
 > **Note:** To remove a vertex color, apply the white vertex color (**#FFFFFF**).

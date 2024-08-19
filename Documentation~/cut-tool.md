@@ -1,59 +1,36 @@
-# ![Cut Tool icon](images/icons/Cut_Tool.png) Cut tool
+# The Cut tool
 
-Use the Cut tool to subdivide Mesh faces with precision. To cut out a shape on a Mesh, you activate the Cut tool, which lets you define the cutout shape with points. The cutout shape becomes a new face on the Mesh.
+To create more complex shapes, you can subdivide a mesh's face with the Cut tool. The new face you create can be any shape; define the shape by placing points on the mesh. You can then move the new face as you would any other face.
 
-To create a new face on an existing Mesh face:
+You can use the Cut tool on any face, regardless of whether you created the mesh with the [New Shape](shape-tool.md) tool, the [New PolyShape](polyshape.md) tool, or by [probuilderizing](Object_ProBuilderize.md) a standard Unity mesh.
 
-1. Open the ProBuilder window (in Unity's top menu: **Tools** > **ProBuilder window**).
+## Create a new face
 
-	The [Edit Mode toolbar](edit-mode-toolbar.md) and the [ProBuilder toolbar](toolbar.md) appear.
+To create a new face on an existing mesh face:
 
-1. Switch to one of the element [editing modes](modes.md).
-
-2. In the ProBuilder toolbar, click the **Cut Tool** button. The **Cut Settings** panel appears at the bottom of the Scene view with a **Complete** button and a **Cancel** button. If the ProBuilder toolbar is using [Text mode](customizing.md#text-vs-icon-mode), the button text background becomes red.
-
-3. To control snapping to nearby edges and vertices, use the options on the [Cut Settings panel](#cut-tool_panel).
-
-5. Click on the Mesh face where you want the vertices for the new face to be. ProBuilder creates the cutout shape based on the edges you draw with these points. For example, you can specify three points on the Mesh to define a triangular shape and the fourth to close it:
-
-	![Example of a triangular cutout on a face](images/cut-tool-example.png)
-
-  > **Tip**: ProBuilder displays red edges as a visual warning if your points make an invalid edge or face. When this happens, undo adding each point until all the edges become blue again.
-
-	As soon as you return to the first point and click it again (such as the fourth point in the triangle example), the cut is complete and the new face appears selected in the Scene view. Now you can either exit the tool or start another cut.
-	
-	**Note**: If nothing happened when you returned to the first point and clicked it again or clicked the **Complete** button, it is probably because the points you defined do not create a valid edge or face. For example, if the tool detected only one point, that does not make a valid edge. You can define more points, undo the previous points, or click the **Cancel** button to cancel the operation and start again.
-
-6. To start another cut, click the **Start** button. The **Cut Settings** panel displays a **Complete** button and a **Cancel** button again.
-
-7. To exit the Cut tool, you can:
-
-	* Click the **Quit** button on the **Cut Settings** panel.
-	* Select the Esc key.
-	* Click the **Cut Tool** button on the ProBuilder toolbar again.
-
-	**Tip**: When you create a new face, the Cut tool creates extra edges in order to strengthen the geometry. Avoid merging the surrounding faces to remove the extra edges, because this could result in degenerated faces and broken geometry.
-
-	![After you cut a face, extra edges secure the new face's integrity. Removing those images makes the new face unstable](images/cut-tool-nomerge.png)
+1. Select a shape. 
+1. In the **Tools** overlay, set the active context to ProBuilder. The **Cut** tool is now available in the **Tools** overlay and the **Cut Settings** panel opens. For more information about the panel, refer to [Cut Settings panel](#cut-tool_panel).
+1. To start drawing the outline of the new face, click on the mesh face you want to cut. If your points create an invalid edge or face, ProBuilder displays red edges. When this happens, undo adding each point until all the edges become blue again.
+1. To complete the new face, return to the first point and click it, or click the **Complete** button in the **Cut Settings** panel. If nothing happens when you try to complete your shape, it's probably because the points you defined don't create a valid edge or face. Add more points, or undo adding the current points, until the shape is valid.
 
 
+> **Tip**: When you create a new face, the Cut tool creates extra edges to strengthen the geometry. Avoid merging the surrounding faces to remove the extra edges, because this can break the geometry of the new face.
+
+![After you cut a face, extra edges secure the new face's integrity. Removing those edges makes the new face unstable](images/cut-tool-nomerge.png)
+
+To exit the Cut tool, you can:
+
+* Press **Esc**.
+* Select **Cut Tool** in the **Tools** overlay again.
 
 <a name="cut-tool_panel"></a>
 
 ## Cut Settings panel
 
-When ProBuilder enters Cut mode, the following panel appears at the bottom of the Scene view:
+The Cut Settings panel offers the following options:
 
-![Extra options for the Cut Tool](images/Cut_Tool-panel.png)
-
-Enable the **Snap to existing edges and vertices** option to snap the points you draw on the target face to any nearby edges and vertices. This makes it easier to place points on the edges or vertices of the face.
-
-When snapping is enabled, the **Snapping distance** defines what happens as you approach a face border. By default, if you click within 0.1 units of an edge or vertex, the Cut tool adds your point on that border instead of adding a floating point directly on the face.
-
-When you activate the Cut tool, the **Cut Settings** panel displays a **Complete** button and a **Cancel** button. As soon as you complete the cut successfully, the **Start** button appears because the Cut tool is modal and you have the choice to either define another cutout or explicitly exit the tool:
-
-![You can choose to start another cut or exit the Cut Tool](images/Cut_Tool-panel2.png)
-
-When you are ready to define points for a new cutout, click the **Start** button and draw more points on the Mesh.
-
-When you want to exit the tool, click the **Quit** button, select the Esc key, or click the **Cut Tool** button on the ProBuilder toolbar again.
+| **Option** | **Description** |
+| --- | --- |
+| **Snap to existing edges and vertices** | Snap the points you draw on the target face to any nearby edges and vertices. This makes it easier to place points on the edges or vertices of the face. |
+| **Snapping distance** | Define how close a point needs to be to a vertex to snap onto that vertex instead of remaining on the face. |
+| **Complete** | Click to complete the new face by connecting the first and last point you drew. If the points you defined don't create a valid edge or face, ProBuilder displays red edges. When this happens, undo adding each point until all the edges become blue again. |

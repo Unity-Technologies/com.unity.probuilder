@@ -1,27 +1,26 @@
-# Creating Meshes
+# Create meshes
 
 ProBuilder provides several different tools for creating editable meshes in Unity. 
 
-The most common approach is to [build a predefined shape](workflow-create-predefined.md) with the [Shape tool](shape-tool.md), which includes a library of shapes. These predefined shapes include standard geometric shapes, and some more complex shapes which correspond to objects that are common in level-building. For example, the **Shape** tool provides simple cubes, prisms, toruses, and other simple geometry that you can use to create buildings, vehicles, and other objects. It also provides some convenient predefined shapes that are typically found in buildings, such as stairs, arches and doors.
+The most common approach is to [build a predefined shape](workflow-create-predefined.md) with the [Shape tool](shape-tool.md), which includes a library of shapes. These predefined shapes include:
+
+* Simple cubes, prisms, toruses, and other simple geometry that you can use to create buildings, vehicles, and other objects. 
+* Predefined shapes that are typically found in buildings, such as stairs, arches, and doors.
 
 ![Mesh shape types](images/ShapeToolTypes.png) 
 
-To create predefined shapes, you can use either of the following methods with the Shape tool:
+If you want to make a mesh with an original shape, you can: 
 
-* Draw a bounding box in the Scene view. Then you can choose a primitive shape and customize it where possible with shape-specific parameters.
-* Define the dimensions of the shape's bounding box on the **Create Shape** panel and customize it where possible with shape-specific parameters. Then **Shift**+click in the Scene view where you want ProBuilder to draw it.
+- Use the [Poly Shape tool](polyshape.md) to create a custom 2D shape and then extrude that shape into a 3D mesh. This is a good strategy for quickly building an irregular structure, like a medieval church or a star-shaped building.
+- Use the [experimental Bezier tool](bezier.md) to define a bezier curve around which ProBuilder extrudes a mesh. For example, you can use this tool to create tunnels with lots of twists and turns.
+- Apply an [experimental Boolean operation](boolean.md) to two or more meshes to create a new mesh. The new shape can be from the difference between the two (Intersection), or everything but the difference between the two (Subtraction), or the two original meshes plus the space between them (Union).
 
-For example, the cube shape doesn't have any shape-specific parameters, but the stairs shape lets you set the curvature, the number of steps, and whether to build sides.
+>**Warning:** Bezier shapes and Boolean operations are experimental, meaning that they're still under development, and might reduce ProBuilder's stability.
 
-![Shape Tool Example](images/Example_ShapeToolsWithCurvedStair.png)
+Whichever method you use to create your mesh, you can:
 
-If you need to make a mesh shaped unlike any of the predefined shapes, you have several options:
-
-- You can use the [Poly Shape tool](polyshape.md) to create a custom 2-dimensional shape and then extrude that shape into a 3-dimensional mesh. This is a good strategy for quickly building an irregular structure, like a medieval church or a star-shaped building.
-- You can use the [experimental Bezier tool](workflow-create-bezier.md) to define a Bezier curve around which ProBuilder extrudes a mesh. For example, you can use this tool to create tunnels with lots of twists and turns.
-- You can apply an [experimental Boolean operation](boolean.md) on two or more mesh objects to create a new object. You can choose to create only the difference between the two (Intersection), or everything but the difference between the two (Subtraction), or one big mesh that encompasses the two original meshes plus the space in between them (Union).
-
->**Warning:** Bezier shapes and Boolean operations are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Use with caution.
-
-Whichever method you use to create your mesh, you can edit it using any of the [ProBuilder editing features](workflow-edit.md), [apply vertex colors](workflow-vertexcolors.md), [smooth its sharp edges](workflow-edit-smoothing.md), and [apply Materials and Textures](workflow-materials.md).
+* Edit it using any of the [ProBuilder editing features](workflow-edit.md).
+* [Apply vertex colors](workflow-vertexcolors.md).
+* [Smooth its sharp edges](workflow-edit-smoothing.md).
+* [Apply materials and textures](workflow-materials.md).
 

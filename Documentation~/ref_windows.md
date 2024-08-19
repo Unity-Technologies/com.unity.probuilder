@@ -11,7 +11,7 @@ This section provides information on the following ProBuilder Editor [windows](o
 | [Vertex Color Editor window](vertex-colors.md) | Edit vertex colors. |
 | [Vertex Positions Editor window](vertex-positions.md) | Edit vertex positions. |
 
-## Additional references
+## Additional sources
 
 * [Bezier Shape Component](workflow-create-bezier).
 * [New PolyShape](shape-tool)

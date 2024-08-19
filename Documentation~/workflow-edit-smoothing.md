@@ -26,9 +26,9 @@ To smooth a part of your mesh:
 1. In the **Scene** view, in the **Tools** overlay, enable the **ProBuilder** tool context.
 1. In the **Tool Settings** overlay, select the **Face** editing mode.
 1. Select the faces that you want to have smooth adjoining edges. Use **Shift** to select multiple faces.
-1. Click an unused smooth group number on the [Smooth Group Editor](smoothing-groups.md) window.
+1. Click an unused smoothing group number on the [Smooth Group Editor](smoothing-groups.md) window. If a group is already in use, its button [highlights in blue when you hover over it](smoothing-groups.md#preview-colors).
 
-    > **Tip:** Smooth groups already in use appear with a color below the button, which corresponds to the color of the group in the **Scene** view.
+    > **Tip**: If you enable the **Preview** option in the **Smooth Group Editor** window, smoothing groups that are in use have a color below their respective button. This color corresponds to the color of the group in the **Scene** view.  
 
 You can repeat these steps using different number buttons to create more groups.
 

@@ -8,4 +8,4 @@ ProBuilder uses the direction that most of the faces on the object are already f
 
 In this example, the majority of the normals on this shape are pointing towards the Camera, so after applying this action, all normals point in the same direction.
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **Conform Object Normals**).
+From the main menu, select **Tools** > **ProBuilder** > **Object** > **Conform Object Normals**.

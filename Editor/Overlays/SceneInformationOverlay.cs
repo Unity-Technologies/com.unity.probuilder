@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 namespace Editor.Overlays
 {
     //[Overlay(typeof(SceneView), "Scene Information", true)]
-    public class SceneInformationOverlay : Overlay
+    class SceneInformationOverlay : Overlay
     {
         Label m_FaceCountLabel = new Label();
         Label m_TriCountLabel = new Label();

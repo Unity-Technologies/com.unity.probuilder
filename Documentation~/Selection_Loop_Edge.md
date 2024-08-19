@@ -6,4 +6,4 @@ The __Select Edge Loop__ action selects an edge loop from each selected edge. An
 
 ![Select Edge Loop Examples](images/Selection_LoopExample.png)
 
-> **Tip:** You can also use this action with the **Alt/Opt+L** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).
+You can use this action with the **Alt/Opt+L** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Select Loop**).
