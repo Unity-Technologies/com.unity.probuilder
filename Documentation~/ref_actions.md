@@ -1,8 +1,54 @@
 # Action reference
 
-This table lists all the actions available in ProBuilder, and indicates which [Edit modes](modes.md) support them.
+This table lists all the actions you can apply to a ProBuilder object, and indicates which [Edit modes](modes.md) support them. 
 
-[[I get why this is a single table, but dividing by the menu categories also makes sense...]]
+These actions are available:
+
+* From the **main menu** > **Tools** > **ProBuilder**. The actions are grouped in **Selection**, **Interaction**, **Object**, and **Geometry**.
+* From the context menu: 
+    1. In the **Tools** overlay, set the working context to ProBuilder. 
+    1. In the **Tool Settings** overlay, select an edit mode.
+    1. In the **Scene** view, right-click on a ProBuilder object.
+
+## Selection actions
+
+These options are never available in the GameObject tool context.
+
+| **Property** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
+| ---- | ---- | ---- | ---- |
+| [Grow Selection](Selection_Grow.md) | x | x | x |
+| [Select Hole](Selection_SelectHole.md) | x | x | |
+| [Select Loop (in Edge Selection mode)](Selection_Loop_Edge.md) | | x | |
+| [Select Loop (in Face Selection mode)](Selection_Loop_Face.md) | | | x |
+| [Select Material](Selection_SelectByMaterial.md) | | | x |
+| [Select Ring (in Edge Selection mode)](Selection_Ring_Edge.md) | | x | |
+| [Select Ring (in Face Selection mode)](Selection_Ring_Face.md) | | | x |
+| [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
+| [Shrink Selection](Selection_Shrink.md) | | x | x | x |
+
+The following action is available only through its keyboard shortcut, and never in the GameObject tool context:
+
+| **Property** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
+| ---- | ---- | ---- | ---- |
+| [Select Path](SelectPath.md) | |  | x |
+
+
+## Interaction actions
+
+| **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
+| ---- | ---- | ---- | ---- | ---- |
+| [Rect](Selection_Rect_Intersect.md) | | | x | x |
+| [Toggle Handle Orientation](HandleAlign.md) | x | x | x | x |
+| [Toggle Select Back Faces](Selection_SelectHidden.md) | x | x | x | x |
+| [Toggle X Ray](Toggle_X_Ray.md) |  |  |  |  |
+
+## Object actions
+
+| **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
+| ---- | ---- | ---- | ---- | ---- |
+
+## Geometry actions
+
 
 | **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
 | ---- | ---- | ---- | ---- | ---- |
@@ -28,30 +74,18 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | [Freeze Transform](Freeze_Transform.md) | x | | | |
 | **Handle** (refer to [Orientation](HandleAlign.md)) | x | x | x | x |
 | [Lightmap UVs](Object_LightmapUVs.md) | x | | | |
-| [Grow Selection](Selection_Grow.md) | | x | x | x |
 | [Insert Edge Loop](Edge_InsertLoop.md)  | | | | |
 | [Inset](Face_Inset.md) | | | | x |
 | [Merge Faces](Face_Merge.md) | | | | x |
 | [Merge Objects](Object_Merge.md) | x | | | |
 | [Mirror Objects](Object_Mirror.md) | x | | | |
 | [Offset Elements](Offset_Elements.md) |  | x | x | x |
-| [Orientation](HandleAlign.md) | x | x | x | x |
 | [ProBuilderize](Object_ProBuilderize.md) | x | | | |
-| [Rect](Selection_Rect_Intersect.md) | | | x | x |
-| [Select by Colors](Selection_SelectByVertexColor.md) | | x | x | x |
-| [Select by Material](Selection_SelectByMaterial.md) | | | | x |
-| [Select Edge Loop](Selection_Loop_Edge.md) | | | x | |
-| [Select Edge Ring](Selection_Ring_Edge.md) | | | x | |
-| [Select Face Loop](Selection_Loop_Face.md) | | | | x |
-| [Select Face Ring](Selection_Ring_Face.md) | | | | x |
-| [Select Hidden](Selection_SelectHidden.md) | x | x | x | x |
-| [Select Holes](Selection_SelectHole.md) | | x | x | |
-| [Select Path](SelectPath.md) | |  |  | x |
+
 | [Set Collider](Entity_Trigger.md#Collider) | x | | | |
 | [Set Pivot To Selection](SetPivot.md) | | x | x | x |
 | [Set Trigger](Entity_Trigger.md) | x | | | |
 | [Shift](Selection_Shift.md) | | x | x | x |
-| [Shrink Selection](Selection_Shrink.md) | | x | x | x |
 | [Split Vertices](Vert_Split.md) | | x | | |
 | [Subdivide Edges](Edge_Subdivide.md) | | | x | |
 | [Subdivide Faces](Face_Subdivide.md) | | | | x |

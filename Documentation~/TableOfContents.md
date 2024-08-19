@@ -76,6 +76,7 @@
 	* [Subdivide Edges](Edge_Subdivide)
 	* [Subdivide Faces](Face_Subdivide)
 	* [Subdivide Object](Object_Subdivide)
+	* [Toggle X Ray](Toggle_X_Ray)
 	* [Triangulate Faces](Face_Triangulate)
 	* [Triangulate - Objects](Object_Triangulate)
 	* [Weld Vertices](Vert_Weld)
