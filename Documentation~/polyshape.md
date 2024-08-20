@@ -8,17 +8,16 @@ To create custom shapes, use the **New PolyShape** tool. Draw a 2D shape with as
 
 To create a new PolyShape:
 
-1. Initiate the **New PolyShape** tool in one of the following ways:
-	* In the **Tools** overlay, click the **New PolyShape** icon.
+1. Activate the **New PolyShape** tool in one of the following ways:
+	* In the **Tools** overlay, select **New PolyShape**.
 	* In the main menu, go to **Tools** > **ProBuilder** > **Editors** > **New PolyShape**.
 
 	For information about the **PolyShape Settings** panel, refer to [PolyShape Settings panel](#the-polyshape-settings-pnael).
 1. Draw points in the **Scene** view to create the 2D outline of the shape. To help you draw in an exact location, use [Snap to Grid](snap-to-grid.md).
+    > **Tip:** You can add shapes next to each other, but they stay separate objects. To merge them, use the [Merge Objects](Object_Merge.md) tool.
 1. When you connect the last point to the first point, you can extrude the shape to create a 3D object.
 	
 The **New PolyShape** tool stays active until you deactivate it, so you can create many shapes in a sequence. 
-
-> **Tip:** You can add shapes next to each other, but they stay separate objects. To merge them, use the [Merge Objects](Object_Merge.md) tool.
 
 ## Edit a PolyShape
 
