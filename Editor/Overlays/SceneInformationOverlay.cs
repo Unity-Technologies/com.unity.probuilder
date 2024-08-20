@@ -1,9 +1,8 @@
 ﻿using UnityEditor.Overlays;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Editor.Overlays
+namespace UnityEditor.ProBuilder.Overlays
 {
     //[Overlay(typeof(SceneView), "Scene Information", true)]
     class SceneInformationOverlay : Overlay

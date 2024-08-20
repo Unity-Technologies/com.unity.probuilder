@@ -16,7 +16,7 @@ ProBuilder provides the following ways to edit ProBuilder Meshes:
 
   - For Poly Shapes, you can [modify the base shape, the extrusion, or the normals](polyshape.md) after you finish [creating it](polyshape.md). For example, you can move the points that define the base or add new points to refine the base shape. You can also change the height and flip the normals.
 
-  - For Bezier Shapes, you can [edit the underlying bezier curve](bezier.md); you can delete and move existing points, add new ones, close the loop, and smooth it.
+  - For Bezier Shapes, you can [edit the underlying bezier curve](workflow-create-bezier.md); you can delete and move existing points, add new ones, close the loop, and smooth it.
   
   	> **Warning:** Bezier shapes are experimental, meaning that they are still under development, and might reduce ProBuilder's stability. Use with caution.
 
