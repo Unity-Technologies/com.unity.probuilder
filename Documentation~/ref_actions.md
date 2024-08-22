@@ -10,6 +10,8 @@ These actions are available:
     1. In the **Tool Settings** overlay, select an edit mode.
     1. In the **Scene** view, right-click on a ProBuilder object.
 
+<!--So... I divided this page by category. I think it's easier to scan. But then the question is: should the TOC match, or should the TOC stay alphabatised? -->
+
 ## Selection actions
 
 These options are never available in the GameObject tool context.
@@ -26,13 +28,9 @@ These options are never available in the GameObject tool context.
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
 | [Shrink Selection](Selection_Shrink.md) | | x | x | x |
 
-[[two select loop should be one, two select ring should be one]]
+<!--two select loop should be one, two select ring should be one - that will have to be another ticket-->
 
-The following action is available only through its keyboard shortcut, and never in the GameObject tool context:
-
-| **Property** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
-| ---- | ---- | ---- | ---- |
-| [Select Path](SelectPath.md) | |  | x |
+The [Select Path](SelectPath.md) action is available only through its keyboard shortcut, and only in the Face edit mode.
 
 ## Interaction actions
 
@@ -41,23 +39,27 @@ The following action is available only through its keyboard shortcut, and never 
 | [Rect](Selection_Rect_Intersect.md) | | | x | x |
 | [Toggle Handle Orientation](HandleAlign.md) | x | x | x | x |
 | [Toggle Select Back Faces](Selection_SelectHidden.md) | x | x | x | x |
-| [Toggle X Ray](Toggle_X_Ray.md) |  |  |  |  |
+| [Toggle X Ray](Toggle_X_Ray.md) | x | x | x  | x |
 
 ## Object actions
 
-| **Property** | **GameObject tool context** | **Vertex edit mode (ProBuilder context)** | **Edge edit mode (ProBuilder context)** | **Face edit mode (ProBuilder context)** |
-| ---- | ---- | ---- | ---- | ---- |
-| [Center Pivot](CenterPivot.md) | x | | | |
-| [Conform Object Normals](Object_ConformNormals.md) (Objects) | x | | | |
-| [Flip Normals](Object_FlipNormals.md) | x | | | |
-| [Freeze Transform](Freeze_Transform.md) | x | | | |
-| [Merge Objects](Object_Merge.md) | x | | | |
-| [Mirror Objects](Object_Mirror.md) | x | | | |
-| [ProBuilderize](Object_ProBuilderize.md) | x | | | |
-| [Set Collider](Entity_Trigger.md#Collider) | x | | | |
-| [Set Trigger](Entity_Trigger.md) | x | | | |
-| [Subdivide Object](Object_Subdivide.md) | x | | | |
-| [Triangulate](Object_Triangulate.md) (Object) | x | | | |
+The following actions always impact the entire GameObject, so they're available in the GameObject context and all edit modes. 
+
+<!--at least that's what it looks like - they're available from the menu at all times, except the ProBuilderize action-->
+
+| **Property** | **GameObject tool context** | **All edit modes**|
+| ---- | ---- | --- |
+| [Center Pivot](CenterPivot.md) | x | x |
+| [Conform Object Normals](Object_ConformNormals.md) (Objects) | x | x |
+| [Flip Normals](Object_FlipNormals.md) | x | x |
+| [Freeze Transform](Freeze_Transform.md) | x | x |
+| [Merge Objects](Object_Merge.md) | x | x |
+| [Mirror Objects](Object_Mirror.md) | x | x |
+| [ProBuilderize](Object_ProBuilderize.md) | x | Doesn't apply to ProBuilder objects |
+| [Set Collider](Entity_Trigger.md#Collider) | x | x |
+| [Set Trigger](Entity_Trigger.md) | x | x |
+| [Subdivide Object](Object_Subdivide.md) | x | x | 
+| [Triangulate](Object_Triangulate.md) (Object) | x | x | 
 
 ## Geometry actions
 
@@ -90,15 +92,12 @@ The following action is available only through its keyboard shortcut, and never 
 | [Weld Vertices](Vert_Weld.md) | | x | | |
 
 
+<!--
+The Editor:
 
-[[
-There's only one extrude
-
-There's only one fill hole
-
-| [Inset](Face_Inset.md) | | | | x | this uses extrude - why is it here?
-
-| [Shift](Selection_Shift.md) | | x | x | x | doesn't exist?
-
-| [Lightmap UVs](Object_LightmapUVs.md) | x | | | | doesn't exist?
-]]
+* Has only one extrude - I should merge them
+* Has only one fill hole - I should merge them
+* Doesn't have inset - it's just a way to use extrude, so why is it treated as an action?
+* Doesn't have Shift
+* Doesn't have Lightmap UVs
+-->
