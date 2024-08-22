@@ -1,4 +1,4 @@
-# Set Pivot
+# Set Pivot To Selection
 
 Use the __Set Pivot__ action to move the pivot point of a mesh to the average center of the selected faces, edges, or vertices.
 
