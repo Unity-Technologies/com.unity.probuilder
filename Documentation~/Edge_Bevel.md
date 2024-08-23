@@ -14,6 +14,7 @@ To bevel edges or faces:
 1. Do one of the following:
     * Right-click (macOS: **Ctrl**+click) on the selected face or edge and select **Bevel Edges**.
     * From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Bevel Edges**.
+1. The **Bevel Edges** overlay opens and a new face is created.
 
 ## Bevel Edges options
 
