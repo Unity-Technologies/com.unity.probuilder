@@ -7,3 +7,12 @@ To access the tool settings:
 1. Select a tool, for example **Main Menu** > **Tools** > **ProBuilder** > **Selection** > **Grow Selection**.
 1. From the **Overlay Menu** overlay, select the corresponding action's button. For example, for the Grow Selection action, the button is **GS**.
 1. The **Tool Options Overlay** opens with the current tool's settings.
+
+
+<!--## Dimensions Overlay
+
+Show or hide the dimensions for all three axes. 
+
+This overlay appears on all mesh objects, not just ProBuilder meshes.
+
+-->
