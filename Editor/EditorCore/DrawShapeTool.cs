@@ -472,7 +472,8 @@ namespace UnityEditor.ProBuilder
                 if (m_CurrentState is ShapeState_InitShape  && m_LastShapeCreated != null)
                     return m_LastShapeCreated;
 
-                if (m_CurrentState is ShapeState_DrawBaseShape && m_DuplicateGO != null)
+                if (m_CurrentState is ShapeState_DrawBaseShape &&
+                    m_DuplicateGO != null && m_DuplicateGO.GetComponent<MeshRenderer>().enabled)
                     return m_DuplicateGO.GetComponent<ProBuilderShape>();
 
                 return proBuilderShape;
@@ -537,6 +538,9 @@ namespace UnityEditor.ProBuilder
 
             if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
                 m_CurrentState = ShapeState.ResetState();
+
+            if (m_DuplicateGO != null)
+                DestroyImmediate(m_DuplicateGO);
         }
 
         void OnSelectModeChanged(SelectMode mode)
@@ -645,7 +649,8 @@ namespace UnityEditor.ProBuilder
 
             if (HandleUtility.nearestControl != m_ControlID || !previewShortcutActive)
             {
-                DestroyImmediate(m_DuplicateGO);
+                if(m_DuplicateGO)
+                    m_DuplicateGO.GetComponent<MeshRenderer>().enabled = false;
                 return;
             }
 
@@ -671,6 +676,16 @@ namespace UnityEditor.ProBuilder
                 ApplyPrefsSettings(shape);
                 shape.GetComponent<MeshRenderer>().sharedMaterial = BuiltinMaterials.ShapePreviewMaterial;
 
+                EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
+                shape.Rebuild(m_Bounds, m_PlaneRotation);
+                ProBuilderEditor.Refresh(false);
+            }
+            else if (m_DuplicateGO.TryGetComponent<MeshRenderer>(out var renderer) && !renderer.enabled)
+            {
+                var shape = m_DuplicateGO.GetComponent<ProBuilderShape>();
+                renderer.enabled = true;
+
+                ApplyPrefsSettings(shape);
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
                 shape.Rebuild(m_Bounds, m_PlaneRotation);
                 ProBuilderEditor.Refresh(false);

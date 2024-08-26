@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UnityEditor.SceneManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using EditorToolManager = UnityEditor.EditorTools.EditorToolManager;
@@ -134,6 +135,8 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += ActiveToolChanged;
             ToolManager.activeContextChanged += ActiveToolChanged;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
+            PrefabStage.prefabStageOpened += OnPrefabStageChanged;
+            PrefabStage.prefabStageClosing += OnPrefabStageChanged;
             OnObjectSelectionChanged();
         }
 
@@ -222,20 +225,14 @@ namespace UnityEditor.ProBuilder
             s_UnitySelectionChangeMeshes.Clear();
         }
 
-        static void SelectModeChanged(SelectMode mode)
-        {
-            InvalidateCaches();
-        }
+        static void SelectModeChanged(SelectMode mode) => InvalidateCaches();
 
-        static void ActiveToolChanged()
-        {
-            InvalidateCaches();
-        }
+        static void ActiveToolChanged() => InvalidateCaches();
 
-        static void AfterMeshModification(IEnumerable<ProBuilderMesh> selection)
-        {
-            InvalidateCaches();
-        }
+        static void AfterMeshModification(IEnumerable<ProBuilderMesh> selection) => InvalidateCaches();
+
+        //Ensure the selection is cleaned when entering/exiting a prefab stage
+        static void OnPrefabStageChanged(PrefabStage _) => InvalidateCaches();
 
         /// <summary>
         /// Ensure the mesh selection matches the current Unity selection. Called after Undo/Redo, as adding or removing

@@ -37,8 +37,8 @@ namespace UnityEditor.ProBuilder
                         {
                             m_IsDragging = true;
 
-                            if(tool.m_DuplicateGO != null)
-                                Object.DestroyImmediate(tool.m_DuplicateGO);
+                            if (tool.m_DuplicateGO != null)
+                                tool.m_DuplicateGO.GetComponent<MeshRenderer>().enabled = false;
 
                             Drag(evt.mousePosition);
                         }
@@ -105,7 +105,9 @@ namespace UnityEditor.ProBuilder
 
             tool.m_ProBuilderShape = null;
             tool.m_LastShapeCreated = shape;
-            Object.DestroyImmediate(tool.m_DuplicateGO);
+            if (tool.m_DuplicateGO != null)
+                tool.m_DuplicateGO.GetComponent<MeshRenderer>().enabled = false;
+
             Selection.activeGameObject = shape.gameObject;
         }
     }

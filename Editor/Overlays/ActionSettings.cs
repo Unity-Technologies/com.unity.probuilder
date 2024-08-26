@@ -59,6 +59,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
+            m_Overlay.displayed = true;
         }
 
         public void Dispose()
@@ -71,6 +72,14 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             Selection.selectionChanged -= ObjectSelectionChanged;
+        }
+
+        internal static bool IsCurrentAction(MenuAction action)
+        {
+            if(s_Instance == null || s_Instance.m_CurrentAction == null)
+                return false;
+
+            return s_Instance.m_CurrentAction.GetType() == action.GetType();
         }
 
         internal static void DoAction(MenuAction action, bool preview)
@@ -97,6 +106,7 @@ namespace UnityEditor.ProBuilder
 
             SceneView.RemoveOverlayFromActiveView(s_Instance.m_Overlay);
             SceneView.AddOverlayToActiveView(s_Instance.m_Overlay = new MenuActionSettingsOverlay());
+            s_Instance.m_Overlay.displayed = true;
         }
 
         internal static void EndPreview()
@@ -167,7 +177,6 @@ namespace UnityEditor.ProBuilder
         public MenuActionSettingsOverlay()
         {
             displayName = PreviewActionManager.actionName;
-            displayed = true;
         }
 
         public override VisualElement CreatePanelContent()
@@ -227,6 +236,11 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => { s_CanTriggerNewAction = true; };
 
             Finish(EditorActionResult.Success);
+        }
+
+        internal static bool IsCurrentAction(MenuAction action)
+        {
+            return PreviewActionManager.IsCurrentAction(action);
         }
     }
 }

@@ -69,6 +69,13 @@ namespace UnityEditor.ProBuilder.Actions
         // This boolean allows to call the action only once in case of multi-selection as PB actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
+
+        [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true, 11)]
+        static bool ProBuilderizeMeshAction_Validate(MenuCommand command)
+        {
+            return !MenuActionSettings.IsCurrentAction(new ProBuilderize());
+        }
+
         [MenuItem("CONTEXT/MeshFilter/ProBuilderize", false, 11)]
         static void ProBuilderizeMeshAction(MenuCommand command)
         {
