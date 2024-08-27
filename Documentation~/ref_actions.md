@@ -1,4 +1,4 @@
-# Mesh editing tools
+# Mesh editing options
 
 This table lists all the editing tools available in ProBuilder, and indicates which [Edit modes](modes.md) support it:
 
