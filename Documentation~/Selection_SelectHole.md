@@ -1,11 +1,21 @@
-# ![Select Hole icon](images/icons/Selection_SelectHole.png) Select Holes
+# Select Hole
 
-The __Select Holes__ action selects all elements along the selected open vertex or edge. A hole is like a removed face. This action is a useful shortcut for selecting all the edges around a missing face.
+In ProBuilder, a hole is a missing face. The **Select Hole** action is a version of Grow Selection that selects all elements along an open vertex or edge. 
 
-If you have no elements selected, this action automatically selects all holes in the selected object.
+> **Tip:** To create a face from the hole, refer to [Fill Hole](FillHole.md).
+<!--fill hole is currently two pages; I will not allow that to stand-->
 
-![Start with one edge selected, grow selection around hole](images/Example_SelectHole.png)
+To select a hole:
 
-This action also tells you how many holes exist in the Mesh. It is only available in the [vertex and edge modes](modes.md).
+1. In the **Tools** overlay, select the **ProBuilder** context.
+1. In the **Tool Settings** overlay, select either:
+    * The **Vertex** edit mode.
+    * The **Edge** edit mode.
+1. Select an edge or vertex along a hole. To select all the holes in the mesh at once, don't select any vertex or edges.
+1. Do one of the following:
+    * Right-click (macOS: **Ctrl**+click) select **ProBuilder Select** > **Select Hole**.
+    * From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Select Hole**.
+1. All the edges or vertexes along the hole are selected.
 
-From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Select Hole**.
+![On the left is a mesh with a single selected edge along a missing face. On the right, the same mesh has all edges around the missing face selected.](images/Example_SelectHole.png)
+
