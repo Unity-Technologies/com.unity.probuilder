@@ -22,8 +22,7 @@ These actions are available:
 | [Export](Object_Export.md) | x | | | |
 | [Extrude Edges](Edge_Extrude.md) | | | x | |
 | [Extrude Faces](Face_Extrude.md) | | | | x |
-| [Fill Hole](Edge_FillHole.md) (Edges) | | | x | |
-| [Fill Hole](Vert_FillHole.md) (Vertices) | | x | | |
+| [Fill Hole](FillHole.md) | | x | x | |
 | [Flip Face Edge](Face_FlipTri.md)  | | | | x |
 | [Flip Face Normals](Face_FlipNormals.md) | | | | x |
 | [Insert Edge Loop](Edge_InsertLoop.md)  | | | | |
@@ -43,7 +42,6 @@ These actions are available:
 The Editor:
 
 * Has only one extrude - I should merge them
-* Has only one fill hole - I should merge them
 * Doesn't have inset - it's just a way to use extrude, so why is it treated as an action?
 * Doesn't have Shift
 * Doesn't have Lightmap UVs
