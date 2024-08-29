@@ -3,6 +3,7 @@
 In ProBuilder, a hole is a missing face. The **Select Hole** action is a version of Grow Selection that selects all elements along an open vertex or edge. 
 
 > **Tip:** To create a face from the hole, refer to [Fill Hole](FillHole.md).
+
 <!--fill hole is currently two pages; I will not allow that to stand-->
 
 To select a hole:
