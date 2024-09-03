@@ -21,6 +21,7 @@ These options are never available in the GameObject tool context.
 | [Select Edge Loop](Selection_EdgeLoopRing.md) | | x | |
 | [Select Edge Ring](Selection_EdgeLoopRing.md) | | x | |
 | [Select Material](Selection_SelectByMaterial.md) | | | x |
+| [Select Smoothing Group](Selection_SmoothingGroup.md) | | | x |
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
 | [Shrink Selection](Selection_Shrink.md) | | x | x | x |
 
