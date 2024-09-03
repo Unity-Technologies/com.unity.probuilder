@@ -12,10 +12,8 @@ Even if the vertex color isn't currently visible (for example, if it has a Mater
 
 From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Select Vertex Color**.
 
-## Select by Colors Options
+## Select Vertex Colors Options
 
 Enable the **Current Selection** option to extend the selection to other faces on the currently selected GameObject(s). By default, this option is disabled. 
 
 When disabled, ProBuilder selects every face with the currently selected vertex color on any GameObject in the scene.
-
-![Grow Selection Options](images/Selection_SelectByVertexColor_props.png)
