@@ -61,7 +61,6 @@ namespace UnityEditor.ProBuilder
         //Size Handle management
         static Vector2 s_StartMousePosition;
         static Vector3 s_StartSize;
-        static Vector3 s_HandleStartPosition;
         static Vector3 s_StartPositionLocal;
         static Vector3 s_StartPositionGlobal;
         static Vector3 s_StartScale;
@@ -211,14 +210,17 @@ namespace UnityEditor.ProBuilder
             {
                 EditorShapeUtility.UpdateFaces(proBuilderShape.editionBounds, proBuilderShape.transform.lossyScale, faces);
 
-                for(int i = 0; i <4; ++i)
+                for (int i = 0; i < 4; ++i)
                     k_OrientationControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
-                for(int i = 0; i <faces.Length; ++i)
+                for (int i = 0; i < faces.Length; ++i)
                     s_FaceControlIDs[i] = GUIUtility.GetControlID(FocusType.Passive);
 
-                var absSize = Math.Abs(proBuilderShape.editionBounds.size);
-                if(absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon )
-                    DoOrientationHandles(proBuilderShape, tool);
+                if (!(proBuilderShape.shape is Cube))
+                {
+                    var absSize = Math.Abs(proBuilderShape.editionBounds.size);
+                    if (absSize.x > Mathf.Epsilon && absSize.y > Mathf.Epsilon && absSize.z > Mathf.Epsilon)
+                        DoOrientationHandles(proBuilderShape, tool);
+                }
 
                 DoSizeHandles(proBuilderShape, tool);
             }
@@ -257,7 +259,6 @@ namespace UnityEditor.ProBuilder
                         s_StartCenter = proBuilderShape.shapeWorldCenter;
                         s_StartScale = proBuilderShape.transform.lossyScale;
                         s_StartScaleInverse = new Vector3(1f / Mathf.Abs(s_StartScale.x), 1f/Mathf.Abs(s_StartScale.y), 1f/Mathf.Abs(s_StartScale.z));
-                        s_HandleStartPosition = face.CenterPosition;
                         s_StartPositionLocal = proBuilderShape.shapeLocalBounds.center + face.CenterPosition;
                         s_StartPositionGlobal = proBuilderShape.transform.TransformPoint(s_StartPositionLocal);
                         s_StartSize = proBuilderShape.size;

@@ -516,7 +516,7 @@ namespace UnityEditor.ProBuilder
             return res.item1;
         }
 
-        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition)
+        internal static SimpleTuple<Plane, Vector3> FindBestPlaneAndBitangent(Vector2 mousePosition, GameObject objectToIgnore = null)
         {
             // Priority in finding the "best" plane for input from a mouse position:
             // 1. Take the plane from the first hit mesh.
@@ -526,7 +526,7 @@ namespace UnityEditor.ProBuilder
             Plane plane;
             Vector3 bitangent;
 
-            if(GetPlaneFromPickedObject(mousePosition, out plane, out bitangent))
+            if(GetPlaneFromPickedObject(mousePosition, objectToIgnore, out plane, out bitangent))
                 return new SimpleTuple<Plane, Vector3>(plane, bitangent);
 
             if (!GetPlaneFromProGridsAxis(mousePosition, out plane))
@@ -537,9 +537,9 @@ namespace UnityEditor.ProBuilder
             return new SimpleTuple<Plane, Vector3>(plane, bitangent);
         }
 
-        static bool GetPlaneFromPickedObject(Vector2 mousePosition, out Plane plane, out Vector3 bitangent)
+        static bool GetPlaneFromPickedObject(Vector2 mousePosition, GameObject objectToIgnore, out Plane plane, out Vector3 bitangent)
         {
-            GameObject go = null;
+            GameObject go = objectToIgnore;
             var ignorePicking = new List<GameObject>();
 
             do

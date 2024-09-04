@@ -23,8 +23,8 @@ namespace UnityEditor.ProBuilder
 
             m_HitPosition = Vector3.positiveInfinity;
 
-            if(tool.m_DuplicateGO != null)
-                GameObject.DestroyImmediate(tool.m_DuplicateGO);
+            if (tool.m_DuplicateGO != null)
+                tool.m_DuplicateGO.GetComponent<MeshRenderer>().enabled = false;
         }
 
         public override ShapeState DoState(Event evt)
@@ -47,7 +47,7 @@ namespace UnityEditor.ProBuilder
 
             if(evt.isMouse && HandleUtility.nearestControl == tool.controlID)
             {
-                var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition);
+                var res = EditorHandleUtility.FindBestPlaneAndBitangent(evt.mousePosition, tool.m_DuplicateGO);
                 Ray ray = HandleUtility.GUIPointToWorldRay(evt.mousePosition);
                 float hit;
 
