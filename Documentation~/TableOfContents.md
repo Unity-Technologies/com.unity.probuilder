@@ -34,7 +34,6 @@
 		* [Toggle Handle Orientation](HandleAlign)
 		* [Toggle Select Back Faces](Selection_SelectHidden)
 		* [Toggle X Ray](Toggle_X_Ray)
-        * [Shift](Selection_Shift)
 	* [Object options reference](object-ref)
 	    * [Center Pivot](CenterPivot)
 		* [Conform Objects Normals](Object_ConformNormals)
