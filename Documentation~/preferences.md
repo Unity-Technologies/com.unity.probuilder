@@ -1,6 +1,6 @@
 # ProBuilder Preferences
 
-To configure ProBuilder, from the main menu, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**). In the **Preferences** window, select **ProBuilder** from the list.
+To configure ProBuilder, from the main menu, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**). In the **Preferences** window, select the **ProBuilder** tab.
 
 ## Dimensions Overlay
 
