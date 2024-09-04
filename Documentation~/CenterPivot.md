@@ -7,6 +7,7 @@ To center the pivot point:
 1. Select one or more objects.
     > **Note:** If you have multiple objects selected, each object's new pivot point is the center of that object, regardless of the position of any other object. 
 1. From the main menu, select **Tools** > **ProBuilder** > **Object** > **Center Pivot**.
+    If you are in the GameObject context, you can also right-click (macOS: **Ctrl**+click) the object and select **ProBuilder** > **Center Pivot**.
 
 ![Center Pivot example. The mesh on the left side is above and to the right of its pivot. The mesh on the right has its pivot at its center.](images/CenterPivot_Example.png)
 
