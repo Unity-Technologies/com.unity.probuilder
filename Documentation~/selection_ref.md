@@ -16,11 +16,11 @@ These options are never available in the GameObject tool context.
 | ---- | ---- | ---- | ---- |
 | [Grow Selection](Selection_Grow.md) | x | x | x |
 | [Select Hole](Selection_SelectHole.md) | x | x | |
-| [Select Loop (in Edge Selection mode)](Selection_Loop_Edge.md) | | x | |
-| [Select Loop (in Face Selection mode)](Selection_Loop_Face.md) | | | x |
+| [Select Face Loop](Selection_FaceLoopRing.md) | | | x |
+| [Select Face Ring](Selection_FaceLoopRing.md) | | | x |
+| [Select Edge Loop](Selection_EdgeLoopRing.md) | | x | |
+| [Select Edge Ring](Selection_EdgeLoopRing.md) | | x | |
 | [Select Material](Selection_SelectByMaterial.md) | | | x |
-| [Select Ring (in Edge Selection mode)](Selection_Ring_Edge.md) | | x | |
-| [Select Ring (in Face Selection mode)](Selection_Ring_Face.md) | | | x |
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
 | [Shrink Selection](Selection_Shrink.md) | | x | x | x |
 

@@ -8,7 +8,7 @@ To expand the selection:
 1. In the **Tool Settings** overlay, select an edit mode. All three modes support this action.
 1. Select a face, edge, or vertex.
 1. Do one of the following:
-    * Right-click (macOS: **Ctrl**+click) and click **Select** > **Grow Selection**.
+    * Right-click (macOS: **Ctrl**+click) and click **Select** > **ProBuilder Select** > **Grow Selection**.
     * From the main menu, select **Tools** > **ProBuilder** > **Selection** > **Grow Selection**.
 1. The **Grow Selection** overlay opens and the selection is expanded to match the default settings.
 
