@@ -28,6 +28,8 @@
         * [Sprite](Sprite)
         * [Stairs](Stair)
         * [Torus](Torus)
+    * [ProBuilderize](Object_ProBuilderize)
+        * [ProBuilder MeshFilter component](ProBuilderMesh)
 * [Edit meshes](workflow-edit)
     * [Common editing tasks](workflow-edit-tasks)
     * [Mesh editing options](ref_actions)
