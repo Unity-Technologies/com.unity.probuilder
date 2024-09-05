@@ -1,11 +1,14 @@
-# ![Center Pivot icon](images/icons/CenterPivot.png) Center Pivot
+# Center Pivot
 
-The __Center Pivot__ action moves the pivot point for the Mesh to the center of the object’s bounds. For example, if you move a lot of vertices on one side of your Mesh, when you try to rotate the object, it rotates around a point outside of the Mesh. 
+The __Center Pivot__ action moves the pivot point for a mesh to the center of the object’s bounds. You might want to do this if you have elongated the vertices on one side of your mesh, which pushes the bounds on that side far from the original center.
 
-From the main menu, select **Tools** > **ProBuilder** > **Object** > **Center Pivot**.
+To center the pivot point:
 
-![Center Pivot example](images/CenterPivot_Example.png)
+1. Select one or more objects.
+    > **Note:** If you have multiple objects selected, each object's new pivot point is the center of that object, regardless of the position of any other object. 
+1. From the main menu, select **Tools** > **ProBuilder** > **Object** > **Center Pivot**.
+    If you are in the GameObject context, you can also right-click (macOS: **Ctrl**+click) the object and select **ProBuilder** > **Center Pivot**.
 
+![Center Pivot example. The mesh on the left side is above and to the right of its pivot. The mesh on the right has its pivot at its center.](images/CenterPivot_Example.png)
 
-
-> **Note:** If you have multiple objects selected, each object's new pivot point becomes the center of each object, regardless of the position of any other object. 
+You can also set the pivot to the center of selected edges, faces, and vertices. Refer to the [Set Pivot](SetPivot.md) action for more information.
