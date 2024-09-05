@@ -1,3 +1,11 @@
 # Store meshes as assets
 
-Store meshes as standalone assets in the Project folder, rather than as part of the Scene asset. This property is only visible when **Experimental Features Enabled** is enabled.
+By default, ProBuilder stores its meshes in the Scene asset, so you can't access them as individual assets. If you need to access the meshes, for example to share them with other projects, you can store them as standalone assets in the Project folder.
+
+To save a ProBuilder mesh as a standalone asset:
+
+1. Go to **Unity** > **Settings** > **ProBuilder**.
+1. Select **Experimental Features Enabled**.
+1. Select **Store Mesh as Asset**.
+
+> **Note:** This is an experimental feature.
