@@ -1,4 +1,4 @@
-# ![Connect Edges icon](images/icons/Edge_Connect.png) Connect Edges
+# Connect Edges
 
 The __Connect Edges__ action inserts an edge that connects the centers of each selected edge.
 

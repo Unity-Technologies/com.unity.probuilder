@@ -23,6 +23,6 @@ These options are never available in the GameObject tool context.
 | [Select Material](Selection_SelectByMaterial.md) | | | x |
 | [Select Smoothing Group](Selection_SmoothingGroup.md) | | | x |
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
-| [Shrink Selection](Selection_Shrink.md) | | x | x | x |
+| [Shrink Selection](Selection_Shrink.md) | x | x | x |
 
 The [Select Path](SelectPath.md) action is available only through its keyboard shortcut, and only in the Face edit mode.

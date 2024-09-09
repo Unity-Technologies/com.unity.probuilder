@@ -1,4 +1,4 @@
-# ![Flip Normals icon](images/icons/Face_FlipNormals.png) Flip Face Normals
+# Flip Face Normals
 
 The __Flip Face Normals__ action flips the normals only on the selected face(s).
 

@@ -1,4 +1,4 @@
-# ![Flip Normals icon](images/icons/Object_FlipNormals.png) Flip Normals
+# Flip Normals
 
 The __Flip Normals__ action flips the normals of all faces on the selected object(s). This is especially useful if you want to convert an exterior-modeled shape into an interior space.
 

@@ -1,4 +1,4 @@
-# ![Detach Face icon](images/icons/Face_Detach.png) Detach Faces
+# Detach Faces
 
 The __Detach Faces__ action detaches the selected face(s) from the rest of the Mesh. 
 

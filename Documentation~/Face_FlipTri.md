@@ -1,4 +1,4 @@
-# ![Flip Triangles icon](images/icons/Face_FlipTri.png) Flip Face Edge
+# Flip Face Edge
 
 The __Flip Face Edge__ action swaps the triangle orientation on the selected face(s) with four sides. This reverses the direction of the middle edge in a quad.
 

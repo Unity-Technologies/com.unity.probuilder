@@ -1,4 +1,4 @@
-# ![Extrude Face icon](images/icons/Face_Extrude.png) Extrude Faces
+# Extrude Faces
 
 The __Extrude Faces__ action creates a new face. To do this, it pulls out the currently selected face, and attaches sides to each edge.
 

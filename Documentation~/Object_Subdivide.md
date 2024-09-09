@@ -1,4 +1,4 @@
-# ![Subdivide Object icon](images/icons/Object_Subdivide.png) Subdivide Object
+# Subdivide Object
 
 The __Subdivide Object__ action divides every face on selected objects, allowing for greater levels of detail when modeling.
 

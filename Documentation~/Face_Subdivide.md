@@ -1,4 +1,4 @@
-# ![Subdivide Face icon](images/icons/Face_Subdivide.png) Subdivide Face
+# Subdivide Face
 
 The __Subdivide Face__ action splits each selected face. To do this, it adds a vertex at the center of each edge and connects them in the center.
 

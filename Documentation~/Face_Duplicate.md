@@ -1,4 +1,4 @@
-# ![Duplicate Faces icon](images/icons/Face_Duplicate.png) Duplicate Faces
+# Duplicate Faces
 
 The __Duplicate Faces__ action copies each selected face and either creates a new Mesh or leaves it in the same GameObject as a sub-Mesh, depending on the default options.
 

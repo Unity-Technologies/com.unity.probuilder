@@ -1,4 +1,4 @@
-# ![Weld Vertices icon](images/icons/Vert_Weld.png) Weld Vertices
+# Weld Vertices
 
 The __Weld Vertices__ action merges selected vertices within a specific distance of one another. You can set this distance with the **Weld Distance** option.
 

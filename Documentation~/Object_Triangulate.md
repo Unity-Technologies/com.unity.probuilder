@@ -1,4 +1,4 @@
-# ![Triangulate icon](images/icons/Object_Triangulate.png) Triangulate (Objects)
+# Triangulate (Objects)
 
 The __Triangulate__ action reduces all polygons to their base triangles. This creates a sharp, faceted appearance.
 
