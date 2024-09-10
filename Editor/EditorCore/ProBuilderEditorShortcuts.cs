@@ -55,7 +55,7 @@ namespace UnityEditor.ProBuilder
 
 		static bool CheckAndEnterPBContextIfNeeded()
 		{
-			if (ToolManager.activeContextType == typeof(GameObjectToolContext))
+			if (ToolManager.activeContextType != typeof(PositionToolContext))
 			{
 				// Check if PositionToolContext can actually be entered
 				if (EditorToolManager.GetComponentContext(typeof(PositionToolContext), true) == null)
