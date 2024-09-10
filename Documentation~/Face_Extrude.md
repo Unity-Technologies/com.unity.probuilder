@@ -1,33 +1,34 @@
 # Extrude Faces
 
-The __Extrude Faces__ action creates a new face. To do this, it pulls out the currently selected face, and attaches sides to each edge.
+The **Extrude Faces** action adds a section to your mesh by moving away the selected face and adding sides to connect it to the mesh from its new position. You can then either:
 
-By default, each new face follows the direction of its vertex normals, but you can change this with the **Extrude By** option.
+* Move the new section farther out and in any direction to make the shape larger.
+* Inset the new section to create an interior space. For example, if you inset a face on a cube, you create a box with an open side and a false bottom. 
 
-![Extrude from inset face on top of cube](images/ExtrudeFace_Example.png)
+![On the left, the cube's top face has a central section selected. On the right, that central section is extruded.](images/ExtrudeFace_Example.png)
 
-You can invoke this action in either way:
+To extrude a face:
 
-- Select one or more face(s) and click **Extrude Faces**. By default, the distance of the extrusion is **0.5**, but you can change that with the **Distance** option.
-
-  > **Tip:** You can also use this action with the **Ctrl/Cmd+E** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Extrude**).
-
-- Select one or more face(s) and then hold **Shift** while moving, rotating, or scaling the selected face(s). This method ignores the options but provides greater control, especially with the direction of the extrusion.
-
-	When you use this method with the scaling control, it creates an inset.
-
+1. In the **Tools** overlay, select the **ProBuilder** context.
+1. In the **Tool Settings** overlay, select the **Face** edit mode.
+1. Select the face to extrude. Hold **Shift** to select multiple faces.
+1. Do one of the following:
+    * Right-click (macOS: **Ctrl**+click) on the selected face and select **Extrude Faces**.
+    * From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Extrude**.
+1. The **Extrude Faces** overlay opens and a new face is created.
+    * By default, the new face follows the direction of its vertex normals. You can change this with the **Extrude By** option.
+    * By default, the distance of the extrusion is **0.5**. You can change this with the **Distance** option. A negative value creates an inset.
+    * You can use the Transform tools to move, rotate, or scale the new face instead of using the options in the overlay. Hold **Shift** for greater control. 
 
 
 ## Extrude Faces Options
 
-These options only apply if you are using the **Extrude Faces** button or the **Ctrl/Cmd+E** shortcut.
+| **Property** |   | **Description** |
+| :--- | --- | --- |
+| **Extrude By** |   | When you extrude more than one face, and those faces share an edge, set how the new faces behave along the shared edge. |
+| ![](images/extrude_face_normals.png) | **Face Normals** | Each new face follows the direction of its original face, and the faces are connected to each other. |
+| ![](images/extrude_vertex_normal.png) | **Vertex Normals** | The edges of the new faces farthest from the joint edge follow the direction of the original faces. However, the faces move toward the shared edge rather than follow the original direction for their whole length. |
+| ![](images/extrude_individual_faces.png) | **Individual Faces** | Each new face follows the direction of its original face, but the faces aren't connected to each other. |
+| **Distance** |   | Distance to extrude the faces(s). Use negative values to inset the face, and define inset. |
 
-![Extrude Face options](images/Face_Extrude_props.png)
 
-| **Property:** |                                                              | **Description:**                                           |
-| :-------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **Extrude By**  |                                                              | Direction for extruding each selected face.                  |
-|                 | ![FaceNormalsIcon](images/icons/ExtrudeFace_FaceNormals.png) **Face Normals** | Use the selected face's own surface direction. Adjacent faces remain connected. |
-|                 | ![FaceNormalsIcon](images/icons/ExtrudeFace_VertexNormals.png) **Vertex Normals** | Use the selected face's Vertex normals. Adjacent faces remain connected. <br />This is the default. |
-|                 | ![FaceNormalsIcon](images/icons/ExtrudeFace_Individual.png) **Individual Faces** | Use the selected face's own surface direction. However, adjacent faces do *not* remain connected. |
-| __Distance__    |                                                              | Distance to extrude the faces(s). <br />Both positive and negative values are valid. |

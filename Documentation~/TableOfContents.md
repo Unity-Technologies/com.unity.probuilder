@@ -57,7 +57,6 @@
 		* [Export](Object_Export)
 		* [Extrude Edges](Edge_Extrude)
 		* [Extrude Faces](Face_Extrude)
-            * [Inset](Face_Inset)
 		* [Fill Hole](FillHole)
 		* [Flip Face Edge](Face_FlipTri)
 		* [Flip Face Normals](Face_FlipNormals)
