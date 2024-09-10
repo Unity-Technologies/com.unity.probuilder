@@ -37,15 +37,6 @@ namespace UnityEditor.ProBuilder
 			ProBuilderEditor.selectMode = SelectMode.Face;
 		}
 
-        [Shortcut("ProBuilder/Editor/Toggle ProBuilder Context", typeof(SceneViewMotion.SceneViewContext), KeyCode.G)]
-        static void Toggle_ObjectElementMode()
-        {
-            if (ToolManager.activeContextType == typeof(GameObjectToolContext))
-                ToolManager.SetActiveContext<PositionToolContext>();
-            else if(ToolManager.activeContextType == typeof(PositionToolContext))
-                ToolManager.SetActiveContext<GameObjectToolContext>();
-        }
-
 		[Shortcut("ProBuilder/Editor/Toggle Edit Mode", typeof(PositionToolContext.ProBuilderShortcutContext), KeyCode.H)]
 		static void Toggle_SelectMode()
 		{
