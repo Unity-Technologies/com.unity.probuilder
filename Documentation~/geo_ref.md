@@ -37,10 +37,3 @@ These actions are available:
 | [Triangulate Faces](Face_Triangulate.md) | | | | x |
 | [Weld Vertices](Vert_Weld.md) | | x | | |
 
-
-<!--
-The Editor:
-
-* Has only one extrude - I should merge them
-* Doesn't have Lightmap UVs
--->
