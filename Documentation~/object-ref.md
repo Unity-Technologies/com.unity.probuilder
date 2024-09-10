@@ -1,2 +1,0 @@
-# Selection options reference
- 
