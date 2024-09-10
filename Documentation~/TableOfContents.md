@@ -95,7 +95,6 @@
 	* [Snap to Grid](snap-to-grid)
 * [Editor windows reference](ref_windows)
 	* [Lightmap UV Editor window](lightmap-uv)
-        	* [Lightmap UVs](Object_LightmapUVs)
 	* [Material Editor window](material-tools)
 	* [Positions Editor window](vertex-positions)
 	* [Smooth Group Editor window](smoothing-groups)

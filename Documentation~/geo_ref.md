@@ -42,7 +42,5 @@ These actions are available:
 The Editor:
 
 * Has only one extrude - I should merge them
-* Doesn't have inset - it's just a way to use extrude, so why is it treated as an action?
-* Doesn't have Shift
 * Doesn't have Lightmap UVs
 -->
