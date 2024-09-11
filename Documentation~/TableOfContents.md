@@ -29,7 +29,7 @@
         * [Stairs](Stair)
         * [Torus](Torus)
     * [ProBuilderize a standard object](Object_ProBuilderize)
-        * [ProBuilder MeshFilter component](ProBuilderMesh)
+    * [ProBuilder MeshFilter component](ProBuilderMesh)
 * [Edit meshes](workflow-edit)
     * [Modeling tips](workflow-edit-tips)
     * [Cut tool](cut-tool)
