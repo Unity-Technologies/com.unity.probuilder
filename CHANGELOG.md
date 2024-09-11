@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- [PBLD-169] "Edit Vertices/Edges/Faces" shortcuts now automatically enter the ProBuilder context.
 - [PBLD-167] Removed "Toggle ProBuilder Context" shortcut - the built-in "Cycle Tool Modes" shortcut should be used instead.
 
 ## [6.0.3] - 2024-08-20
