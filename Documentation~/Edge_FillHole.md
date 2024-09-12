@@ -4,7 +4,7 @@ The __Fill Hole__ action creates a new face that fills any holes that touch the 
 
 ![Create new face from open edges](images/FillHole_Example.png)
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Geometry** > **Fill Hole**).
+From the main menu, select **Tools** > **ProBuilder** > **Geometry** > **Fill Hole**.
 
 ## Fill Hole Options
 

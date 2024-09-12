@@ -4,7 +4,7 @@ Use the **Positions Editor** window to enter specific translation coordinates to
 
 ![The Positions Editor window with two faces selected](images/vertex-positions.png)
 
-> **Tip:** You can access this tool from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open Vertex Position Editor**).
+To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open Vertex Positions Editor**.
 
 By default, Unity uses absolute coordinates to define positions, but you can click the **World Space** button in the top right corner to use relative coordinates instead (that is, relative to the **Model Space**).
 

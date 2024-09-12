@@ -6,7 +6,7 @@ The __Grow Selection__ action expands the selection outward to adjacent faces, e
 
 This action is available in the [vertex, edge, and face modes](modes.md).
 
-> **Tip:** You can also use this action with the **Alt/Opt+G** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Grow Selection**).
+You can use this action with the **Alt/Opt+G** shortcut, or from the ProBuilder menu (**Tools** > **ProBuilder** > **Selection** > **Grow Selection**).
 
 
 

@@ -106,7 +106,7 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.LabelField(s_LogPath);
             GUI.enabled = true;
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("open", EditorStyles.miniButton))
+            if (GUILayout.Button("Open", EditorStyles.miniButton))
                 UnityEditor.EditorUtility.OpenWithDefaultApp(s_LogPath);
             GUILayout.EndHorizontal();
 

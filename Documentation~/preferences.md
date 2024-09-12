@@ -1,4 +1,4 @@
-# ProBuilder Preferences
+# ProBuilder Preferences 
 
 To configure ProBuilder, from the main menu, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**). In the **Preferences** window, select the **ProBuilder** tab.
 
@@ -10,7 +10,7 @@ By default, the [Dimensions overlay](menu-dimover.md) displays the dimensions of
 
 Enable or disable these ProBuilder experimental features:
 
-* **Tools** > **ProBuilder** > **Editors** > [**New Bezier Shape**](bezier.md)
+* **Tools** > **ProBuilder** > **Editors** > **New Bezier Shape**.
 * **Tools** > **ProBuilder** > **Experimental** > **Boolean (CSG)**.
 * **Preferences** window > **ProBuilder** > **Store Mesh as Asset**.
 
@@ -22,7 +22,6 @@ Enable or disable these ProBuilder experimental features:
 | **Store Meshes as Asset** | Store meshes as standalone assets in the Project folder, rather than as part of the Scene asset. This property is only visible when **Experimental Features Enabled** is enabled. |
 
 > **Note**: When you activate or deactivate experimental features, the Unity Editor has to recompile scripts, which causes a delay before changes apply.
-
 ## General
 
 Set some basic options for ProBuilder.

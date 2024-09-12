@@ -1,10 +1,8 @@
-# ![UV Editor icon](images/icons/Panel_UVEditor.png) UV Editor window
+# UV Editor window
 
 Use the UV Editor window to manage texture mapping on the selected Mesh.
 
-To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click the **UV Editor** button ( ![UV Editor icon](images/icons/Panel_UVEditor.png) ).
-
-> **Tip:** You can also access this window from the ProBuilder menu (**Tools** > **ProBuilder** > **Editors** > **Open UV Editor**).
+To open this window, go to **Main Menu** > **Tools** > **ProBuilder** > **Editors** > **Open UV Editor**.
 
 ![UV Editor window](images/UVPanel_FullWindow_Letters.png)
 
@@ -15,7 +13,7 @@ To open this window, navigate to the [ProBuilder toolbar](toolbar.md) and click 
 * Choose **UV** to edit the UV mapping for shaders.
 * Choose **UV2 (read-only)** to regenerate your baked or realtime lightmaps.
 
-**(C)** The **Actions** panel is a dynamic panel, similar to the [ProBuilder toolbar](toolbar.md):
+**(C)** The **Actions** panel is a dynamic panel:
 
 * What kind of UVs you are editing (shader UVs or lightmap UV2s) determine which set of options appear in the panel. 
 * For shader UV options, you can switch between using manual UV editing or auto-texturing, and these each have their own specific options as well. For more information, see [UV editing modes](#uv-modes).

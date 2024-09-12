@@ -2,7 +2,7 @@
 
 The __ProBuilderize__ action converts the selected object(s) into ProBuilder-editable objects.
 
-> **Tip:** You can also launch this action from the ProBuilder menu (**Tools** > **ProBuilder** > **Object** > **ProBuilderize**).
+From the main menu, select **Tools** > **ProBuilder** > **Object** > **ProBuilderize**.
 
 ## ProBuilderize options
 

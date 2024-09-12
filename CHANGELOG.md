@@ -7,8 +7,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changes
+
+- [PBLD-169] "Edit Vertices/Edges/Faces" shortcuts now automatically enter the ProBuilder context.
+- [PBLD-167] Removed "Toggle ProBuilder Context" shortcut - the built-in "Cycle Tool Modes" shortcut should be used instead.
+
+## [6.0.3] - 2024-08-20
+
 ### Fixed
 
+- [PBLD-159] Fixed an issue where a ProBuilder menu item shortcut would conflict with Editor's built-in shortcut.
+- [PBLD-158] Fixed a bug where ProBuilder would prevent classes inheriting from `UnityEditor.Editor` to compile.
+- [PBLD-151] Fixed a bug where the Action Settings overlay would not be displayed when used the first time.
+- [PBLD-141] Fixed a bug where the selection would be incorrect when entering PrefabStage.
+- [PBLD-142] Fixed a bug where it was possible to trigger the probuilderize action twice on the same object.
+- [PBLD-150] Fixed a bug where the orientation handles would not be useful when manipulating a cube shape.
+- [PBLD-149] Fixed a bug where the ProBuilder edit modes toggle could be disabled.
+- [PBLD-145] Fixed a bug where using the preview shape with HDRP would crash the editor.
+- Fixed a bug where moving the preview shape was not ignoring the preview shape to compute the correct placement.
+
+### Added
+
+- [PBLD-152] Added some relevant Unity selection actions in the ProBuilder contextual menu.
+
+## [6.0.2] - 2024-08-08
+
+### Fixed
+
+- [PBLD-138] Fixed a bug where duplicating a ProBuilder mesh would mark all scenes as dirty.
+- [PBLD-115] Fixed a bug where using the 'Create PolyShape' tool when GPU Resident Drawer was enabled would throw warnings.
+- [PBLD-134] Fixed a bug where drawing ProBuilder shapes would cause temporary visual glitches on macOS.
+- [PBLD-127] Fixed a bug where undoing a shape creation would reset the deleted shape in the scene.
 - [PBLD-129] Fixed a bug where redoing actions was not updating the ProBuilder mesh in the scene.
 - [PBLD-120] Replaced the former scene info by a scene view overlay.
 - [PBLD-121] Fixed edit mode and context shortcuts and settings tooltips.
