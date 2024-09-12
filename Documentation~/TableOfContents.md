@@ -112,6 +112,5 @@
 * [Experimental features](experimental)
 	* [Create and edit Bezier shapes](workflow-create-bezier)
 	* [Perform Boolean operations](boolean)
-	* [Store meshes as assets](meshes-as-assets)
 * [Scripting API overview](api)
 * [Glossary](gloss)
