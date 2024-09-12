@@ -1,4 +1,6 @@
-# Modeling tips for beginners
+# Modeling tips
+
+## Performance and detail
 
 To successfully create digital models, you need to find a balance between visual quality and resource requirements. Always remember these two statements:
 
@@ -19,7 +21,7 @@ Finally, when you are satisfied with the look and shape of your Mesh, you can tr
 
 
 
-# Ideal geometry
+## Ideal geometry
 
 When you create buildings and other architectural structures, you can use Unity's grid snapping to help you stick to right angles and perfect lines. It also makes you less likely to accidentally move vertices past an adjacent vertex, which would create impossible geometry.
 
@@ -27,9 +29,13 @@ To make it easier to combine pieces of your buildings together later on, only us
 
 
 
+## Geometry workflow examples
+
+
+
 <a name="bad_verts"></a>
 
-# Structures to avoid
+## Structures to avoid
 
 Try to avoid creating structures that contain vertices in irregular locations:
 
@@ -40,7 +46,7 @@ Try to avoid creating structures that contain vertices in irregular locations:
 
 <a name="tjoint"></a>
 
-## T-Junctions
+### T-Junctions
 
 If you can avoid vertices at T-junctions, that makes your geometry a lot cleaner:
 
@@ -54,7 +60,7 @@ To avoid this complexity, the [Insert Edge Loop](Edge_InsertLoop.md) action crea
 
 <a name="floatv"></a>
 
-## Floating vertices
+### Floating vertices
 
 Another structural issue to avoid is a floating (or winged) vertex:
 

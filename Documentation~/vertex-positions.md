@@ -1,4 +1,4 @@
-# Positions Editor window
+# Set vertex positions
 
 Use the **Positions Editor** window to enter specific translation coordinates to modify vertex positions.
 

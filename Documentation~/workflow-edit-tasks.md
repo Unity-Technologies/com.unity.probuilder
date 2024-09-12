@@ -1,26 +1,6 @@
 # Common editing tasks
 
-This page describes some of the most common ways you can use the ProBuilder tools and actions to create and modify geometry. There any many more possibilities, but these should give you a good place to start developing your own workflow.
 
-## General modeling tasks
-
-- **Selecting**: Selecting elements is the first step you take when you want to change your Mesh. ProBuilder provides a whole range of [selection actions](selection-tools.md) that make it easier to target the elements you need to access. As a shortcut, when working in the Face editing mode, you can double-click any face to select all faces on the Mesh.
-
-- **Transforming:** You can translate, rotate, and scale geometry elements to change the shape of a basic Mesh. For example, if you use the basic Stairs shape but you want to give it a crooked look, you could move some edges or vertices.
-
-- **Extruding:** "Extruding" refers to dragging a face out from the Mesh. To do this, select ![Face edit mode](images/icons/EditModes_Face.png) [Face editing mode](modes.md) in the Tool Settings overlay after you activate the ProBuilde tool context. Then, select a face, hold Shift, and use the Transform controls.
-
-  Alternatively, you can [extrude edges](Edge_Extrude.md) (for example, if you want to build a ski slope, you could extrude an edge and then [smooth it](smoothing-groups.md)).
-
-- **Insetting**: "Insetting" refers to dragging the edges of the face inside the Mesh. To do this, select a face, hold Shift, and use the Scale controls. Then drag in the opposite direction without the Shift modifier to complete the [inset](Face_Inset.md).
-
-- **Subdividing edges**: If you have an irregular shape (for example, a wall with a peaked top) and you need to split it into four faces (for example, to insert windows), you can [insert an edge loop](Edge_InsertLoop.md) to split the whole wall into two mirrored pieces, and then select only those edges along the front and back of the wall.
-
-	[Subdividing](Edge_Subdivide.md) the two selected edges then creates a third vertex, which you can connect up with the vertices at the base of the peaked section to create four perfectly even sections on the front and the back. This approach is much easier than trying to subdivide a five-sided polygon.
-
-- **Cutting**: This is similar to [subdividing faces](Face_Subdivide.md) except that you control the shape of the new face, instead of letting ProBuilder split the face evenly. You click on the face to define the location of the edges and vertices using the modal [Cut](cut-tool.md) tool.
-
-- **Boolean operations**: Some geometry is hard to create by moving faces, edges, and vertices. The experimental [Boolean](boolean.md) feature allows you to quickly combine two Meshes together to create a new Mesh. The final Mesh is either the addition of the two, the difference between the two, or only the common geometry between them, depending on the mode.
 
 ## Object-specific tasks
 
