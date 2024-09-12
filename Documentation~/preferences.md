@@ -29,7 +29,7 @@ Set some basic options for ProBuilder.
 
 | **Property** | **Function** |
 | :--- | :--- |
-| **Show Action Notifications** | Enable this option to display a notification in the Scene view after you perform an action with ProBuilder. |
+| **Show Action Notifications** | Display a notification in the Scene view after you perform an action with ProBuilder. |
 | **Auto Lightmap UVs** | Generate the UV2 channel after every geometry edit. This means you don't have to manually generate them every time the mesh changes. UV2 channel generation for meshes is necessary for lighting, but can be time-consuming. If you are editing objects with many vertices, disable this option to save resources. |
 | **Show Missing Lightmap UVs Warning** | Display a warning in the console if ProBuilder shapes are missing a valid UV2 channel when Unity performs a lightmap bake. |
 | **Show Handle Info** | Display the information for moving, rotating, and scaling deltas in the **Scene** view when the active context is ProBuilder. **Note**: If you have the [Component Editor **Tools** panel](https://docs.unity3d.com/Manual/UsingCustomEditorTools.html#ToolModesAccessSceneViewPanel) open in the **Scene** view, it covers this information and you need to close it. |
