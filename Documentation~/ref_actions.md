@@ -1,6 +1,6 @@
-# Action reference
+# Mesh editing options
 
-This table lists all the actions available in ProBuilder, and indicates which [Edit modes](modes.md) support it:
+This table lists all the editing tools available in ProBuilder, and indicates which [Edit modes](modes.md) support it:
 
 | **Icon** | **Text** | ![Object edit mode](images/icons/EditModes_Object.png) | ![Vertex edit mode](images/icons/EditModes_Vertex.png) | ![Edge edit mode](images/icons/EditModes_Edge.png) | ![Face edit mode](images/icons/EditModes_Face.png) |
 | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -61,4 +61,5 @@ This table lists all the actions available in ProBuilder, and indicates which [E
 | ![Triangulate icon](images/icons/Object_Triangulate.png) |[Triangulate](Object_Triangulate.md) (Object) | x | | | |
 | ![Flip Triangles icon](images/icons/Face_FlipTri.png) |**Turn Edges** (see [Flip Face Edge](Face_FlipTri.md)) |  | | | x |
 | ![Weld Vertices icon](images/icons/Vert_Weld.png) |[Weld Vertices](Vert_Weld.md) | | x | | |
+
 

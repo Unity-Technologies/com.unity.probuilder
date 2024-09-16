@@ -1,5 +1,22 @@
 # Exporting and re-importing
 
+<!--
+
+## Export
+
+[Export selected ProBuilder Meshes](workflow-exporting.md) in various formats. 
+
+| **Menu item** | **Description** |
+| --- | --- |
+| **Export Asset** | Saves the selection as a Unity mesh `.asset` files. This format is only readable in Unity. |
+| **Export Obj** | Exports the selected object(s) as `.obj` files (Wavefront OBJ format). This is a widely supported model format. It supports multiple Textures and Mesh groups. |
+| **Export Ply** | Exports the selected object(s) as `.ply` files (Stanford PLY, or Polygon File Format). This format is generally supported and very extensible. It supports quads and vertex colors, but not multiple materials. |
+| **Export Stl Ascii** | Exports the selected object(s) as ASCII `.stl` files (stereolithography, standard tessellation, or standard triangle format). This is a widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
+| **Export Stl Binary** | Exports the selected object(s) as Binary `.stl` files (stereolithography, standard tessellation, or standard triangle format). This is a widely supported format, generally used in CAD software or 3D printing. It only supports Triangle geometry. |
+
+## Actions
+-->
+
 If you want to use a ProBuilder mesh in another program, such as a 3D modeling application, you can use the **Export** action to save it to one of the supported formats. For example, you might be using a ProBuilder mesh as a placeholder while greyboxing, but eventually want to create or enhance a complex mesh.
 
 You can also export your ProBuilder mesh to the Unity `.asset` format and re-import it to use as a Prefab or spawn it in the scene. 
