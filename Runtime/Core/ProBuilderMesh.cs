@@ -976,10 +976,7 @@ namespace UnityEngine.ProBuilder
 #endif
             }
         }
-
-        [Obsolete("InstanceID is not used to track mesh references as of 2023/04/12")]
-        internal int id => gameObject.GetInstanceID();
-
+        
         /// <summary>
         /// Gets a flag that indicates whether the <see cref="UnityEngine.Mesh" /> is in sync with the ProBuilderMesh.
         /// </summary>
