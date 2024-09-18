@@ -548,7 +548,7 @@ namespace UnityEditor.ProBuilder
                     ignorePicking.Add(go);
 
                 go = HandleUtility.PickGameObject(mousePosition, false, ignorePicking.ToArray());
-            } while (go != null && go.GetComponent<MeshFilter>() == null && go.GetComponent<Terrain>() == null);
+            } while (go != null && go.GetComponent<MeshFilter>() == null);
 
             if (go != null)
             {
@@ -566,17 +566,6 @@ namespace UnityEditor.ProBuilder
 
                         bitangent = GetBitangent(plane.normal);
 
-                        return true;
-                    }
-                }
-                else if (go.GetComponent<Terrain>() != null)
-                {
-                    UnityEngine.RaycastHit hit;
-                    if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(mousePosition), out hit))
-                    {
-                        plane = new Plane(hit.normal, hit.point);
-                        var forward = go.transform.forward;
-                        bitangent = Mathf.Abs(Vector3.Dot(plane.normal, forward)) > .9f ? go.transform.up : forward;
                         return true;
                     }
                 }
