@@ -160,7 +160,7 @@ namespace UnityEditor.ProBuilder
                     // - check for the older pb_ObjectArray and copy data to new default
                     s_CurrentPalette = FileUtility.LoadRequired<MaterialPalette>(s_MaterialPalettePath);
 
-                    string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
+                    GUID[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
 
                     for (int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
                     {
