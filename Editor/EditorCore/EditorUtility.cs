@@ -87,6 +87,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="window">The EditorWindow to display this notification in.</param>
         /// <param name="message">The text to display in the notification.</param>
         /// <exception cref="ArgumentNullException">Window is null.</exception>
+        static bool s_PendingNotificationUpdate;
         internal static void ShowNotification(EditorWindow window, string message)
         {
             if (!s_ShowNotifications)
@@ -98,8 +99,11 @@ namespace UnityEditor.ProBuilder
             window.ShowNotification(new GUIContent(message, ""));
             window.Repaint();
 
-            if (EditorApplication.update != NotifUpdate)
+            if (!s_PendingNotificationUpdate)
+            {
                 EditorApplication.update += NotifUpdate;
+                s_PendingNotificationUpdate = true;
+            }
 
             s_NotificationTimer = Time.realtimeSinceStartup + k_DefaultNotificationDuration;
             s_NotificationWindow = window;
@@ -117,6 +121,7 @@ namespace UnityEditor.ProBuilder
                 throw new ArgumentNullException("window");
 
             EditorApplication.update -= NotifUpdate;
+            s_PendingNotificationUpdate = false;
 
             window.RemoveNotification();
             window.Repaint();
