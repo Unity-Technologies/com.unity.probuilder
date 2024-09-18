@@ -658,7 +658,7 @@ namespace UnityEditor.ProBuilder
                 var sceneView = SceneView.lastActiveSceneView;
                 var cameraTransform = sceneView.camera.transform;
                 var axis = sceneView.sceneViewGrids.gridAxis;
-                var point = sceneView.sceneViewGrids.GetPivot(axis);
+                var point = sceneView.sceneViewGrids.GetOffsetAlongAxis(axis);
 
                 switch (axis)
                 {
