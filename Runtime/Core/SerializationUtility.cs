@@ -40,7 +40,7 @@ namespace UnityEngine.ProBuilder
         [Conditional("UNITY_EDITOR")]
         public static void RegisterDrivenProperty(Object driver, Object target, string property)
         {
-#if UNITY_2020_1_OR_NEWER && RUNTIME_VISIBLE_TO_PROBUILDER_LANDED
+#if RUNTIME_VISIBLE_TO_PROBUILDER_LANDED
             DrivenPropertyManager.RegisterProperty(driver, target, property);
 #else
             registerProperty.Invoke(null, new object[] { driver, target, property });
@@ -50,7 +50,7 @@ namespace UnityEngine.ProBuilder
         [Conditional("UNITY_EDITOR")]
         public static void UnregisterDrivenProperty(Object driver, Object target, string property)
         {
-#if UNITY_2020_1_OR_NEWER && RUNTIME_VISIBLE_TO_PROBUILDER_LANDED
+#if RUNTIME_VISIBLE_TO_PROBUILDER_LANDED
             DrivenPropertyManager.UnregisterProperty(driver, target, property);
 #else
             unregisterProperty.Invoke(null, new object[] { driver, target, property });
