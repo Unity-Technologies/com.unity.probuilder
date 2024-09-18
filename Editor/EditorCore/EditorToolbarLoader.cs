@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using System.Linq;
 using System.Reflection;
+using UnityEngine.Assemblies;
 
 namespace UnityEditor.ProBuilder
 {
@@ -132,7 +133,7 @@ namespace UnityEditor.ProBuilder
 
         static void SearchForMenuAttributes(List<MenuAction> list)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in CurrentAssemblies.GetLoadedAssemblies())
             {
                 try
                 {

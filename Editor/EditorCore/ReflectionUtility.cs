@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine.Assemblies;
 using UnityEngine.ProBuilder;
 
 namespace UnityEditor.ProBuilder
@@ -37,7 +38,7 @@ namespace UnityEditor.ProBuilder
 
             if (t == null)
             {
-                IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                IEnumerable<Assembly> assemblies = CurrentAssemblies.GetLoadedAssemblies();
 
                 if (assembly != null)
                     assemblies = assemblies.Where(x => x.FullName.Contains(assembly));
