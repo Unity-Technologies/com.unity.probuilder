@@ -7,7 +7,7 @@ namespace UnityEditor.ProBuilder
     {
         internal static bool ContainsDefine(string define)
         {
-            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms();
             foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
@@ -28,7 +28,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="define"></param>
         public static void AddScriptingDefine(string define)
         {
-            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms();
             foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
@@ -56,7 +56,7 @@ namespace UnityEditor.ProBuilder
         /// <param name="define"></param>
         public static void RemoveScriptingDefine(string define)
         {
-            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms(true);
+            var validPlatforms = BuildPlatforms.instance.GetValidPlatforms();
             foreach (BuildPlatform targetPlatform in validPlatforms)
             {
                 if (targetPlatform.namedBuildTarget == NamedBuildTarget.Unknown)
