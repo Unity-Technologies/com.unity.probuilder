@@ -29,20 +29,13 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0; i < array.Length; i++)
             {
-                if (array[i] is ProceduralMaterial)
+                if (array[i] is T)
                 {
-                    arr[i] = (T)System.Convert.ChangeType(array[i], typeof(ProceduralMaterial));
+                    arr[i] = (T)System.Convert.ChangeType(array[i], typeof(T));
                 }
                 else
                 {
-                    if (array[i] is T)
-                    {
-                        arr[i] = (T)System.Convert.ChangeType(array[i], typeof(T));
-                    }
-                    else
-                    {
-                        arr[i] = default(T);
-                    }
+                    arr[i] = default(T);
                 }
             }
 
