@@ -60,7 +60,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static void GameObjectCreatedOrStructureModified(int instanceId)
+        static void GameObjectCreatedOrStructureModified(InstanceID instanceId)
         {
             // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
             // if so, we need to create a new mesh asset.
