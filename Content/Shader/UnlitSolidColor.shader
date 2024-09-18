@@ -21,7 +21,7 @@ Shader "ProBuilder/Unlit Solid Color"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             float4 _Color;
 

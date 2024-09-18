@@ -29,7 +29,7 @@ Shader "Hidden/ProBuilder/VertexShader"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             float _Scale;
             float4 _Color;

@@ -37,8 +37,8 @@ Shader "Hidden/ProBuilder/LineBillboard"
             #pragma geometry geo
             #pragma fragment frag
             #pragma exclude_renderers metal
-            #include "UnityCG.cginc"
-            #include "ProBuilderCG.cginc"
+            #include "UnityCG.hlsl"
+            #include "ProBuilderCG.hlsl"
 
             struct appdata
             {

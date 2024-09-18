@@ -18,7 +18,7 @@ Shader "Hidden/ProBuilder/SmoothingPreview"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             float _Opacity;
             float _Dither;

@@ -14,7 +14,7 @@ Shader "Hidden/ProBuilder/NormalPreview"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             float _Scale;
 

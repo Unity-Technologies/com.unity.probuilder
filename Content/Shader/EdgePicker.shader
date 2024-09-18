@@ -26,8 +26,8 @@ Shader "Hidden/ProBuilder/EdgePicker"
 CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
-            #include "ProBuilderCG.cginc"
+            #include "UnityCG.hlsl"
+            #include "ProBuilderCG.hlsl"
 
             struct appdata
             {

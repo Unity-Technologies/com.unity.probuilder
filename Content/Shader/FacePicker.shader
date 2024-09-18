@@ -18,7 +18,7 @@ Shader "Hidden/ProBuilder/FacePicker"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             struct appdata
             {

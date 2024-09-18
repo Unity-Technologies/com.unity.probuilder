@@ -30,8 +30,8 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
-            #include "ProBuilderCG.cginc"
+            #include "UnityCG.hlsl"
+            #include "ProBuilderCG.hlsl"
 
             float _Scale;
             float4 _Color;

@@ -16,7 +16,7 @@ Shader "ProBuilder/UnlitVertexColor"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.hlsl"
 
             struct appdata
             {

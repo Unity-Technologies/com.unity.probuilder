@@ -36,7 +36,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
                 #pragma fragment frag
                 #pragma geometry geo
                 #pragma exclude_renderers metal
-                #include "UnityCG.cginc"
+                #include "UnityCG.hlsl"
 
                 struct appdata
                 {

@@ -28,8 +28,8 @@ Shader "Hidden/ProBuilder/VertexPicker"
 CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
-            #include "ProBuilderCG.cginc"
+            #include "UnityCG.hlsl"
+            #include "ProBuilderCG.hlsl"
 
             // Is the camera in orthographic mode? (1 yes, 0 no)
             #define ORTHO (1 - UNITY_MATRIX_P[3][3])
