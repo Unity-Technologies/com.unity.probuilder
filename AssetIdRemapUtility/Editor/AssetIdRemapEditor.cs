@@ -130,7 +130,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         MultiColumnHeader m_MultiColumnHeader;
         Rect m_AssetTreeRect = new Rect(0, 0, 0, 0);
         [SerializeField]
-        TreeViewState m_TreeViewState = null;
+        TreeViewState<int> m_TreeViewState = null;
         [SerializeField]
         MultiColumnHeaderState m_MultiColumnHeaderState = null;
         GUIContent m_AssetTreeSettingsContent = null;
@@ -177,7 +177,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             }
 
             if (m_TreeViewState == null)
-                m_TreeViewState = new TreeViewState();
+                m_TreeViewState = new TreeViewState<int>();
 
             if (m_MultiColumnHeaderState == null)
                 m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
@@ -473,7 +473,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             m_ConversionReadyState = GetReadyState();
         }
 
-        bool RemoveAssetStoreFiles(TreeViewItem root, StringBuilder log)
+        bool RemoveAssetStoreFiles(TreeViewItem<int> root, StringBuilder log)
         {
             AssetTreeItem node = root as AssetTreeItem;
 

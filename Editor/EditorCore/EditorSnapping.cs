@@ -126,7 +126,7 @@ namespace UnityEditor.ProBuilder
         public static Vector3 incrementalSnapMoveValue => EditorSnapSettings.move;
 
         public static Vector3 worldSnapMoveValue
-            => ProGridsInterface.IsActive() ? ProGridsInterface.SnapValue() * Vector3.one : GridSettings.size;
+            => ProGridsInterface.IsActive() ? ProGridsInterface.SnapValue() * Vector3.one : GridSettings.instance.size;
 
         public static float incrementalSnapRotateValue => EditorSnapSettings.rotate;
 
