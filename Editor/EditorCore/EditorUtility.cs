@@ -145,7 +145,7 @@ namespace UnityEditor.ProBuilder
         {
             var status = PrefabUtility.GetPrefabInstanceStatus(go);
             #pragma warning disable 612, 618
-            return status == PrefabInstanceStatus.Connected || status == PrefabInstanceStatus.Disconnected;
+            return status != PrefabInstanceStatus.NotAPrefab;
             #pragma warning restore 612, 618
         }
 
