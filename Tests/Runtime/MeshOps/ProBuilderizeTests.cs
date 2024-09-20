@@ -39,7 +39,7 @@ class ProBuilderizeTests : TemporaryAssetTest
 
         // do this song and dance because AssetDatabase.LoadAssetAtPath doesn't seem to work with models in the
         // Package directories
-        File.Copy(TestUtility.templatesDirectory + "MeshImporter/maya-cube-quads.fbx", srcPath);
+        File.Copy(FileUtil.PathToAbsolutePath(TestUtility.templatesDirectory) + "MeshImporter/maya-cube-quads.fbx", srcPath);
         AssetDatabase.Refresh();
         var source = AssetDatabase.LoadMainAssetAtPath(srcPath);
         var meshImporter = (ModelImporter)AssetImporter.GetAtPath(srcPath);

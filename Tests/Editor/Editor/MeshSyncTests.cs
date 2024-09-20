@@ -52,7 +52,7 @@ class MeshSyncTests : TemporaryAssetTest
         var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
         cube.transform.parent = parent;
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        var originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
 
         Selection.activeObject = cube.gameObject;
 
@@ -89,7 +89,7 @@ class MeshSyncTests : TemporaryAssetTest
         cube.transform.parent = emptyGO;
 
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        var originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
 
         Selection.objects = new[] { emptyGO.gameObject };
         ActiveEditorTracker.sharedTracker.ForceRebuild();

@@ -388,7 +388,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
 
             // Get the calling file path relative to the `Tests/` directory
             string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
-            string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
+            string fullTestRootPath = FileUtil.PathToAbsolutePath(testsRootDirectory).Replace("\\", "/");//Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
             string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
             string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).Replace("\\", "/").TrimStart('/');
 
