@@ -13,11 +13,20 @@ To change context, in the **Tools** overlay, select the **Tool Context** at the 
 
 To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select the mode.
 
-## Keyboard shortcuts
+## The Probuilder context menu
 
-For a list of all shortcuts, and to add shortcuts, go to **Edit > Shortcuts** to open the [Shortcuts Manager](xref:ShortcutsManager).
+To quickly access ProBuilder actions, right-click (macOS: **Ctrl**+click) on a ProBuilder object to open the context menu:
 
-These are some common shortcuts you can use with ProBuilder:
+* In the GameObject context, the context menu's ProBuilder category lists actions that impact the mesh as a whole, such as Flip Normals and Export.
+* In the ProBuilder context, the context menu lists actions that match your current selection and edit mode.
+
+These actions are also available in the ProBuilder menu.
+
+## Keyboard shortcut for edit modes and context
+
+To change context or edit modes, use the following keyboard shortcuts:
 
 * Press **Escape** to return from the ProBuilder context to the GameObject context.
 * Press **G** to cycle through the ProBuilder edit modes.
+
+For a list of all shortcuts, and to add or change shortcuts, go to **Edit** > **Shortcuts** (macOS: **Unity** > **Shortcuts**).
