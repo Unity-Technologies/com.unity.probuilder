@@ -11,7 +11,7 @@
     * [Tool options overlays](tool-options-overlay)
     * [Scene Information](Scene_Information)
     * [Transform tools in ProBuilder](Transform_Tools)
-	* [Snap to Grid](snap-to-grid)
+    * [Snap to Grid](snap-to-grid)
     * [ProBuilder shortcuts](hotkeys)
 * [Creating meshes](workflow-create)
 	* [New PolyShape and Edit PolyShape tools](polyshape)
