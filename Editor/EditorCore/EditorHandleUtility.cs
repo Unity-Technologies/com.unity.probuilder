@@ -508,7 +508,6 @@ namespace UnityEditor.ProBuilder
         /// Get a plane suitable for mouse input in a scene view.
         /// </summary>
         /// <param name="mousePosition"></param>
-        /// <param name="alignOnGrid"></param>
         /// <returns></returns>
         internal static Plane FindBestPlane(Vector2 mousePosition)
         {
@@ -660,7 +659,7 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-        static Plane GetPlaneFromSceneView()
+        internal static Plane GetPlaneFromSceneView()
         {
             Plane plane;
             Vector3 normal = Vector3.up;
