@@ -48,8 +48,11 @@ namespace UnityEditor.ProBuilder
 
         public override void OnToolGUI(EditorWindow window)
         {
-            if (m_PolyShape == null)
+            if (m_PolyShape == null || polygon == null)
             {
+                if(m_PolyShape)
+                    m_LastPolyShape = m_PolyShape.gameObject;
+
                 if (!TryCreatePolyShape())
                 {
                     ToolManager.RestorePreviousTool();
@@ -63,13 +66,9 @@ namespace UnityEditor.ProBuilder
                 if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
                     evt.Use();
-                    UndoUtility.RecordObject(polygon, "Set Height");
-
-                    SetPolyEditMode(PolyShape.PolyEditMode.None);
-                    polygon.gameObject.hideFlags = HideFlags.None;
                     m_LastPolyShape = polygon.gameObject;
-                    polygon = null;
 
+                    SetShapeHeight();
                     if (!TryCreatePolyShape())
                     {
                         ToolManager.RestorePreviousTool();
@@ -210,15 +209,17 @@ namespace UnityEditor.ProBuilder
             }
             get
             {
-                if(polygon.m_Points.Count >= 3 &&
-                   m_Plane.distance.Equals(0) &&
-                   m_Plane.normal.Equals(Vector3.up))
+                if (polygon.m_Points.Count >= 3 &&
+                    m_Plane.distance.Equals(0) &&
+                    m_Plane.normal.Equals(Vector3.up))
                 {
                     Transform trs = polygon.transform;
                     m_Plane = new Plane(trs.TransformPoint(polygon.m_Points[0]),
                         trs.TransformPoint(polygon.m_Points[1]),
                         trs.TransformPoint(polygon.m_Points[2]));
                 }
+                else
+                    m_Plane = EditorHandleUtility.GetPlaneFromSceneView();
 
                 return m_Plane;
             }
@@ -350,10 +351,7 @@ namespace UnityEditor.ProBuilder
                 evt.Use();
                 m_NextMouseUpAdvancesMode = false;
 
-                if (SceneCameraIsAlignedWithPolyUp())
-                    SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                else
-                    SetPolyEditMode(PolyShape.PolyEditMode.Height);
+                SetPolyEditMode(PolyShape.PolyEditMode.Height);
             }
 
             if (m_IsModifyingVertices && (
@@ -472,6 +470,16 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.EndVertical();
         }
 
+        internal void SetShapeHeight()
+        {
+            UndoUtility.RecordObject(polygon, "Set Height");
+
+            RebuildPolyShapeMesh(polygon);
+            polygon.gameObject.hideFlags = HideFlags.None;
+            SetPolyEditMode(PolyShape.PolyEditMode.None);
+            polygon = null;
+        }
+
         internal void SetPolyEditMode(PolyShape.PolyEditMode mode)
         {
             if(polygon == null)
@@ -480,6 +488,7 @@ namespace UnityEditor.ProBuilder
             PolyShape.PolyEditMode old = polygon.polyEditMode;
             if (mode != old)
             {
+                Debug.Log($"PolyShape: {old} -> {mode}");
                 GUIUtility.hotControl = 0;
 
                 // Entering edit mode after the shape has been finalized once before, which means
@@ -500,10 +509,20 @@ namespace UnityEditor.ProBuilder
                 {
                     Vector3 up = polygon.transform.up;
                     Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
-                    Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                    Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-                    float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
-                    s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
+
+                    if (SceneCameraIsAlignedWithPolyUp())
+                    {
+                        s_HeightMouseOffset = polygon.extrude;
+                        SetShapeHeight();
+                        return;
+                    }
+                    else
+                    {
+                        Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                        Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+                        float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
+                        s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
+                    }
                 }
                 else if(old == PolyShape.PolyEditMode.Path && mode == PolyShape.PolyEditMode.None)
                 {
@@ -537,7 +556,7 @@ namespace UnityEditor.ProBuilder
                 // renderer enable/disable, material re-apply, etc.
                 if (polygon.polyEditMode == PolyShape.PolyEditMode.Height && polygon.m_Points != null && polygon.m_Points.Count >= 3)
                     polygon.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-                
+
                 var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {
@@ -574,6 +593,19 @@ namespace UnityEditor.ProBuilder
             }
 
             return trs.InverseTransformPoint(point);
+        }
+
+        Vector3 GetPointFromHit(Vector3 hit)
+        {
+            // this monstrosity exists so that grid and incremental snap work when possible, and
+            // incremental is enabled when grid is not available.
+            var point = m_Polygon.isOnGrid
+                ? EditorSnapping.MoveSnap(hit)
+                : EditorSnapping.snapMode == SnapMode.Relative
+                    ? ProBuilderSnapping.Snap(hit, EditorSnapping.incrementalSnapMoveValue)
+                    : hit;
+
+            return point;
         }
 
         void DoPointPlacement()
@@ -627,13 +659,7 @@ namespace UnityEditor.ProBuilder
 
                         if (polygon.m_Points.Count < 1)
                         {
-                            // this monstrosity exists so that grid and incremental snap work when possible, and
-                            // incremental is enabled when grid is not available.
-                            polygon.transform.position = m_Polygon.isOnGrid
-                                ? EditorSnapping.MoveSnap(hit)
-                                : EditorSnapping.snapMode == SnapMode.Relative
-                                    ? ProBuilderSnapping.Snap(hit, EditorSnapping.incrementalSnapMoveValue)
-                                    : hit;
+                            polygon.transform.position = GetPointFromHit(hit);
 
                             Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
@@ -803,6 +829,7 @@ namespace UnityEditor.ProBuilder
                     evt.Use();
                     UndoUtility.RecordObject(polygon, "Set Height");
                     SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                    return;
                 }
 
                 bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
@@ -978,11 +1005,7 @@ namespace UnityEditor.ProBuilder
                 {
                     if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
-                        if (SceneCameraIsAlignedWithPolyUp())
-                            SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                        else
-                            SetPolyEditMode(PolyShape.PolyEditMode.Height);
-
+                        SetPolyEditMode(PolyShape.PolyEditMode.Height);
                         evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
