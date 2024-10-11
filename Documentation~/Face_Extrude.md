@@ -26,9 +26,9 @@ To extrude a face:
 | **Property** |   | **Description** |
 | :--- | --- | --- |
 | **Extrude By** |   | When you extrude more than one face, and those faces share an edge, set how the new faces behave along the shared edge. |
-| ![](images/extrude_face_normals.png) | **Face Normals** | Each new face follows the direction of its original face, and the faces are connected to each other. |
-| ![](images/extrude_vertex_normal.png) | **Vertex Normals** | The edges of the new faces farthest from the joint edge follow the direction of the original faces. However, the faces move toward the shared edge rather than follow the original direction for their whole length. |
-| ![](images/extrude_individual_faces.png) | **Individual Faces** | Each new face follows the direction of its original face, but the faces aren't connected to each other. |
+| | ![](images/extrude_face_normals.png) **Face Normals** | Each new face follows the direction of its original face, and the faces are connected to each other. |
+| | ![](images/extrude_vertex_normal.png) **Vertex Normals** | The edges of the new faces farthest from the joint edge follow the direction of the original faces. However, the faces move toward the shared edge rather than follow the original direction for their whole length. |
+| | ![](images/extrude_individual_faces.png) **Individual Faces** | Each new face follows the direction of its original face, but the faces aren't connected to each other. |
 | **Distance** |   | Distance to extrude the faces(s). Use negative values to inset the face, and define inset. |
 
 
