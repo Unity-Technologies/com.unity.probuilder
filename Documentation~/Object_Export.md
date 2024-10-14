@@ -1,4 +1,4 @@
-# ![Export icon](images/icons/Object_Export.png) Export
+# Export
 
 The __Export__ action [exports](workflow-exporting.md#export) the selected ProBuilder object(s) to a 3D Model file.
 

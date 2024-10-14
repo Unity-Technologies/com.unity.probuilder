@@ -1,4 +1,4 @@
-# ![Orientation](images/icons/HandleAlign_Local.png) Orientation
+# Orientation
 
 The __Orientation__ action sets the orientation of scene handles when you select [objects and elements](modes.md). Click the __Orientation__ button to switch between the three states: __Global__, __Local__, or __Normal__.
 

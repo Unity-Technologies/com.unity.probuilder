@@ -1,4 +1,4 @@
-# ![Select By Smoothing Group action](images/icons/Selection_SelectBySmoothingGroup.png) Select Smoothing Group
+# Select Smoothing Group
 
 Use the **Select Smoothing Group** action inside the [Smooth Group Editor window](smoothing-groups.md) to select faces matching the current smoothing group.
 

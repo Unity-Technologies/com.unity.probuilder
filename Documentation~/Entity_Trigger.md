@@ -1,4 +1,4 @@
-# ![Entity icon](images/icons/Entity_Trigger.png) Entity type actions
+# Entity type actions
 
 ProBuilder provides some default "entity" behaviors. These are MonoBehaviours that provide some commonly used functionality.
 
