@@ -1,4 +1,4 @@
-# ![Lightmap UVs icon](images/icons/Object_LightmapUVs.png) Lightmap UVs
+# Lightmap UVs
 
 Use the __Lightmap UVs__ action to manually generate any missing lightmap UVs. This works on each Mesh in every open scene that is missing lightmap UVs.
 

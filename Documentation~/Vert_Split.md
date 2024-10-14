@@ -1,4 +1,4 @@
-# ![Split Vertices icon](images/icons/Vert_Split.png) Split Vertices
+# Split Vertices
 
 The __Split Vertices__ action splits a vertex into individual vertices (one for each adjacent face) so that you can move the faces independently.
 

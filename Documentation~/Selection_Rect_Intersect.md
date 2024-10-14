@@ -1,4 +1,4 @@
-# ![Selection Rect icon](images/icons/Selection_Rect_Intersect.png) Rect
+# Rect
 
 Use the __Rect__ action to choose whether drag selection should only select elements completely inside the drag rectangle, or also elements that are partially inside the the drag rectangle.
 

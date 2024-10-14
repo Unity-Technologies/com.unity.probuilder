@@ -1,4 +1,4 @@
-# ![Merge Objects icon](images/icons/Object_Merge.png) Merge Objects
+# Merge Objects
 
 The __Merge Objects__ action merges two or more selected ProBuilder GameObjects into a single ProBuilder GameObject.
 

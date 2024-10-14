@@ -1,4 +1,4 @@
-# ![Offset Elements icon](images/icons/Offset_Elements.png) Offset Elements
+# Offset Elements
 
 The __Offset Elements__ action moves the selected element(s) according to the default values. You can change the default values with the **Offset Settings**. 
 

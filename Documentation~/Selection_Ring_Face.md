@@ -1,4 +1,4 @@
-# ![Select Face Ring icon](images/icons/Selection_Ring_Face.png) Select Face Ring
+# Select Face Ring
 
 Selects a face ring from each selected face.
 

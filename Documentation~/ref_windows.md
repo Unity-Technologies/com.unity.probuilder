@@ -1,4 +1,4 @@
-# Editor window reference
+# Editor windows reference
 
 This section provides information on the following ProBuilder Editor [windows](overview-ui.md#pb_editors):
 

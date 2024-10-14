@@ -1,4 +1,4 @@
-# ![Fill Hole icon](images/icons/FillHole.png) Fill Hole (Vertices)
+# Fill Hole (Vertices)
 
 The __Fill Hole__ action creates a new face that fills any holes that touch the selected vertices.
 
