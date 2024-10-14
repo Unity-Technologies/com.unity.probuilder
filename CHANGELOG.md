@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.3] - 2024-08-20
+
+### Fixed
+
+- [PBLD-159] Fixed an issue where a ProBuilder menu item shortcut would conflict with Editor's built-in shortcut.
+- [PBLD-158] Fixed a bug where ProBuilder would prevent classes inheriting from `UnityEditor.Editor` to compile.
+- [PBLD-151] Fixed a bug where the Action Settings overlay would not be displayed when used the first time.
+- [PBLD-141] Fixed a bug where the selection would be incorrect when entering PrefabStage.
+- [PBLD-142] Fixed a bug where it was possible to trigger the probuilderize action twice on the same object.
+- [PBLD-150] Fixed a bug where the orientation handles would not be useful when manipulating a cube shape.
+- [PBLD-149] Fixed a bug where the ProBuilder edit modes toggle could be disabled.
+- [PBLD-145] Fixed a bug where using the preview shape with HDRP would crash the editor.
+- Fixed a bug where moving the preview shape was not ignoring the preview shape to compute the correct placement.
+
+### Added
+
+- [PBLD-152] Added some relevant Unity selection actions in the ProBuilder contextual menu.
+
 ## [6.0.2] - 2024-08-08
 
 ### Fixed
