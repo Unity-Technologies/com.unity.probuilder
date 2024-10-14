@@ -1,4 +1,4 @@
-# ![Conform Normals icon](images/icons/Object_ConformNormals.png) Conform Normals (Objects)
+# Conform Normals (Objects)
 
 The __Conform Normals__ action sets all face normals on the selected object to the same relative direction. 
 

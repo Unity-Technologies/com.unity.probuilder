@@ -1,4 +1,4 @@
-# ![Select Hidden ON](images/icons/Selection_SelectHidden-ON.png) Select Hidden
+# Select Hidden
 
 Use the __Select Hidden__ action to determine whether ProBuilder selects or ignores hidden elements when you perform a drag-selection. Clicking the __Select Hidden__ button to switch between the two states: __On__ or __Off__.
 

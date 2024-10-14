@@ -1,4 +1,4 @@
-# ![Mirror Objects icon](images/icons/Object_Mirror.png) Mirror Objects
+# Mirror Objects
 
 The __Mirror Objects__ action creates mirrored copies of objects.
 

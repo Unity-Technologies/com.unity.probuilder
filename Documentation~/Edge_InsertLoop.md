@@ -1,4 +1,4 @@
-# ![Insert Edge Loop icon](images/icons/Edge_InsertLoop.png) Insert Edge Loop
+# Insert Edge Loop
 
 The __Insert Edge Loop__ action adds a new edge loop from the selected edge(s). An edge loop is a series of edges that are directly connected. They often encircle a 3D object and connect back at the origin point.
 

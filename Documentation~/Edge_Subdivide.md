@@ -1,4 +1,4 @@
-# ![Subdivide Edge icon](images/icons/Edge_Subdivide.png) Subdivide Edges
+# Subdivide Edges
 
 The __Subdivide Edges__ action divides the selected edge(s) into multiple edges. By default, ProBuilder splits the edge in two, but in the Options window, you can set your own number of __Subdivisions__.
 

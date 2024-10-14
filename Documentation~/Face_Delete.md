@@ -1,4 +1,4 @@
-# ![Delete Faces icon](images/icons/Face_Delete.png) Delete Faces
+# Delete Faces
 
 The __Delete Faces__ replace deletes the selected face(s).
 
