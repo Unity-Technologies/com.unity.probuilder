@@ -1,6 +1,6 @@
 # ProBuilderize a standard GameObject
 
-You can turn any 3D GameObject to a ProBuilder object. 
+You can turn a 3D GameObject that has the Mesh Filter and Mesh Renderer components to a ProBuilder object. 
 
 To ProBuilderize a GameObject:
 
