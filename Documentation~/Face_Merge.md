@@ -1,4 +1,4 @@
-# ![Merge Faces icon](images/icons/Face_Merge.png) Merge Faces
+# Merge Faces
 
 The __Merge Faces__ action merges selected faces into a single face, and removes any dividing edges.
 

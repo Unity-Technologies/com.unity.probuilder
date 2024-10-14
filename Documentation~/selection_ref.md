@@ -21,9 +21,8 @@ These options are never available in the GameObject tool context.
 | [Select Edge Loop](Selection_EdgeLoopRing.md) | | x | |
 | [Select Edge Ring](Selection_EdgeLoopRing.md) | | x | |
 | [Select Material](Selection_SelectByMaterial.md) | | | x |
+| [Select Smoothing Group](Selection_SmoothingGroup.md) | | | x |
 | [Select Vertex Color](Selection_SelectByVertexColor.md) | x | x | x |
-| [Shrink Selection](Selection_Shrink.md) | | x | x | x |
-
-<!--two select loop should be one, two select ring should be one - that will have to be another ticket-->
+| [Shrink Selection](Selection_Shrink.md) | x | x | x |
 
 The [Select Path](SelectPath.md) action is available only through its keyboard shortcut, and only in the Face edit mode.

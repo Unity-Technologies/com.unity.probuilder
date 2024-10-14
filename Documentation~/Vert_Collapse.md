@@ -1,4 +1,4 @@
-# ![Collapse Vertices icon](images/icons/Vert_Collapse.png) Collapse Vertices
+# Collapse Vertices
 
 The __Collapse Vertices__ action collapses all selected vertices to a single point, regardless of distance.
 

@@ -1,4 +1,4 @@
-# ![Connect Vertices Icon](images/icons/Vert_Connect.png) Connect Vertices
+# Connect Vertices
 
 The __Connect Vertices__ action creates a new edge that connects the selected vertices.
 

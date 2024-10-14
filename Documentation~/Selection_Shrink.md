@@ -1,4 +1,4 @@
-# ![Shrink Selection](images/icons/Selection_Shrink.png) Shrink Selection
+# Shrink Selection
 
 The __Shrink Selection__ action removes the elements on the perimeter of the current selection. It performs the opposite action of the [Grow Selection](Selection_Grow.md) action.
 

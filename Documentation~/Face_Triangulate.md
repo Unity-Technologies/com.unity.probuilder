@@ -1,4 +1,4 @@
-# ![Triangulate Faces icon](images/icons/Face_Triangulate.png) Triangulate Faces
+# Triangulate Faces
 
 The __Triangulate Faces__ action reduces selected faces to their base triangles. This creates a faceted, non-smooth appearance. 
 

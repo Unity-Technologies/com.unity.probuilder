@@ -1,4 +1,4 @@
-# ![Select Edge Ring icon](images/icons/Selection_Ring.png) Select Edge Ring
+# Select Edge Ring
 
 The __Select Edge Ring__ action selects a ring from each selected edge. An edge ring is a series of edges which share faces but are not directly connected.
 
