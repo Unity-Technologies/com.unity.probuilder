@@ -20,4 +20,3 @@ Use the options in the **ProBuilderize** overlay to customize the ProBuilder obj
 | **Import Smoothing** | Smooth the transition between faces to make a softer object. For more information, refer to [Smoothing groups](smoothing-groups.md). |
 | **Smoothing Threshold** | Decide which adjacent faces to add to each smoothing group. Use a value larger than the angle between the faces you want to add. The range is from 0.0001 to 45. This setting is only available when you use **Import Smoothing**. |
 
-<!--Right click > MeshFilter > ProBuilderize - the overlay doesn't have the Live Preview option. This sounds wrong.-->
