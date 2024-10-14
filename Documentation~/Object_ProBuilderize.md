@@ -1,4 +1,4 @@
-# ProBuilderize
+# ProBuilderize a standard object
 
 The __ProBuilderize__ action converts the selected object(s) into ProBuilder-editable objects.
 
