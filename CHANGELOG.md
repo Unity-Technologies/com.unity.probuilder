@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- [STO-3427] Fixing a bug where Polyshape creation tool was not working with orthographic camera.
-- [STO-3429] Fixing a bug where increment snapping was ignored when drawing ProBuilder shapes.
-- [STO-3432] Fixing a bug where Polyshape creation tool was not placing properly the first point on a custom grids. 
+- [STO-3427] Fixed a bug where Polyshape creation tool was not working with orthographic camera.
+- [STO-3429] Fixed a bug where increment snapping was ignored when drawing ProBuilder shapes.
+- [STO-3432] Fixed a bug where Polyshape creation tool was not placing properly the first point on a custom grids. 
 
 ## [6.0.4] - 2024-09-12
 
