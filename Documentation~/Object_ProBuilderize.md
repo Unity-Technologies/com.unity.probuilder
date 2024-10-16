@@ -1,15 +1,22 @@
-# ![ProBuilderize icon](images/icons/Object_ProBuilderize.png) ProBuilderize
+# ProBuilderize a standard GameObject
 
-The __ProBuilderize__ action converts the selected object(s) into ProBuilder-editable objects.
+You can turn a 3D GameObject that has the Mesh Filter and Mesh Renderer components to a ProBuilder object. 
 
-From the main menu, select **Tools** > **ProBuilder** > **Object** > **ProBuilderize**.
+To ProBuilderize a GameObject:
+
+1. In the **Scene** view, select the GameObject.
+2. Do one of the following:
+    * From the main menu, select **Tools** > **ProBuilder** > **Object** > **Pro Builderize**.
+    * Right-click the GameObject and select **MeshFilter** > **ProBuilderize**.
+3. The **ProBuilderize** overlay opens, and you can customize the ProBuilder object.
 
 ## ProBuilderize options
 
-Use the following ProBuilderize options to customize how your object is converted to a ProBuilder object.
+Use the options in the **ProBuilderize** overlay to customize the ProBuilder object.
 
-| **Property:**         | **Description:**                                           |
-| :---------------------- | :----------------------------------------------------------- |
-| __Import Quads__        | Enable this option to keep Meshes quadrangulated when ProBuilder imports them. <br />Disable it to import the Mesh as triangles. |
-| __Import Smoothing__    | Enable this option to use a smoothing angle value to calculate [smoothing groups](smoothing-groups.md). |
-| __Smoothing Threshold__ | Set this value to decide which adjacent faces to add to a smoothing group. Use a value that is higher than the difference of any adjoining angle that is adjacent to the face(s) you want to add to a smoothing group. This setting is only available if __Import Smoothing__ is enabled. |
+| **Property** | **Description** |
+| :--- | :--- |
+| **Import Quads** | The faces of a 3D GameObject are built of quads, and by default the ProBuilderize action creates the ProBuilder objects of quads, too. Although quads are more practical to manipulate, the build process can lead to  topology that doesn't fully match the triangle topology of the original asset. These differences can lead to unexpected visual artifacts, deformation issues, and other visual problems. To build the faces of triangles, disable **Import Quads**. |
+| **Import Smoothing** | Smooth the transition between faces to make a softer object. For more information, refer to [Smoothing groups](smoothing-groups.md). |
+| **Smoothing Threshold** | Decide which adjacent faces to add to each smoothing group. Use a value larger than the angle between the faces you want to add. The range is from 0.0001 to 45. This setting is only available when you use **Import Smoothing**. |
+
