@@ -44,9 +44,6 @@ namespace UnityEditor.ProBuilder
             m_PolyShape = null;
             if (m_LastPolyShape)
                 Selection.activeObject = m_LastPolyShape;
-
-            //Cancel the last PolyShapeTool action in undo history (extra GO created)
-            //Undo.RevertAllDownToGroup(Undo.GetCurrentGroup() - 1);
         }
 
         public override void OnToolGUI(EditorWindow window)
