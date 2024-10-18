@@ -40,10 +40,13 @@ namespace UnityEditor.ProBuilder
 
         public override void OnWillBeDeactivated()
         {
+            base.OnWillBeDeactivated();
             m_PolyShape = null;
             if (m_LastPolyShape)
                 Selection.activeObject = m_LastPolyShape;
-            base.OnWillBeDeactivated();
+
+            //Cancel the last PolyShapeTool action in undo history (extra GO created)
+            //Undo.RevertAllDownToGroup(Undo.GetCurrentGroup() - 1);
         }
 
         public override void OnToolGUI(EditorWindow window)
@@ -95,7 +98,7 @@ namespace UnityEditor.ProBuilder
             if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
             {
                 DestroyImmediate(polygon.gameObject);
-                Undo.RevertAllInCurrentGroup();
+                Undo.RevertAllDownToGroup(m_UndoGroup - 1);
             }
 
             if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
@@ -119,8 +122,8 @@ namespace UnityEditor.ProBuilder
 
                 UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
                 Undo.RegisterCompleteObjectUndo(go, "Adding components");
-                m_PolyShape = go.AddComponent<PolyShape>();
-                ProBuilderMesh pb = go.AddComponent<ProBuilderMesh>();
+                m_PolyShape = Undo.AddComponent<PolyShape>(go);
+                ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
                 pb.CreateShapeFromPolygon(m_PolyShape.m_Points, m_PolyShape.extrude, m_PolyShape.flipNormals);
                 EditorUtility.InitObject(pb);
 
@@ -547,7 +550,7 @@ namespace UnityEditor.ProBuilder
                     EditorApplication.delayCall += () =>
                     {
                         DestroyImmediate(go);
-                        Undo.RevertAllInCurrentGroup();
+                        Undo.RevertAllDownToGroup(m_UndoGroup - 1);
                     };
                     return;
                 }
@@ -1059,14 +1062,7 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-                    {
-                        DestroyImmediate(polygon.gameObject);
-                        Undo.RevertAllInCurrentGroup();
-                    }
-
                     LeaveTool();
-
                     evt.Use();
                     break;
                 }
