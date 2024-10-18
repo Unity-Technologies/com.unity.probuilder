@@ -579,7 +579,7 @@ namespace UnityEditor.ProBuilder
                 // PBLD-137 - continously refresh the material, otherwise if Resident Drawer is on, new faces are drawn without material applied until there's some other trigger:
                 // renderer enable/disable, material re-apply, etc.
                 if (polygon.polyEditMode == PolyShape.PolyEditMode.Height && polygon.m_Points != null &&
-                    polygon.m_Points.Count >= 3)
+                    polygon.m_Points.Count >= 3 && polygon.mesh.renderer.sharedMaterial == null)
                 {
                     Undo.RegisterCompleteObjectUndo(polygon.mesh.renderer, "Adding Material");
                     polygon.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
@@ -1101,7 +1101,7 @@ namespace UnityEditor.ProBuilder
                 polygon.polyEditMode =  PolyShape.PolyEditMode.Path;
                 polygon.extrude = 0f;
                 polygon.mesh.Clear();
-                DestroyImmediate(polygon.mesh.mesh);
+                DestroyImmediate(polygon.mesh.mesh, true);
             }
 
             if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
