@@ -40,16 +40,19 @@ namespace UnityEditor.ProBuilder
 
         public override void OnWillBeDeactivated()
         {
+            base.OnWillBeDeactivated();
             m_PolyShape = null;
             if (m_LastPolyShape)
                 Selection.activeObject = m_LastPolyShape;
-            base.OnWillBeDeactivated();
         }
 
         public override void OnToolGUI(EditorWindow window)
         {
-            if (m_PolyShape == null)
+            if (m_PolyShape == null || polygon == null)
             {
+                if(m_PolyShape)
+                    m_LastPolyShape = m_PolyShape.gameObject;
+
                 if (!TryCreatePolyShape())
                 {
                     ToolManager.RestorePreviousTool();
@@ -63,13 +66,9 @@ namespace UnityEditor.ProBuilder
                 if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
                     evt.Use();
-                    UndoUtility.RecordObject(polygon, "Set Height");
-
-                    SetPolyEditMode(PolyShape.PolyEditMode.None);
-                    polygon.gameObject.hideFlags = HideFlags.None;
                     m_LastPolyShape = polygon.gameObject;
-                    polygon = null;
 
+                    SetShapeHeight();
                     if (!TryCreatePolyShape())
                     {
                         ToolManager.RestorePreviousTool();
@@ -93,8 +92,11 @@ namespace UnityEditor.ProBuilder
                (Selection.activeObject is GameObject go && go == polygon.gameObject))
                 return;
 
-            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            {
                 DestroyImmediate(polygon.gameObject);
+                Undo.RevertAllDownToGroup(m_UndoGroup - 1);
+            }
 
             if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -108,9 +110,15 @@ namespace UnityEditor.ProBuilder
             var newPolyshape = CanCreateNewPolyShape();
             if (newPolyshape)
             {
+                Undo.SetCurrentGroupName("PolyShape Tool");
+                //Finalize previous operation in term of undo
+                m_UndoGroup = Undo.GetCurrentGroup();
+
                 GameObject go = new GameObject("PolyShape");
                 go.hideFlags = HideFlags.HideAndDontSave | HideFlags.HideInInspector;
+
                 UndoUtility.RegisterCreatedObjectUndo(go, "Create Poly Shape");
+                Undo.RegisterCompleteObjectUndo(go, "Adding components");
                 m_PolyShape = Undo.AddComponent<PolyShape>(go);
                 ProBuilderMesh pb = Undo.AddComponent<ProBuilderMesh>(go);
                 pb.CreateShapeFromPolygon(m_PolyShape.m_Points, m_PolyShape.extrude, m_PolyShape.flipNormals);
@@ -210,19 +218,23 @@ namespace UnityEditor.ProBuilder
             }
             get
             {
-                if(polygon.m_Points.Count >= 3 &&
-                   m_Plane.distance.Equals(0) &&
-                   m_Plane.normal.Equals(Vector3.up))
+                if (polygon.m_Points.Count >= 3 &&
+                    m_Plane.distance.Equals(0) &&
+                    m_Plane.normal.Equals(Vector3.up))
                 {
                     Transform trs = polygon.transform;
                     m_Plane = new Plane(trs.TransformPoint(polygon.m_Points[0]),
                         trs.TransformPoint(polygon.m_Points[1]),
                         trs.TransformPoint(polygon.m_Points[2]));
                 }
+                else
+                    m_Plane = EditorHandleUtility.GetPlaneFromSceneView();
 
                 return m_Plane;
             }
         }
+
+        protected int m_UndoGroup;
 
         int m_ControlId;
         int m_ControlId0;
@@ -276,6 +288,9 @@ namespace UnityEditor.ProBuilder
         {
             SetPolyEditMode(PolyShape.PolyEditMode.None);
 
+            Undo.SetCurrentGroupName("PolyShape Tool");
+            m_UndoGroup = Undo.GetCurrentGroup();
+
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ToolManager.activeContextChanged += OnActiveContextChanged;
@@ -294,6 +309,7 @@ namespace UnityEditor.ProBuilder
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
+            Undo.CollapseUndoOperations(m_UndoGroup);
             polygon = null;
         }
 
@@ -350,10 +366,7 @@ namespace UnityEditor.ProBuilder
                 evt.Use();
                 m_NextMouseUpAdvancesMode = false;
 
-                if (SceneCameraIsAlignedWithPolyUp())
-                    SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                else
-                    SetPolyEditMode(PolyShape.PolyEditMode.Height);
+                SetPolyEditMode(PolyShape.PolyEditMode.Height);
             }
 
             if (m_IsModifyingVertices && (
@@ -472,6 +485,18 @@ namespace UnityEditor.ProBuilder
             EditorGUILayout.EndVertical();
         }
 
+        internal void SetShapeHeight()
+        {
+            Undo.RegisterCompleteObjectUndo(polygon, "Set Height");
+
+            RebuildPolyShapeMesh(polygon);
+            polygon.gameObject.hideFlags = HideFlags.None;
+            SetPolyEditMode(PolyShape.PolyEditMode.None);
+            Undo.CollapseUndoOperations(m_UndoGroup);
+
+            polygon = null;
+        }
+
         internal void SetPolyEditMode(PolyShape.PolyEditMode mode)
         {
             if(polygon == null)
@@ -490,7 +515,8 @@ namespace UnityEditor.ProBuilder
                     if (ProBuilderEditor.instance != null)
                         ProBuilderEditor.instance.ClearElementSelection();
 
-                    UndoUtility.RecordComponents<ProBuilderMesh,PolyShape>(polygon.GetComponents(typeof(Component)), "Edit Polygon Shape");
+                    Undo.RegisterCompleteObjectUndo(polygon, "Edit Polygon Shape");
+                    Undo.RegisterCompleteObjectUndo(polygon.mesh, "Edit Polygon Shape mesh");
                 }
 
                 polygon.polyEditMode = mode;
@@ -500,15 +526,29 @@ namespace UnityEditor.ProBuilder
                 {
                     Vector3 up = polygon.transform.up;
                     Vector3 origin = polygon.transform.TransformPoint(Math.Average(polygon.m_Points));
-                    Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                    Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
-                    float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
-                    s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
+
+                    if (SceneCameraIsAlignedWithPolyUp())
+                    {
+                        s_HeightMouseOffset = polygon.extrude;
+                        SetShapeHeight();
+                        return;
+                    }
+                    else
+                    {
+                        Ray r = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                        Vector3 p = Math.GetNearestPointRayRay(origin, up, r.origin, r.direction);
+                        float extrude = Vector3.Distance(origin, p) * Mathf.Sign(Vector3.Dot(p - origin, up));
+                        s_HeightMouseOffset = polygon.extrude - EditorSnapping.MoveSnap(extrude);
+                    }
                 }
                 else if(old == PolyShape.PolyEditMode.Path && mode == PolyShape.PolyEditMode.None)
                 {
                     var go = polygon.gameObject;
-                    EditorApplication.delayCall += () => DestroyImmediate(go);
+                    EditorApplication.delayCall += () =>
+                    {
+                        DestroyImmediate(go);
+                        Undo.RevertAllDownToGroup(m_UndoGroup - 1);
+                    };
                     return;
                 }
 
@@ -535,9 +575,13 @@ namespace UnityEditor.ProBuilder
             {
                 // PBLD-137 - continously refresh the material, otherwise if Resident Drawer is on, new faces are drawn without material applied until there's some other trigger:
                 // renderer enable/disable, material re-apply, etc.
-                if (polygon.polyEditMode == PolyShape.PolyEditMode.Height && polygon.m_Points != null && polygon.m_Points.Count >= 3)
+                if (polygon.polyEditMode == PolyShape.PolyEditMode.Height && polygon.m_Points != null &&
+                    polygon.m_Points.Count >= 3 && polygon.mesh.renderer.sharedMaterial == null)
+                {
+                    Undo.RegisterCompleteObjectUndo(polygon.mesh.renderer, "Adding Material");
                     polygon.mesh.renderer.sharedMaterial = EditorMaterialUtility.GetUserMaterial();
-                
+                }
+
                 var result = polygon.CreateShapeFromPolygon();
                 if(result.status == ActionResult.Status.Failure)
                 {
@@ -574,6 +618,19 @@ namespace UnityEditor.ProBuilder
             }
 
             return trs.InverseTransformPoint(point);
+        }
+
+        Vector3 GetPointFromHit(Vector3 hit)
+        {
+            // this monstrosity exists so that grid and incremental snap work when possible, and
+            // incremental is enabled when grid is not available.
+            var point = m_Polygon.isOnGrid
+                ? EditorSnapping.MoveSnap(hit)
+                : EditorSnapping.snapMode == SnapMode.Relative
+                    ? ProBuilderSnapping.Snap(hit, EditorSnapping.incrementalSnapMoveValue)
+                    : hit;
+
+            return point;
         }
 
         void DoPointPlacement()
@@ -621,19 +678,14 @@ namespace UnityEditor.ProBuilder
 
                     if (plane.Raycast(ray, out hitDistance))
                     {
-                        UndoUtility.RecordObject(polygon, "Add Polygon Shape Point");
+                        Undo.RegisterCompleteObjectUndo(polygon, "Add Polygon Shape Point");
 
                         Vector3 hit = ray.GetPoint(hitDistance);
 
                         if (polygon.m_Points.Count < 1)
                         {
-                            // this monstrosity exists so that grid and incremental snap work when possible, and
-                            // incremental is enabled when grid is not available.
-                            polygon.transform.position = m_Polygon.isOnGrid
-                                ? EditorSnapping.MoveSnap(hit)
-                                : EditorSnapping.snapMode == SnapMode.Relative
-                                    ? ProBuilderSnapping.Snap(hit, EditorSnapping.incrementalSnapMoveValue)
-                                    : hit;
+                            Undo.RegisterCompleteObjectUndo(polygon.transform, "Set position");
+                            polygon.transform.position = GetPointFromHit(hit);
 
                             Vector3 cameraFacingPlaneNormal = plane.normal;
                             if (Vector3.Dot(cameraFacingPlaneNormal, SceneView.lastActiveSceneView.camera.transform.forward) > 0f)
@@ -803,6 +855,7 @@ namespace UnityEditor.ProBuilder
                     evt.Use();
                     UndoUtility.RecordObject(polygon, "Set Height");
                     SetPolyEditMode(PolyShape.PolyEditMode.Edit);
+                    return;
                 }
 
                 bool sceneInUse = EditorHandleUtility.SceneViewInUse(evt);
@@ -978,11 +1031,7 @@ namespace UnityEditor.ProBuilder
                 {
                     if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
-                        if (SceneCameraIsAlignedWithPolyUp())
-                            SetPolyEditMode(PolyShape.PolyEditMode.Edit);
-                        else
-                            SetPolyEditMode(PolyShape.PolyEditMode.Height);
-
+                        SetPolyEditMode(PolyShape.PolyEditMode.Height);
                         evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
@@ -1010,11 +1059,7 @@ namespace UnityEditor.ProBuilder
 
                 case KeyCode.Escape:
                 {
-                    if(polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-                        DestroyImmediate(polygon.gameObject);
-
                     LeaveTool();
-
                     evt.Use();
                     break;
                 }
@@ -1047,6 +1092,15 @@ namespace UnityEditor.ProBuilder
 
         void UndoRedoPerformed()
         {
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            {
+                //resetting state if undo is performed while in height edit mode
+                polygon.polyEditMode =  PolyShape.PolyEditMode.Path;
+                polygon.extrude = 0f;
+                polygon.mesh.Clear();
+                DestroyImmediate(polygon.mesh.mesh, true);
+            }
+
             if (polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 RebuildPolyShapeMesh(polygon);
         }
