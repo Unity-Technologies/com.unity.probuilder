@@ -77,12 +77,12 @@ namespace UnityEditor.ProBuilder.Actions
 
             var extrudeMethodField = new EnumField("Extrude By", extrudeMethod);
             extrudeMethodField.tooltip = " You may also choose to Extrude by Face Normal, Vertex Normal, or as Individual Faces.";
-            extrudeMethodField.RegisterCallback<ChangeEvent<string>>(evt =>
+            extrudeMethodField.RegisterCallback<ChangeEvent<System.Enum>>(evt =>
             {
-                System.Enum.TryParse(evt.newValue, out ExtrudeMethod newValue);
-                if (extrudeMethod != newValue)
+                var newEnumValue = (ExtrudeMethod)evt.newValue;
+                if (extrudeMethod != newEnumValue)
                 {
-                    extrudeMethod = newValue;
+                    extrudeMethod = newEnumValue;
                     extrudeMethodLabel.style.backgroundImage = m_Icons[(int)extrudeMethod];
                     ProBuilderSettings.Save();
                     PreviewActionManager.UpdatePreview();
