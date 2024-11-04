@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [STO-3429] Fixed a bug where increment snapping was ignored when drawing ProBuilder shapes.
 - [STO-3432] Fixed a bug where Polyshape creation tool was not placing properly the first point on a custom grids.
 - [PBLD-183] Fixed a bug where the 'Extrude by' setting of the 'Extrude Faces' action would always be set to 'Individual Faces'.
+- [STO-3442] Fixed a bug where hover-highlighted elements are not always selected.
 
 ## [6.0.4] - 2024-09-12
 
