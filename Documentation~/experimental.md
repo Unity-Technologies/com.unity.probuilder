@@ -1,4 +1,4 @@
-# Experimental features
+# Use experimental features
 
 ProBuilder includes three experimental features:
 

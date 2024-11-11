@@ -1,14 +1,18 @@
-# Installing ProBuilder
+# Install ProBuilder
 
-From version 3.0 and onwards, ProBuilder is only available from the Package Manager.
+From version 3.0 and later, ProBuilder is only available from the Package Manager.
+
+## Install as a package
 
 To install this package, follow the instructions in the [Package Manager documentation](https://docs.unity3d.com/Manual/upm-ui-install.html).
 
+## Compatibility with Unity versions
 
+This version of ProBuilder is only compatible with Unity version 2019.4 and later. 
 
 ## Support for scriptable render pipelines
 
-If you are using either the [Universal Render Pipeline](https://docs.unity3d.com/Manual/universal-render-pipeline.html) (URP) or the [High Definition Render Pipeline](https://docs.unity3d.com/Manual/high-definition-render-pipeline.html) (HDRP), you also need to import the corresponding URP or HDRP Shaders needed to display vertex colors and textures correctly.
+If you're using either the [Universal Render Pipeline](https://docs.unity3d.com/Manual/universal-render-pipeline.html) (URP) or the [High Definition Render Pipeline](https://docs.unity3d.com/Manual/high-definition-render-pipeline.html) (HDRP), you also need to import the corresponding URP or HDRP Shaders needed to display vertex colors and textures correctly.
 
 To import these Shaders from the **Samples** section:
 
@@ -21,10 +25,4 @@ To import these Shaders from the **Samples** section:
 3. Click the button next to the support entry that matches the render pipeline you are using.
 
   The Project view now displays the support folder containing the imported files under the `Assets/Samples/ProBuilder/<version>` folder of your project.
-
-
-
-## Compatibility with Unity versions
-
-This version of ProBuilder is only compatible with Unity version 2019.4 and later. 
 

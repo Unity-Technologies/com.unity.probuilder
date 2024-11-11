@@ -2,14 +2,14 @@
 
 You can access all of ProBuilder's editing tools and actions from:
 
-* The context menu (right-click) for a ProBuilder Mesh in the Scene view.
+* The context menu (right-click) for a ProBuilder Mesh in the **Scene** view.
 * The Tool Settings overlay.
 * The Tools overlay in both GameObject and ProBuilder context.
 * **Main Menu** > **Tools** > **ProBuilder**.
 
-## Building and editing complex Meshes
+## Building and editing complex meshes
 
-ProBuilder Meshes act like regular GameObjects in Unity. You can apply Transform values to them and add components to them. They respond to the physics system, and you can animate them and attach scripts to them in order to control them. However, standard Unity Meshes are not the same as ProBuilder Meshes: you can't edit them with ProBuilder actions until you [convert them into ProBuilder objects](Object_ProBuilderize.md). 
+ProBuilder meshes act like regular GameObjects in Unity. You can apply Transform values to them and add components to them. They respond to the physics system, and you can animate them and attach scripts to them in order to control them. However, standard Unity Meshes are not the same as ProBuilder Meshes: you can't edit them with ProBuilder actions until you [convert them into ProBuilder objects](Object_ProBuilderize.md). 
 
 ![ProBuilder vs. Unity Meshes](images/PBvsUnityMeshes.png)
 

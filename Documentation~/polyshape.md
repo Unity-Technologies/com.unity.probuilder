@@ -1,4 +1,4 @@
-# New PolyShape and Edit PolyShape tools
+# Create and edit custom PolyShapes
 
 To create custom shapes, use the **New PolyShape** tool. Draw a 2D shape with as many points as you need, then extrude it to 3D. You can continue to edit the shape once you've extruded it to make it more complex. 
 

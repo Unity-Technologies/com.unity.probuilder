@@ -1,34 +1,34 @@
-* [About ProBuilder](index)
-    * [What's new in ProBuilder](whats-new)
-    * [Getting started](overview)
-    * [ProBuilder mesh components](components)
-    * [Edit modes and active contexts](modes)
-    * [Tools vs. actions](tools)
-    * [Installing ProBuilder](installing)
-    * [Helpful links](links)
-    * [Glossary](gloss)
+* [Unity ProBuilder](index)
+    * [What's new in ProBuilder](whats-new) - **done**
+    * [Install ProBuilder](installing) - **done**
+    * [Getting started](overview) - **done**
+    * [ProBuilder mesh components](components) - **done**
+    * [Edit modes and active contexts](modes) - **done**
+    * [Tools vs. actions](tools) - **done**
+    * [Helpful links](links) - **done**
+    * [Glossary](gloss) - **done**
 * [Interacting with ProBuilder](overview-ui)
-    * [Tool options overlays](tool-options-overlay)
-    * [Scene Information](Scene_Information)
-    * [Transform tools in ProBuilder](Transform_Tools)
-    * [Snap to Grid](snap-to-grid)
-    * [ProBuilder shortcuts](hotkeys)
+    * [The Tool Options overlay](tool-options-overlay) - **done**
+    * [The Scene Information overlay](Scene_Information) - **done**
+    * [Transform tools in ProBuilder](Transform_Tools) - **done**
+    * [Snap to Grid](snap-to-grid) - **done**
+    * [ProBuilder keyboard shortcuts](hotkeys) - **done**
 * [Create meshes](workflow-create)
-    * [New PolyShape and Edit PolyShape tools](polyshape)
-    * [New Shape and Edit Shape tools](shape-tool)
-        * [Arch](Arch)
-        * [Cone](Cone)
-        * [Cube](Cube)
-        * [Cylinder](Cylinder)
-        * [Door](Door)
-        * [Pipe](Pipe)
-        * [Plane](Plane)
-        * [Prism](Prism)
-        * [Sphere](Sphere)
-        * [Sprite](Sprite)
-        * [Stairs](Stair)
-        * [Torus](Torus)
-    * [ProBuilderize a standard object](Object_ProBuilderize)
+    * [Create and edit custom PolyShapes](polyshape) - **done**
+    * [Create and edit built-in shapes](shape-tool) - **done**
+        * [Arch](Arch) - **done**
+        * [Cone](Cone) - **done**
+        * [Cube](Cube) - **done**
+        * [Cylinder](Cylinder) - **done**
+        * [Door](Door) - **done**
+        * [Pipe](Pipe) - **done**
+        * [Plane](Plane) - **done**
+        * [Prism](Prism) - **done**
+        * [Sphere](Sphere) - **done**
+        * [Sprite](Sprite) - **done**
+        * [Stairs](Stair) - **done**
+        * [Torus](Torus) - **done**
+    * [ProBuilderize a standard object](Object_ProBuilderize) - **done**
     * [ProBuilder MeshFilter component](ProBuilderMesh)
 * [Edit meshes](workflow-edit)
     * [Modeling tips](workflow-edit-tips)
@@ -98,7 +98,7 @@
         * [UV drop-down menu](uv_dropdown)
         * [Actions Panel: Auto UV Mode](auto-uvs-actions)
         * [Actions Panel: Manual UV Mode](manual-uvs-actions)
-* [Experimental features](experimental)
+* [Use experimental features](experimental)
     * [Create and edit Bezier shapes](workflow-create-bezier)
     * [Perform Boolean operations](boolean)
     * [Store meshes as assets](meshes-as-assets)

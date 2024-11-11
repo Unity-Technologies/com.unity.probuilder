@@ -1,19 +1,20 @@
-# About ProBuilder
+# Unity ProBuilder
 
-You can build, edit, and texture custom geometry in Unity with the actions and tools available in the ProBuilder package. You can also use ProBuilder to help with in-scene level design, prototyping, collision Meshes, and play-testing. 
+Use ProBuilder to create, edit, and texture custom geometry in Unity. ProBuilder also includes a [Scripting API](api.md) so you can write C# scripts to make your own tools and customizations.
 
-ProBuilder also comes with a [Scripting API](api.md), so that you can write C# scripts to make your own tools and customizations.
+Use custom geometry for in-scene level design, prototyping, collision meshes, and play-testing. ProBuilder also includes a [model export feature](workflow-exporting.md) so you can edit your levels in any 3D modeling software.
 
-To add ProBuilder to Unity, refer to [Installing ProBuilder](installing.md). 
+| **Topic**                       | **Description**                  |
+| :------------------------------ | :------------------------------- |
+| **[Subpage A](link-to-page-A)** | Summary sentence from subpage A. |
+| **[Subpage B](link-to-page-B)** | Summary sentence from subpage A. |
+| **...**                         | ...                              |
+
+## Additional resources
+
+- [Install ProBuilder](installing.md)
+- [Create meshes](workflow-create.md)
 
 ![The Unity logo built with ProBuilder and an open Vertex Color editor window.](images/probuilder_unitylogo.png)
-
-Some of the advanced features include:
-
-* [UV editing and texture mapping](workflow-texture-mapping.md)
-* [Applying Vertex Colors](workflow-vertexcolors.md)
-* [Creating parametric shapes](workflow-create.md)
-
-In addition, the ProBuilder package includes a [Model export feature](workflow-exporting.md), which you can use to tweak your levels in any 3D modeling software.
 
 

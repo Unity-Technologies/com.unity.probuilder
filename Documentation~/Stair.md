@@ -1,4 +1,5 @@
 # Stairs
+
 You can create straight stairs, curved stairs, long stairs, stairs with a lot of steps, wide stairs, and stairs without side polygons.
 
 ![Stairs shapes](images/shape-tool_stair.png)
@@ -9,7 +10,7 @@ You can customize the shape of your stairs with these shape-specific properties:
 
 
 | **Property:** | **Description:** |
-|:-- |:-- |
+| :--- | :--- |
 | __Steps Generation__ | Select how you want ProBuilder to build steps:<br /><br />- Select the **Height** method if you want ProBuilder to generate a predictable height for each step in the staircase. This means that if you increase the height of the overall size of the staircase, the number of of steps increases.<br />- Select the **Count** method if you want ProBuilder to generate a specific number of steps, regardless of any changes in the size of the staircase. This means that if you increase the height of the overall size of the stairs, each step becomes higher.<br /><br />The default value is the **Count** method. |
 | __Steps Height__ | Set the fixed height of each step on the stairs. The default value is 0.2. <br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |
 | __Homogeneous Steps__ | Enable this option to force every step to be the exactly the same height. This is enabled by default.<br /><br />This property is only available when the **Steps Generation** method is set to **Height**. |

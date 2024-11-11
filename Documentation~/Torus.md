@@ -1,4 +1,5 @@
 # Torus
+
 A torus is a 3D shape formed by a small circle that rotates around a bigger circle. It usually looks like a circular ring, or a donut.
 
 ![Torus shapes](images/shape-tool_torus.png)
@@ -15,7 +16,7 @@ You can customize the shape of a torus with these shape-specific properties:
 
 
 | **Property:** | **Description:** |
-|:-- |:-- |
+| :--- | :--- |
 | __Rows__ | Set the complexity of the Mesh, together with the __Columns__ value. You can enter a value from 3 to 64. The higher the value, the smoother the shape, but at the cost of more polygons to calculate. The default value is 16. |
 | __Columns__ | Set the complexity of the Mesh, together with the __Rows__ value. You can enter a value from 3 to 64. The higher the value, the smoother the shape, but at the cost of more polygons (and therefore more computation). The default value is 24. |
 | __Tube Radius__ | Set the radius of the tube itself in meters. The default value is 0.1. |

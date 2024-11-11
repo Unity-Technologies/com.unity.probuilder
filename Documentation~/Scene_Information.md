@@ -1,4 +1,4 @@
-# Scene Information
+# The Scene Information overlay
 
 ![The Scene Information overlay](images/show-scene-info.png)
 

@@ -1,4 +1,4 @@
-# New Shape and Edit Shape tools
+# Create and edit built-in shapes
 
 To add built-in ProBuilder shapes, use the **New Shape** tool.
 
