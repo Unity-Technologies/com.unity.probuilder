@@ -52,7 +52,7 @@ namespace UnityEditor.ProBuilder
                     case EventType.MouseUp:
                         if(evt.button == 0)
                         {
-                            if(!m_IsDragging && evt.shift)
+                            if (!m_IsDragging && evt.shift)
                             {
                                 CreateLastShape();
                                 return ResetState();
@@ -60,6 +60,9 @@ namespace UnityEditor.ProBuilder
 
                             if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) <= Mathf.Min(0.01f, tool.minSnapSize))
                                 return ResetState();
+                            
+                            tool.m_LastNonDuplicateCenterToOrigin = (tool.m_BB_Origin - tool.m_BB_OppositeCorner) * 0.5f;
+                            tool.m_LastNonDuplicateRotation = tool.m_PlaneRotation;
 
                             return NextState();
                         }
@@ -96,9 +99,9 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
             tool.ApplyPrefsSettings(shape);
-
+            
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-            shape.Rebuild(tool.m_Bounds, tool.m_PlaneRotation);
+            shape.Rebuild(tool.previewPivotPosition, tool.m_PlaneRotation, tool.m_Bounds);
 
             //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
