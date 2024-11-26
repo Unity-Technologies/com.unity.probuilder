@@ -435,7 +435,7 @@ namespace UnityEditor.ProBuilder
         }
 
         internal Vector3 m_LastNonDuplicateCenterToOrigin;
-        internal Quaternion m_LastNonDuplicateRotation;
+       
         internal Vector3 previewPivotPosition
         {
             get
@@ -445,7 +445,7 @@ namespace UnityEditor.ProBuilder
                     var lastCenterToOrigin = instance.m_LastNonDuplicateCenterToOrigin;
                     var lastCenterToOriginNorm = lastCenterToOrigin.normalized;
                     
-                    var deltaRot = Quaternion.Inverse(instance.m_LastNonDuplicateRotation) * instance.m_PlaneRotation;
+                    var deltaRot = instance.m_PlaneRotation;
                     lastCenterToOriginNorm = deltaRot * lastCenterToOriginNorm;
 
                     var pivotOffset = lastCenterToOriginNorm * lastCenterToOrigin.magnitude;
@@ -683,17 +683,20 @@ namespace UnityEditor.ProBuilder
             cornerPosition.y = position.y;
             
             m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
+            var lastPreviewRotation = m_PlaneRotation;
             m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+            var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation);
 
             var preview_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
             var preview_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
             var preview_BB_OppositeCorner = preview_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
 
 
+            ProBuilderShape shape;
             if (m_DuplicateGO == null)
             {
                 var instantiated = ShapeFactory.Instantiate(activeShapeType);
-                var shape = instantiated.GetComponent<ProBuilderShape>();
+                shape = instantiated.GetComponent<ProBuilderShape>();
                 m_DuplicateGO = shape.gameObject;
                 m_DuplicateGO.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                 ApplyPrefsSettings(shape);
@@ -701,17 +704,28 @@ namespace UnityEditor.ProBuilder
 
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
                 shape.Rebuild(previewPivotPosition, m_PlaneRotation, m_Bounds);
+                
                 ProBuilderEditor.Refresh(false);
             }
-            else if (m_DuplicateGO.TryGetComponent<MeshRenderer>(out var renderer) && !renderer.enabled)
+            else
             {
-                var shape = m_DuplicateGO.GetComponent<ProBuilderShape>();
-                renderer.enabled = true;
+                var rendererWasEnabled = true;
+                if (m_DuplicateGO.TryGetComponent<MeshRenderer>(out var renderer) && !renderer.enabled)
+                {
+                    rendererWasEnabled = false;
+                    renderer.enabled = true;
+                }
 
-                ApplyPrefsSettings(shape);
-                EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
-                shape.Rebuild(previewPivotPosition, m_PlaneRotation, m_Bounds);
-                ProBuilderEditor.Refresh(false);
+                if (forceRebuildPreview || !rendererWasEnabled)
+                {
+                    shape = m_DuplicateGO.GetComponent<ProBuilderShape>();
+
+                    ApplyPrefsSettings(shape);
+                    EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
+                    shape.Rebuild(previewPivotPosition, m_PlaneRotation, m_Bounds);
+
+                    ProBuilderEditor.Refresh(false);
+                }
             }
 
             var pivot = GetPoint(position);
