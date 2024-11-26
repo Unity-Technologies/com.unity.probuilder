@@ -435,6 +435,7 @@ namespace UnityEditor.ProBuilder
         }
 
         internal Vector3 m_LastNonDuplicateCenterToOrigin;
+        PivotLocation m_LastPreviewPivotLocation;
        
         internal Vector3 previewPivotPosition
         {
@@ -685,8 +686,10 @@ namespace UnityEditor.ProBuilder
             m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
             var lastPreviewRotation = m_PlaneRotation;
             m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-            var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation);
-
+            var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation) || 
+                                      m_LastPreviewPivotLocation != pivotLocation;
+            m_LastPreviewPivotLocation = pivotLocation;
+            
             var preview_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
             var preview_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
             var preview_BB_OppositeCorner = preview_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
