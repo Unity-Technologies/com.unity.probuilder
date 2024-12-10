@@ -86,7 +86,10 @@ namespace UnityEditor.ProBuilder
                         break;
 
                     case EventType.MouseUp:
+                    {
+                        tool.m_LastNonDuplicateCenterToOrigin = Quaternion.Inverse(tool.m_PlaneRotation)  * ((tool.m_BB_Origin - tool.m_BB_HeightCorner) * 0.5f);
                         return ValidateShape();
+                    }
                 }
             }
 
