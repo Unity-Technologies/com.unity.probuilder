@@ -426,7 +426,10 @@ namespace UnityEditor.ProBuilder
                     {
                         var lastShape = instance.m_LastShapeCreated;
                         var lastShapeTrs = lastShape.transform;
-                        var newPivotPosition = value == PivotLocation.Center ? lastShape.shapeWorldCenter : instance.m_BB_Origin;
+                        var newPivotPosition = lastShape.shapeWorldCenter;
+                        if (value != PivotLocation.Center)
+                            newPivotPosition += instance.m_PlaneRotation * m_LastNonDuplicateCenterToOrigin;
+                        
                         instance.m_LastShapeCreated.Rebuild(newPivotPosition, lastShapeTrs.rotation, lastShape.shapeWorldBounds);
                     }
                     shapePivotLocation = value;
