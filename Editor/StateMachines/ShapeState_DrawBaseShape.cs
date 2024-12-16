@@ -60,8 +60,8 @@ namespace UnityEditor.ProBuilder
 
                             if(Vector3.Distance(tool.m_BB_OppositeCorner, tool.m_BB_Origin) <= Mathf.Min(0.01f, tool.minSnapSize))
                                 return ResetState();
-                            
-                      
+
+
                             tool.m_LastNonDuplicateCenterToOrigin = Quaternion.Inverse(tool.m_PlaneRotation) * ((tool.m_BB_Origin - tool.m_BB_OppositeCorner) * 0.5f);
                             return NextState();
                         }
@@ -98,12 +98,9 @@ namespace UnityEditor.ProBuilder
             UndoUtility.RegisterCreatedObjectUndo(shape.gameObject, $"Create Shape");
             EditorUtility.InitObject(shape.mesh);
             tool.ApplyPrefsSettings(shape);
-            
+
             EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
             shape.Rebuild(tool.previewPivotPosition, tool.m_PlaneRotation, tool.m_Bounds);
-
-            Debug.Log("DBG: rebuild LAST shape pos: " + tool.previewPivotPosition +
-                      " rot: " + tool.m_PlaneRotation + " bounds: " +  tool.m_Bounds);
 
             //Finish initializing object and collider once it's completed
             ProBuilderEditor.Refresh(false);
