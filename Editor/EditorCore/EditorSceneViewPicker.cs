@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 {
     struct ScenePickerPreferences
     {
-        public const float maxPointerDistance = 40f;
+        public const float maxPointerDistance = 20f;
         public const float offPointerMultiplier = 1.2f;
 
         public CullingMode cullMode;
@@ -520,7 +520,13 @@ namespace UnityEditor.ProBuilder
             Camera cam = SceneView.lastActiveSceneView.camera;
             selection.Clear();
             s_NearestVertices.Clear();
-            selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+            bool highlightedVertexExists = ProBuilderEditor.instance.hovering.vertexes.Count > 0;
+
+            // if there is a vertex already highlighted, we don't want to select a different game object
+            if (!highlightedVertexExists)
+            {
+                selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+            }
             float maxDistance = ScenePickerPreferences.maxPointerDistance * ScenePickerPreferences.maxPointerDistance;
             ProBuilderMesh hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
@@ -600,7 +606,13 @@ namespace UnityEditor.ProBuilder
         static float EdgeRaycast(Vector3 mousePosition, ScenePickerPreferences pickerPrefs, bool allowUnselected, SceneSelection selection)
         {
             selection.Clear();
-            selection.gameObject = UHandleUtility.PickGameObject(mousePosition, false);
+            bool highlightedEdgeExists = ProBuilderEditor.instance.hovering.edges.Count > 0;
+
+            // if there is an edge already highlighted, we don't want to select a different game object
+            if (!highlightedEdgeExists)
+            {
+                selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+            }
             var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             float bestDistance = Mathf.Infinity;
