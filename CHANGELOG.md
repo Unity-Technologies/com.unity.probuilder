@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
 - [PBLD-180] Fixed an issue in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
 - Fixed a bug where Undo was not working correctly with Polyshape creation tool. 
 - [PBLD-196] Fixed a bug where Polyshape creation tool was not working with orthographic camera.
