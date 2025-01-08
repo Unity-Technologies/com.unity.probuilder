@@ -52,22 +52,24 @@ namespace UnityEditor.ProBuilder
         internal static Pref<bool> s_AllowNonManifoldActions =
             new Pref<bool>("editor.allowNonManifoldActions", false, SettingsScope.User);
 
-        static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
+        static Pref<bool> s_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
 
-        static Pref<RectSelectMode> m_DragSelectRectMode =
+        static Pref<bool> s_SnapVertexToSelfEnabled = new Pref<bool>("editor.snapVertexToSelfEnabled", true);
+
+        static Pref<RectSelectMode> s_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
         internal static event Action rectSelectModeChanged;
         internal static RectSelectMode rectSelectMode
         {
-            get { return m_DragSelectRectMode.value; }
+            get { return s_DragSelectRectMode.value; }
 
             set
             {
-                if (m_DragSelectRectMode.value == value)
+                if (s_DragSelectRectMode.value == value)
                     return;
 
-                m_DragSelectRectMode.SetValue(value, true);
+                s_DragSelectRectMode.SetValue(value, true);
                 if(rectSelectModeChanged != null)
                     rectSelectModeChanged();
 
@@ -76,17 +78,33 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal static event Action backfaceSelectionEnabledChanged;
-        internal static bool backfaceSelectionEnabled
+        internal static event Action snapVertexToSelfEnabledChanged;
+        internal static bool snapVertexToSelfEnabled
         {
-            get { return m_BackfaceSelectEnabled.value; }
+            get { return s_SnapVertexToSelfEnabled.value; }
 
             set
             {
-                if (value == m_BackfaceSelectEnabled.value)
+                if (value == s_SnapVertexToSelfEnabled.value)
                     return;
 
-                m_BackfaceSelectEnabled.SetValue(value, true);
+                s_SnapVertexToSelfEnabled.SetValue(value, true);
+                if(snapVertexToSelfEnabledChanged != null)
+                    snapVertexToSelfEnabledChanged();
+            }
+        }
+
+        internal static event Action backfaceSelectionEnabledChanged;
+        internal static bool backfaceSelectionEnabled
+        {
+            get { return s_BackfaceSelectEnabled.value; }
+
+            set
+            {
+                if (value == s_BackfaceSelectEnabled.value)
+                    return;
+
+                s_BackfaceSelectEnabled.SetValue(value, true);
                 if(backfaceSelectionEnabledChanged != null)
                     backfaceSelectionEnabledChanged();
 
@@ -253,8 +271,8 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
-                rectSelectMode = m_DragSelectRectMode
+                cullMode = s_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
+                rectSelectMode = s_DragSelectRectMode
             };
         }
 

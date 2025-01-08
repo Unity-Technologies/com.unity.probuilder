@@ -20,6 +20,7 @@ namespace UnityEditor.ProBuilder
                 yield return "ProBuilder Settings/Select Mode";
                 yield return "ProBuilder Settings/Select Back Faces";
                 yield return "ProBuilder Settings/Drag Rect Mode";
+                yield return "ProBuilder Settings/Snap Vertices To Self";
             }
         }
     }
