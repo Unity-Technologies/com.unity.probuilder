@@ -1,0 +1,83 @@
+:root {
+}
+
+#ActionName.toolbarMode {
+    display: none;
+}
+
+#PanelButton.toolbarHorizontalMode {
+    width: 32px;
+    height: 20px;
+    max-width: 32px;
+    max-height: 20px;
+    min-width: 32px;
+    min-height: 20px;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-right: 1px;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-right: 2px;
+    padding-left: 2px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+#ActionColor.toolbarMode {
+    height: 16px;
+    max-height: 16px;
+    min-height: 16px;
+    width: 4px;
+    max-width: 4px;
+    min-width: 4px;
+    background-position-x: left 0;
+}
+
+#ActionIcon.toolbarMode {
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    min-height: 16px;
+    min-width: 16px;
+    background-position-x: center 0;
+}
+
+#PanelButton.panelMode {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-width: 100px;
+}
+
+#PanelButton.toolbarVerticalMode {
+    width: 36px;
+    height: 20px;
+    max-width: 36px;
+    max-height: 20px;
+    min-width: 36px;
+    min-height: 20px;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 1px;
+    margin-left: 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}

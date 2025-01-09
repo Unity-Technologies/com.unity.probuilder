@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.unity.probuilder/Editor/Resources/ActionOverlay.uss?fileID=7433441132597879392&amp;guid=4d2274e209af2ae458928061ab0671a0&amp;type=3#ActionOverlay" />
+    <ui:VisualElement name="Root" style="flex-grow: 1; flex-direction: row; align-self: stretch;">
+        <ui:Button text="&#10;" name="PanelButton" style="align-items: center; flex-direction: row; background-color: rgb(69, 69, 69); flex-shrink: 0; flex-grow: 1;">
+            <ui:VisualElement name="ActionColor" style="flex-grow: 1; width: 4px; max-width: 4px; min-width: 4px; background-color: rgb(200, 0, 0); flex-shrink: 0; height: 22px; margin-left: 2px;" />
+            <ui:VisualElement name="ActionIcon" style="flex-grow: 1; width: 16px; height: 16px; max-width: 16px; max-height: 16px; min-height: 16px; min-width: 16px; margin-right: 2px; margin-left: 2px;" />
+            <ui:Label text="Label" name="ActionName" style="color: rgb(228, 228, 228);" />
+        </ui:Button>
+    </ui:VisualElement>
+</ui:UXML>
