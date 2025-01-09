@@ -9,25 +9,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- Improved DrawShape tool performance when placing the first vertex.
+- Improved DrawShape tool performance when you place the first vertex.
 
 ### Fixed
 
 - [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
-- [PBLD-180] Fixed an issue in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
-- Fixed a bug where Undo was not working correctly with Polyshape creation tool. 
-- [PBLD-196] Fixed a bug where Polyshape creation tool was not working with orthographic camera.
+- [PBLD-180] Fixed a bug in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
+- Fixed a bug where Undo was not working correctly with the Polyshape creation tool. 
+- [PBLD-196] Fixed a bug where the Polyshape creation tool was not working with an orthographic camera.
 - [STO-3429] Fixed a bug where increment snapping was ignored when drawing ProBuilder shapes.
-- [STO-3432] Fixed a bug where Polyshape creation tool was not placing properly the first point on a custom grids.
-- [PBLD-183] Fixed a bug where the 'Extrude by' setting of the 'Extrude Faces' action would always be set to 'Individual Faces'.
+- [STO-3432] Fixed a bug where the Polyshape creation tool was not placing the first point on a custom grids correctly.
+- [PBLD-183] Fixed a bug where the "Extrude by" setting of the **Extrude Faces** action was always set to **Individual Faces**.
 - [STO-3442] Fixed a bug where hover-highlighted elements are not always selected.
 
 ## [6.0.4] - 2024-09-12
 
 ### Changes
 
-- [PBLD-169] "Edit Vertices/Edges/Faces" shortcuts now automatically enter the ProBuilder context.
-- [PBLD-167] Removed "Toggle ProBuilder Context" shortcut - the built-in "Cycle Tool Modes" shortcut should be used instead.
+- [PBLD-169] Using the **Edit Vertices**, **Edit Edges**, and **Edit Faces** shortcuts now automatically activate the the ProBuilder tool context.
+- [PBLD-167] Removed the **Toggle ProBuilder Context** shortcut. Use the the built-in **Cycle Tool Modes** shortcut instead.
 
 ## [6.0.3] - 2024-08-20
 
