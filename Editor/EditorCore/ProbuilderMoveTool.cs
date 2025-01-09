@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -62,9 +63,18 @@ namespace UnityEditor.ProBuilder
                 if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
-                    bool vertexSnapping = ProBuilderEditor.snapVertexToSelfEnabled ?
-                        HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, null, out nearest) :
-                        HandleUtility.FindNearestVertex(currentEvent.mousePosition, out nearest);
+                    bool vertexSnapping = false;
+                    if (ProBuilderEditor.snapVertexToSelfEnabled)
+                        vertexSnapping =
+                            HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, null, out nearest);
+                    else
+                    {
+                        var trs = new List<Transform>();
+                        foreach (var key in elementSelection)
+                            trs.Add(((MeshAndPositions)key).mesh.transform);
+
+                        vertexSnapping = HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, trs.ToArray(), out nearest);
+                    }
 
                     if (vertexSnapping)
                     {
