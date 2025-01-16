@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;

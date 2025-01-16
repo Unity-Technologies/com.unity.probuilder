@@ -18,22 +18,22 @@ namespace UnityEditor.ProBuilder
 
 			ProBuilderEditor.selectMode = SelectMode.Vertex;
 		}
-
+		
 		[Shortcut("ProBuilder/Editor/Edit Edges", typeof(SceneViewMotion.SceneViewContext))]
 		static void SetSelectMode_Edge()
-		{
+		{			
 			if (!CheckAndEnterPBContextIfNeeded())
 				return;
-
+			
 			ProBuilderEditor.selectMode = SelectMode.Edge;
 		}
-
+		
 		[Shortcut("ProBuilder/Editor/Edit Faces", typeof(SceneViewMotion.SceneViewContext))]
 		static void SetSelectMode_Faces()
 		{
 			if (!CheckAndEnterPBContextIfNeeded())
 				return;
-
+			
 			ProBuilderEditor.selectMode = SelectMode.Face;
 		}
 
@@ -51,7 +51,7 @@ namespace UnityEditor.ProBuilder
 				// Check if PositionToolContext can actually be entered
 				if (EditorToolManager.GetComponentContext(typeof(PositionToolContext), true) == null)
 					return false;
-
+				
 				ToolManager.SetActiveContext<PositionToolContext>();
 			}
 
