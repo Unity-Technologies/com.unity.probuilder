@@ -63,20 +63,7 @@ namespace UnityEditor.ProBuilder
                 if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
-                    bool vertexSnapping = false;
-                    if (ProBuilderEditor.snapVertexToSelfEnabled)
-                        vertexSnapping =
-                            HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, null, out nearest);
-                    else
-                    {
-                        var trs = new List<Transform>();
-                        foreach (var key in elementSelection)
-                            trs.Add(((MeshAndPositions)key).mesh.transform);
-
-                        vertexSnapping = HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, trs.ToArray(), out nearest);
-                    }
-
-                    if (vertexSnapping)
+                    if (HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, null, out nearest))
                     {
                         var unrotated = handleRotationOriginInverse * delta;
                         var dir = new Vector3Mask(unrotated, k_CardinalAxisError);

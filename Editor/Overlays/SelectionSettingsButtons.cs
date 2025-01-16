@@ -150,50 +150,6 @@ namespace UnityEditor.ProBuilder.UI
         }
     }
 
-    [EditorToolbarElement("ProBuilder Settings/Snap Vertices To Self")]
-    class SnapVerticesToSelfToggle : EditorToolbarToggle
-    {
-        const string k_Tooltip = "Snap Vertices to the object itself when using vertex snapping manipulation (Move tool only).";
-
-        SnapVerticesToSelfToggle()
-        {
-            tooltip = k_Tooltip;
-            enabledSelf = EditorToolManager.activeTool is ProbuilderMoveTool;
-
-            //TODO: Replace with real icons
-            offIcon =  IconUtility.GetIcon("Modes/Mode_Vertex");
-            onIcon =  IconUtility.GetIcon("Modes/Mode_Vertex");
-            //END TODO
-
-            SetValueWithoutNotify(ProBuilderEditor.snapVertexToSelfEnabled);
-            RegisterCallback<ChangeEvent<bool>>(evt => ProBuilderEditor.snapVertexToSelfEnabled = evt.newValue);
-            RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
-            RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
-        }
-
-        void OnAttachToPanel(AttachToPanelEvent evt)
-        {
-            ProBuilderEditor.snapVertexToSelfEnabledChanged += UpdateVisual;
-            ToolManager.activeToolChanged += ActiveToolChanged;
-        }
-
-        void OnDetachFromPanel(DetachFromPanelEvent evt)
-        {
-            ProBuilderEditor.snapVertexToSelfEnabledChanged -= UpdateVisual;
-            ToolManager.activeToolChanged -= ActiveToolChanged;
-        }
-
-        private void ActiveToolChanged()
-        {
-            enabledSelf = EditorToolManager.activeTool is ProbuilderMoveTool;
-        }
-
-        void UpdateVisual()
-        {
-            SetValueWithoutNotify(ProBuilderEditor.snapVertexToSelfEnabled);
-        }
-    }
-
     [EditorToolbarElement("ProBuilder Settings/Handle Orientation")]
     class HandleOrientationDropdown : EditorToolbarDropdown
     {

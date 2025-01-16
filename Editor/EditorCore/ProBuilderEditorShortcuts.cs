@@ -57,12 +57,5 @@ namespace UnityEditor.ProBuilder
 
 			return true;
 		}
-
-        [Shortcut("ProBuilder/Editor/Toggle Vertex Snapping to self", typeof(PositionToolContext.ProBuilderShortcutContext))]
-        static void Toggle_SnapVertexToSelf()
-        {
-            if(EditorToolManager.activeTool is ProbuilderMoveTool)
-                ProBuilderEditor.snapVertexToSelfEnabled = !ProBuilderEditor.snapVertexToSelfEnabled;
-        }
 	}
 }

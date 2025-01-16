@@ -54,8 +54,6 @@ namespace UnityEditor.ProBuilder
 
         static Pref<bool> s_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
 
-        static Pref<bool> s_SnapVertexToSelfEnabled = new Pref<bool>("editor.snapVertexToSelfEnabled", true);
-
         static Pref<RectSelectMode> s_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
@@ -75,22 +73,6 @@ namespace UnityEditor.ProBuilder
 
                 if (s_Instance != null)
                     s_Instance.m_ScenePickerPreferences.rectSelectMode = value;
-            }
-        }
-
-        internal static event Action snapVertexToSelfEnabledChanged;
-        internal static bool snapVertexToSelfEnabled
-        {
-            get { return s_SnapVertexToSelfEnabled.value; }
-
-            set
-            {
-                if (value == s_SnapVertexToSelfEnabled.value)
-                    return;
-
-                s_SnapVertexToSelfEnabled.SetValue(value, true);
-                if(snapVertexToSelfEnabledChanged != null)
-                    snapVertexToSelfEnabledChanged();
             }
         }
 
