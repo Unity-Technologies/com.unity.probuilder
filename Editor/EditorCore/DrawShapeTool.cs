@@ -429,7 +429,7 @@ namespace UnityEditor.ProBuilder
                         var newPivotPosition = lastShape.shapeWorldCenter;
                         if (value != PivotLocation.Center)
                             newPivotPosition += instance.m_PlaneRotation * m_LastNonDuplicateCenterToOrigin;
-                        
+
                         instance.m_LastShapeCreated.Rebuild(newPivotPosition, lastShapeTrs.rotation, lastShape.shapeWorldBounds);
                     }
                     shapePivotLocation = value;
@@ -439,7 +439,7 @@ namespace UnityEditor.ProBuilder
 
         internal Vector3 m_LastNonDuplicateCenterToOrigin;
         PivotLocation m_LastPreviewPivotLocation;
-       
+
         internal Vector3 previewPivotPosition
         {
             get
@@ -448,14 +448,14 @@ namespace UnityEditor.ProBuilder
                 {
                     var lastCenterToOrigin = instance.m_LastNonDuplicateCenterToOrigin;
                     var lastCenterToOriginNorm = lastCenterToOrigin.normalized;
-                    
+
                     var deltaRot = instance.m_PlaneRotation;
                     lastCenterToOriginNorm = deltaRot * lastCenterToOriginNorm;
 
                     var pivotOffset = lastCenterToOriginNorm * lastCenterToOrigin.magnitude;
                     return pivotOffset + instance.m_Bounds.center;
                 }
-                
+
                 return m_Bounds.center;
             }
         }
@@ -685,14 +685,14 @@ namespace UnityEditor.ProBuilder
             position = GetPoint(position);
             var cornerPosition = position - size / 2f;
             cornerPosition.y = position.y;
-            
+
             m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
             var lastPreviewRotation = m_PlaneRotation;
             m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
-            var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation) || 
+            var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation) ||
                                       m_LastPreviewPivotLocation != pivotLocation;
             m_LastPreviewPivotLocation = pivotLocation;
-            
+
             var preview_BB_Origin = m_Bounds.center - m_PlaneRotation * (size / 2f);
             var preview_BB_HeightCorner = m_Bounds.center + m_PlaneRotation * (size / 2f);
             var preview_BB_OppositeCorner = preview_BB_HeightCorner - m_PlaneRotation * new Vector3(0, size.y, 0);
@@ -710,7 +710,7 @@ namespace UnityEditor.ProBuilder
 
                 EditorShapeUtility.CopyLastParams(shape.shape, shape.shape.GetType());
                 shape.Rebuild(previewPivotPosition, m_PlaneRotation, m_Bounds);
-                
+
                 ProBuilderEditor.Refresh(false);
             }
             else
@@ -740,7 +740,7 @@ namespace UnityEditor.ProBuilder
             else
                 pivot = previewPivotPosition;
             m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
-            
+
             DrawBoundingBox(preview_BB_Origin, preview_BB_HeightCorner, preview_BB_OppositeCorner, false);
         }
 
@@ -749,8 +749,9 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void RecalculateBounds()
         {
-            var forward = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneForward);
-            var right = HandleUtility.PointOnLineParameter(m_BB_OppositeCorner, m_BB_Origin, m_PlaneRight);
+            var diag = m_BB_OppositeCorner - m_BB_Origin;
+            var forward = Vector3.Dot(diag, m_PlaneForward.normalized);
+            var right = Vector3.Dot(diag, m_PlaneRight.normalized);
 
             var localHeight = Quaternion.Inverse(m_PlaneRotation) * (m_BB_HeightCorner - m_BB_OppositeCorner);
             var height = localHeight.y;
@@ -850,7 +851,7 @@ namespace UnityEditor.ProBuilder
                 Handles.DotHandleCap(-1, heightCorner, Quaternion.identity, HandleUtility.GetHandleSize(heightCorner) * 0.05f, EventType.Repaint);
             }
         }
-        
+
         internal void DrawBoundingBox(bool drawCorners = true)
         {
             DrawBoundingBox(m_BB_Origin, m_BB_OppositeCorner, m_BB_HeightCorner, drawCorners);
