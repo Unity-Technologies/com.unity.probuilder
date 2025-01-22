@@ -62,8 +62,7 @@ namespace UnityEditor.ProBuilder
                 if (Tools.vertexDragging)
                 {
                     Vector3 nearest;
-
-                    if (FindNearestVertex(currentEvent.mousePosition, out nearest))
+                    if (HandleUtility.FindNearestVertex(currentEvent.mousePosition, null, null, out nearest))
                     {
                         var unrotated = handleRotationOriginInverse * delta;
                         var dir = new Vector3Mask(unrotated, k_CardinalAxisError);
@@ -75,9 +74,11 @@ namespace UnityEditor.ProBuilder
                             m_Position = HandleUtility.ProjectPointLine(nearest,
                                 handlePositionOrigin + rotationDirection,
                                 handlePositionOrigin - rotationDirection);
-
-                            delta = m_Position - handlePositionOrigin;
                         }
+                        else
+                            m_Position = nearest;
+
+                        delta = m_Position - handlePositionOrigin;
                     }
                 }
                 else if (EditorSnapping.snapMode == SnapMode.World)

@@ -363,16 +363,5 @@ namespace UnityEditor.ProBuilder
                 ProBuilderEditor.Refresh();
             }
         }
-
-        /// <summary>
-        /// Find the nearest vertex among all visible objects.
-        /// </summary>
-        /// <param name="mousePosition"></param>
-        /// <param name="vertex"></param>
-        /// <returns></returns>
-        protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
-        {
-            return HandleUtility.FindNearestVertex(mousePosition, out vertex);
-        }
     }
 }
