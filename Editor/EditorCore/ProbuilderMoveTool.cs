@@ -73,8 +73,12 @@ namespace UnityEditor.ProBuilder
                                 handlePositionOrigin + rotationDirection,
                                 handlePositionOrigin - rotationDirection);
 
-                            delta = m_Position - handlePositionOrigin;
                         }
+                        else
+                            m_Position = nearest;
+
+                        delta = m_Position - handlePositionOrigin;
+                        Debug.Log("Found near vertex");
                     }
                 }
                 else if (EditorSnapping.snapMode == SnapMode.World)
