@@ -88,7 +88,7 @@ namespace UnityEditor.ProBuilder
         static readonly Color SELECTED_COLOR_MANUAL = new Color(1f, .68f, 0f, .39f);
         static readonly Color SELECTED_COLOR_AUTO = new Color(0f, .785f, 1f, .39f);
 
-#if UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX
         public bool ControlKey { get { return Event.current.modifiers == EventModifiers.Command; } }
     #else
         public bool ControlKey
@@ -221,7 +221,7 @@ namespace UnityEditor.ProBuilder
 
         void ScreenshotMenu()
         {
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX
 
 // On Mac ShowAsDropdown and ShowAuxWindow both throw stack pop exceptions when initialized.
             UVRenderOptions renderOptions = EditorWindow.GetWindow<UVRenderOptions>(true, "Save UV Image", true);
@@ -648,7 +648,7 @@ namespace UnityEditor.ProBuilder
 
         bool IsCopyUVSettingsModifiers(EventModifiers modifiers)
         {
-#if UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX
             return (modifiers == (EventModifiers.Command | EventModifiers.Shift));
 #else
             return (modifiers == (EventModifiers.Control | EventModifiers.Shift));
@@ -714,7 +714,12 @@ namespace UnityEditor.ProBuilder
             {
                 return CopyFaceUVSettings(pb, selectedFace);
             }
+#if UNITY_EDITOR_OSX
+            // PBLD-189: Auto-stitch has incorrect and inconvenient shortcut on MacOS
+            else if (em == (EventModifiers.Command | EventModifiers.Shift | EventModifiers.Alt))
+#else
             else if (e.modifiers == EventModifiers.Control)
+#endif
             {
                 int len = pb.selectedFacesInternal == null ? 0 : pb.selectedFacesInternal.Length;
 
