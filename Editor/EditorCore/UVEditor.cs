@@ -716,7 +716,7 @@ namespace UnityEditor.ProBuilder
             }
 #if UNITY_EDITOR_OSX
             // PBLD-189: Auto-stitch has incorrect and inconvenient shortcut on MacOS
-            else if (em == (EventModifiers.Command | EventModifiers.Shift | EventModifiers.Alt))
+            else if (e.modifiers == (EventModifiers.Command | EventModifiers.Shift | EventModifiers.Alt))
 #else
             else if (e.modifiers == EventModifiers.Control)
 #endif
