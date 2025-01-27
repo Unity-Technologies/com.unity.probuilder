@@ -382,7 +382,7 @@ namespace UnityEditor.ProBuilder
         protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
         {
 #if UNITY_2020_2_OR_NEWER
-            return HandleUtility.FindNearestVertex(mousePosition, out vertex);
+            return HandleUtility.FindNearestVertex(mousePosition, null, null, out vertex);
 #else
             s_FindNearestVertexArguments[0] = mousePosition;
             s_FindNearestVertexArguments[1] = null;
