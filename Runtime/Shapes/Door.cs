@@ -25,6 +25,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_LegWidth = .75f;
 
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_DoorHeight = 0.5f;
+            m_LegWidth = 0.75f;
+        }
+        
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {

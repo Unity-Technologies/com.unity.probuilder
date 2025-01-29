@@ -8,6 +8,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Prism")]
     public class Prism : Shape
     {
+        internal override void SetParametersToBuiltInShape() { }
+        
         /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 
