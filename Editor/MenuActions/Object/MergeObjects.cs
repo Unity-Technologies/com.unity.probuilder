@@ -39,6 +39,12 @@ namespace UnityEditor.ProBuilder.Actions
             if (MeshSelection.selectedObjectCount < 2)
                 return new ActionResult(ActionResult.Status.Canceled, "Must Select 2+ Objects");
 
+            DoMergeObjectsAction();
+            return new ActionResult(ActionResult.Status.Success, "Merged Objects");
+        }
+
+        internal List<ProBuilderMesh> DoMergeObjectsAction()
+        {
             var selected = MeshSelection.top.ToArray();
             ProBuilderMesh currentMesh = MeshSelection.activeMesh;
             UndoUtility.RecordObject(currentMesh, "Merge Objects");
@@ -53,8 +59,14 @@ namespace UnityEditor.ProBuilder.Actions
                     {
                         mesh.gameObject.name = Selection.activeGameObject.name + "-Merged";
                         UndoUtility.RegisterCreatedObjectUndo(mesh.gameObject, "Merge Objects");
+                        
                         Selection.objects = res.Select(x => x.gameObject).ToArray();
                     }
+                    
+                    // Remove PolyShape component if one is present post-merge
+                    var polyShapeComp = mesh.gameObject.GetComponent<PolyShape>();
+                    if (polyShapeComp != null )
+                        UndoUtility.DestroyImmediate(polyShapeComp);
                 }
 
                 // Delete donor objects if they are not part of the result
@@ -65,8 +77,7 @@ namespace UnityEditor.ProBuilder.Actions
                 }
             }
 
-            ProBuilderEditor.Refresh();
-            return new ActionResult(ActionResult.Status.Success, "Merged Objects");
+            return res;
         }
     }
 }
