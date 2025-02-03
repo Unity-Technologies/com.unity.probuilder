@@ -19,6 +19,7 @@ using Vertex = UnityEngine.ProBuilder.Vertex;
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Cut Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
+    [Icon("Packages/com.unity.probuilder/Content/Icons/Toolbar/CutTool.png")]
     class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
@@ -84,12 +85,6 @@ namespace UnityEditor.ProBuilder
         static readonly Color k_DrawingLineColor = new Color(0.01f, .9f, 0.3f, 1f);
 
         Color m_CurrentHandleColor = k_HandleColor;
-
-        GUIContent m_IconContent;
-        public override GUIContent toolbarIcon
-        {
-            get { return m_IconContent; }
-        }
 
         //Handles and point placement
         int m_ControlId;
@@ -169,13 +164,6 @@ namespace UnityEditor.ProBuilder
 
         void OnEnable()
         {
-            m_IconContent = new GUIContent()
-            {
-                image = IconUtility.GetIcon("Toolbar/CutTool"),
-                text = "Cut Tool",
-                tooltip = "Cut Tool"
-            };
-
             s_HandleColorUseExistingVertex = Handles.selectedColor;
             s_HandleColorAddVertexOnEdge = Handles.selectedColor;
 
