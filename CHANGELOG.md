@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fixed a bug where "Cut Tool" text was displaying when toolbar was in horizontal position.
 - [PBLD-192] Fixed a bug where vertices were not able to snap on other vertices from the same mesh.
 - [PBLD-189] Fixed a bug where using the auto-stitch functionality of the UV Editor would not work properly on MacOS.
 - [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
