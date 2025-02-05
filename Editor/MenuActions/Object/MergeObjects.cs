@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.ProBuilder.UI;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -66,10 +67,14 @@ namespace UnityEditor.ProBuilder.Actions
                         Selection.objects = res.Select(x => x.gameObject).ToArray();
                     }
                     
-                    // Remove PolyShape component if one is present post-merge
+                    // Remove PolyShape and ProBuilderShape components if any are present post-merge
                     var polyShapeComp = mesh.gameObject.GetComponent<PolyShape>();
                     if (polyShapeComp != null )
                         UndoUtility.DestroyImmediate(polyShapeComp);
+                    
+                    var proBuilderShape = mesh.gameObject.GetComponent<ProBuilderShape>();
+                    if (proBuilderShape != null )
+                        UndoUtility.DestroyImmediate(proBuilderShape);
                 }
 
                 // Delete donor objects if they are not part of the result

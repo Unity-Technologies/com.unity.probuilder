@@ -32,7 +32,9 @@ public class MergeObjectsTest
     }
     
     [Test]
-    public void MergeObjects_WithPolyShapeCompPresent_ResultNoLongerHasPolyShapeComp()
+    [TestCase(typeof(PolyShape))]
+    [TestCase(typeof(ProBuilderShape))]
+    public void MergeObjects_WithShapeCompPresent_ResultNoLongerHasShapeComp(System.Type shapeCompType)
     {
         var meshes = new List<ProBuilderMesh>();
         meshes.Add(m_mesh1);
@@ -40,15 +42,25 @@ public class MergeObjectsTest
         meshes.Add(m_mesh3);
 
         foreach (var mesh in meshes)
-            mesh.gameObject.AddComponent<PolyShape>();
+        {
+            if (shapeCompType == typeof(PolyShape)) 
+                mesh.gameObject.AddComponent<PolyShape>();
+            else
+                mesh.gameObject.AddComponent<ProBuilderShape>();
+        }
 
         MeshSelection.SetSelection(new List<GameObject>( new[]{ m_mesh1.gameObject, m_mesh2.gameObject, m_mesh3.gameObject }));
         ActiveEditorTracker.sharedTracker.ForceRebuild();
 
         var mergeObjectsAction = new MergeObjects();
         var newMeshes = mergeObjectsAction.DoMergeObjectsAction();
+
+        var shapeCompFound = false; 
+        if (shapeCompType == typeof(PolyShape)) 
+            shapeCompFound = newMeshes[0].gameObject.GetComponent<PolyShape>() != null;
+        else 
+            shapeCompFound = newMeshes[0].gameObject.GetComponent<ProBuilderShape>() != null;
         
-        var polyShapeFound = newMeshes[0].gameObject.GetComponent<PolyShape>() != null;
-        Assert.That(polyShapeFound, Is.Not.True, "There should be no PolyShape component on ProBuilder Meshes after mesh combine.");
+        Assert.That(shapeCompFound, Is.Not.True, $"There should be no {shapeCompType.Name} component on ProBuilder Meshes after mesh combine.");
     }
 }
