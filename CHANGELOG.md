@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-189] Fixed a bug where using the auto-stitch functionality of the UV Editor would not work properly on MacOS.
 - [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
 - [PBLD-180] Fixed a bug in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
-- Fixed a bug where Undo was not working correctly with the Polyshape creation tool. 
+- [PBLD-210] Fixed a bug where Undo was not working correctly with the Polyshape creation tool. 
 - [PBLD-196] Fixed a bug where the Polyshape creation tool was not working with an orthographic camera.
 - [STO-3429] Fixed a bug where increment snapping was ignored when drawing ProBuilder shapes.
 - [STO-3432] Fixed a bug where the Polyshape creation tool was not placing the first point on a custom grids correctly.
