@@ -66,18 +66,56 @@ namespace UnityEditor.ProBuilder
                 if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
                     evt.Use();
-                    m_LastPolyShape = polygon.gameObject;
-
-                    SetShapeHeight();
-                    if (!TryCreatePolyShape())
-                    {
-                        ToolManager.RestorePreviousTool();
+                    if (!TryFinalizeShape())
                         return;
-                    }
                 }
             }
 
             base.OnToolGUI(window);
+        }
+
+        protected override void HandleKeyEvent(Event evt)
+        {
+            KeyCode key = evt.keyCode;
+
+            switch (key)
+            {
+                case KeyCode.Space:
+                case KeyCode.Return:
+                {
+                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
+                        || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    {
+                        TryFinalizeShape();
+                    }
+                    break;
+                }
+
+                case KeyCode.Escape:
+                {
+                    if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                        TryFinalizeShape();
+                    else
+                        Undo.RevertAllDownToGroup(m_UndoGroup - 1); // cancel everything we were doing this group
+                    break;
+                }
+
+            }
+
+            base.HandleKeyEvent(evt);
+        }
+
+        bool TryFinalizeShape()
+        {
+            m_LastPolyShape = polygon.gameObject;
+
+            SetShapeHeight();
+            if (!TryCreatePolyShape())
+            {
+                ToolManager.RestorePreviousTool();
+                return true;
+            }
+            return false;
         }
 
         protected override void OnObjectSelectionChanged()
@@ -92,14 +130,8 @@ namespace UnityEditor.ProBuilder
                (Selection.activeObject is GameObject go && go == polygon.gameObject))
                 return;
 
-            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
-            {
-                DestroyImmediate(polygon.gameObject);
-                Undo.RevertAllDownToGroup(m_UndoGroup - 1);
-            }
-
-            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                TryFinalizeShape();
 
             LeaveTool();
         }
@@ -547,7 +579,6 @@ namespace UnityEditor.ProBuilder
                     EditorApplication.delayCall += () =>
                     {
                         DestroyImmediate(go);
-                        Undo.RevertAllDownToGroup(m_UndoGroup - 1);
                     };
                     return;
                 }
@@ -1020,7 +1051,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void HandleKeyEvent(Event evt)
+        protected virtual void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
 
@@ -1031,7 +1062,8 @@ namespace UnityEditor.ProBuilder
                 {
                     if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.Height);
+                        if (polygon.m_Points.Count > 2)
+                            SetPolyEditMode(PolyShape.PolyEditMode.Height);
                         evt.Use();
                     }
                     else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
