@@ -946,12 +946,16 @@ namespace UnityEditor.ProBuilder
 
                      if(index >= 0)
                      {
-                         List<Face> toDelete;
-                         Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
-                         newFace.submeshIndex = m_TargetFace.submeshIndex;
+                         // In the case of only 2 distinct, a face should not be added.
+                         if (polygon.Distinct().Count() != 2)
+                         {
+                             List<Face> toDelete;
+                             Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
+                             newFace.submeshIndex = m_TargetFace.submeshIndex;
 
-                         newFaces.Add(newFace);
-                         facesToDelete.AddRange(toDelete);
+                             newFaces.Add(newFace);
+                             facesToDelete.AddRange(toDelete);
+                         }
 
                          //Start a new polygon
                          polygon = new List<int>();
