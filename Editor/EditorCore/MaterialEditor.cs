@@ -7,6 +7,7 @@ using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using System;
+using static UnityEditor.ProBuilder.PositionToolContext;
 
 namespace UnityEditor.ProBuilder
 {
@@ -23,14 +24,20 @@ namespace UnityEditor.ProBuilder
 
         const string k_QuickMaterialPath = "Tools/" + PreferenceKeys.pluginTitle + "/Materials/Apply Quick Material";
 
-        [MenuItem(k_QuickMaterialPath+" %#M2", true, PreferenceKeys.menuMaterialColors)]
+        [MenuItem(k_QuickMaterialPath, true, PreferenceKeys.menuMaterialColors)]
         public static bool VerifyQuickMaterialAction()
         {
             return ProBuilderEditor.instance != null && MeshSelection.selectedObjectCount > 0 && instance != null && instance.m_QueuedMaterial.value != null;
         }
 
-        [MenuItem(k_QuickMaterialPath+" %#M2", false, PreferenceKeys.menuMaterialColors)]
+        [MenuItem(k_QuickMaterialPath, false, PreferenceKeys.menuMaterialColors)]
         public static void ApplyQuickMaterial()
+        {
+            ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
+        }
+
+        [Shortcut("ProBuilder/Apply Quick Material", typeof(ProBuilderShortcutContext), KeyCode.Mouse2)]
+        public static void ApplyQuickMaterialShortcut()
         {
             ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
         }
