@@ -121,6 +121,10 @@ namespace UnityEditor.ProBuilder
             m_LastPolyShape = polygon.gameObject;
 
             SetShapeHeight();
+            polygon.gameObject.hideFlags = HideFlags.None;
+            UndoUtility.RegisterCreatedObjectUndo(polygon.gameObject, "Finalize Draw PolyShape");
+            Undo.CollapseUndoOperations(m_UndoGroup);
+            polygon = null;
             return false;
         }
 
@@ -542,11 +546,7 @@ namespace UnityEditor.ProBuilder
             Undo.RegisterCompleteObjectUndo(polygon, "Set Height");
 
             RebuildPolyShapeMesh(polygon);
-            polygon.gameObject.hideFlags = HideFlags.None;
             SetPolyEditMode(PolyShape.PolyEditMode.None);
-            Undo.CollapseUndoOperations(m_UndoGroup);
-
-            polygon = null;
         }
 
         internal void SetPolyEditMode(PolyShape.PolyEditMode mode)
@@ -583,6 +583,9 @@ namespace UnityEditor.ProBuilder
                     {
                         s_HeightMouseOffset = polygon.extrude;
                         SetShapeHeight();
+                        polygon.gameObject.hideFlags = HideFlags.None;
+                        Undo.CollapseUndoOperations(m_UndoGroup);
+                        polygon = null;
                         return;
                     }
                     else
