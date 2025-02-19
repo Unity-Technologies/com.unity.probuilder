@@ -947,7 +947,7 @@ namespace UnityEditor.ProBuilder
                      if(index >= 0)
                      {
                          // In the case of only 2 distinct, a face should not be added.
-                         if (polygon.Distinct().Count() != 2)
+                         if (polygon.Count != 2)
                          {
                              List<Face> toDelete;
                              Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
