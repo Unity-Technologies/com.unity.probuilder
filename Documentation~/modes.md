@@ -1,24 +1,49 @@
-# Edit modes and active contexts
+# Edit modes and active tool contexts
 
-You can use ProBuilder tools in two tool contexts:
+ProBuilder uses tool contexts and their dependent edit modes to display tools that are relevant to your current selection. 
 
-* The GameObject context, which allows you to control the entire Mesh.
-    ![The GameObject context changes the options you can use in both the Tools and Tool Context overlay to those that control the entire GameObject](images/GameObjectContextOverlays.png)
+To change the tool context of your current selection, in the **Tools** overlay, select the **Tool Context** at the top of the overlay.
 
-* The ProBuilder context, which allows you to control the individual elements of the mesh. The ProBuilder context is further divided into edit modes that define what you are selecting and editing:
+> [!TIP]
+> To check which overlays are available in the Scene view, press the **`** key to open the Overlay menu. You can also open the Overlay menu from the More (⋮) menu in the top right corner of the Scene view. You can also use the Overlays menu overlay to quickly toggle the visibility of all the overlays in the Scene view.
 
-    * Vertex Selection: Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
-    * Edge selection: Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
-    * Face selection: Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
+You can use ProBuilder tools in two tool contexts: 
 
-        ![The ProBuilder context changes the options you can use in both the Tools and Tool Context overlay to those that change individual parts of a ProBuilder object](images/ProBuilderContextOverlays.png)
+* [The GameObject context](#the-gameobject-context)
+* [The ProBuilder context](#the-probuilder-context)
+
+## The GameObject context
+
+The GameObject context allows you to control the entire mesh. The GameObject tool context is the default tool context in the Editor. The GameObject tool context is active when no other tool context is activated.   
+    
+![The GameObject context changes the options you can use in both the Tools and Tool Context overlay to those that control the entire GameObject](images/GameObjectContextOverlays.png)
+
+* <span class="iconClr-CalloutLabel-A" aria-label="A" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: The active tool context. In this image, the GameObject context is active. This icon in the Tools overlay displays that the ProBuilder context is available, but it's not highlighted in blue so it's not active. 
+* <span class="iconClr-CalloutLabel-B" aria-label="B" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: ProBuilder global tools. The project in this image has the ProBuilder package installed, so these tools are always available. If you do not have the ProBuilder package installed, these tools are not available.
+* <span class="iconClr-CalloutLabel-C" aria-label="C" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: ProBuilder component tools. The GameObject selected in this image has a ProBuilder component attached to it, so it has the ProBuilder tool, [**Edit ProBuilder Shape**](workflow-edit) available. 
 
 
-To change context, in the **Tools** overlay, select the **Tool Context** at the top of the overlay.
+## The ProBuilder context
 
-To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select the mode.
+The ProBuilder context allows you to control the individual elements of the mesh. You can only activate the ProBuilder context if the GameObject you have selected has a ProBuilder component attached to it. The ProBuilder context is further divided into edit modes that define what you are selecting and editing. 
 
-## The Probuilder context menu
+To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select a mode. 
+
+![The ProBuilder context changes the options you can use in both the Tools and Tool Context overlay to those that change individual parts of a ProBuilder object](images/ProBuilderContextOverlays.png)
+
+
+* <span class="iconClr-CalloutLabel-A" aria-label="A" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: The active tool context. In this image, the ProBuilder tool context is active, so the Tool Settings overlay has settings specific to ProBuilder displayed. To disable the ProBuilder context and return to the GameObject tool context, select this icon. 
+* <span class="iconClr-CalloutLabel-B" aria-label="B" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: Vertex Selection edit mode in the Tool Settings overlay. Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
+* <span class="iconClr-CalloutLabel-C" aria-label="C" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: Edge selection edit modein the Tool Settings overlay. Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
+* <span class="iconClr-CalloutLabel-D" aria-label="D" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: Face selection edit mode in the Tool Settings overlay. Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
+* <span class="iconClr-CalloutLabel-E" aria-label="E" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: Hidden Element Selection setting in the Tool Settings overlay. To learn more, refer to [Select Hidden](Selection_SelectHidden).
+* <span class="iconClr-CalloutLabel-F" aria-label="F" style="font-size:20px"><span class="path1"></span><span class="path2"></span></span>: The Cut tool. To learn more, refer to [The Cut Tool](cut-tool).
+
+
+
+
+
+## The ProBuilder context menu
 
 To quickly access ProBuilder actions, right-click (macOS: **Ctrl**+click) on a ProBuilder object to open the context menu:
 
@@ -34,4 +59,4 @@ To change context or edit modes, use the following keyboard shortcuts:
 * Press **Escape** to return from the ProBuilder context to the GameObject context.
 * Press **G** to cycle through the ProBuilder edit modes.
 
-For a list of all shortcuts, and to add or change shortcuts, go to **Edit** > **Shortcuts** (macOS: **Unity** > **Shortcuts**).
+For a list of all ProBuilder shortcuts, and to add or change shortcuts, go to **Edit** > **Shortcuts** (macOS: **Unity** > **Shortcuts**) and select the **ProBuilder** category.
