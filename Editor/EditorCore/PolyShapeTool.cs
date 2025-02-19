@@ -113,7 +113,8 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            base.HandleKeyEvent(evt);
+            if (evt.type != EventType.Used)
+                base.HandleKeyEvent(evt);
         }
 
         bool TryFinalizeShape()
