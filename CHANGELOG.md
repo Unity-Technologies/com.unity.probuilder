@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [STO-3432] Fixed a bug where the Polyshape creation tool was not placing the first point on a custom grids correctly.
 - [PBLD-183] Fixed a bug where the **Extrude by** setting of the **Extrude Faces** action was always set to **Individual Faces**.
 - [STO-3442] Fixed a bug where hover-highlighted elements are not always selected.
+- [PBLD-205] Fixed a bug where the `Edit PolyShape` tool would revert previously merged PolyShape objects.
 
 ## [6.0.4] - 2024-09-12
 
