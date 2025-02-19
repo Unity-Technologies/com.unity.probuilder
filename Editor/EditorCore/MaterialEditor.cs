@@ -16,6 +16,13 @@ namespace UnityEditor.ProBuilder
     /// </summary>
     sealed class MaterialEditor : ConfigurableWindow
     {
+        class MaterialShortcutContext : IShortcutContext
+        {
+            public bool active
+                => EditorWindow.focusedWindow is SceneView
+                   && instance != null;
+        }
+
         // Reference to pb_Editor instance.
         static ProBuilderEditor editor { get { return ProBuilderEditor.instance; } }
 
@@ -36,7 +43,7 @@ namespace UnityEditor.ProBuilder
             ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
         }
 
-        [Shortcut("ProBuilder/Apply Quick Material", typeof(ProBuilderShortcutContext), KeyCode.Mouse2)]
+        [Shortcut("ProBuilder/Apply Quick Material", typeof(MaterialShortcutContext), KeyCode.Mouse2, defaultShortcutModifiers: ShortcutModifiers.Shift | ShortcutModifiers.Control)]
         public static void ApplyQuickMaterialShortcut()
         {
             ApplyMaterial(MeshSelection.topInternal, instance.m_QueuedMaterial.value);
@@ -142,6 +149,8 @@ namespace UnityEditor.ProBuilder
         // The index of the currently loaded material palette in m_AvailablePalettes
         int m_CurrentPaletteIndex = 0;
 
+        ProBuilderShortcutContext m_ShortcutContext;
+
         /// <summary>
         /// The currently loaded material palette, or a default.
         /// </summary>
@@ -201,10 +210,13 @@ namespace UnityEditor.ProBuilder
             m_RowBackgroundStyle.normal.background = EditorGUIUtility.whiteTexture;
             s_CurrentPalette = null;
             RefreshAvailablePalettes();
+
+            ShortcutManager.RegisterContext(m_ShortcutContext ??= new ProBuilderShortcutContext());
         }
 
         void OnDisable()
         {
+            ShortcutManager.UnregisterContext(m_ShortcutContext);
             instance = null;
         }
 
