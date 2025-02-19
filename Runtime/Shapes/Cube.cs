@@ -57,7 +57,6 @@ namespace UnityEngine.ProBuilder.Shapes
         /// <inheritdoc/>
         public override Bounds RebuildMesh(ProBuilderMesh mesh, Vector3 size, Quaternion rotation)
         {
-            Debug.Log("RebuildMesh--------");
             mesh.Clear();
 
             Vector3[] points = new Vector3[k_CubeTriangles.Length];
@@ -67,6 +66,10 @@ namespace UnityEngine.ProBuilder.Shapes
             
             
             mesh.GeometryWithPoints(points);
+            
+            foreach (var face in mesh.facesInternal)
+                face.uv = new AutoUnwrapSettings(face.uv) { anchor = AutoUnwrapSettings.Anchor.UpperLeft};
+            mesh.RefreshUV(mesh.faces);
             
             return mesh.mesh.bounds;
         }
