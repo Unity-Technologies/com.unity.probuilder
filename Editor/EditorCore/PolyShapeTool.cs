@@ -33,6 +33,7 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_LastPolyShape = null;
+            isExiting = false;
             MeshSelection.SetSelection((GameObject)null);
             ToolManager.SetActiveContext<GameObjectToolContext>();
             base.OnActivated();
@@ -61,7 +62,7 @@ namespace UnityEditor.ProBuilder
             }
 
             var evt = Event.current;
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            if (polygon?.polyEditMode == PolyShape.PolyEditMode.Height)
             {
                 if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
@@ -87,6 +88,8 @@ namespace UnityEditor.ProBuilder
                         || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
                         TryFinalizeShape();
+                        LeaveTool();
+                        evt.Use();
                     }
                     break;
                 }
@@ -94,12 +97,20 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Escape:
                 {
                     if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    {
                         TryFinalizeShape();
+                    }
                     else
-                        Undo.RevertAllDownToGroup(m_UndoGroup - 1); // cancel everything we were doing this group
+                    {
+                        EditorApplication.delayCall += () =>
+                        {
+                            Undo.RevertAllDownToGroup(m_UndoGroup - 1); // cancel everything we were doing this group
+                        };
+                    }
+                    LeaveTool();
+                    evt.Use();
                     break;
                 }
-
             }
 
             base.HandleKeyEvent(evt);
@@ -110,11 +121,6 @@ namespace UnityEditor.ProBuilder
             m_LastPolyShape = polygon.gameObject;
 
             SetShapeHeight();
-            if (!TryCreatePolyShape())
-            {
-                ToolManager.RestorePreviousTool();
-                return true;
-            }
             return false;
         }
 
@@ -140,7 +146,7 @@ namespace UnityEditor.ProBuilder
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             var newPolyshape = CanCreateNewPolyShape();
-            if (newPolyshape)
+            if (newPolyshape && !isExiting)
             {
                 Undo.SetCurrentGroupName("PolyShape Tool");
                 //Finalize previous operation in term of undo
@@ -273,6 +279,7 @@ namespace UnityEditor.ProBuilder
         int m_SelectedIndex = -2;
         bool m_IsModifyingVertices = false;
         bool m_NextMouseUpAdvancesMode = false;
+        protected bool isExiting = false;
 
         bool m_PlacingPoint = false;
         float m_DistanceFromHeightHandle;
@@ -367,6 +374,7 @@ namespace UnityEditor.ProBuilder
 
         protected void LeaveTool()
         {
+            isExiting = true;
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
@@ -1060,14 +1068,14 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                 case KeyCode.Return:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                    if (polygon?.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
                         if (polygon.m_Points.Count > 2)
                             SetPolyEditMode(PolyShape.PolyEditMode.Height);
                         evt.Use();
                     }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
-                            || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    else if (polygon?.polyEditMode == PolyShape.PolyEditMode.Height
+                            || polygon?.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
                         LeaveTool();
                         evt.Use();
