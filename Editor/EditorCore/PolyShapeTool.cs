@@ -137,8 +137,20 @@ namespace UnityEditor.ProBuilder
                 return;
 
             if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            {
                 TryFinalizeShape();
-
+            }
+            else if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            {
+                // NOTE 2025-02-19 At this point the selection has already changed and we want to
+                // cancel out of this tool. Unity does not provide a beforeSelectionChanged event
+                // which would be proper time to remove and clean up the undo entries from the
+                // undo stack. The selection change is already added to the undo stack so we cannot
+                // revert it now. This is the next best thing.
+                Undo.ClearUndo(polygon.gameObject);
+                Undo.ClearUndo(polygon);
+                Undo.SetCurrentGroupName(Undo.GetCurrentGroupName());
+            }
             LeaveTool();
         }
 
