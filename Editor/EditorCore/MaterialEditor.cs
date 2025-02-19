@@ -7,7 +7,6 @@ using UnityEditor.ShortcutManagement;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using System;
-using static UnityEditor.ProBuilder.PositionToolContext;
 
 namespace UnityEditor.ProBuilder
 {
@@ -149,7 +148,7 @@ namespace UnityEditor.ProBuilder
         // The index of the currently loaded material palette in m_AvailablePalettes
         int m_CurrentPaletteIndex = 0;
 
-        ProBuilderShortcutContext m_ShortcutContext;
+        MaterialShortcutContext m_ShortcutContext;
 
         /// <summary>
         /// The currently loaded material palette, or a default.
@@ -211,7 +210,7 @@ namespace UnityEditor.ProBuilder
             s_CurrentPalette = null;
             RefreshAvailablePalettes();
 
-            ShortcutManager.RegisterContext(m_ShortcutContext ??= new ProBuilderShortcutContext());
+            ShortcutManager.RegisterContext(m_ShortcutContext ??= new MaterialShortcutContext());
         }
 
         void OnDisable()
