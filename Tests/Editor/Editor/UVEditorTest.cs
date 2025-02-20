@@ -94,7 +94,7 @@ public class UVEditorWindow
             Assert.That(f.manualUV, Is.EqualTo(true));
         }
 
-		//Confirm that UV bounds origin are not at the LowerLeft corner
+	//Confirm that UV bounds origin are not at the LowerLeft corner
         Vector2 minimalUV = UVEditor.instance.UVSelectionMinimalUV();
         Assert.That(minimalUV, !Is.EqualTo(UVEditor.LowerLeft));
 
