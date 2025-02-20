@@ -18,7 +18,7 @@ public class UVEditorWindow
     {
         m_cube = ShapeFactory.Instantiate<Cube>();
         EditorUtility.InitObject(m_cube);
-		// Unsure UV bounds origin is not at (0,0) lower left
+	// Unsure UV bounds origin is not at (0,0) lower left
         foreach (var face in m_cube.facesInternal)
             face.uv = new AutoUnwrapSettings(face.uv) { anchor = AutoUnwrapSettings.Anchor.UpperLeft, offset = new Vector2(-0.5f, -0.5f) };
         m_cube.RefreshUV(m_cube.faces);
