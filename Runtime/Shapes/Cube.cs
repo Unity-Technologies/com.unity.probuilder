@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEditor;
 
 namespace UnityEngine.ProBuilder.Shapes
