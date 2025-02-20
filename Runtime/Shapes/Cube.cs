@@ -49,9 +49,9 @@ namespace UnityEngine.ProBuilder.Shapes
             for (int i = 0; i < k_CubeTriangles.Length; i++)
                 points[i] = rotation * Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], Math.Abs(size));
             
-            
             mesh.GeometryWithPoints(points);
             
+            UvUnwrapping.SetAutoUV(mesh, mesh.facesInternal, true);
             foreach (var face in mesh.facesInternal)
                 face.uv = new AutoUnwrapSettings(face.uv) { anchor = AutoUnwrapSettings.Anchor.UpperLeft};
             mesh.RefreshUV(mesh.faces);
