@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-192] Fixed a bug where vertices were not able to snap on other vertices from the same mesh for Unity 2020.3 and later.
 - [PBLD-150] Fixed a bug where the orientation handles would not be useful when manipulating a cube shape.
 - [PBLD-205] Fixed a bug where the `Edit PolyShape` tool would revert previously merged PolyShape objects.
+- [PBLD-199] Fixed a bug where an exception was thrown if you placed two cut tool vertices on the same edge.
 
 ## [5.2.3] - 2024-08-12
 
