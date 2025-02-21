@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [STO-3442] Fixed a bug where hover-highlighted elements are not always selected.
 - [PBLD-202] Fixed an issue where creating ProBuilder shapes using the Hierarchy menu would not result in procedurally editable `ProBuilderShape` meshes. 
 - [PBLD-205] Fixed a bug where the `Edit PolyShape` tool would revert previously merged PolyShape objects.
+- [PBLD-199] Fixed a bug where an exception was thrown if you placed two cut tool vertices on the same edge.
 
 ## [6.0.4] - 2024-09-12
 
