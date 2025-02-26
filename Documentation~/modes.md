@@ -19,7 +19,7 @@ Use the GameObject context to control the entire mesh. The GameObject tool conte
     
 ![The GameObject context changes the options you can use in both the Tools and Tool Context overlay to those that control the entire GameObject](images/GameObjectContextOverlays.png)
 
-* A: The active tool context. In this image, the GameObject context is active. This icon in the Tools overlay displays that the ProBuilder context is available, but it's not highlighted in blue so it's not active. 
+* A: The active tool context. In this image, the GameObject context is active. This icon in the **Tools** overlay displays that the ProBuilder context is available, but it's not highlighted in blue so it's not active. 
 * B: ProBuilder global tools. The project in this image has the ProBuilder package installed, so these tools are always available. If you do not have the ProBuilder package installed, these tools are not available.
 * C: ProBuilder component tools. The GameObject selected in this image has a ProBuilder component attached to it, so it has [**Edit ProBuilder Shape**](workflow-edit) available. This component tool is available in both ProBuilder and GameObject tool contexts. 
 
@@ -28,18 +28,18 @@ Use the GameObject context to control the entire mesh. The GameObject tool conte
 
 You can use the ProBuilder context to access tools that control individual elements of the mesh. You can only activate the ProBuilder context if the GameObject you have selected has a ProBuilder component attached to it. The ProBuilder context is further divided into edit modes that define what you are selecting and editing. 
 
-To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select a mode. 
+To change edit modes within the ProBuilder context, in the ****Tool Settings**** overlay, select a mode. 
 
-![The ProBuilder context changes the options you can use in both the Tools and Tool Context overlay to those that change individual parts of a ProBuilder object](images/ProBuilderContextOverlays.png)
+![The ProBuilder context changes the options you can use in both the **Tools** and **Tool Settings** overlay to those that change individual parts of a ProBuilder object](images/ProBuilderContextOverlays.png)
 
 
-* A: The active tool context. In this image, the ProBuilder tool context is active, so the Tool Settings overlay has settings specific to ProBuilder displayed. To disable the ProBuilder context and return to the GameObject tool context, select this icon. 
-* B: The Cut tool. To learn more, refer to [The Cut Tool](cut-tool).
-* C: ProBuilder component tools. The GameObject selected in this image has a ProBuilder component attached to it, so it has [**Edit ProBuilder Shape**](workflow-edit) available. This component tool is available in both ProBuilder and GameObject tool contexts. 
-* D: Vertex Selection edit mode in the Tool Settings overlay. Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
-* E: Edge selection edit modein the Tool Settings overlay. Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
-* F: Face selection edit mode in the Tool Settings overlay. Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
-* G: Hidden Element Selection setting in the Tool Settings overlay. To learn more, refer to [Select Hidden](Selection_SelectHidden).
+* A: The active tool context in the **Tools** overlay. In this image, the ProBuilder tool context is active, so the **Tool Settings** overlay has settings specific to ProBuilder displayed. To disable the ProBuilder context and return to the GameObject tool context, select this icon. 
+* B: The Cut tool in the **Tools** overlay. To learn more, refer to [The Cut Tool](cut-tool).
+* C: ProBuilder component tools in the **Tools** overlay. The GameObject selected in this image has a ProBuilder component attached to it, so it has [**Edit ProBuilder Shape**](workflow-edit) available. This component tool is available in both ProBuilder and GameObject tool contexts. 
+* D: Vertex Selection edit mode in the **Tool Settings** overlay. Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
+* E: Edge selection edit modein the **Tool Settings** overlay. Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
+* F: Face selection edit mode in the **Tool Settings** overlay, which is the active edit mode in this image. Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
+* G: Hidden Element Selection setting in the **Tool Settings** overlay. To learn more, refer to [Select Hidden](Selection_SelectHidden).
 
 
 
