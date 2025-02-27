@@ -51,7 +51,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [Range(1, 256)]
         [SerializeField]
         int m_StepsCount = 10;
-
+        internal int stepsCount 
+        {
+            get => m_StepsCount;
+            set => m_StepsCount = value;
+        }
+        
         /// <summary>
         /// Determines whether to force every step to be the exactly the same height. If disabled,
         /// the height of the last step is smaller than the others depending on the remaining height.
@@ -73,6 +78,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_Circumference = 0f;
 
+        internal float circumference 
+        {
+            get => m_Circumference;
+            set => m_Circumference = value;
+        }
+
         /// <summary>
         /// Determines whether to draw polygons on the sides of the stairs.
         /// This is enabled by default. You can disable this option if the sides of your stairs
@@ -92,6 +103,20 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField, Min(0f)]
         float m_InnerRadius;
+        internal float innerRadius 
+        {
+            get => m_InnerRadius;
+            set => m_InnerRadius = value;
+        }
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_StepsHeight = 0.4f;
+            m_StepsCount = 6;
+            m_HomogeneousSteps = true;
+            m_Circumference = 0f;
+            m_Sides = true;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

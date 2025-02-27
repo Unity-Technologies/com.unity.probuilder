@@ -30,6 +30,13 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
+        
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_AxisDivisions = 8;
+            m_HeightCuts = 2;
+            m_Smooth = false;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

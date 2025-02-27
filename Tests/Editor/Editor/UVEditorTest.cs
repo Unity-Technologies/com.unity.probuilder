@@ -18,6 +18,10 @@ public class UVEditorWindow
     {
         m_cube = ShapeFactory.Instantiate<Cube>();
         EditorUtility.InitObject(m_cube);
+	// Unsure UV bounds origin is not at (0,0) lower left
+        foreach (var face in m_cube.facesInternal)
+            face.uv = new AutoUnwrapSettings(face.uv) { anchor = AutoUnwrapSettings.Anchor.UpperLeft, offset = new Vector2(-0.5f, -0.5f) };
+        m_cube.RefreshUV(m_cube.faces);
         ActiveEditorTracker.sharedTracker.ForceRebuild();
 
         ToolManager.SetActiveContext<PositionToolContext>();
@@ -69,7 +73,6 @@ public class UVEditorWindow
     public void Manual_PlanarProjection()
     {
         //Select faces
-
         List<Face> selectedFaces = new List<Face>();
         selectedFaces.Add(m_cube.faces[2]);
         selectedFaces.Add(m_cube.faces[4]);
@@ -91,10 +94,11 @@ public class UVEditorWindow
             Assert.That(f.manualUV, Is.EqualTo(true));
         }
 
-        //Modify those faces
+	//Confirm that UV bounds origin are not at the LowerLeft corner
         Vector2 minimalUV = UVEditor.instance.UVSelectionMinimalUV();
         Assert.That(minimalUV, !Is.EqualTo(UVEditor.LowerLeft));
 
+        //Do UV projection - UVs should align with LowerLeft corner
         UVEditor.instance.Menu_PlanarProject();
         minimalUV = UVEditor.instance.UVSelectionMinimalUV();
         Assert.That(minimalUV, Is.EqualTo(UVEditor.LowerLeft));
