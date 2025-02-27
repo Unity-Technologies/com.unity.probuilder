@@ -37,7 +37,7 @@ To change edit modes within the ProBuilder context, in the ****Tool Settings****
 * B: The Cut tool in the **Tools** overlay. To learn more, refer to [The Cut Tool](cut-tool).
 * C: ProBuilder component tools in the **Tools** overlay. The GameObject selected in this image has a ProBuilder component attached to it, so the [**Edit ProBuilder Shape**](workflow-edit) tool is available. This component tool is available in both ProBuilder and GameObject tool contexts. 
 * D: Vertex Selection edit mode in the **Tool Settings** overlay. Select vertices and perform detailed editing such as vertex splitting and connecting. For a complete list of actions you can perform in this mode, refer to [Vertex actions](vertex.md)
-* E: Edge selection edit modein the **Tool Settings** overlay. Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
+* E: Edge selection edit mode in the **Tool Settings** overlay. Select edges and perform semi-complex geometry editing, and edge loop modeling techniques. For a complete list of actions you can perform in this mode, refer to [Edge actions](edge.md).
 * F: Face selection edit mode in the **Tool Settings** overlay, which is the active edit mode in this image. Select faces on an object to perform basic tasks like moving, extruding, or even deleting them. For a complete list of actions you can perform in this mode, refer to [Face actions](face.md).
 * G: Hidden Element Selection setting in the **Tool Settings** overlay. To learn more, refer to [Select Hidden](Selection_SelectHidden).
 
