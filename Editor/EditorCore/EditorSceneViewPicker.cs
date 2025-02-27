@@ -107,10 +107,6 @@ namespace UnityEditor.ProBuilder
 
                 foreach (var face in s_Selection.faces)
                 {
-                    UVEditor uvEditor = UVEditor.instance;
-                    if (uvEditor != null && uvEditor.ClickShortcutCheck(mesh, face))
-                        return null;
-
                     var faces = mesh.faces as Face[] ?? mesh.faces.ToArray();
                     var ind = Array.IndexOf<Face>(faces, face);
                     var sel = mesh.selectedFaceIndexes.IndexOf(ind);
