@@ -8,6 +8,8 @@ namespace UnityEngine.ProBuilder.Shapes
     [Shape("Sprite")]
     public class Sprite : Shape
     {
+        internal override void SetParametersToBuiltInShape() { }
+        
         /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 

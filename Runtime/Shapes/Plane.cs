@@ -24,6 +24,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         int m_WidthSegments = 1;
 
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_HeightSegments = 5;
+            m_WidthSegments = 5;
+        }
+
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
