@@ -19,7 +19,8 @@ namespace UnityEditor.ProBuilder
         {
             public bool active
                 => EditorWindow.focusedWindow is SceneView
-                   && instance != null;
+                   && instance != null && MeshSelection.selectedObjectCount > 0
+                   && instance.m_QueuedMaterial.value != null;
         }
 
         // Reference to pb_Editor instance.
