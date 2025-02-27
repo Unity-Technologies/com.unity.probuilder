@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Fixed a bug where undoing a PolyShape creation then redoing it did not bring the PolyShape back.
+- Fixed a bug where undoing a PolyShape creation then redoing it did not restore the PolyShape.
 - Fixed a bug where you could progress to the Edit Height stage of the Polyshape creation tool without forming a base polygon with at least three points.
 - Fixed a bug where shapes created by pressing Enter or Space using the Polyshape creation tool were not interactible nor added to the Scene hierarchy.
 - [PBLD-213] Fixed a bug where selection changes with the Polyshape creation tool active were being reverted.
