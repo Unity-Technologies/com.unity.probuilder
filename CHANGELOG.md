@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a bug where undoing a PolyShape creation then redoing it did not restore the PolyShape.
 - Fixed a bug where you could progress to the Edit Height stage of the Polyshape creation tool without forming a base polygon with at least three points.
 - Fixed a bug where shapes created by pressing Enter or Space using the Polyshape creation tool were not selectable or added to the scene hierarchy.
-- [PBLD-213] Fixed a bug where selection changes with the Polyshape creation tool active were being reverted.
+- [PBLD-213] Fixed a bug where selection changes made while the PolyShape creation tool was active were being reverted.
 - [PBLD-192] Fixed a bug where vertices were not able to snap on other vertices from the same mesh.
 - [PBLD-189] Fixed a bug where using the auto-stitch functionality of the UV Editor would not work properly on MacOS.
 - [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
