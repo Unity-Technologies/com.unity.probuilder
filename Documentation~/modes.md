@@ -26,9 +26,9 @@ Use the GameObject context to control the entire mesh. The GameObject tool conte
 
 ## The ProBuilder context
 
-You can use the ProBuilder context to access tools that control individual elements of the mesh. You can only activate the ProBuilder context if the GameObject you have selected has a ProBuilder component attached to it. The ProBuilder context is further divided into edit modes that define what you are selecting and editing. 
+You can use the ProBuilder context to access tools that control individual elements of the mesh. You can only activate the ProBuilder context if the GameObject you have selected has a ProBuilder component attached to it. The ProBuilder context is further divided into edit modes that define the elements of the mesh you are selecting and editing. 
 
-To change edit modes within the ProBuilder context, in the ****Tool Settings**** overlay, select a mode. 
+To change edit modes within the ProBuilder context, in the **Tool Settings** overlay, select a mode. 
 
 ![The ProBuilder context changes the options you can use in both the **Tools** and **Tool Settings** overlay to those that change individual parts of a ProBuilder object](images/ProBuilderContextOverlays.png)
 
