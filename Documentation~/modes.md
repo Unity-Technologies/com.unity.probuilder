@@ -62,4 +62,4 @@ To change context or edit modes, use the following keyboard shortcuts:
 * Press **Escape** to return from the ProBuilder context to the GameObject context.
 * Press **G** to cycle through the ProBuilder edit modes.
 
-For a list of all ProBuilder shortcuts, and to add or change shortcuts, go to **Edit** > **Shortcuts** (macOS: **Unity** > **Shortcuts**) and select the **ProBuilder** category.
+For a list of all ProBuilder shortcuts, and to add or change shortcuts, go to **Edit** > **Shortcuts** (macOS: **Unity** > **Shortcuts**) and search for **ProBuilder**. 
