@@ -33,6 +33,7 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_LastPolyShape = null;
+            isExiting = false;
             MeshSelection.SetSelection((GameObject)null);
             ToolManager.SetActiveContext<GameObjectToolContext>();
             base.OnActivated();
@@ -61,23 +62,71 @@ namespace UnityEditor.ProBuilder
             }
 
             var evt = Event.current;
-            if (polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+            if (polygon?.polyEditMode == PolyShape.PolyEditMode.Height)
             {
                 if (evt.type == EventType.MouseUp && evt.button == 0 && !EditorHandleUtility.IsAppendModifier(evt.modifiers))
                 {
                     evt.Use();
-                    m_LastPolyShape = polygon.gameObject;
-
-                    SetShapeHeight();
-                    if (!TryCreatePolyShape())
-                    {
-                        ToolManager.RestorePreviousTool();
+                    if (!TryFinalizeShape())
                         return;
-                    }
                 }
             }
 
             base.OnToolGUI(window);
+        }
+
+        protected override void HandleKeyEvent(Event evt)
+        {
+            KeyCode key = evt.keyCode;
+
+            switch (key)
+            {
+                case KeyCode.Space:
+                case KeyCode.Return:
+                {
+                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
+                        || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    {
+                        TryFinalizeShape();
+                        LeaveTool();
+                        evt.Use();
+                    }
+                    break;
+                }
+
+                case KeyCode.Escape:
+                {
+                    if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
+                    {
+                        TryFinalizeShape();
+                    }
+                    else
+                    {
+                        EditorApplication.delayCall += () =>
+                        {
+                            Undo.RevertAllDownToGroup(m_UndoGroup - 1); // cancel everything we were doing this group
+                        };
+                    }
+                    LeaveTool();
+                    evt.Use();
+                    break;
+                }
+            }
+
+            if (evt.type != EventType.Used)
+                base.HandleKeyEvent(evt);
+        }
+
+        bool TryFinalizeShape()
+        {
+            m_LastPolyShape = polygon.gameObject;
+
+            SetShapeHeight();
+            polygon.gameObject.hideFlags = HideFlags.None;
+            UndoUtility.RegisterCreatedObjectUndo(polygon.gameObject, "Finalize Draw PolyShape");
+            Undo.CollapseUndoOperations(m_UndoGroup);
+            polygon = null;
+            return false;
         }
 
         protected override void OnObjectSelectionChanged()
@@ -92,15 +141,21 @@ namespace UnityEditor.ProBuilder
                (Selection.activeObject is GameObject go && go == polygon.gameObject))
                 return;
 
-            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
             {
-                DestroyImmediate(polygon.gameObject);
-                Undo.RevertAllDownToGroup(m_UndoGroup - 1);
+                TryFinalizeShape();
             }
-
-            if(polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Height)
-                SetPolyEditMode(PolyShape.PolyEditMode.None);
-
+            else if (polygon != null && polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+            {
+                // NOTE 2025-02-19 At this point the selection has already changed and we want to
+                // cancel out of this tool. Unity does not provide a beforeSelectionChanged event
+                // which would be proper time to remove and clean up the undo entries from the
+                // undo stack. The selection change is already added to the undo stack so we cannot
+                // revert it now. This is the next best thing.
+                Undo.ClearUndo(polygon.gameObject);
+                Undo.ClearUndo(polygon);
+                Undo.SetCurrentGroupName(Undo.GetCurrentGroupName());
+            }
             LeaveTool();
         }
 
@@ -108,7 +163,7 @@ namespace UnityEditor.ProBuilder
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             var newPolyshape = CanCreateNewPolyShape();
-            if (newPolyshape)
+            if (newPolyshape && !isExiting)
             {
                 Undo.SetCurrentGroupName("PolyShape Tool");
                 //Finalize previous operation in term of undo
@@ -241,6 +296,7 @@ namespace UnityEditor.ProBuilder
         int m_SelectedIndex = -2;
         bool m_IsModifyingVertices = false;
         bool m_NextMouseUpAdvancesMode = false;
+        protected bool isExiting = false;
 
         bool m_PlacingPoint = false;
         float m_DistanceFromHeightHandle;
@@ -335,6 +391,7 @@ namespace UnityEditor.ProBuilder
 
         protected void LeaveTool()
         {
+            isExiting = true;
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
@@ -490,11 +547,7 @@ namespace UnityEditor.ProBuilder
             Undo.RegisterCompleteObjectUndo(polygon, "Set Height");
 
             RebuildPolyShapeMesh(polygon);
-            polygon.gameObject.hideFlags = HideFlags.None;
             SetPolyEditMode(PolyShape.PolyEditMode.None);
-            Undo.CollapseUndoOperations(m_UndoGroup);
-
-            polygon = null;
         }
 
         internal void SetPolyEditMode(PolyShape.PolyEditMode mode)
@@ -531,6 +584,9 @@ namespace UnityEditor.ProBuilder
                     {
                         s_HeightMouseOffset = polygon.extrude;
                         SetShapeHeight();
+                        polygon.gameObject.hideFlags = HideFlags.None;
+                        Undo.CollapseUndoOperations(m_UndoGroup);
+                        polygon = null;
                         return;
                     }
                     else
@@ -547,7 +603,6 @@ namespace UnityEditor.ProBuilder
                     EditorApplication.delayCall += () =>
                     {
                         DestroyImmediate(go);
-                        Undo.RevertAllDownToGroup(m_UndoGroup - 1);
                     };
                     return;
                 }
@@ -1020,7 +1075,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        void HandleKeyEvent(Event evt)
+        protected virtual void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
 
@@ -1029,13 +1084,14 @@ namespace UnityEditor.ProBuilder
                 case KeyCode.Space:
                 case KeyCode.Return:
                 {
-                    if (polygon.polyEditMode == PolyShape.PolyEditMode.Path)
+                    if (polygon?.polyEditMode == PolyShape.PolyEditMode.Path)
                     {
-                        SetPolyEditMode(PolyShape.PolyEditMode.Height);
+                        if (polygon.m_Points.Count > 2)
+                            SetPolyEditMode(PolyShape.PolyEditMode.Height);
                         evt.Use();
                     }
-                    else if (polygon.polyEditMode == PolyShape.PolyEditMode.Height
-                            || polygon.polyEditMode == PolyShape.PolyEditMode.Edit)
+                    else if (polygon?.polyEditMode == PolyShape.PolyEditMode.Height
+                            || polygon?.polyEditMode == PolyShape.PolyEditMode.Edit)
                     {
                         LeaveTool();
                         evt.Use();
