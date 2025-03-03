@@ -73,6 +73,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         bool m_Smooth = true;
 
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_Subdivisions = 2;
+            m_Smooth = false;
+        }
+        
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)
         {
