@@ -32,7 +32,7 @@ The **Fill Mode** defines how to treat the UV image; whether to repeat it (to cr
 
 ![Shows 3 modes for filling the face with a Texture](images/UV_FillModes.png)
 
-|**Value:** |**Function:** |
+|**Value** |**Function** |
 |:---|:---|
 |__Tile__ |Continuously tile (repeat) the UVs across the object. |
 |__Fit__ |Uniformly scale UVs to size. |
@@ -50,8 +50,8 @@ By default this is set to **None**, but you can select any of the following poin
 
 ![Anchor points on a Mesh](images/UV_AutoActions-Anchor.png)
 
-|                         |                           |                          |
-| ----------------------- | ------------------------- | ------------------------ |
+| **Left anchors** | **Center anchors**  | **Right anchors**  |
+| :--- | :--- | :--- |
 | **(A)** __Upper Left__  | **(B)** __Upper Center__  | **(C)** __Upper Right__  |
 | **(D)** __Middle Left__ | **(E)** __Middle Center__ | **(F)** __Middle Right__ |
 | **(G)** __Lower Left__  | **(H)** __Lower Center__  | **(I)** __Lower Right__  |
