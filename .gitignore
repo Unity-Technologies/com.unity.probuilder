@@ -18,3 +18,10 @@ UpgradeProjects~/*/.idea/**
 # Package Manager
 .Editor/**
 upm-ci~/**
+
+# Wrench
+!Tools/**/*sln
+!Tools/**/*csproj
+Tools/**/.idea/
+bin
+obj
