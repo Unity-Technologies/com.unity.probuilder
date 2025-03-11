@@ -158,9 +158,7 @@ namespace UnityEditor.ProBuilder
         /// Gets a flag that indicates both the visibility and enabled state of an action
         /// to determine whether the current mode and selection is valid for it.
         /// </summary>
-        /// <returns>.</returns>
-        public MenuActionState menuActionState
-        {
+        /// <value></value>
             get
             {
                 if (hidden)

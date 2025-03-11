@@ -146,7 +146,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the number of items in this collection.
         /// </summary>
-        /// <returns>The length of this collection</returns>
+        /// <value>The length of this collection</value>
         public int Count
         {
             get { return m_Vertices.Length; }
@@ -155,7 +155,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets whether this collection is read-only.
         /// </summary>
-        /// <returns>The value of the IsReadOnly flag.</returns>
+        /// <value>The value of the IsReadOnly flag.</value>
         public bool IsReadOnly
         {
             get { return m_Vertices.IsReadOnly; }

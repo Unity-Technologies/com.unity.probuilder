@@ -112,7 +112,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Tests whether the current graphics device supports geometry shaders.
         /// </summary>
-        /// <returns>True if the current graphics device supports geometry shaders, and false if it does not.</returns>
+        /// <value>True if the current graphics device supports geometry shaders, and false if it does not.</value>
         public static bool geometryShadersSupported
         {
             get
