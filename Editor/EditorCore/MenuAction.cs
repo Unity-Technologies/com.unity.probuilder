@@ -159,6 +159,8 @@ namespace UnityEditor.ProBuilder
         /// to determine whether the current mode and selection is valid for it.
         /// </summary>
         /// <value></value>
+        public MenuActionState menuActionState
+        {
             get
             {
                 if (hidden)
