@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
         public override void OnActivated()
         {
             m_LastPolyShape = null;
-            isExiting = false;
+            m_IsExiting = false;
             MeshSelection.SetSelection((GameObject)null);
             ToolManager.SetActiveContext<GameObjectToolContext>();
             base.OnActivated();
@@ -75,7 +75,7 @@ namespace UnityEditor.ProBuilder
             base.OnToolGUI(window);
         }
 
-        protected override void HandleKeyEvent(Event evt)
+        internal override void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
 
@@ -163,7 +163,7 @@ namespace UnityEditor.ProBuilder
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             var newPolyshape = CanCreateNewPolyShape();
-            if (newPolyshape && !isExiting)
+            if (newPolyshape && !m_IsExiting)
             {
                 Undo.SetCurrentGroupName("PolyShape Tool");
                 //Finalize previous operation in term of undo
@@ -289,14 +289,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected int m_UndoGroup;
+        internal int m_UndoGroup;
 
         int m_ControlId;
         int m_ControlId0;
         int m_SelectedIndex = -2;
         bool m_IsModifyingVertices = false;
         bool m_NextMouseUpAdvancesMode = false;
-        protected bool isExiting = false;
+        internal bool m_IsExiting = false;
 
         bool m_PlacingPoint = false;
         float m_DistanceFromHeightHandle;
@@ -391,7 +391,7 @@ namespace UnityEditor.ProBuilder
 
         protected void LeaveTool()
         {
-            isExiting = true;
+            m_IsExiting = true;
             //Quit Polygon edit mode and deactivate the tool
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
@@ -1075,7 +1075,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        protected virtual void HandleKeyEvent(Event evt)
+        internal virtual void HandleKeyEvent(Event evt)
         {
             KeyCode key = evt.keyCode;
 
