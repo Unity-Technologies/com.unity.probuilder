@@ -272,6 +272,9 @@ namespace UnityEditor.ProBuilder
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
 
+        /// <summary>
+        /// Performs the action for this menu item when in Text mode.
+        /// </summary>
         public void PerformAltAction() => DoAlternateAction();
 
         /// <summary>
@@ -279,6 +282,7 @@ namespace UnityEditor.ProBuilder
         /// Creates a custom settings window for this action. Populate a root visual element in that method with
         /// the settings content.
         /// </summary>
+        /// <returns>A VisualElement containing settings content.</returns>
         public virtual VisualElement CreateSettingsContent()
         {
             return null;
@@ -287,6 +291,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
+        /// <param name="sceneView">SceneView for which OnSceneGUI method is called.</param>
         public virtual void DoSceneGUI(SceneView sceneView) {}
 
         /// <summary>
@@ -321,12 +326,25 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Raised when MenuAction contents change.
+        /// </summary>
         public event Action changed;
 
+        /// <summary>
+        /// Called during PerformAction.
+        /// Calling this method triggers the <see cref="changed"/> event.
+        /// </summary>
         protected void ContentsChanged() => changed?.Invoke();
 
+        /// <summary>
+        /// Override to register <see cref="ContentsChanged"/> to event callbacks.
+        /// </summary>
         public virtual void RegisterChangedCallbacks() { }
 
+        /// <summary>
+        /// Override to unregister <see cref="ContentsChanged"/> from event callbacks.
+        /// </summary>
         public virtual void UnregisterChangedCallbacks() { }
     }
 }

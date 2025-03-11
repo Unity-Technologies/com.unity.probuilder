@@ -181,6 +181,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <value>
+        /// Static instance of ProBuilderEditor.
+        /// </value>
         public static ProBuilderEditor instance => s_Instance;
 
         internal ProBuilderEditor()
@@ -205,6 +208,9 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => UpdateSelection();
         }
 
+        /// <summary>
+        /// Unsubscribes from events and clears static state.
+        /// </summary>
         public void Dispose()
         {
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
@@ -274,7 +280,11 @@ namespace UnityEditor.ProBuilder
         {
             instance?.UpdateSelection(vertexCountChanged);
         }
-
+        
+        /// <summary>
+        /// Called when handling events in Scene view.
+        /// </summary>
+        /// <param name="sceneView">SceneView for which OnSceneGUI method is called.</param>
         public void OnSceneGUI(SceneView sceneView)
         {
             if (!EditorToolUtility.IsBuiltinOverride(EditorToolManager.activeTool))
