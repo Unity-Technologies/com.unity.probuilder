@@ -216,10 +216,18 @@ namespace UnityEditor.ProBuilder
         }
     }
 
+    /// <summary>
+    /// An EditorAction for displaying MenuAction settings overlay and action previewing.
+    /// </summary>
     public class MenuActionSettings : EditorAction
     {
         static bool s_CanTriggerNewAction = true;
-
+        
+        /// <summary>
+        /// MenuActionSettings constructor.
+        /// </summary>
+        /// <param name="action">The MenuAction for which to display a settings overlay.</param>
+        /// <param name="hasPreview">Indicates if the action can be previewed.</param>
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
         {
             if (!s_CanTriggerNewAction)
