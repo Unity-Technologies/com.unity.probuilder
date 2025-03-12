@@ -291,7 +291,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
-        /// <param name="sceneView">SceneView for which OnSceneGUI method is called.</param>
+        /// <param name="sceneView">SceneView for which the DoSceneGUI method is called.</param>
         public virtual void DoSceneGUI(SceneView sceneView) {}
 
         /// <summary>
