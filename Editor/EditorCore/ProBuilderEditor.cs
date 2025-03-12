@@ -209,7 +209,7 @@ namespace UnityEditor.ProBuilder
         }
 
         /// <summary>
-        /// Unsubscribes from events and clears static state.
+        /// Clears static state and unsubscribes from events.
         /// </summary>
         public void Dispose()
         {
