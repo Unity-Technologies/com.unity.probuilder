@@ -39,7 +39,7 @@
     }
   ],
   "dependencies": {
-    "com.unity.shadergraph": "17.0.2",
+    "com.unity.shadergraph": "17.0.3",
     "com.unity.settings-manager": "1.0.3",
     "com.unity.modules.physics": "1.0.0",
     "com.unity.modules.imgui": "1.0.0"
