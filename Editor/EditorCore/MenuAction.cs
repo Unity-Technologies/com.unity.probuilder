@@ -309,6 +309,9 @@ namespace UnityEditor.ProBuilder
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
 
+        /// <summary>
+        /// Performs the action for this menu item when in Text mode.
+        /// </summary>
         public void PerformAltAction() => DoAlternateAction();
 
         /// <summary>
@@ -343,12 +346,25 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Raised when MenuAction contents change.
+        /// </summary>
         public event Action changed;
 
+        /// <summary>
+        /// Called during PerformAction.
+        /// Calling this method triggers the <see cref="changed"/> event.
+        /// </summary>
         protected void ContentsChanged() => changed?.Invoke();
 
+        /// <summary>
+        /// Override to register <see cref="ContentsChanged"/> to event callbacks.
+        /// </summary>
         public virtual void RegisterChangedCallbacks() { }
 
+        /// <summary>
+        /// Override to unregister <see cref="ContentsChanged"/> from event callbacks.
+        /// </summary>
         public virtual void UnregisterChangedCallbacks() { }
     }
 }
