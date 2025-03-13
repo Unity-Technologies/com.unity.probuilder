@@ -1,4 +1,4 @@
-com.unity.probuilder © 2025 Unity Technologies
+ProBuilder copyright © 2025 Unity Technologies
 
 Licensed under the Unity Companion License for Unity-dependent projects (see [https://unity3d.com/legal/licenses/unity_companion_license](https://unity3d.com/legal/licenses/unity_companion_license)).
 
