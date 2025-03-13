@@ -29,6 +29,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         public EditorTool Tool => m_Tool;
 
+        /// <inheritdoc/>
         protected override ActionResult PerformActionImplementation()
         {
             if(m_Tool == null)

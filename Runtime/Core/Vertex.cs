@@ -45,7 +45,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the position in local space.
         /// </summary>
-        /// <returns>The position in local space.</returns>
+        /// <value>The position in local space.</value>
         /// <seealso cref="ProBuilderMesh.positions"/>
         public Vector3 position
         {
@@ -60,7 +60,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the [vertex color](../manual/workflow-vertexcolors.html).
         /// </summary>
-        /// <returns>The color applied to this vertex.</returns>
+        /// <value>The color applied to this vertex.</value>
         /// <seealso cref="ProBuilderMesh.colors"/>
         /// <seealso cref="UnityEngine.Color" />
         public Color color
@@ -76,7 +76,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the unit vector normal.
         /// </summary>
-        /// <returns>The unit vector normal.</returns>
+        /// <value>The unit vector normal.</value>
         /// <seealso cref="ProBuilderMesh.GetNormals"/>
         public Vector3 normal
         {
@@ -91,7 +91,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the vertex tangent (sometimes called binormal).
         /// </summary>
-        /// <returns>The vertex tangent.</returns>
+        /// <value>The vertex tangent.</value>
         /// <seealso cref="ProBuilderMesh.tangents"/>
         public Vector4 tangent
         {
@@ -106,7 +106,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the UV0 channel. Also called texture UVs.
         /// </summary>
-        /// <returns>The UV0 channel.</returns>
+        /// <value>The UV0 channel.</value>
         /// <seealso cref="ProBuilderMesh.textures"/>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector2 uv0
@@ -122,7 +122,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the UV2 channel.
         /// </summary>
-        /// <returns>The UV2 channel.</returns>
+        /// <value>The UV2 channel.</value>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector2 uv2
         {
@@ -137,7 +137,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the UV3 channel.
         /// </summary>
-        /// <returns>The UV3 channel.</returns>
+        /// <value>The UV3 channel.</value>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector4 uv3
         {
@@ -152,7 +152,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the UV4 channel.
         /// </summary>
-        /// <returns>The UV4 channel.</returns>
+        /// <value>The UV4 channel.</value>
         /// <seealso cref="ProBuilderMesh.GetUVs"/>
         public Vector4 uv4
         {

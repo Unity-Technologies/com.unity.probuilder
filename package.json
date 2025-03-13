@@ -1,7 +1,7 @@
 {
   "name": "com.unity.probuilder",
   "displayName": "ProBuilder",
-  "version": "5.2.3",
+  "version": "5.2.4",
   "unity": "2019.4",
   "description": "Build, edit, and texture custom geometry in Unity. Use ProBuilder for in-scene level design, prototyping, collision meshes, all with on-the-fly play-testing.\n\nAdvanced features include UV editing, vertex colors, parametric shapes, and texture blending. With ProBuilder's model export feature it's easy to tweak your levels in any external 3D modelling suite.\n\nIf you are using URP/HDRP, be careful to also import the corresponding sample project in the section below to get the proper materials.",
   "keywords": [
@@ -33,9 +33,19 @@
       "path": "Samples~/UniversalRenderPipeline"
     },
     {
+      "displayName": "Universal Render Pipeline Support 2019",
+      "description": "Shaders and materials for the Light Weight Render Pipeline for 2019.X Editors.",
+      "path": "Samples~/UniversalRenderPipeline 2019"
+    },
+    {
       "displayName": "High Definition Render Pipeline Support",
       "description": "Shaders and materials for the High Definition Render Pipeline.",
       "path": "Samples~/HDRP"
+    },
+    {
+      "displayName": "High Definition Render Pipeline Support 2019",
+      "description": "Shaders and materials for the High Definition Render Pipeline for 2019.X Editors.",
+      "path": "Samples~/HDRP 2019"
     },
     {
       "displayName": "Editor Examples",
