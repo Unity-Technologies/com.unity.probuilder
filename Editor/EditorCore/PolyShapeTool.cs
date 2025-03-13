@@ -343,7 +343,8 @@ namespace UnityEditor.ProBuilder
         }
 
         void OnDisable(){}
-
+        
+        /// <inheritdoc/>
         public override void OnActivated()
         {
             SetPolyEditMode(PolyShape.PolyEditMode.None);
@@ -359,7 +360,8 @@ namespace UnityEditor.ProBuilder
             m_Target = null;
             UpdateTarget();
         }
-
+        
+        /// <inheritdoc/>
         public override void OnWillBeDeactivated()
         {
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
@@ -393,6 +395,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Exits the tool and restores previous persistent tool.
+        /// </summary>
         protected void LeaveTool()
         {
             m_IsExiting = true;
