@@ -14,9 +14,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets whether to perform depth testing when testing elements with raycasting.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// True to select only visible elements; false to select all elements regardless of visibility.
-        /// </returns>
+        /// </value>
         public bool depthTest { get; set; }
 
         /// <summary>

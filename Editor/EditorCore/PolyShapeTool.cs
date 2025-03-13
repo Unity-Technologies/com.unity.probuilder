@@ -30,6 +30,7 @@ namespace UnityEditor.ProBuilder
 
         PolyShape m_PolyShape = null;
 
+        /// <inheritdoc/>
         public override void OnActivated()
         {
             m_LastPolyShape = null;
@@ -39,6 +40,7 @@ namespace UnityEditor.ProBuilder
             base.OnActivated();
         }
 
+        /// <inheritdoc/>
         public override void OnWillBeDeactivated()
         {
             base.OnWillBeDeactivated();
@@ -47,6 +49,7 @@ namespace UnityEditor.ProBuilder
                 Selection.activeObject = m_LastPolyShape;
         }
 
+        /// <inheritdoc/>
         public override void OnToolGUI(EditorWindow window)
         {
             if (m_PolyShape == null || polygon == null)
@@ -128,7 +131,8 @@ namespace UnityEditor.ProBuilder
             polygon = null;
             return false;
         }
-
+        
+        /// <inheritdoc/>
         protected override void OnObjectSelectionChanged()
         {
             if(Selection.activeObject != null && polygon == null)
@@ -1176,6 +1180,9 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        /// <summary>
+        /// Called when object selection changes.
+        /// </summary>
         protected virtual void OnObjectSelectionChanged()
         {
             if(polygon == null)
