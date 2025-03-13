@@ -180,7 +180,10 @@ namespace UnityEditor.ProBuilder
                 };
             }
         }
-
+        
+        /// <summary>
+        /// Static getter for the ProBuilderEditor instance.
+        /// </summary>
         /// <value>
         /// Static instance of ProBuilderEditor.
         /// </value>

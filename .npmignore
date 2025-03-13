@@ -35,4 +35,5 @@ upm-ci.log.meta
 
 TestRunnerOptions.json
 
-Tools
+/Tools/
+/Tools.meta
