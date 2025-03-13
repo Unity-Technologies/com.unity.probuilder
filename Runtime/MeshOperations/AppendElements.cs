@@ -1353,7 +1353,7 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// <param name="mesh">The source mesh.</param>
         /// <param name="originalEdge">The edge to add the point to.</param>
         /// <param name="point">The point to insert on the edge.</param>
-        /// <returns>The new Vertex created.</returns>//
+        /// <returns>The new Vertex created.</returns>
         public static Vertex InsertVertexOnEdge(this ProBuilderMesh mesh, Edge originalEdge, Vector3 point)
         {
             if (mesh == null)

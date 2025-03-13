@@ -59,9 +59,9 @@ namespace UnityEngine.ProBuilder
         /// Gets or sets whether to map this face's UV coordinates manually or automatically. See
         /// [Mapping Textures with UVs](../manual/workflow-uvs.html) for an overview of the differences.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// True to set UV coordinates manually; false to use <see cref="AutoUnwrapSettings" />.
-        /// </returns>
+        /// </value>
         public bool manualUV
         {
             get { return m_ManualUV; }
@@ -82,9 +82,9 @@ namespace UnityEngine.ProBuilder
         /// Gets or sets which texture group this face belongs to. ProBuilder uses texture groups when
         /// projecting Auto UVs. See [Continuous tiling](../manual/workflow-uvs.html#continuous-tiling).
         /// </summary>
-        /// <returns>
+        /// <value>
         /// ID of the texture group for this face.
-        /// </returns>
+        /// </value>
         public int textureGroup
         {
             get { return m_TextureGroup;}
@@ -111,9 +111,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the triangle indices that compose this face.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// The array of indices representing this face's triangles.
-        /// </returns>
+        /// </value>
         public ReadOnlyCollection<int> indexes
         {
             get { return new ReadOnlyCollection<int>(m_Indexes); }
@@ -152,9 +152,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets a collection of the vertex indexes that the indexes array references, made distinct.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// A unique collection of vertices.
-        /// </returns>
+        /// </value>
         public ReadOnlyCollection<int> distinctIndexes
         {
             get { return new ReadOnlyCollection<int>(distinctIndexesInternal); }
@@ -168,9 +168,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the perimeter edges that compose this face.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// The collection of edges on this face.
-        /// </returns>
+        /// </value>
         public ReadOnlyCollection<Edge> edges
         {
             get { return new ReadOnlyCollection<Edge>(edgesInternal); }
@@ -179,9 +179,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets which smoothing group this face belongs to, if any. This is used to calculate vertex normals.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// The ID of this smoothing group as an integer.
-        /// </returns>
+        /// </value>
         public int smoothingGroup
         {
             get { return m_SmoothingGroup; }
@@ -201,9 +201,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets the index of the submesh that this face belongs to.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// The ID of the submesh as an integer.
-        /// </returns>
+        /// </value>
         public int submeshIndex
         {
             get { return m_SubmeshIndex; }
@@ -213,9 +213,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets a reference to the [Auto UV](../manual/workflow-uvs.html#auto-uv-mode-features) mapping parameters.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// The ID of this submesh as an integer.
-        /// </returns>
+        /// </value>
         public AutoUnwrapSettings uv
         {
             get { return m_Uv; }
@@ -226,9 +226,9 @@ namespace UnityEngine.ProBuilder
         /// Gets the index for the specified triangle in this face's array of triangle indices.
         /// </summary>
         /// <param name="i">The triangle to access</param>
-        /// <returns>
+        /// <value>
         /// The index of the specified triangle.
-        /// </returns>
+        /// </value>
         public int this[int i]
         {
             get { return indexesInternal[i]; }
