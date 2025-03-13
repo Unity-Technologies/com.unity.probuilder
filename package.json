@@ -33,9 +33,19 @@
       "path": "Samples~/UniversalRenderPipeline"
     },
     {
+      "displayName": "Universal Render Pipeline Support 2019",
+      "description": "Shaders and materials for the Light Weight Render Pipeline for 2019.X Editors.",
+      "path": "Samples~/UniversalRenderPipeline 2019"
+    },
+    {
       "displayName": "High Definition Render Pipeline Support",
       "description": "Shaders and materials for the High Definition Render Pipeline.",
       "path": "Samples~/HDRP"
+    },
+    {
+      "displayName": "High Definition Render Pipeline Support 2019",
+      "description": "Shaders and materials for the High Definition Render Pipeline for 2019.X Editors.",
+      "path": "Samples~/HDRP 2019"
     },
     {
       "displayName": "Editor Examples",
