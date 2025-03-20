@@ -29,6 +29,78 @@ publish_dry_run_probuilder:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_probuilder
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-windows
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-windows
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-windows
+        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_macos
     specific_options:
       UTR:
@@ -139,6 +211,78 @@ publish_probuilder:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_probuilder
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2019.4-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2019.4-windows
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2021.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2021.3-windows
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-macos
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-ubuntu
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-2022.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-2022.3-windows
+        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_macos
     specific_options:
       UTR:
