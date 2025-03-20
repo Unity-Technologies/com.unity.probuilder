@@ -1,6 +1,8 @@
-﻿using RecipeEngine.Api.Settings;
+﻿using RecipeEngine.Api.Platforms;
+using RecipeEngine.Api.Settings;
 using RecipeEngine.Modules.Wrench.Models;
 using RecipeEngine.Modules.Wrench.Settings;
+using RecipeEngine.Platforms;
 
 namespace ProBuilder.Cookbook.Settings;
 

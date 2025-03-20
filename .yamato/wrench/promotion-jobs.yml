@@ -29,14 +29,6 @@ publish_dry_run_probuilder:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_probuilder
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2019.4-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2019.4-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_ubuntu
     specific_options:
       UTR:
@@ -44,22 +36,6 @@ publish_dry_run_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-2019.4-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2019.4-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2019.4-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2021.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2021.3-macos
         unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_ubuntu
     specific_options:
@@ -69,22 +45,6 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-2021.3-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2021.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2021.3-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2022.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2022.3-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_ubuntu
     specific_options:
       UTR:
@@ -92,22 +52,6 @@ publish_dry_run_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-2022.3-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2022.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2022.3-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.0-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.0-macos
         unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_ubuntu
     specific_options:
@@ -117,22 +61,6 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.0-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.0-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.1-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.1-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_ubuntu
     specific_options:
       UTR:
@@ -141,22 +69,6 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.1-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.1-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.2-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.2-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_ubuntu
     specific_options:
       UTR:
@@ -164,14 +76,6 @@ publish_dry_run_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.2-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.2-windows
         unzip: true
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
@@ -211,14 +115,6 @@ publish_probuilder:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_probuilder
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2019.4-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2019.4-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_ubuntu
     specific_options:
       UTR:
@@ -226,22 +122,6 @@ publish_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-2019.4-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2019_4_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2019.4-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2019.4-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2021.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2021.3-macos
         unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_ubuntu
     specific_options:
@@ -251,22 +131,6 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-2021.3-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2021_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2021.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2021.3-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2022.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2022.3-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_ubuntu
     specific_options:
       UTR:
@@ -274,22 +138,6 @@ publish_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-2022.3-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_2022_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-2022.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-2022.3-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.0-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.0-macos
         unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_ubuntu
     specific_options:
@@ -299,22 +147,6 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.0-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.0-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.1-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.1-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_ubuntu
     specific_options:
       UTR:
@@ -323,22 +155,6 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-ubuntu
         unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.1-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.1-windows
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.2-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.2-macos
-        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_ubuntu
     specific_options:
       UTR:
@@ -346,14 +162,6 @@ publish_probuilder:
         unzip: true
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-ubuntu
-        unzip: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-probuilder-6000.2-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-probuilder-6000.2-windows
         unzip: true
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
