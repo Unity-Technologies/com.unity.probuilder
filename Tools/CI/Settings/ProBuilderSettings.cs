@@ -16,7 +16,11 @@ public class ProBuilderSettings : AnnotatedSettingsBase
     {
         {
             "com.unity.probuilder",
-            new PackageOptions() { ReleaseOptions = new ReleaseOptions() { IsReleasing = true } }
+            new PackageOptions()
+            {
+                ReleaseOptions = new ReleaseOptions() { IsReleasing = true },
+                MaximumEditorVersion = "2022.3" 
+            }
         }
     };
 
