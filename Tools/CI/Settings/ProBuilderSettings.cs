@@ -18,12 +18,25 @@ public class ProBuilderSettings : AnnotatedSettingsBase
         }
     };
 
+    // You can either use a platform.json file or specify custom yamato VM images for each package in code.
+    private readonly Dictionary<SystemType, Platform> ImageOverrides = new()
+    {
+        {
+            SystemType.Ubuntu,
+            new Platform(new Agent("package-ci/ubuntu-18.04:v4", FlavorType.BuildLarge, ResourceType.Vm),
+                SystemType.Ubuntu)
+        }
+    };
+    
     public ProBuilderSettings()
     {
         Wrench = new WrenchSettings(
             PackagesRootPaths,
             PackageOptions
         );      
+        
+        // change default images as per Dictionary above.
+        Wrench.Packages["com.unity.probuilder"].EditorPlatforms = ImageOverrides;
     }
 
     public WrenchSettings Wrench { get; private set; }
