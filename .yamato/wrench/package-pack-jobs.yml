@@ -5,7 +5,7 @@
 package_pack_-_probuilder:
   name: Package Pack - probuilder
   agent:
-    image: package-ci/ubuntu-18.04:v4
+    image: package-ci/ubuntu-18.04:default
     type: Unity::VM
     flavor: b1.large
   commands:

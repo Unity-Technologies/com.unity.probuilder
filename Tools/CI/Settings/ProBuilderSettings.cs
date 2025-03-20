@@ -22,10 +22,18 @@ public class ProBuilderSettings : AnnotatedSettingsBase
 
     // You can either use a platform.json file or specify custom yamato VM images for each package in code.
     private readonly Dictionary<SystemType, Platform> ImageOverrides = new()
-    {
+    { {
+            SystemType.Windows,
+            new Platform(new Agent("package-ci/win10:default", FlavorType.BuildLarge, ResourceType.Vm), SystemType.Windows)
+        },
+        {
+            SystemType.MacOS,
+            new Platform(new Agent("package-ci/macos-13:default", FlavorType.BuildExtraLarge, ResourceType.VmOsx),
+                SystemType.MacOS)
+        },
         {
             SystemType.Ubuntu,
-            new Platform(new Agent("package-ci/ubuntu-18.04:v4", FlavorType.BuildLarge, ResourceType.Vm),
+            new Platform(new Agent("package-ci/ubuntu-18.04:default", FlavorType.BuildLarge, ResourceType.Vm),
                 SystemType.Ubuntu)
         }
     };
