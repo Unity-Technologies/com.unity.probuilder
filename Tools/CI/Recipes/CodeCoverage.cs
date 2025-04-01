@@ -39,7 +39,7 @@ public class CodeCoverage : RecipeBase
                 .WithDescription($"Generate code coverage data for {settings.Wrench.Packages[package].DisplayName} on {platform.System}")
                 .WithPlatform(platform)
                 .WithCommands("npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm")
-                .WithCommands($"upm-ci package test -u trunk --package-path {package} --type package-tests --enable-code-coverage --code-coverage-options \"generateAdditionalMetrics;generateHtmlReport;assemblyFilters:+{packageAssemblyName}*,-*Tests*,-*Examples*;pathFilters:-**Tests**;\" --extra-utr-arg=--coverage-results-path=${sourceDir}/upm-ci~/test-results/CoverageResults")
+                .WithCommands($"upm-ci package test -u trunk --type package-tests --enable-code-coverage --code-coverage-options \"generateAdditionalMetrics;generateHtmlReport;assemblyFilters:+{packageAssemblyName}*,-*Tests*,-*Examples*;pathFilters:-**Tests**;\" --extra-utr-arg=--coverage-results-path=${sourceDir}/upm-ci~/test-results/CoverageResults")
                 .WithUpmCiArtifacts()
                 .WithDependencies(settings.Wrench.WrenchJobs[package][JobTypes.Pack]);
 
