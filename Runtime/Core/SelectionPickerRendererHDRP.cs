@@ -83,16 +83,16 @@ namespace UnityEngine.ProBuilder
 
                 CommandBuffer cb = new CommandBuffer();
                 cb.ClearRenderTarget(true, true, Color.white);
-                ctx.ExecuteCommandBuffer(cb);
-                ctx.Submit();
 
-                if (camera.camera.TryGetCullingParameters(out Rendering.ScriptableCullingParameters cullParams))
+                if (camera.camera.TryGetCullingParameters(out ScriptableCullingParameters cullParams))
                 {
-                    CullingResults cullResuts = ctx.Cull(ref cullParams);
-                    var listDesc = new RendererListDesc(new ShaderTagId("Always"), cullResuts, camera.camera);
-                    var list = ctx.CreateRendererList(listDesc);
+                    CullingResults cullResults = ctx.Cull(ref cullParams);
+                    var listParams = new RendererListParams(cullResults, new DrawingSettings(new ShaderTagId("Always"), new SortingSettings(camera.camera)), FilteringSettings.defaultValue);
+                    var list = ctx.CreateRendererList(ref listParams);
                     cb.DrawRendererList(list);
                 }
+                ctx.ExecuteCommandBuffer(cb);
+                ctx.Submit();
             }
 #endif
             }
