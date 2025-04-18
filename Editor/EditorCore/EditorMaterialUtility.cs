@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0; i < ShaderUtil.GetPropertyCount(material.shader); i++)
             {
-                if (ShaderUtil.GetPropertyType(material.shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
+                if (material.shader.GetPropertyType(i) == UnityEngine.Rendering.ShaderPropertyType.Texture)
                 {
                     string propertyName = ShaderUtil.GetPropertyName(material.shader, i);
 
