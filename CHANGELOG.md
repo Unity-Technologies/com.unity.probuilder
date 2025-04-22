@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
-- [PBLD-228] Updated function to access shader property types
+- [PBLD-228] Updated function to access shader property types.
 
 ### Fixed
 
-- [PBLD-224] Fixed rect selection in HDRP
+- [PBLD-224] Fixed rect selection in HDRP.
 
 ## [6.0.5] - 2025-03-11
 
