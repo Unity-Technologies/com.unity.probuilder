@@ -83,6 +83,37 @@ class ExportObj : TemporaryAssetTest
     }
 
     [Test]
+    public static void ExportSingleCube_CreatesTextureFile()
+    {
+        var cube = ShapeFactory.Instantiate<Cube>();
+
+        string obj;
+        string mtl;
+        List<string> textures;
+        string exportPath = TestUtility.temporarySavedAssetsDirectory + "SingleCube.obj";
+        string exportedPath = UnityEditor.ProBuilder.Actions.ExportObj.DoExport(
+            exportPath,
+            new Model[] { new Model("Single Cube Mesh", cube.mesh, UnityEngine.ProBuilder.BuiltinMaterials.defaultMaterial) },
+            new ObjOptions()
+            {
+                copyTextures = true
+            });
+
+        Assume.That(string.IsNullOrEmpty(exportedPath), Is.False);
+
+        AssetDatabase.ImportAsset(exportedPath);
+
+        var imported = AssetDatabase.LoadAssetAtPath(exportedPath, typeof(GameObject)) as GameObject;
+        Assume.That(imported, Is.Not.Null);
+        var go = GameObject.Instantiate(imported);
+        var meshRenderer = go.GetComponentInChildren<MeshRenderer>();
+        Assert.That(meshRenderer.sharedMaterials.Length, Is.GreaterThan(0));
+        Assert.That(meshRenderer.sharedMaterials[0].mainTexture, Is.Not.Null);
+        var mainTex = meshRenderer.sharedMaterials[0].mainTexture;
+        Assert.That(AssetDatabase.GetAssetPath(mainTex), Is.EqualTo(TestUtility.temporarySavedAssetsDirectory+mainTex.name+".png"));
+    }
+
+    [Test]
     public static void ExportMultipleMeshes_CreatesModelWithTwoGroups()
     {
         var cube1 = new Model("Cube A", ShapeFactory.Instantiate<Cube>());
