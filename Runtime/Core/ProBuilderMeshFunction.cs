@@ -405,7 +405,38 @@ namespace UnityEngine.ProBuilder
                 }
 
                 submeshes[i].submeshIndex = currentSubmeshIndex;
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
+
+                // remove any indices that contain degenerate triangles
+                int numBadIndices = 0;
+                int[] indexes = submeshes[i].m_Indexes;
+                for (var tri = 0; tri < indexes.Length; tri += 3)
+                {
+                    Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
+                    Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
+                    if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
+                    {
+                        numBadIndices += 3;
+                    }
+                    else
+                    {
+                        submeshes[i].m_Indexes[tri - numBadIndices] = submeshes[i].m_Indexes[tri];
+                        submeshes[i].m_Indexes[tri - numBadIndices + 1] = submeshes[i].m_Indexes[tri + 1];
+                        submeshes[i].m_Indexes[tri - numBadIndices + 2] = submeshes[i].m_Indexes[tri + 2];
+                    }
+                }
+
+                int[] fixedIndices;
+                if (numBadIndices > 0)
+                {
+                    fixedIndices = new int[submeshes[i].m_Indexes.Length - numBadIndices];
+                    submeshes[i].m_Indexes.AsSpan(0, fixedIndices.Length).CopyTo(fixedIndices);
+                }
+                else
+                {
+                    fixedIndices = submeshes[i].m_Indexes;
+                }
+
+                mesh.SetIndices(fixedIndices, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
                 currentSubmeshIndex++;
             }
 

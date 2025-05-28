@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [PBLD-224] Fixed rect selection in HDRP.
+- [PBLD-236] Fixed a bug where degenerate triangles were being added to output meshes, causing occasional rendering artifacts.
 
 ## [6.0.5] - 2025-03-11
 
