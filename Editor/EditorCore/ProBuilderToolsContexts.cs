@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
                     else if (action.optionsEnabled)
                     {
                         title = GetMenuTitle(action, title);
-                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))));
+                        menu.AppendAction(title, _ => EditorAction.Start(new MenuActionSettings(action, HasPreview(action))), GetStatus(action));
                     }
                     else
                         menu.AppendAction(GetMenuTitle(action, title), _ => action.PerformAction());
