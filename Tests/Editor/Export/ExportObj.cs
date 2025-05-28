@@ -87,9 +87,6 @@ class ExportObj : TemporaryAssetTest
     {
         var cube = ShapeFactory.Instantiate<Cube>();
 
-        string obj;
-        string mtl;
-        List<string> textures;
         string exportPath = TestUtility.temporarySavedAssetsDirectory + "SingleCube.obj";
         string exportedPath = UnityEditor.ProBuilder.Actions.ExportObj.DoExport(
             exportPath,
