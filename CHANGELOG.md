@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [PBLD-224] Fixed rect selection in HDRP.
 - [PBLD-236] Fixed a bug where degenerate triangles were being added to output meshes, causing occasional rendering artifacts.
+- [PBLD-220] Fixed an error in the SoftDeleteEdges sample code that was preventing it from appearing in the context menu.
 - [PBLD-231] Fixed a bug where Extrude was not being disabled in the context menu when 'allow non-manifold actions' was not selected in the ProBuilder preferences.
 
 ## [6.0.5] - 2025-03-11
