@@ -247,6 +247,12 @@ namespace UnityEditor.ProBuilder.Actions
                         continue;
 
                     GameObject go = mf.gameObject;
+                    var renderer = go.GetComponent<MeshRenderer>();
+                    if (renderer.isPartOfStaticBatch)
+                    {
+                        Debug.LogError($"Probuilderize is not supported for renderers that have `IsPartOfStaticBatch` set.\n {go.name} will not probuilderize.");
+                        continue;
+                    }
                     Mesh sourceMesh = mf.sharedMesh;
                     Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
 
