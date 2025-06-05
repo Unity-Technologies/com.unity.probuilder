@@ -10,13 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - [PBLD-228] Updated function to access shader property types.
+- [PBLD-222] Probuilderizing now works for gameobjects that have isPartOfStaticBatch set to true.
 
 ### Fixed
 
 - [PBLD-224] Fixed rect selection in HDRP.
 - [PBLD-236] Fixed a bug where degenerate triangles were being added to output meshes, causing occasional rendering artifacts.
 - [PBLD-231] Fixed a bug where Extrude was not being disabled in the context menu when 'allow non-manifold actions' was not selected in the ProBuilder preferences.
-- [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
 
 ## [6.0.5] - 2025-03-11
 
