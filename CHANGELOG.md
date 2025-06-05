@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - [PBLD-228] Updated function to access shader property types.
+- [PBLD-222] Probuilderizing now works for gameobjects that have isPartOfStaticBatch set to true.
 
 ### Fixed
 
