@@ -274,9 +274,6 @@ namespace UnityEditor.ProBuilder.Actions
                         // we need to invert the transform matrix to get the points into the correct local space
                         var transform = go.transform;
                         var positions = sourceMesh.vertices;
-                        // static meshes aren't transformed by their immediate parent, but they are transformed by one parent above
-                        if(transform.parent)
-                            transform.parent.TransformPoints(positions);
                         transform.InverseTransformPoints(positions);
                         sourceMesh.vertices = positions;
                     }
