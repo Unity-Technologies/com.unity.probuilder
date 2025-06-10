@@ -19,6 +19,11 @@ namespace UnityEditor.ProBuilder.Actions
         public override string iconPath => string.Empty;
 		public override Texture2D icon => null;
 		public override TooltipContent tooltip { get { return k_Tooltip; } }
+        
+        /// <summary>
+        /// This action does not require any file input.
+        /// </summary>
+        protected override bool hasFileMenuEntry { get { return false; } }
 
 		/// <summary>
 		/// What to show in the hover tooltip window.
