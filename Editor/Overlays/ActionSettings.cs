@@ -72,6 +72,8 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             Selection.selectionChanged -= ObjectSelectionChanged;
+
+            UndoUtility.ExitAndValidatePreview();
         }
 
         internal static bool IsCurrentAction(MenuAction action)
