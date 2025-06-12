@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEditor.Actions;
-using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Actions
@@ -246,38 +245,9 @@ namespace UnityEditor.ProBuilder.Actions
                 {
                     if (mf.sharedMesh == null)
                         continue;
-                    GameObject go = mf.gameObject;
-                    var renderer = go.GetComponent<MeshRenderer>();
-                    Mesh sourceMesh = mf.sharedMesh;
-                    var startSubMeshIndex = 0;
-                    // when the renderer is part of a static batch, the import fails due to the mesh being overwritten
-                    // during ProBuilderMesh instantiation (see EnsureMeshFilterIsAssigned)
-                    if(renderer && renderer.isPartOfStaticBatch){
-                        startSubMeshIndex = renderer.subMeshStartIndex;
-                        sourceMesh = Object.Instantiate(mf.sharedMesh);
-                        // clearing the mesh on the mesh filter causes the meshrenderer to clear the static batch flag
-                        mf.sharedMesh = null;
-                        // when the source mesh came from a static batch, it needs to be preprocessed to behave correctly
-                        // rework the submeshes based on the total count of materials
-                        var subMeshDescriptors = new SubMeshDescriptor[renderer.sharedMaterials.Length];
-                        var indices = new List<int[]>();
-                        for (int j = 0; j < renderer.sharedMaterials.Length; j++)
-                        {
-                            subMeshDescriptors[j] = sourceMesh.GetSubMesh(j + startSubMeshIndex);
-                            indices.Add(sourceMesh.GetIndices(j+startSubMeshIndex));
-                        }
-                        for (int j = 0; j < renderer.sharedMaterials.Length; j++)
-                        {
-                            sourceMesh.SetIndices(indices[j], subMeshDescriptors[j].topology, j);
-                        }
-                        sourceMesh.subMeshCount = renderer.sharedMaterials.Length;
-                        // we need to invert the transform matrix to get the points into the correct local space
-                        var transform = go.transform;
-                        var positions = sourceMesh.vertices;
-                        transform.InverseTransformPoints(positions);
-                        sourceMesh.vertices = positions;
-                    }
 
+                    GameObject go = mf.gameObject;
+                    Mesh sourceMesh = mf.sharedMesh;
                     Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
 
                     try
@@ -296,7 +266,7 @@ namespace UnityEditor.ProBuilder.Actions
                         Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
                     }
 
-                    UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", go.name, i / count);
+                    UnityEditor.EditorUtility.DisplayProgressBar("ProBuilderizing", mf.gameObject.name, i / count);
                 }
 
                 UnityEditor.EditorUtility.ClearProgressBar();
