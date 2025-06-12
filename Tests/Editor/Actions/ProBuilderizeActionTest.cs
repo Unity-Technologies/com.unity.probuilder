@@ -29,6 +29,7 @@ public class ProBuilderizeActionTest
         ProBuilderize proBuilderize = new ProBuilderize();
         proBuilderize.PerformAction();
         // confirm that the delaycall inside the action returns
+        var completed = false;
         EditorApplication.delayCall += () =>
         {
             completed = true;
