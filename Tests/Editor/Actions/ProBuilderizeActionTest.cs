@@ -28,7 +28,16 @@ public class ProBuilderizeActionTest
 
         ProBuilderize proBuilderize = new ProBuilderize();
         proBuilderize.PerformAction();
-        yield return null;
+        // confirm that the delaycall inside the action returns
+        EditorApplication.delayCall += () =>
+        {
+            completed = true;
+        };
+        while (!completed)
+        {
+            EditorApplication.QueuePlayerLoopUpdate();
+            yield return null;
+        }
         LogAssert.Expect(LogType.Error, "Probuilderize is not supported for renderers that have `IsPartOfStaticBatch` set.\nCube will not probuilderize.");
         Assert.IsNull(Cubes[2].GetComponent<ProBuilderMesh>());
     }
