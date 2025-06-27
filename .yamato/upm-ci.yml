@@ -1,11 +1,13 @@
 package:
   code_coverage:
-     # Prepend "+" to the assembly name to include it in the code coverage, prepend "-" to exclude assembly. Globbing can be used in the name.
+     # Prepend "+" to the assembly/path name to include it in the code coverage, prepend "-" to exclude assembly/path. Globbing can be used in the name.
     assemblies:
       - +Unity.ProBuilder*
       - -*Tests*
       - -*Examples*
       - -*Debug*
+    paths:
+      - -**External/**
     test_trigger: true
 test_editors:
   - version: trunk
@@ -66,7 +68,7 @@ test_coverage_{{ platform.name }}_{{ editor.version }}:
     flavor: {{ platform.flavor}}
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - upm-ci package test --unity-version {{ editor.version }} --type package-tests  --enable-code-coverage --code-coverage-options "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:{{ package.code_coverage.assemblies | join:"," }};" --extra-utr-arg="--coverage-results-path={{ platform.yamato_source_dir }}/upm-ci~/test-results/CoverageResults --coverage-upload-options=\"reportsDir:upm-ci~/test-results;name:{{platform.name}}_{{editor.version}};flags:{{platform.name}}_{{editor.version}};verbose\""
+    - upm-ci package test --unity-version {{ editor.version }} --type package-tests  --enable-code-coverage --code-coverage-options "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:{{ package.code_coverage.assemblies | join:"," }};pathFilters:{{ package.code_coverage.paths | join:"," }};" --extra-utr-arg="--coverage-results-path={{ platform.yamato_source_dir }}/upm-ci~/test-results/CoverageResults --coverage-upload-options=\"reportsDir:upm-ci~/test-results;name:{{platform.name}}_{{editor.version}};flags:{{platform.name}}_{{editor.version}};verbose\""
   artifacts:
     logs:
       paths:
