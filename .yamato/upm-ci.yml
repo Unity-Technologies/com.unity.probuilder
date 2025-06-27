@@ -35,6 +35,26 @@ pack:
       paths:
         - "upm-ci~/**/*"
 
+{% for editor in test_editors %}
+{% for platform in test_platforms %}
+test_{{ platform.name }}_{{ editor.version }}:
+  name : Test {{ editor.version }} on {{ platform.name }}
+  agent:
+    type: {{ platform.type }}
+    image: {{ platform.image }}
+    flavor: {{ platform.flavor}}
+  commands:
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+    - upm-ci package test --unity-version {{ editor.version }}
+  artifacts:
+    logs:
+      paths:
+        - "upm-ci~/test-results/**/*"
+  dependencies:
+    - .yamato/upm-ci.yml#pack
+{% endfor %}
+{% endfor %}
+
 {% if package.code_coverage.test_trigger == "true" %}
 {% for editor in test_editors %}
 {% for platform in test_platforms %}
@@ -47,27 +67,6 @@ test_coverage_{{ platform.name }}_{{ editor.version }}:
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --unity-version {{ editor.version }} --type package-tests  --enable-code-coverage --code-coverage-options "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:{{ package.code_coverage.assemblies | join:"," }};" --extra-utr-arg="--coverage-results-path={{ platform.yamato_source_dir }}/upm-ci~/test-results/CoverageResults --coverage-upload-options=\"reportsDir:upm-ci~/test-results;name:{{platform.name}}_{{editor.version}};flags:{{platform.name}}_{{editor.version}};verbose\""
-  artifacts:
-    logs:
-      paths:
-        - "upm-ci~/test-results/**/*"
-  dependencies:
-    - .yamato/upm-ci.yml#pack
-{% endfor %}
-{% endfor %}
-
-{% else %}
-{% for editor in test_editors %}
-{% for platform in test_platforms %}
-test_{{ platform.name }}_{{ editor.version }}:
-  name : Test {{ editor.version }} on {{ platform.name }}
-  agent:
-    type: {{ platform.type }}
-    image: {{ platform.image }}
-    flavor: {{ platform.flavor}}
-  commands:
-    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - upm-ci package test --unity-version {{ editor.version }}
   artifacts:
     logs:
       paths:
@@ -97,15 +96,16 @@ test_trigger:
     - .yamato/upm-ci.yml#test_coverage_{{platform.name}}_{{editor.version}}
     {% else %}
     - .yamato/upm-ci.yml#test_{{platform.name}}_{{editor.version}}
+    {% endif %}
     {% endfor %}
     {% endfor %}
 
-nightly_trigger:
-  name: Nightly Trigger
+weekly_trigger:
+  name: Weekly Trigger
   triggers:
     recurring:
     - branch: master
-      frequency: daily
+      frequency: weekly
   dependencies:
     - .yamato/upm-ci.yml#pack
     {% for editor in test_editors %}
@@ -118,7 +118,7 @@ publish:
   name: Publish to Internal Registry
   agent:
     type: Unity::VM
-    image: package-ci/win10:default
+    image: package-ci/win10:v4
     flavor: b1.large
   variables:
     UPMCI_ENABLE_PACKAGE_SIGNING: 1
