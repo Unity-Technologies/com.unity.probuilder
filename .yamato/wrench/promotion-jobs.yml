@@ -9,7 +9,7 @@ publish_dry_run_probuilder:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-54_4ed3929f39f0279ecefec81a437d0eb42e21a4f9c6469a88d31e8f3d764709fe.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
@@ -18,10 +18,7 @@ publish_dry_run_probuilder:
   - command: python PythonScripts/ignore_existing_package_failure.py
   - command: python PythonScripts/run_publish_if_any_package_left.py --dry-run
   after:
-  - command: curl -s https://artifactory-slo.bf.unity3d.com/artifactory/automation-and-tooling/infrastructure-instability-detection/standalone/setup/run_standalone_instability_detection-latest.sh --output run_standalone_instability_detection-latest.sh --retry 5 || exit 0
-  - command: bash ./run_standalone_instability_detection-latest.sh ubuntu 0.5.0 || exit 0
-    timeout: 10
-    retries: 1
+  - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
   artifacts:
     logs:
       paths:
@@ -37,6 +34,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_ubuntu
     specific_options:
       UTR:
@@ -45,6 +44,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_windows
     specific_options:
       UTR:
@@ -53,6 +54,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-windows
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_macos
     specific_options:
       UTR:
@@ -61,6 +64,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_ubuntu
     specific_options:
       UTR:
@@ -69,6 +74,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_windows
     specific_options:
       UTR:
@@ -77,6 +84,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-windows
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_macos
     specific_options:
       UTR:
@@ -85,6 +94,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_ubuntu
     specific_options:
       UTR:
@@ -93,6 +104,8 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_windows
     specific_options:
       UTR:
@@ -101,15 +114,44 @@ publish_dry_run_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-windows
         unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-macos
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-ubuntu
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-windows
+        unzip: true
+      packages:
+        ignore_artifact: true
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.32.0
-  triggers:
-    expression: push.branch match "^release/.*"
-    cancel_old_ci: true
+    UPMPVP_CONTEXT_WRENCH: 0.11.1.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.32.0
+    Wrench: 0.11.1.0
 
 # Publish  for probuilder to https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-npm
 publish_probuilder:
@@ -119,7 +161,7 @@ publish_probuilder:
     type: Unity::VM
     flavor: b1.large
   commands:
-  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-54_4ed3929f39f0279ecefec81a437d0eb42e21a4f9c6469a88d31e8f3d764709fe.zip -o wrench-localapv.zip
+  - command: curl https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-2-68_53c92d3b34ce3f4b652c9785dd1530bdc5885f6523465d6969c3be91f9ccaaf1.zip -o wrench-localapv.zip
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
@@ -128,10 +170,7 @@ publish_probuilder:
   - command: python PythonScripts/ignore_existing_package_failure.py
   - command: python PythonScripts/run_publish_if_any_package_left.py
   after:
-  - command: curl -s https://artifactory-slo.bf.unity3d.com/artifactory/automation-and-tooling/infrastructure-instability-detection/standalone/setup/run_standalone_instability_detection-latest.sh --output run_standalone_instability_detection-latest.sh --retry 5 || exit 0
-  - command: bash ./run_standalone_instability_detection-latest.sh ubuntu 0.5.0 || exit 0
-    timeout: 10
-    retries: 1
+  - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
   artifacts:
     logs:
       paths:
@@ -147,6 +186,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_ubuntu
     specific_options:
       UTR:
@@ -155,6 +196,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_windows
     specific_options:
       UTR:
@@ -163,6 +206,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.0-windows
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_macos
     specific_options:
       UTR:
@@ -171,6 +216,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_ubuntu
     specific_options:
       UTR:
@@ -179,6 +226,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_1_-_windows
     specific_options:
       UTR:
@@ -187,6 +236,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.1-windows
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_macos
     specific_options:
       UTR:
@@ -195,6 +246,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-macos
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_ubuntu
     specific_options:
       UTR:
@@ -203,6 +256,8 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-ubuntu
         unzip: true
+      packages:
+        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_2_-_windows
     specific_options:
       UTR:
@@ -211,10 +266,42 @@ publish_probuilder:
       pvp-results:
         location: results/pvp/validate-probuilder-6000.2-windows
         unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_macos
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-macos
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-macos
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_ubuntu
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-ubuntu
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-ubuntu
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-probuilder-6000.3-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.3-windows
+        unzip: true
+      packages:
+        ignore_artifact: true
   variables:
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 0.10.32.0
+    UPMPVP_CONTEXT_WRENCH: 0.11.1.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 0.10.32.0
+    Wrench: 0.11.1.0
 

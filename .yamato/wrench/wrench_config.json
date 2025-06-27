@@ -12,9 +12,9 @@
       "InternalOnly": false,
       "NeverPublish": false,
       "MaxEditorVersion": "",
-      "coverageEnabled": false,
+      "coverageEnabled": true,
       "coverageCommands": [
-        "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME;pathReplacePatterns:@*,,**/PackageCache/,;sourcePaths:YAMATO_SOURCE_DIR/Packages;"
+        "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME,-*Tests*,-*Examples*,-*Debug*;pathReplacePatterns:@*,,**/PackageCache/,;sourcePaths:YAMATO_SOURCE_DIR/Packages;"
       ],
       "dependantsToIgnoreInPreviewApv": {}
     }
@@ -31,7 +31,7 @@
   },
   "publishing_job": ".yamato/wrench/promotion-jobs.yml#publish_probuilder",
   "branch_pattern": "ReleaseSlash",
-  "wrench_version": "0.10.32.0",
+  "wrench_version": "0.11.1.0",
   "pvp_exemption_path": ".yamato/wrench/pvp-exemptions.json",
   "cs_project_path": "Tools/CI/ProBuilder.Cookbook.csproj"
 }
