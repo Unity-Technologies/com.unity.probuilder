@@ -11,7 +11,7 @@ public class ProBuilderSettings : AnnotatedSettingsBase
 
     // Environment variables
     public static readonly string ProBuilderPackageName = "com.unity.probuilder";
-    readonly string _excludeAssembliesCodeCovCommand = "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME,-*Tests*,-*Examples*,-*Debug*;pathReplacePatterns:@*,,**/PackageCache/,;sourcePaths:YAMATO_SOURCE_DIR/Packages;";
+    readonly string _excludeAssembliesCodeCovCommand = "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME,-*Tests*,-*Examples*,-*Debug*;pathFilters:-**External/**;pathReplacePatterns:@*,,**/PackageCache/,;sourcePaths:YAMATO_SOURCE_DIR/Packages;";
 
     // update this to list all packages in this repo that you want to release.
     Dictionary<string, PackageOptions> PackageOptions = new()
