@@ -17,11 +17,11 @@ namespace UnityEditor.ProBuilder
 
             Texture2D best = null;
 
-            for (int i = 0; i < ShaderUtil.GetPropertyCount(material.shader); i++)
+            for (int i = 0; i < material.shader.GetPropertyCount(); i++)
             {
                 if (material.shader.GetPropertyType(i) == UnityEngine.Rendering.ShaderPropertyType.Texture)
                 {
-                    string propertyName = ShaderUtil.GetPropertyName(material.shader, i);
+                    string propertyName = material.shader.GetPropertyName(i);
 
                     Texture2D tex = material.GetTexture(propertyName) as Texture2D;
 
