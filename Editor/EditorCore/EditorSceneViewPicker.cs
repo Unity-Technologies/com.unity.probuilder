@@ -631,16 +631,6 @@ namespace UnityEditor.ProBuilder
                 }
             }
 
-            Camera camera = Camera.current; // Get the current camera
-            if (camera == null)
-                return Mathf.Infinity; // If there's no active camera, skip this edge
-
-            // Define the near plane of the camera
-            Plane nearPlane = new Plane(
-                camera.transform.forward,
-                camera.transform.position + camera.transform.forward * camera.nearClipPlane
-            );
-
             foreach (var mesh in MeshSelection.topInternal)
             {
                 var trs = mesh.transform;
@@ -663,10 +653,10 @@ namespace UnityEditor.ProBuilder
                         Vector3 worldPosA = trs.TransformPoint(positions[x]);
                         Vector3 worldPosB = trs.TransformPoint(positions[y]);
 
-                        if (ProcessEdgePoints(camera, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
+                        if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
                         {
                             // Calculate distance from the mouse position to the line
-                            float d = HandleUtility.DistancePointLine(Event.current.mousePosition, guiPointA, guiPointB);
+                            float d = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
                             d *= distMultiplier;
 
                             // best distance isn't set to maxPointerDistance because we want to preserve an unselected
@@ -808,14 +798,13 @@ namespace UnityEditor.ProBuilder
 
                 if (res.edge.IsValid())
                 {
-                    Camera camera = Camera.current;
                     Vector3 worldPosA = mesh.transform.TransformPoint(v[res.edge.a]);
                     Vector3 worldPosB = mesh.transform.TransformPoint(v[res.edge.b]);
 
-                    if (ProcessEdgePoints(camera, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
+                    if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
                     {
                         // Calculate distance from the mouse position to the line
-                        res.distance = HandleUtility.DistancePointLine(Event.current.mousePosition, guiPointA, guiPointB);
+                        res.distance = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
                     }
                     else
                     {
