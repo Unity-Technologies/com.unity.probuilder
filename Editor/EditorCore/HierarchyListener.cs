@@ -48,7 +48,9 @@ namespace UnityEditor.ProBuilder
                     // of names to assume that scene mesh assets were created by probuilder.
                     stream.GetChangeGameObjectStructureHierarchyEvent(i, out var data);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                     if (UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go)
+#pragma warning restore CS0618
                     {
                         var meshes = go.GetComponentsInChildren<ProBuilderMesh>();
                         foreach (var mesh in meshes)
@@ -64,7 +66,9 @@ namespace UnityEditor.ProBuilder
         {
             // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
             // if so, we need to create a new mesh asset.
+#pragma warning disable CS0618 // Type or member is obsolete
             if (UnityEditor.EditorUtility.InstanceIDToObject(instanceId) is GameObject go)
+#pragma warning restore CS0618
                 CheckForProBuilderMeshesCreatedOrModified(go);
         }
 
