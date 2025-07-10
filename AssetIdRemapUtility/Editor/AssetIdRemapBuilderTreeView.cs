@@ -33,11 +33,13 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             extraSpaceBeforeIconAndLabel = 18f;
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         protected override TreeViewItem BuildRoot()
         {
             StringTupleTreeElement root = new StringTupleTreeElement(0, -1, -1, "Root", "", "");
 
             var all = new List<TreeViewItem>();
+#pragma warning restore CS0618
 
             int index = 1;
 
@@ -106,7 +108,9 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             GUI.Label(rect, m_CellContents);
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         protected override bool DoesItemMatchSearch(TreeViewItem element, string search)
+#pragma warning restore CS0618
         {
             StringTupleTreeElement tup = element as StringTupleTreeElement;
 
@@ -197,7 +201,9 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
+#pragma warning disable CS0618 // Type or member is obsolete
     class StringTupleTreeElement : TreeViewItem
+#pragma warning restore CS0618
     {
         public string item1;
         public string item2;

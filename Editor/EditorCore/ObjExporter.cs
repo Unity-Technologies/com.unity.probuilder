@@ -324,12 +324,12 @@ namespace UnityEditor.ProBuilder
                 // Texture maps
                 if (mat.shader != null)
                 {
-                    for (int i = 0; i < ShaderUtil.GetPropertyCount(mat.shader); i++)
+                    for (int i = 0; i < mat.shader.GetPropertyCount(); i++)
                     {
                         if (mat.shader.GetPropertyType(i) != UnityEngine.Rendering.ShaderPropertyType.Texture)
                             continue;
 
-                        string texPropertyName = ShaderUtil.GetPropertyName(mat.shader, i);
+                        string texPropertyName = mat.shader.GetPropertyName(i);
 
                         Texture texture = mat.GetTexture(texPropertyName);
 

@@ -11,7 +11,9 @@ using UObject = UnityEngine.Object;
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
+#pragma warning disable CS0618 // Type or member is obsolete
     sealed class AssetTreeItem : TreeViewItem
+#pragma warning restore CS0618
     {
         string m_RelativePath;
         string m_FullPath;
@@ -99,6 +101,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
+#pragma warning disable CS0618 // Type or member is obsolete
     class AssetTreeView : TreeView
     {
         string m_RootDirectory = null;
@@ -137,7 +140,6 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             columnIndexForTreeFoldouts = 0;
             rowHeight = 18f;
         }
-
         protected override TreeViewItem BuildRoot()
         {
             AssetTreeItem root = new AssetTreeItem(0, Application.dataPath, "")
@@ -307,4 +309,5 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                         GatherTreeItems(child as AssetTreeItem, list);
         }
     }
+#pragma warning restore CS0618 // Type or member is obsolete
 }
