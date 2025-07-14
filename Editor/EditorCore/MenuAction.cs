@@ -150,7 +150,9 @@ namespace UnityEditor.ProBuilder
         public virtual string menuTitle { get { return tooltip.title; } }
 
         /// <summary>
-        /// Gets whether this class should have an entry built into the hardware menu. This is not implemented for custom actions.
+        /// This should be true for actions that have settings that can be changed, allowing the user
+        /// to preview and confirm their changes. For actions that have no settings, this needs to
+        /// be overridden to return false.
         /// </summary>
         protected internal virtual bool hasFileMenuEntry { get { return true; } }
 

@@ -20,6 +20,11 @@ namespace UnityEditor.ProBuilder.Actions
 		public override Texture2D icon => null;
 		public override TooltipContent tooltip { get { return k_Tooltip; } }
 
+        /// <summary>
+        /// This action does not have any settings to preview.
+        /// </summary>
+        protected override bool hasFileMenuEntry { get { return false; } }
+
 		/// <summary>
 		/// What to show in the hover tooltip window.
 		/// TooltipContent is similar to GUIContent, with the exception that it also includes an optional params[]

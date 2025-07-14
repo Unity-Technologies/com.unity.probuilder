@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.6] - 2025-07-01
+
+### Changes
+
+- [PBLD-228] Updated function to access shader property types.
+
+### Fixed
+
+- [PBLD-224] Fixed rect selection in HDRP.
+- [PBLD-236] Fixed a bug where degenerate triangles were being added to output meshes, causing occasional rendering artifacts.
+- [PBLD-220] Fixed an error in the SoftDeleteEdges sample code that was preventing it from appearing in the context menu.
+- [PBLD-231] Fixed a bug where Extrude was not being disabled in the context menu when 'allow non-manifold actions' was not selected in the ProBuilder preferences.
+- [PBLD-238] Fixed a bug that could cause users to lose any work that they did on a ProBuilder mesh between two usages of tool actions that had previews (options overlays).
+- [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
+- [PBLD-245] Fixed warnings about obsolete API usage when using Unity 6.2 and later. Updated the API usage where the alternatives were available in Unity 2022.3.
+
 ## [6.0.5] - 2025-03-11
 
 ### Changes
