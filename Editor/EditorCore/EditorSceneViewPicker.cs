@@ -423,7 +423,9 @@ namespace UnityEditor.ProBuilder
             s_PbHits.Clear();
 
             // If any event modifiers are engaged don't cycle the deep click
-            EventModifiers em = Event.current.modifiers;
+            EventModifiers em = EventModifiers.None;
+            if (Event.current != null)
+                em = Event.current.modifiers;
 
             // Reset cycle if we used an event modifier previously.
             // Move state back to single selection.
@@ -534,7 +536,7 @@ namespace UnityEditor.ProBuilder
             // Final selection update
             if (candidateGo != null)
             {
-                Event.current.Use();
+                Event.current?.Use();
 
                 if (candidatePb != null)
                 {
