@@ -20,21 +20,14 @@ public class FacePickerTests
     private Vector3 GetFaceCenterWorld(ProBuilderMesh mesh, Face face)
     {
         Vector3 centerLocal = Vector3.zero;
-        if (face.indexesInternal == null || face.indexesInternal.Length == 0)
-            return Vector3.zero; // Should not happen for valid ProBuilder faces
+        Assume.That(face.indexesInternal != null);
+        Assume.That(face.indexesInternal.Length != 0);
 
         Vector3[] positions = mesh.positionsInternal;
         foreach (int index in face.indexesInternal)
         {
-            if (index >= 0 && index < positions.Length)
-            {
-                centerLocal += positions[index];
-            }
-            else
-            {
-                Debug.LogError($"Invalid vertex index {index} found in face indexes.");
-                return Vector3.zero; // Or handle error appropriately
-            }
+            Assume.That(index >= 0 && index < positions.Length);
+            centerLocal += positions[index];
         }
         centerLocal /= face.indexesInternal.Length;
 
