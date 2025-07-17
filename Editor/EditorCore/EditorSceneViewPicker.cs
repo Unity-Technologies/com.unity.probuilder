@@ -419,8 +419,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderMesh candidatePb = null;
             Face        candidateFace = null;
             float       candidateDistance = Mathf.Infinity;
-
-            s_PbHits.Clear();
+            float       resultDistance = Mathf.Infinity;
 
             // If any event modifiers are engaged don't cycle the deep click
             EventModifiers em = EventModifiers.None;
@@ -453,8 +452,6 @@ namespace UnityEditor.ProBuilder
                     Ray ray = UHandleUtility.GUIPointToWorldRay(mousePosition);
                     RaycastHit hit;
 
-                    // The pickerOptions.cullMode should be set appropriately (e.g., CullingMode.None)
-                    // by the caller if "Select Hidden" implies ignoring backface culling or normal direction for picking.
                     if (UnityEngine.ProBuilder.HandleUtility.FaceRaycast(ray,
                             mesh,
                             out hit,
@@ -507,13 +504,10 @@ namespace UnityEditor.ProBuilder
                 candidateFace = selectedHit.face;
                 candidateDistance = selectedHit.dist;
 
-                // Update the newHash for the element actually picked after cycling/filtering
-                int newHash = selectedHit.hash;
-
-                // Update s_DeepSelectionPrevious only for actual clicks (not hovers)
+                // Update s_DeepSelectionPrevious only for actual clicks after cycling/filtering (not hovers)
                 if (!isPreview)
                 {
-                    s_DeepSelectionPrevious = newHash;
+                    s_DeepSelectionPrevious = selectedHit.hash;
                 }
             }
             else // No ProBuilder meshes were hit, fallback to standard GameObject picking
@@ -527,10 +521,6 @@ namespace UnityEditor.ProBuilder
                     candidateDistance = 0f; // Indicate a direct hit (distance not relevant for non-PB pick)
                     s_DeepSelectionPrevious = 0; // Reset deep selection if a non-PB object is picked
                 }
-                else
-                {
-                    return Mathf.Infinity; // Nothing at all hit
-                }
             }
 
             // Final selection update
@@ -538,25 +528,21 @@ namespace UnityEditor.ProBuilder
             {
                 Event.current?.Use();
 
+                selection.gameObject = candidateGo;
+                resultDistance = Mathf.Sqrt(candidateDistance);
+
                 if (candidatePb != null)
                 {
                     if (candidatePb.selectable)
                     {
-                        selection.gameObject = candidateGo;
                         selection.mesh = candidatePb;
                         selection.SetSingleFace(candidateFace);
-
-                        return Mathf.Sqrt(candidateDistance);
                     }
                 }
-
-                // If clicked off a pb_Object but onto another gameobject, set the selection
-                // and dip out.
-                selection.gameObject = candidateGo;
-                return Mathf.Sqrt(candidateDistance);
             }
 
-            return Mathf.Infinity;
+            s_PbHits.Clear();
+            return resultDistance;
         }
 
         static float VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection)
