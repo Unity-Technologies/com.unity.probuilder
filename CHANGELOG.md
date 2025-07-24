@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [PBLD-242] Fixed a bug where edges were being incorrectly selected when one or both vertices were behind the camera's near plane, causing flipped lines and inconsistent selection behavior.
+- [PBLD-226] Fixed a bug where ProBuilder faces could not selected when obscured by another GameObject
 
 ## [6.0.6] - 2025-07-01
 
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-238] Fixed a bug that could cause users to lose any work that they did on a ProBuilder mesh between two usages of tool actions that had previews (options overlays).
 - [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
 - [PBLD-245] Fixed warnings about obsolete API usage when using Unity 6.2 and later. Updated the API usage where the alternatives were available in Unity 2022.3.
+
 
 ## [6.0.5] - 2025-03-11
 
