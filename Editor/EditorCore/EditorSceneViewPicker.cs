@@ -406,6 +406,8 @@ namespace UnityEditor.ProBuilder
             return FaceRaycast(mousePosition, pickerOptions, allowUnselected, selection, 0, true);
         }
 
+        static List<(ProBuilderMesh mesh, Face face, float dist, int hash)> s_PbHits = new List<(ProBuilderMesh, Face, float, int)>();
+
         static float FaceRaycast(Vector3 mousePosition,
             ScenePickerPreferences pickerOptions,
             bool allowUnselected,
@@ -413,21 +415,23 @@ namespace UnityEditor.ProBuilder
             int deepClickOffset = 0,
             bool isPreview = true)
         {
-            GameObject pickedGo = null;
-            ProBuilderMesh pickedPb = null;
-            Face pickedFace = null;
-
-            int newHash = 0;
+            GameObject candidateGo = null;
+            ProBuilderMesh candidatePb = null;
+            Face        candidateFace = null;
+            float       candidateDistance = Mathf.Infinity;
+            float       resultDistance = Mathf.Infinity;
 
             // If any event modifiers are engaged don't cycle the deep click
-            EventModifiers em = Event.current.modifiers;
+            EventModifiers em = EventModifiers.None;
+            if (Event.current != null)
+                em = Event.current.modifiers;
 
             // Reset cycle if we used an event modifier previously.
             // Move state back to single selection.
             if ((em != EventModifiers.None) != s_AppendModifierPreviousState)
             {
                 s_AppendModifierPreviousState = (em != EventModifiers.None);
-                s_DeepSelectionPrevious = newHash;
+                s_DeepSelectionPrevious = 0;
             }
 
             if (isPreview || em != EventModifiers.None)
@@ -437,13 +441,11 @@ namespace UnityEditor.ProBuilder
 
             selection.Clear();
 
-            float distance = Mathf.Infinity;
-
-            for (int i = 0, next = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
+            // First, find all ProBuilder meshes and their hit faces under the mouse
+            for (int i = 0, pickedCount = s_OverlappingGameObjects.Count; i < pickedCount; i++)
             {
                 var go = s_OverlappingGameObjects[i];
                 var mesh = go.GetComponent<ProBuilderMesh>();
-                Face face = null;
 
                 if (mesh != null && (allowUnselected || MeshSelection.topInternal.Contains(mesh)))
                 {
@@ -456,59 +458,91 @@ namespace UnityEditor.ProBuilder
                             Mathf.Infinity,
                             pickerOptions.cullMode))
                     {
-                        face = mesh.facesInternal[hit.face];
-                        distance = Vector2.SqrMagnitude(((Vector2)mousePosition) - HandleUtility.WorldToGUIPoint(mesh.transform.TransformPoint(hit.point)));
+                        Face face = mesh.facesInternal[hit.face];
+                        float dist = Vector2.SqrMagnitude(((Vector2)mousePosition) - HandleUtility.WorldToGUIPoint(mesh.transform.TransformPoint(hit.point)));
+                        s_PbHits.Add((mesh, face, dist, face.GetHashCode()));
                     }
-                }
-
-                // pb_Face doesn't define GetHashCode, meaning it falls to object.GetHashCode (reference comparison)
-                int hash = face == null ? go.GetHashCode() : face.GetHashCode();
-
-                if (s_DeepSelectionPrevious == hash)
-                    next = (i + (1 + deepClickOffset)) % pickedCount;
-
-                if (next == i)
-                {
-                    pickedGo = go;
-                    pickedPb = mesh;
-                    pickedFace = face;
-
-                    newHash = hash;
-
-                    // a prior hash was matched, this is the next. if
-                    // it's just the first iteration don't break (but do
-                    // set the default).
-                    if (next != 0)
-                        break;
                 }
             }
 
-            if (!isPreview)
-                s_DeepSelectionPrevious = newHash;
-
-            if (pickedGo != null)
+            if (s_PbHits.Count > 0)
             {
-                Event.current.Use();
+                // Sort ProBuilder hits by distance (closest first)
+                s_PbHits.Sort((a, b) => a.dist.CompareTo(b.dist));
 
-                if (pickedPb != null)
+                int chosenIndex = 0;
+
+                // Apply deep click cycling logic only if it's an actual click and a previous selection exists
+                if (!isPreview && s_DeepSelectionPrevious != 0)
                 {
-                    if (pickedPb.selectable)
+                    int currentSelectionIndex = -1;
+                    // Find the index of the previously selected item (if it's still in the list)
+                    for (int i = 0; i < s_PbHits.Count; i++)
                     {
-                        selection.gameObject = pickedGo;
-                        selection.mesh = pickedPb;
-                        selection.SetSingleFace(pickedFace);
-
-                        return Mathf.Sqrt(distance);
+                        if (s_PbHits[i].hash == s_DeepSelectionPrevious)
+                        {
+                            currentSelectionIndex = i;
+                            break;
+                        }
                     }
-                }
 
-                // If clicked off a pb_Object but onto another gameobject, set the selection
-                // and dip out.
-                selection.gameObject = pickedGo;
-                return Mathf.Sqrt(distance);
+                    if (currentSelectionIndex != -1)
+                    {
+                        // Calculate the next index for cycling
+                        chosenIndex = (currentSelectionIndex + (1 + deepClickOffset)) % s_PbHits.Count;
+                        // Handle negative result from modulo for deepClickOffset = -1 if currentSelectionIndex is 0
+                        if (chosenIndex < 0) chosenIndex += s_PbHits.Count;
+                    }
+                    // If s_DeepSelectionPrevious was set but no matching PB hit is found in current list,
+                    // fall back to the closest one (chosenIndex remains 0)
+                }
+                // else for first click or if s_DeepSelectionPrevious is 0, chosenIndex remains 0 (selects closest)
+
+                var selectedHit = s_PbHits[chosenIndex];
+                candidateGo = selectedHit.mesh.gameObject;
+                candidatePb = selectedHit.mesh;
+                candidateFace = selectedHit.face;
+                candidateDistance = selectedHit.dist;
+
+                // Update s_DeepSelectionPrevious only for actual clicks after cycling/filtering (not hovers)
+                if (!isPreview)
+                {
+                    s_DeepSelectionPrevious = selectedHit.hash;
+                }
+            }
+            else // No ProBuilder meshes were hit, fallback to standard GameObject picking
+            {
+                // This means the mouse is over a non-ProBuilder GameObject, or nothing at all.
+                // We should still allow picking of that topmost non-ProBuilder GameObject.
+                GameObject topmostGo = HandleUtility.PickGameObject(mousePosition, false);
+                if (topmostGo != null)
+                {
+                    candidateGo = topmostGo;
+                    candidateDistance = 0f; // Indicate a direct hit (distance not relevant for non-PB pick)
+                    s_DeepSelectionPrevious = 0; // Reset deep selection if a non-PB object is picked
+                }
             }
 
-            return distance;
+            // Final selection update
+            if (candidateGo != null)
+            {
+                Event.current?.Use();
+
+                selection.gameObject = candidateGo;
+                resultDistance = Mathf.Sqrt(candidateDistance);
+
+                if (candidatePb != null)
+                {
+                    if (candidatePb.selectable)
+                    {
+                        selection.mesh = candidatePb;
+                        selection.SetSingleFace(candidateFace);
+                    }
+                }
+            }
+
+            s_PbHits.Clear();
+            return resultDistance;
         }
 
         static float VertexRaycast(Vector3 mousePosition, ScenePickerPreferences pickerOptions, bool allowUnselected, SceneSelection selection)
