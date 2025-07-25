@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-242] Fixed a bug where edges were being incorrectly selected when one or both vertices were behind the camera's near plane, causing flipped lines and inconsistent selection behavior.
 - [PBLD-226] Fixed a bug where ProBuilder faces could not selected when obscured by another GameObject
 
 ## [6.0.6] - 2025-07-01

@@ -684,31 +684,35 @@ namespace UnityEditor.ProBuilder
                         int x = edge.a;
                         int y = edge.b;
 
-                        float d = UHandleUtility.DistanceToLine(
-                                trs.TransformPoint(positions[x]),
-                                trs.TransformPoint(positions[y]));
+                        Vector3 worldPosA = trs.TransformPoint(positions[x]);
+                        Vector3 worldPosB = trs.TransformPoint(positions[y]);
 
-                        d *= distMultiplier;
-
-                        // best distance isn't set to maxPointerDistance because we want to preserve an unselected
-                        // gameobject over a selected gameobject with an out of bounds edge.
-                        if (d > ScenePickerPreferences.maxPointerDistance)
-                            continue;
-
-                        // account for stacked edges
-                        if (Mathf.Approximately(d, bestDistance))
+                        if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
                         {
-                            s_EdgeBuffer.Add(new Edge(x, y));
-                        }
-                        else if (d < bestDistance)
-                        {
-                            s_EdgeBuffer.Clear();
-                            s_EdgeBuffer.Add(new Edge(x, y));
+                            // Calculate distance from the mouse position to the line
+                            float d = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
+                            d *= distMultiplier;
 
-                            selection.gameObject = mesh.gameObject;
-                            selection.mesh = mesh;
-                            selection.SetSingleEdge(new Edge(x, y));
-                            bestDistance = d;
+                            // best distance isn't set to maxPointerDistance because we want to preserve an unselected
+                            // gameobject over a selected gameobject with an out of bounds edge.
+                            if (d > ScenePickerPreferences.maxPointerDistance)
+                                continue;
+
+                            // account for stacked edges
+                            if (Mathf.Approximately(d, bestDistance))
+                            {
+                                s_EdgeBuffer.Add(new Edge(x, y));
+                            }
+                            else if (d < bestDistance)
+                            {
+                                s_EdgeBuffer.Clear();
+                                s_EdgeBuffer.Add(new Edge(x, y));
+
+                                selection.gameObject = mesh.gameObject;
+                                selection.mesh = mesh;
+                                selection.SetSingleEdge(new Edge(x, y));
+                                bestDistance = d;
+                            }
                         }
                     }
                 }
@@ -720,6 +724,20 @@ namespace UnityEditor.ProBuilder
             }
 
             return selection.gameObject != null ? bestDistance : Mathf.Infinity;
+        }
+
+
+        /// <summary>
+        /// Function to clip a point to the near plane.
+        /// </summary>
+        /// <param name="pointBehind"> the point behind the plane</param>
+        /// <param name="pointInFront"> the point in front of te plane</param>
+        /// <param name="nearPlaneZ"> the camera near plane z</param>
+        /// <returns>The intersection point between the line and the near plane</returns>
+        static Vector3 ClipPointToNearPlane(Vector3 pointBehind, Vector3 pointInFront, float nearPlaneZ)
+        {
+            float t = (nearPlaneZ - pointBehind.z) / (pointInFront.z - pointBehind.z);
+            return pointBehind + t * (pointInFront - pointBehind);
         }
 
         static Edge GetClosestEdgeToCamera(Vector3[] positions, IEnumerable<Edge> edges)
@@ -813,12 +831,71 @@ namespace UnityEditor.ProBuilder
                 }
 
                 if (res.edge.IsValid())
-                    res.distance = UHandleUtility.DistanceToLine(
-                            mesh.transform.TransformPoint(v[res.edge.a]),
-                            mesh.transform.TransformPoint(v[res.edge.b]));
+                {
+                    Vector3 worldPosA = mesh.transform.TransformPoint(v[res.edge.a]);
+                    Vector3 worldPosB = mesh.transform.TransformPoint(v[res.edge.b]);
+
+                    if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
+                    {
+                        // Calculate distance from the mouse position to the line
+                        res.distance = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
+                    }
+                    else
+                    {
+                        // If both points are behind the camera, skip this edge
+                        res.distance = Mathf.Infinity;
+                    }
+                }
             }
 
             return res;
+        }
+
+        static bool ProcessEdgePoints(Camera camera, Vector3 worldPosA, Vector3 worldPosB, out Vector3 guiPointA, out Vector3 guiPointB)
+        {
+            guiPointA = Vector3.zero;
+            guiPointB = Vector3.zero;
+
+            // Check if the points are in front of the camera
+            bool pointAInFront = Vector3.Dot(camera.transform.forward, worldPosA - camera.transform.position) > 0;
+            bool pointBInFront = Vector3.Dot(camera.transform.forward, worldPosB - camera.transform.position) > 0;
+
+            // If both points are behind the camera, skip this edge
+            if (!pointAInFront && !pointBInFront)
+            {
+                return false;
+            }
+
+            // Check if either point is behind the camera
+            if (!pointAInFront || !pointBInFront)
+            {
+                // Clip points against the near plane
+                Vector3 cameraSpacePointA = camera.transform.InverseTransformPoint(worldPosA);
+                Vector3 cameraSpacePointB = camera.transform.InverseTransformPoint(worldPosB);
+
+                float nearPlaneZ = camera.nearClipPlane;
+
+                if (cameraSpacePointA.z < nearPlaneZ)
+                {
+                    cameraSpacePointA = ClipPointToNearPlane(cameraSpacePointA, cameraSpacePointB, nearPlaneZ);
+                }
+
+                if (cameraSpacePointB.z < nearPlaneZ)
+                {
+                    cameraSpacePointB = ClipPointToNearPlane(cameraSpacePointB, cameraSpacePointA, nearPlaneZ);
+                }
+
+                // Transform clipped points back to screen space
+                guiPointA = HandleUtility.WorldToGUIPoint(camera.transform.TransformPoint(cameraSpacePointA));
+                guiPointB = HandleUtility.WorldToGUIPoint(camera.transform.TransformPoint(cameraSpacePointB));
+            }
+            else // Both points are in front of the camera
+            {
+                guiPointA = HandleUtility.WorldToGUIPoint(worldPosA);
+                guiPointB = HandleUtility.WorldToGUIPoint(worldPosB);
+            }
+
+            return true;
         }
     }
 }
