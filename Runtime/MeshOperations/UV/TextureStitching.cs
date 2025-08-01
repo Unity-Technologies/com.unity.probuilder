@@ -8,11 +8,11 @@ namespace UnityEngine.ProBuilder.MeshOperations
         /// Provided two faces, this method will attempt to project @f2 and align its size, rotation, and position to match
         /// the shared edge on f1.  Returns true on success, false otherwise.
         /// </summary>
-        /// <param name="mesh"></param>
-        /// <param name="f1"></param>
-        /// <param name="f2"></param>
+        /// <param name="mesh">The mesh containing the faces</param>
+        /// <param name="f1">The anchor face</param>
+        /// <param name="f2">The face to align to the anchor</param>
         /// <param name="channel"></param>
-        /// <returns></returns>
+        /// <returns>true if the autostitching succeeded, else fase</returns>
         public static bool AutoStitch(ProBuilderMesh mesh, Face f1, Face f2, int channel)
         {
             var wings = WingedEdge.GetWingedEdges(mesh, new [] { f1, f2 });
