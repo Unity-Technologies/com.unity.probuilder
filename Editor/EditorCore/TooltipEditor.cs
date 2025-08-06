@@ -24,7 +24,6 @@ namespace UnityEditor.ProBuilder
                 s_Instance.maxSize = Vector2.zero;
                 s_Instance.hideFlags = HideFlags.HideAndDontSave;
                 s_Instance.ShowTooltip();
-                s_Instance.m_Parent.window.SetAlpha(1f);
             }
 
             return s_Instance;
