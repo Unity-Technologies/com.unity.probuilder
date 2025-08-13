@@ -409,27 +409,40 @@ namespace UnityEngine.ProBuilder
                 // remove any indices that contain degenerate triangles
                 int numBadIndices = 0;
                 int[] indexes = submeshes[i].m_Indexes;
-                for (var tri = 0; tri < indexes.Length; tri += 3)
+
+                if (submeshes[i].m_Topology == MeshTopology.Triangles)
                 {
-                    Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
-                    Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
-                    if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
+                    if (indexes.Length % 3 == 0)
                     {
-                        numBadIndices += 3;
-                    }
-                    else
-                    {
-                        submeshes[i].m_Indexes[tri - numBadIndices] = submeshes[i].m_Indexes[tri];
-                        submeshes[i].m_Indexes[tri - numBadIndices + 1] = submeshes[i].m_Indexes[tri + 1];
-                        submeshes[i].m_Indexes[tri - numBadIndices + 2] = submeshes[i].m_Indexes[tri + 2];
+                        for (var tri = 0; tri < indexes.Length; tri += 3)
+                        {
+                            if (tri + 2 >= indexes.Length ||
+                                indexes[tri] >= positions.Count ||
+                                indexes[tri + 1] >= positions.Count ||
+                                indexes[tri + 2] >= positions.Count)
+                                continue;
+
+                            Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
+                            Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
+                            if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
+                            {
+                                numBadIndices += 3;
+                            }
+                            else
+                            {
+                                indexes[tri - numBadIndices] = indexes[tri];
+                                indexes[tri - numBadIndices + 1] = indexes[tri + 1];
+                                indexes[tri - numBadIndices + 2] = indexes[tri + 2];
+                            }
+                        }
                     }
                 }
 
                 int[] fixedIndices;
                 if (numBadIndices > 0)
                 {
-                    fixedIndices = new int[submeshes[i].m_Indexes.Length - numBadIndices];
-                    submeshes[i].m_Indexes.AsSpan(0, fixedIndices.Length).CopyTo(fixedIndices);
+                    fixedIndices = new int[indexes.Length - numBadIndices];
+                    Array.Copy(indexes, 0, fixedIndices, 0, fixedIndices.Length);
                 }
                 else
                 {
