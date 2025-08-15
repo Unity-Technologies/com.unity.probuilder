@@ -410,30 +410,27 @@ namespace UnityEngine.ProBuilder
                 int numBadIndices = 0;
                 int[] indexes = submeshes[i].m_Indexes;
 
-                if (submeshes[i].m_Topology == MeshTopology.Triangles)
+                if (submeshes[i].m_Topology == MeshTopology.Triangles && indexes.Length % 3 == 0)
                 {
-                    if (indexes.Length % 3 == 0)
+                    for (var tri = 0; tri < indexes.Length; tri += 3)
                     {
-                        for (var tri = 0; tri < indexes.Length; tri += 3)
-                        {
-                            if (tri + 2 >= indexes.Length ||
-                                indexes[tri] >= positions.Count ||
-                                indexes[tri + 1] >= positions.Count ||
-                                indexes[tri + 2] >= positions.Count)
-                                continue;
+                        if (tri + 2 >= indexes.Length ||
+                            indexes[tri] >= positions.Count ||
+                            indexes[tri + 1] >= positions.Count ||
+                            indexes[tri + 2] >= positions.Count)
+                            continue;
 
-                            Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
-                            Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
-                            if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
-                            {
-                                numBadIndices += 3;
-                            }
-                            else
-                            {
-                                indexes[tri - numBadIndices] = indexes[tri];
-                                indexes[tri - numBadIndices + 1] = indexes[tri + 1];
-                                indexes[tri - numBadIndices + 2] = indexes[tri + 2];
-                            }
+                        Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
+                        Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
+                        if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
+                        {
+                            numBadIndices += 3;
+                        }
+                        else
+                        {
+                            indexes[tri - numBadIndices] = indexes[tri];
+                            indexes[tri - numBadIndices + 1] = indexes[tri + 1];
+                            indexes[tri - numBadIndices + 2] = indexes[tri + 2];
                         }
                     }
                 }
