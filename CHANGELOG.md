@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-242] Fixed a bug where edges were being incorrectly selected when one or both vertices were behind the camera's near plane, causing flipped lines and inconsistent selection behavior.
 - [PBLD-226] Fixed a bug where ProBuilder faces could not selected when obscured by another GameObject
 - [PBLD-164] Fixed a bug with UV autostitching where the position offset would not take into account the face rotation center offset.
+- [PBLD-251] Fixed a bug which would cause out of bounds exceptions when exporting meshes with quad topology
 - [PBLD-253] Removes call to internal API that is being removed.
 
 ## [6.0.6] - 2025-07-01
