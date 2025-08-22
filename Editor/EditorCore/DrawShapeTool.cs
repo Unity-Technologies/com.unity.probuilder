@@ -12,7 +12,6 @@ namespace UnityEditor.ProBuilder
 {
 
     [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cube  %#K", false, PreferenceKeys.menuEditor + 1)]
@@ -31,6 +30,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cube", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Cube";
+        protected override string IconText => "Create Cube";
+        protected override string IconTooltip => "Create Cube";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cube))
@@ -41,7 +44,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sphere", false, PreferenceKeys.menuEditor + 2)]
@@ -60,6 +62,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sphere", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Sphere";
+        protected override string IconText => "Create Sphere";
+        protected override string IconTooltip => "Create Sphere";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Sphere))
@@ -70,7 +76,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
     class CreatePlaneTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Plane", false, PreferenceKeys.menuEditor + 3)]
@@ -89,6 +94,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Plane", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Plane";
+        protected override string IconText => "Create Plane";
+        protected override string IconTooltip => "Create Plane";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Plane))
@@ -99,7 +108,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Cylinder",variantGroup = typeof(DrawShapeTool), variantPriority = 3)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
     class CreateCylinderTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cylinder", false, PreferenceKeys.menuEditor + 4)]
@@ -118,6 +126,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cylinder", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Cylinder";
+        protected override string IconText => "Create Cylinder";
+        protected override string IconTooltip => "Create Cylinder";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cylinder))
@@ -128,7 +140,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Cone", variantGroup = typeof(DrawShapeTool), variantPriority = 4)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
     class CreateConeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cone", false, PreferenceKeys.menuEditor + 5)]
@@ -147,6 +158,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cone", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Cone";
+        protected override string IconText => "Create Cone";
+        protected override string IconTooltip => "Create Cone";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Cone))
@@ -157,7 +172,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Prism",variantGroup = typeof(DrawShapeTool), variantPriority = 5)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
     class CreatePrismTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Prism", false, PreferenceKeys.menuEditor + 6)]
@@ -176,6 +190,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Prism", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Prism";
+        protected override string IconText => "Create Prism";
+        protected override string IconTooltip => "Create Prism";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Prism))
@@ -186,7 +204,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Stairs", variantGroup = typeof(DrawShapeTool), variantPriority = 6)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
     class CreateStairsTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Stairs", false, PreferenceKeys.menuEditor + 7)]
@@ -205,6 +222,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Stairs", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Stairs";
+        protected override string IconText => "Create Stairs";
+        protected override string IconTooltip => "Create Stairs";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Stairs))
@@ -215,7 +236,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Torus",variantGroup = typeof(DrawShapeTool), variantPriority = 7)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
     class CreateTorusTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Torus", false, PreferenceKeys.menuEditor + 8)]
@@ -234,6 +254,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Torus", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Torus";
+        protected override string IconText => "Create Torus";
+        protected override string IconTooltip => "Create Torus";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Torus))
@@ -244,7 +268,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Pipe",variantGroup = typeof(DrawShapeTool), variantPriority = 8)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
     class CreatePipeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Pipe", false, PreferenceKeys.menuEditor + 9)]
@@ -263,6 +286,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Pipe", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Pipe";
+        protected override string IconText => "Create Pipe";
+        protected override string IconTooltip => "Create Pipe";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Pipe))
@@ -273,7 +300,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Arch",variantGroup = typeof(DrawShapeTool), variantPriority = 9)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
     class CreateArchTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Arch", false, PreferenceKeys.menuEditor + 10)]
@@ -292,6 +318,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Arch", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Arch";
+        protected override string IconText => "Create Arch";
+        protected override string IconTooltip => "Create Arch";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Arch))
@@ -302,7 +332,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Door",variantGroup = typeof(DrawShapeTool), variantPriority = 10)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
     class CreateDoorTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Door", false, PreferenceKeys.menuEditor + 11)]
@@ -321,6 +350,10 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Door", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
+        protected override string IconPath => "Tools/ShapeTool/Door";
+        protected override string IconText => "Create Door";
+        protected override string IconTooltip => "Create Door";
+
         public override void OnActivated()
         {
             if (m_LastShapeCreated && !(m_LastShapeCreated.shape is Door))
@@ -331,7 +364,6 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Sprite",variantGroup = typeof(DrawShapeTool), variantPriority = 11)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
     class CreateSpriteTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sprite", false, PreferenceKeys.menuEditor + 12)]
@@ -349,6 +381,10 @@ namespace UnityEditor.ProBuilder
 
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sprite", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
+
+        protected override string IconPath => "Tools/ShapeTool/Sprite";
+        protected override string IconText => "Create Sprite";
+        protected override string IconTooltip => "Create Sprite";
 
         public override void OnActivated()
         {
@@ -414,6 +450,9 @@ namespace UnityEditor.ProBuilder
         protected abstract Vector3 lastSize { get; set; }
         protected abstract Quaternion lastRotation { get; set; }
         protected abstract PivotLocation shapePivotLocation { get; set; }
+        protected abstract string IconPath { get; }
+        protected abstract string IconText { get; }
+        protected abstract string IconTooltip { get; }
 
         public PivotLocation pivotLocation
         {
@@ -525,6 +564,19 @@ namespace UnityEditor.ProBuilder
 
         static DrawShapeTool s_Instance = null;
         internal static DrawShapeTool instance => s_Instance;
+
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                return new GUIContent()
+                {
+                    image = IconUtility.GetIcon(IconPath),
+                    text = IconText,
+                    tooltip = IconTooltip
+                };
+            }
+        }
 
         void OnDisable()
         {
