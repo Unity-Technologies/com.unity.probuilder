@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.7] - 2025-08-28
+
+### Fixed
+
+- [PBLD-242] Fixed a bug where edges were being incorrectly selected when one or both vertices were behind the camera's near plane, causing flipped lines and inconsistent selection behavior.
+- [PBLD-226] Fixed a bug where ProBuilder faces could not selected when obscured by another GameObject
+- [PBLD-164] Fixed a bug with UV autostitching where the position offset would not take into account the face rotation center offset.
+- [PBLD-251] Fixed a bug which would cause out of bounds exceptions when exporting meshes with quad topology
+- [PBLD-253] Removed a call to internal API that is being removed.
+- [PBLD-255] Fixed an issue where faces being extruded using the shift+click were invisible
+- Fixed warnings about materials being altered when the package is imported in Unity 6.2.
+
 ## [6.0.6] - 2025-07-01
 
 ### Changes
@@ -20,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-238] Fixed a bug that could cause users to lose any work that they did on a ProBuilder mesh between two usages of tool actions that had previews (options overlays).
 - [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
 - [PBLD-245] Fixed warnings about obsolete API usage when using Unity 6.2 and later. Updated the API usage where the alternatives were available in Unity 2022.3.
+
 
 ## [6.0.5] - 2025-03-11
 

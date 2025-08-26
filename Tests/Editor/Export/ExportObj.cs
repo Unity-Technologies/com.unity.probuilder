@@ -80,6 +80,8 @@ class ExportObj : TemporaryAssetTest
 
         Assume.That(imported, Is.Not.Null);
         Assert.That(imported.vertexCount, Is.GreaterThan(0));
+
+        Object.DestroyImmediate(cube.gameObject);
     }
 
     [Test]
@@ -108,13 +110,17 @@ class ExportObj : TemporaryAssetTest
         Assert.That(meshRenderer.sharedMaterials[0].mainTexture, Is.Not.Null);
         var mainTex = meshRenderer.sharedMaterials[0].mainTexture;
         Assert.That(AssetDatabase.GetAssetPath(mainTex), Is.EqualTo(TestUtility.temporarySavedAssetsDirectory+mainTex.name+".png"));
+
+        Object.DestroyImmediate(cube.gameObject);
     }
 
     [Test]
     public static void ExportMultipleMeshes_CreatesModelWithTwoGroups()
     {
-        var cube1 = new Model("Cube A", ShapeFactory.Instantiate<Cube>());
-        var cube2 = new Model("Cube B", ShapeFactory.Instantiate<Cube>());
+        var cubeA = ShapeFactory.Instantiate<Cube>();
+        var cubeB = ShapeFactory.Instantiate<Cube>();
+        var cube1 = new Model("Cube A", cubeA);
+        var cube2 = new Model("Cube B", cubeB);
         string exportedPath = TestUtility.temporarySavedAssetsDirectory + "ObjGroup.obj";
 
         UnityEditor.ProBuilder.Actions.ExportObj.DoExport(exportedPath, new Model[] { cube1, cube2 }, new ObjOptions()
@@ -133,5 +139,8 @@ class ExportObj : TemporaryAssetTest
         var all = AssetDatabase.LoadAllAssetRepresentationsAtPath(exportedPath);
 
         Assert.That(all.Count(x => x is Mesh), Is.EqualTo(2));
+
+        Object.DestroyImmediate(cubeA.gameObject);
+        Object.DestroyImmediate(cubeB.gameObject);
     }
 }
