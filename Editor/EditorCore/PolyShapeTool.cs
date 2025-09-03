@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
         {
             get
             {
-                if(s_IconContent == null)
+                if (s_IconContent == null)
                     s_IconContent = new GUIContent()
                     {
                         image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
