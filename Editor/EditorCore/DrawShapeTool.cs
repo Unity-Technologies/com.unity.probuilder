@@ -565,16 +565,19 @@ namespace UnityEditor.ProBuilder
         static DrawShapeTool s_Instance = null;
         internal static DrawShapeTool instance => s_Instance;
 
+        GUIContent s_IconContent;
         public override GUIContent toolbarIcon
         {
             get
             {
-                return new GUIContent()
-                {
-                    image = IconUtility.GetIcon(IconPath),
-                    text = IconText,
-                    tooltip = IconTooltip
-                };
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon(IconPath),
+                        text = IconText,
+                        tooltip = IconTooltip
+                    };
+                return s_IconContent;
             }
         }
 
