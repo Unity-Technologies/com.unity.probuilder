@@ -30,9 +30,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cube", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Cube";
-        protected override string IconText => "Create Cube";
-        protected override string IconTooltip => "Create Cube";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Cube"),
+                        text = "Create Cube",
+                        tooltip = "Create Cube"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -62,9 +74,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sphere", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Sphere";
-        protected override string IconText => "Create Sphere";
-        protected override string IconTooltip => "Create Sphere";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Sphere"),
+                        text = "Create Sphere",
+                        tooltip = "Create Sphere"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -94,9 +118,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Plane", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Plane";
-        protected override string IconText => "Create Plane";
-        protected override string IconTooltip => "Create Plane";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Plane"),
+                        text = "Create Plane",
+                        tooltip = "Create Plane"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -126,9 +162,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cylinder", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Cylinder";
-        protected override string IconText => "Create Cylinder";
-        protected override string IconTooltip => "Create Cylinder";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Cylinder"),
+                        text = "Create Cylinder",
+                        tooltip = "Create Cylinder"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -158,9 +206,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Cone", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Cone";
-        protected override string IconText => "Create Cone";
-        protected override string IconTooltip => "Create Cone";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Cone"),
+                        text = "Create Cone",
+                        tooltip = "Create Cone"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -190,9 +250,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Prism", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Prism";
-        protected override string IconText => "Create Prism";
-        protected override string IconTooltip => "Create Prism";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Prism"),
+                        text = "Create Prism",
+                        tooltip = "Create Prism"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -222,9 +294,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Stairs", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Stairs";
-        protected override string IconText => "Create Stairs";
-        protected override string IconTooltip => "Create Stairs";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Stairs"),
+                        text = "Create Stairs",
+                        tooltip = "Create Stairs"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -254,9 +338,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Torus", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Torus";
-        protected override string IconText => "Create Torus";
-        protected override string IconTooltip => "Create Torus";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Torus"),
+                        text = "Create Torus",
+                        tooltip = "Create Torus"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -286,9 +382,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Pipe", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Pipe";
-        protected override string IconText => "Create Pipe";
-        protected override string IconTooltip => "Create Pipe";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Pipe"),
+                        text = "Create Pipe",
+                        tooltip = "Create Pipe"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -318,9 +426,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Arch", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Arch";
-        protected override string IconText => "Create Arch";
-        protected override string IconTooltip => "Create Arch";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Arch"),
+                        text = "Create Arch",
+                        tooltip = "Create Arch"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -350,9 +470,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Door", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Door";
-        protected override string IconText => "Create Door";
-        protected override string IconTooltip => "Create Door";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Door"),
+                        text = "Create Door",
+                        tooltip = "Create Door"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -382,9 +514,21 @@ namespace UnityEditor.ProBuilder
         Pref<PivotLocation> m_PivotLocation = new Pref<PivotLocation>("ShapeBuilder.PivotLocation.Sprite", PivotLocation.Center);
         protected override PivotLocation shapePivotLocation { get => m_PivotLocation.value; set => m_PivotLocation.SetValue(value); }
 
-        protected override string IconPath => "Tools/ShapeTool/Sprite";
-        protected override string IconText => "Create Sprite";
-        protected override string IconTooltip => "Create Sprite";
+        static GUIContent s_IconContent;
+        public override GUIContent toolbarIcon
+        {
+            get
+            {
+                if (s_IconContent == null)
+                    s_IconContent = new GUIContent()
+                    {
+                        image = IconUtility.GetIcon("Tools/ShapeTool/Sprite"),
+                        text = "Create Sprite",
+                        tooltip = "Create Sprite"
+                    };
+                return s_IconContent;
+            }
+        }
 
         public override void OnActivated()
         {
@@ -450,9 +594,6 @@ namespace UnityEditor.ProBuilder
         protected abstract Vector3 lastSize { get; set; }
         protected abstract Quaternion lastRotation { get; set; }
         protected abstract PivotLocation shapePivotLocation { get; set; }
-        protected abstract string IconPath { get; }
-        protected abstract string IconText { get; }
-        protected abstract string IconTooltip { get; }
 
         public PivotLocation pivotLocation
         {
@@ -564,22 +705,6 @@ namespace UnityEditor.ProBuilder
 
         static DrawShapeTool s_Instance = null;
         internal static DrawShapeTool instance => s_Instance;
-
-        GUIContent s_IconContent;
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if (s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon(IconPath),
-                        text = IconText,
-                        tooltip = IconTooltip
-                    };
-                return s_IconContent;
-            }
-        }
 
         void OnDisable()
         {
