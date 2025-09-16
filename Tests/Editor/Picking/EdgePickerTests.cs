@@ -184,8 +184,6 @@ public class EdgePickerTests
 
         yield return null;
 
-        //MeshSelection.AddToSelection(mesh2.gameObject);
-
         Edge edge1 = m_Mesh.facesInternal[0].edgesInternal[3];
         Vector3 pA1_world = m_Mesh.transform.TransformPoint(m_Mesh.positionsInternal[edge1.a]);
         Vector3 pB1_world = m_Mesh.transform.TransformPoint(m_Mesh.positionsInternal[edge1.b]);
