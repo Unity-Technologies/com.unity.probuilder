@@ -639,13 +639,38 @@ namespace UnityEditor.ProBuilder
             bool highlightedEdgeExists = ProBuilderEditor.instance.hovering.edges.Count > 0;
 
             // if there is an edge already highlighted, we don't want to select a different game object
-            if (!highlightedEdgeExists)
+            if (highlightedEdgeExists)
             {
-                selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+                ProBuilderMesh hoveredMeshFromHighlight = ProBuilderEditor.instance.hovering.mesh;
+                if (hoveredMeshFromHighlight != null && ProBuilderEditor.instance.hovering.edges.Count > 0)
+                {
+                    Edge highlightedEdge = ProBuilderEditor.instance.hovering.edges[0]; // Assuming single edge hover
+
+                    // Calculate the screen distance for this specific highlighted edge.
+                    Vector3[] positions = hoveredMeshFromHighlight.positionsInternal;
+                    Vector3 worldPosA = hoveredMeshFromHighlight.transform.TransformPoint(positions[highlightedEdge.a]);
+                    Vector3 worldPosB = hoveredMeshFromHighlight.transform.TransformPoint(positions[highlightedEdge.b]);
+
+                    if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
+                    {
+                        float distToHighlightedEdge = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
+
+                        // If the highlighted edge is within the maximum picking distance, select it and return early.
+                        if (distToHighlightedEdge <= ScenePickerPreferences.maxPointerDistance)
+                        {
+                            selection.gameObject = hoveredMeshFromHighlight.gameObject;
+                            selection.mesh = hoveredMeshFromHighlight;
+                            selection.SetSingleEdge(highlightedEdge);
+                            return distToHighlightedEdge;
+                        }
+                    }
+                }
             }
-            var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             float bestDistance = Mathf.Infinity;
+            selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+            var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
+
             bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
             if (hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
@@ -659,7 +684,8 @@ namespace UnityEditor.ProBuilder
                     selection.SetSingleEdge(tup.edge);
                     bestDistance = tup.distance;
 
-                    // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
+                    // If the nearest edge was acquired by a raycast on an already selected mesh,
+                    // return early to prioritize it.
                     if (hoveredIsInSelection)
                         return tup.distance;
                 }

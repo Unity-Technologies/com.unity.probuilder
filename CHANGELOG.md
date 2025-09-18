@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.
+- [PBLD-258] Fixed an bug where clicking a highlighted edge might select a hidden edge instead.
 
 ## [6.0.7] - 2025-08-28
 
