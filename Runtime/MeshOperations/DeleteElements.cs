@@ -59,6 +59,74 @@ namespace UnityEngine.ProBuilder.MeshOperations
             mesh.SetSharedTextures(commonUV);
         }
 
+        public static int[] DeleteVerticesAndConnectedFaces(this ProBuilderMesh mesh, IEnumerable<int> coincidentVertices)
+        {
+            if (mesh == null)
+                throw new ArgumentNullException(nameof(mesh));
+
+            if (coincidentVertices == null)
+                throw new ArgumentNullException(nameof(coincidentVertices));
+
+            var requested = coincidentVertices.Distinct().ToList();
+            if (requested.Count == 0)
+                return new int[0];
+
+            requested.Sort();
+
+            // Find faces that reference any of the requested vertex indices
+            var requestedSet = new HashSet<int>(requested);
+            var facesToRemove = new List<int>();
+
+            for (int i = 0; i < mesh.facesInternal.Length; i++)
+            {
+                var face = mesh.facesInternal[i];
+                foreach (var idx in face.distinctIndexesInternal)
+                {
+                    if (requestedSet.Contains(idx))
+                    {
+                        facesToRemove.Add(i);
+                        break;
+                    }
+                }
+            }
+
+            // Remove faces first (this will update vertices and shared structures)
+            int[] removedByFace = new int[0];
+            if (facesToRemove.Count > 0)
+            {
+                removedByFace = mesh.DeleteFaces(facesToRemove);
+            }
+
+            Array.Sort(removedByFace);
+            var removedByFaceSet = new HashSet<int>(removedByFace);
+
+            // Determine which originally requested indices were NOT already removed by face deletion
+            var remaining = requested.Where(x => !removedByFaceSet.Contains(x)).ToList();
+
+            // If there are still vertices to remove, adjust their indices to account for vertices already removed,
+            // then call the low-level DeleteVertices which expects indexes that are not referenced by triangles.
+            if (remaining.Count > 0)
+            {
+                // removedByFace is sorted; for each original index, compute how many removed indices are < index
+                var adjusted = new List<int>(remaining.Count);
+                for (int i = 0; i < remaining.Count; i++)
+                {
+                    int orig = remaining[i];
+                    int shift = removedByFace.Length > 0 ? ArrayUtility.NearestIndexPriorToValue(removedByFace, orig) + 1 : 0;
+                    adjusted.Add(orig - shift);
+                }
+
+                // Call the low-level delete (assumes no triangles reference these adjusted indices)
+                mesh.DeleteVertices(adjusted);
+            }
+
+            // Return the list of original indices removed (both from faces and remaining vertex deletions)
+            var result = new List<int>(removedByFace);
+            result.AddRange(remaining);
+            result.Sort();
+            return result.ToArray();
+        }
+
         /// <summary>
         /// Removes a face from a mesh.
         ///
