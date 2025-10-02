@@ -52,7 +52,7 @@ class MeshSyncTests : TemporaryAssetTest
         var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
         cube.transform.parent = parent;
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetEntityId();
 
         Selection.activeObject = cube.gameObject;
 
@@ -72,7 +72,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetEntityId(), Is.Not.EqualTo(originalMeshId));
     }
 
     //[PBLD-75] Sending the event to the scene view is needed as just calling HierarchyListener.OnObjectCreated
@@ -89,7 +89,7 @@ class MeshSyncTests : TemporaryAssetTest
         cube.transform.parent = emptyGO;
 
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetEntityId();
 
         Selection.objects = new[] { emptyGO.gameObject };
         ActiveEditorTracker.sharedTracker.ForceRebuild();
@@ -117,7 +117,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetEntityId(), Is.Not.EqualTo(originalMeshId));
     }
 
     [Test]

@@ -455,7 +455,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
             if (o != null)
             {
-                string path = AssetDatabase.GetAssetPath(o.GetInstanceID());
+                string path = AssetDatabase.GetAssetPath(o.GetEntityId());
 
                 if (!string.IsNullOrEmpty(path))
                 {

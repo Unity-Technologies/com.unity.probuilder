@@ -58,7 +58,7 @@ namespace UnityEngine.ProBuilder
 
             target.Clear();
             target.indexFormat = edgeCount * 2 > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            target.name = "ProBuilder::EdgeMesh" + target.GetInstanceID();
+            target.name = "ProBuilder::EdgeMesh" + target.GetEntityId();
             target.vertices = mesh.positionsInternal;
             target.subMeshCount = 1;
             target.SetIndices(s_IndexList, MeshTopology.Lines, 0);
@@ -81,7 +81,7 @@ namespace UnityEngine.ProBuilder
 
             target.Clear();
             target.indexFormat = vertexCount > ushort.MaxValue ? Rendering.IndexFormat.UInt32 : Rendering.IndexFormat.UInt16;
-            target.name = "ProBuilder::EdgeMesh" + target.GetInstanceID();
+            target.name = "ProBuilder::EdgeMesh" + target.GetEntityId();
             target.vertices = mesh.positionsInternal;
             target.subMeshCount = 1;
             target.SetIndices(s_IndexList, MeshTopology.Lines, 0);

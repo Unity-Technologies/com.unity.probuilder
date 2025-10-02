@@ -168,7 +168,7 @@ namespace UnityEditor.ProBuilder
         [Conditional("DEBUG_MESH_SYNC")]
         static void LogMeshSyncEvent(ProBuilderMesh mesh, MeshSyncState state, string msg)
         {
-            Debug.Log($"{mesh} {mesh.GetInstanceID()} {state} {msg}");
+            Debug.Log($"{mesh} {mesh.GetEntityId()} {state} {msg}");
         }
 
         /// <summary>

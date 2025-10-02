@@ -75,7 +75,7 @@ public class PrefabTests
         Assume.That(instance2, Is.Not.Null);
         var mesh1 = instance1.GetComponent<ProBuilderMesh>().mesh;
         var mesh2 = instance2.GetComponent<ProBuilderMesh>().mesh;
-        Assert.That(mesh1.GetInstanceID(), Is.Not.EqualTo(mesh2.GetInstanceID()));
+        Assert.That(mesh1.GetEntityId(), Is.Not.EqualTo(mesh2.GetEntityId()));
     }
 
     [Test]

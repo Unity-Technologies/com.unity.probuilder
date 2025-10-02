@@ -177,8 +177,8 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.Label("Identifiers", EditorStyles.boldLabel);
             EditorGUI.showMixedValue = targets.Length > 1;
-            EditorGUILayout.IntField("ProBuilderMesh", m_Mesh.GetInstanceID());
-            EditorGUILayout.IntField("UnityEngine.Mesh", sharedMesh != null ? sharedMesh.GetInstanceID() : -1);
+            EditorGUILayout.IntField("ProBuilderMesh", m_Mesh.GetEntityId());
+            EditorGUILayout.IntField("UnityEngine.Mesh", sharedMesh != null ? sharedMesh.GetEntityId() : -1);
             EditorGUILayout.TextField("UnityEngine.Mesh.name", sharedMesh != null ? sharedMesh.name : "null");
             EditorGUI.showMixedValue = false;
 #endif
