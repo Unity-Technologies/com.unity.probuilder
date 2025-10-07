@@ -516,8 +516,6 @@ namespace UnityEditor.ProBuilder
             // Final selection update
             if (candidateGo != null)
             {
-                Event.current?.Use();
-
                 selection.gameObject = candidateGo;
                 resultDistance = Mathf.Sqrt(candidateDistance);
 
