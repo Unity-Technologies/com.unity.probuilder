@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
 
         static string GetPropertyId(ProBuilderMesh mesh, string property)
         {
-            return string.Format("{0}.{1}", mesh.GetEntityId(), property);
+            return string.Format("{0}.{1}", mesh.GetObjectId(), property);
         }
 
         void DoSharedVerticesInfo(ProBuilderMesh mesh)

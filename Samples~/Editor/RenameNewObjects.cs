@@ -34,7 +34,7 @@ namespace ProBuilder.EditorExamples
 		/// <param name="pb"></param>
 		static void OnProBuilderObjectCreated(pb_Object pb)
 		{
-			pb.gameObject.name = string.Format("pb_{0}{1}", pb.gameObject.name, pb.GetEntityId());
+			pb.gameObject.name = string.Format("pb_{0}{1}", pb.gameObject.name, pb.GetObjectId());
 		}
 	}
 }

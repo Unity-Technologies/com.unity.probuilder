@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
             {
                 UnityEditor.EditorUtility.DisplayProgressBar(
                     "Refreshing ProBuilder Objects",
-                    "Reshaping pb_Object " + all[i].GetEntityId() + ".",
+                    "Reshaping pb_Object " + all[i].GetObjectId() + ".",
                     ((float)i / all.Length));
 
                 try
@@ -103,7 +103,7 @@ namespace UnityEditor.ProBuilder
             {
                 UnityEditor.EditorUtility.DisplayProgressBar(
                     "Refreshing ProBuilder Objects",
-                    "Rebuilding mesh " + targets[i].GetEntityId() + ".",
+                    "Rebuilding mesh " + targets[i].GetObjectId() + ".",
                     ((float)i / targets.Length));
 
                 ProBuilderMesh pb = targets[i];

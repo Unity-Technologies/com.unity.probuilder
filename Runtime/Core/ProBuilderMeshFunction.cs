@@ -335,7 +335,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
-                mesh = new Mesh() { name = $"pb_Mesh{GetEntityId()}" };
+                mesh = new Mesh() { name = $"pb_Mesh{this.GetObjectId()}" };
             }
             else if (mesh.vertexCount != vertexCount)
             {
@@ -484,7 +484,7 @@ namespace UnityEngine.ProBuilder
         {
             mesh = mesh != null
                 ? Instantiate(mesh)
-                : new Mesh() { name = $"pb_Mesh{GetEntityId()}" };
+                : new Mesh() { name = $"pb_Mesh{this.GetObjectId()}" };
 
             if (meshSyncState == MeshSyncState.InSync)
             {

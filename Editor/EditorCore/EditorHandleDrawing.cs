@@ -240,7 +240,7 @@ namespace UnityEditor.ProBuilder
         static Mesh CreateMesh()
         {
             var mesh = new Mesh();
-            mesh.name = "EditorMeshHandles.MeshHandle" + mesh.GetEntityId();
+            mesh.name = "EditorMeshHandles.MeshHandle" + mesh.GetObjectId();
             mesh.hideFlags = HideFlags.HideAndDontSave;
             return mesh;
         }
