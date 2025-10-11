@@ -52,7 +52,7 @@ class MeshSyncTests : TemporaryAssetTest
         var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
         cube.transform.parent = parent;
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetObjectId();
 
         Selection.activeObject = cube.gameObject;
 
@@ -72,7 +72,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetObjectId(), Is.Not.EqualTo(originalMeshId));
     }
 
     //[PBLD-75] Sending the event to the scene view is needed as just calling HierarchyListener.OnObjectCreated
@@ -89,7 +89,7 @@ class MeshSyncTests : TemporaryAssetTest
         cube.transform.parent = emptyGO;
 
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetInstanceID();
+        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetObjectId();
 
         Selection.objects = new[] { emptyGO.gameObject };
         ActiveEditorTracker.sharedTracker.ForceRebuild();
@@ -117,7 +117,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetInstanceID(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetObjectId(), Is.Not.EqualTo(originalMeshId));
     }
 
     [Test]
@@ -129,7 +129,7 @@ class MeshSyncTests : TemporaryAssetTest
         EditorUtility.SynchronizeWithMeshFilter(mesh);
         Assert.That(EditorSceneManager.GetActiveScene().isDirty, Is.False);
     }
-    
+
     // [PBLD-138] Duplicating PBMesh would dirty all scenes
     [UnityTest]
     public IEnumerator GivenMultipleScenes_DuplicatePBMesh_OnlyOneSceneIsDirty()
@@ -137,28 +137,28 @@ class MeshSyncTests : TemporaryAssetTest
         // Load two scenes
         Scene firstScene = EditorSceneManager.GetActiveScene();
         Assume.That(firstScene, Is.Not.Null, "First scene should not be null.");
-        Assume.That(firstScene.isDirty, Is.False, "First scene should not be dirty.");        
-        
+        Assume.That(firstScene.isDirty, Is.False, "First scene should not be dirty.");
+
         Scene secondScene = OpenScene(emptyScene, OpenSceneMode.Additive);
         Assume.That(secondScene, Is.Not.Null, "Second scene should not be null");
-        Assume.That(secondScene.isDirty, Is.False, "Second scene should not be dirty.");        
-        
-        Assume.That(EditorSceneManager.sceneCount, Is.EqualTo(2), "There should be two scenes loaded.");        
-        
+        Assume.That(secondScene.isDirty, Is.False, "Second scene should not be dirty.");
+
+        Assume.That(EditorSceneManager.sceneCount, Is.EqualTo(2), "There should be two scenes loaded.");
+
         SceneManager.SetActiveScene(firstScene);
-        
+
         // Create a cube in first scene
         var cube = GameObject.Find("Cube");
         Assume.That(cube, Is.Not.Null, "Finding Cube shape should succeed.");
-        
+
         // Select cube
         Selection.activeGameObject = cube.gameObject;
         ActiveEditorTracker.sharedTracker.ForceRebuild();
-        
+
         // Duplicate cube
         var evt = new Event(){type = EventType.ExecuteCommand, commandName = "Duplicate"};
         SceneView.lastActiveSceneView.SendEvent(evt);
-        
+
         // Wait until we can confirm duplication command
         var count = 0;
         while (firstScene.rootCount < 2 && count < 100)
@@ -170,16 +170,16 @@ class MeshSyncTests : TemporaryAssetTest
 
         // Wait one frame for the Undo commands to flush
         yield return null;
-        
+
         // Second scene should stay untouched
         Assert.That(firstScene.isDirty, Is.True, "First scene should be dirty after cube duplication.");
         Assert.That(secondScene.isDirty, Is.False, "Second scene should remain clean after cube duplication.");
-        
+
         // Clean-up
         var rootGOs = firstScene.GetRootGameObjects();
         for (int i = 0; i < rootGOs.Length; ++i)
             GameObject.DestroyImmediate(rootGOs[i]);
-        
+
         CloseScene(firstScene);
         CloseScene(secondScene);
     }

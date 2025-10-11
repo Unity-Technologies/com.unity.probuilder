@@ -40,7 +40,7 @@ namespace UnityEditor.ProBuilder.Actions
             {
                 if (c > 32 && UnityEditor.EditorUtility.DisplayCancelableProgressBar(
                         "Stripping ProBuilder Scripts",
-                        "Working over " + all[i].GetInstanceID() + ".",
+                        "Working over " + all[i].GetObjectId() + ".",
                         ((float)i / all.Count)))
                     break;
 

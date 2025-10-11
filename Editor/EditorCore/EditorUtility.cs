@@ -168,7 +168,7 @@ namespace UnityEditor.ProBuilder
         [Conditional("DEBUG_MESH_SYNC")]
         static void LogMeshSyncEvent(ProBuilderMesh mesh, MeshSyncState state, string msg)
         {
-            Debug.Log($"{mesh} {mesh.GetInstanceID()} {state} {msg}");
+            Debug.Log($"{mesh} {mesh.GetObjectId()} {state} {msg}");
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace UnityEditor.ProBuilder
 
             pb.unwrapParameters = new UnwrapParameters(Lightmapping.s_UnwrapParameters);
             pb.Optimize();
-            
+
             // PBLD-137 - if Resident Drawer is on, it will start throwing errors if submeshCount != materialCount
             if (pb.mesh.subMeshCount == 0)
                 pb.renderer.sharedMaterial = null;
