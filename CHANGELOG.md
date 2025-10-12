@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 - MeshSelection.totalVertexCountOptimized made public
+- CutTool made public
 
 ### Fixed
 
