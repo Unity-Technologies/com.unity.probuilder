@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changes
+- PositionToolContext made public
+- TextureToolContext made public
 - MeshSelection.totalVertexCountOptimized made public
 - CutTool made public
 
