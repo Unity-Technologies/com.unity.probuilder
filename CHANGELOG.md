@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changes
+- MeshSelection.totalVertexCountOptimized made public
+
 ### Fixed
 
 - [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.
