@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fixed a big where in the TextureMoveTool, a snapping of 1.0f was applied to handle movement before the actual snapping is applied
 - [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.
 - [PBLD-258] Fixed an bug where clicking a highlighted edge might select a hidden edge instead.
 - [PBLD-262] Fixed a bug in the deep cycling of face selection where faces from hidden meshes would get prioritized
