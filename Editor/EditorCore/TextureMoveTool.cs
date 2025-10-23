@@ -49,23 +49,24 @@ namespace UnityEditor.ProBuilder
 
             // Disable Snap for the individual handles. Snap is applied if movement is detected.
             const float SnapFactor = 0.0f;
+            var handleSize = HandleUtility.GetHandleSize(m_Position);
 
             m_Position = Handles.Slider2D(m_Position,
                     Vector3.forward,
                     Vector3.right,
                     Vector3.up,
-                    HandleUtility.GetHandleSize(m_Position) * .2f,
+                    handleSize * .2f,
                     Handles.RectangleHandleCap,
                     SnapFactor,
                     false);
 
             Handles.color = Color.green;
 
-            m_Position = Handles.Slider(m_Position, Vector3.up, HandleUtility.GetHandleSize(m_Position), Handles.ArrowHandleCap, SnapFactor);
+            m_Position = Handles.Slider(m_Position, Vector3.up, handleSize, Handles.ArrowHandleCap, SnapFactor);
 
             Handles.color = Color.red;
 
-            m_Position = Handles.Slider(m_Position, Vector3.right, HandleUtility.GetHandleSize(m_Position), Handles.ArrowHandleCap, SnapFactor);
+            m_Position = Handles.Slider(m_Position, Vector3.right, handleSize, Handles.ArrowHandleCap, SnapFactor);
 
             Handles.color = Color.white;
 
