@@ -467,9 +467,6 @@ namespace UnityEditor.ProBuilder
 
             if (s_PbHits.Count > 0)
             {
-                // Sort ProBuilder hits by distance (closest first)
-                s_PbHits.Sort((a, b) => a.dist.CompareTo(b.dist));
-
                 int chosenIndex = 0;
 
                 // Apply deep click cycling logic only if it's an actual click and a previous selection exists
@@ -493,6 +490,11 @@ namespace UnityEditor.ProBuilder
                         // Handle negative result from modulo for deepClickOffset = -1 if currentSelectionIndex is 0
                         if (chosenIndex < 0) chosenIndex += s_PbHits.Count;
                     }
+                    else
+                    {
+                        // If the mouse moved enough that none of the hit faces correspond to the previous selection, we reset
+                        s_DeepSelectionPrevious = 0;
+                    }
                     // If s_DeepSelectionPrevious was set but no matching PB hit is found in current list,
                     // fall back to the closest one (chosenIndex remains 0)
                 }
@@ -510,24 +512,10 @@ namespace UnityEditor.ProBuilder
                     s_DeepSelectionPrevious = selectedHit.hash;
                 }
             }
-            else // No ProBuilder meshes were hit, fallback to standard GameObject picking
-            {
-                // This means the mouse is over a non-ProBuilder GameObject, or nothing at all.
-                // We should still allow picking of that topmost non-ProBuilder GameObject.
-                GameObject topmostGo = HandleUtility.PickGameObject(mousePosition, false);
-                if (topmostGo != null)
-                {
-                    candidateGo = topmostGo;
-                    candidateDistance = 0f; // Indicate a direct hit (distance not relevant for non-PB pick)
-                    s_DeepSelectionPrevious = 0; // Reset deep selection if a non-PB object is picked
-                }
-            }
 
             // Final selection update
             if (candidateGo != null)
             {
-                Event.current?.Use();
-
                 selection.gameObject = candidateGo;
                 resultDistance = Mathf.Sqrt(candidateDistance);
 
@@ -539,6 +527,11 @@ namespace UnityEditor.ProBuilder
                         selection.SetSingleFace(candidateFace);
                     }
                 }
+            }
+            else if (candidateGo == null && !isPreview)
+            {
+                // if we click somewhere with no PB, we reset the deep cycle
+                s_DeepSelectionPrevious = 0;
             }
 
             s_PbHits.Clear();
@@ -639,13 +632,38 @@ namespace UnityEditor.ProBuilder
             bool highlightedEdgeExists = ProBuilderEditor.instance.hovering.edges.Count > 0;
 
             // if there is an edge already highlighted, we don't want to select a different game object
-            if (!highlightedEdgeExists)
+            if (highlightedEdgeExists)
             {
-                selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+                ProBuilderMesh hoveredMeshFromHighlight = ProBuilderEditor.instance.hovering.mesh;
+                if (hoveredMeshFromHighlight != null && ProBuilderEditor.instance.hovering.edges.Count > 0)
+                {
+                    Edge highlightedEdge = ProBuilderEditor.instance.hovering.edges[0]; // Assuming single edge hover
+
+                    // Calculate the screen distance for this specific highlighted edge.
+                    Vector3[] positions = hoveredMeshFromHighlight.positionsInternal;
+                    Vector3 worldPosA = hoveredMeshFromHighlight.transform.TransformPoint(positions[highlightedEdge.a]);
+                    Vector3 worldPosB = hoveredMeshFromHighlight.transform.TransformPoint(positions[highlightedEdge.b]);
+
+                    if (ProcessEdgePoints(Camera.current, worldPosA, worldPosB, out Vector3 guiPointA, out Vector3 guiPointB))
+                    {
+                        float distToHighlightedEdge = HandleUtility.DistancePointLine(mousePosition, guiPointA, guiPointB);
+
+                        // If the highlighted edge is within the maximum picking distance, select it and return early.
+                        if (distToHighlightedEdge <= ScenePickerPreferences.maxPointerDistance)
+                        {
+                            selection.gameObject = hoveredMeshFromHighlight.gameObject;
+                            selection.mesh = hoveredMeshFromHighlight;
+                            selection.SetSingleEdge(highlightedEdge);
+                            return distToHighlightedEdge;
+                        }
+                    }
+                }
             }
-            var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
 
             float bestDistance = Mathf.Infinity;
+            selection.gameObject = HandleUtility.PickGameObject(mousePosition, false);
+            var hoveredMesh = selection.gameObject != null ? selection.gameObject.GetComponent<ProBuilderMesh>() : null;
+
             bool hoveredIsInSelection = MeshSelection.topInternal.Contains(hoveredMesh);
 
             if (hoveredMesh != null && (allowUnselected || hoveredIsInSelection))
@@ -659,7 +677,8 @@ namespace UnityEditor.ProBuilder
                     selection.SetSingleEdge(tup.edge);
                     bestDistance = tup.distance;
 
-                    // If the nearest edge was acquired by a raycast, then the distance to mesh is 0f.
+                    // If the nearest edge was acquired by a raycast on an already selected mesh,
+                    // return early to prioritize it.
                     if (hoveredIsInSelection)
                         return tup.distance;
                 }

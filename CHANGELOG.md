@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [6.0.8] - 2025-11-17
+
+### Fixed
+
+- [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.
+- [PBLD-258] Fixed an bug where clicking a highlighted edge might select a hidden edge instead.
+- [PBLD-262] Fixed a bug in the deep cycling of face selection where faces from hidden meshes would get prioritized
+
 ## [6.0.7] - 2025-08-28
 
 ### Fixed
@@ -32,7 +40,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-238] Fixed a bug that could cause users to lose any work that they did on a ProBuilder mesh between two usages of tool actions that had previews (options overlays).
 - [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
 - [PBLD-245] Fixed warnings about obsolete API usage when using Unity 6.2 and later. Updated the API usage where the alternatives were available in Unity 2022.3.
-
 
 ## [6.0.5] - 2025-03-11
 
