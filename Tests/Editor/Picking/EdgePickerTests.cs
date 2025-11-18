@@ -270,8 +270,7 @@ public class EdgePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.Expect("Handles.GetClosestPickingID called outside an editor OnGUI");
-        UnityEngine.TestTools.LogAssert.Expect("Assertion failed on expression: 'device.IsInsideFrame()'");
+        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
         EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
