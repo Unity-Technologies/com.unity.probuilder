@@ -132,6 +132,22 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             }
         }
 
+        class IgnoreAssertScope : IDisposable
+        {
+            bool m_SavedState;
+
+            public IgnoreAssertScope()
+            {
+                m_SavedState = UnityEngine.TestTools.LogAssert.ignoreFailingMessages;
+                UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true; // Ignore logs due to not executing OnGUI loop
+            }
+
+            public void Dispose()
+            {
+                UnityEngine.TestTools.LogAssert.ignoreFailingMessages = m_SavedState;
+            }
+        }
+
         /// <summary>
         /// Convert a full path to one relative to the project directory.
         /// </summary>
