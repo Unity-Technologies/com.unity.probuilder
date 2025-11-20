@@ -1,6 +1,8 @@
-﻿using RecipeEngine.Api.Settings;
+﻿using RecipeEngine.Api.Platforms;
+using RecipeEngine.Api.Settings;
 using RecipeEngine.Modules.Wrench.Models;
 using RecipeEngine.Modules.Wrench.Settings;
+using RecipeEngine.Platforms;
 
 namespace ProBuilder.Cookbook.Settings;
 
@@ -18,7 +20,14 @@ public class ProBuilderSettings : AnnotatedSettingsBase
     {
         {
             ProBuilderPackageName,
-            new PackageOptions() { ReleaseOptions = new ReleaseOptions() { IsReleasing = true } }
+            new PackageOptions()
+            {
+                ReleaseOptions = new ReleaseOptions() { IsReleasing = true },
+                ValidationOptions = new ValidationOptions()
+                {
+                    AdditionalUtrArguments = ["--fail-on-assert"]
+                }
+            }
         }
     };
 
@@ -31,6 +40,9 @@ public class ProBuilderSettings : AnnotatedSettingsBase
 
         Wrench.Packages[ProBuilderPackageName].CoverageCommands.Enabled = true;
         Wrench.Packages[ProBuilderPackageName].CoverageCommands.Commands = [_excludeAssembliesCodeCovCommand];
+
+        var defaultMacPlatform = WrenchPackage.DefaultEditorPlatforms[SystemType.MacOS];
+        Wrench.Packages["com.unity.probuilder"].EditorPlatforms[SystemType.MacOS] = new Platform(new Agent("package-ci/macos-13-arm64:v4", FlavorType.MacDefault, defaultMacPlatform.Agent.Resource, "M1"), defaultMacPlatform.System);
     }
 
     public WrenchSettings Wrench { get; private set; }
