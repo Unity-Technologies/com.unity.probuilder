@@ -14,7 +14,7 @@ validate_-_probuilder_-_6000_0_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.0/staging -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.0/staging -c editor -a arm64 --path .Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-probuilder --packages "upm-ci~/packages/*.tgz" --filter "com.unity.probuilder com.unity.probuilder.tests" --unity .Editor
@@ -216,7 +216,7 @@ validate_-_probuilder_-_6000_2_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.2/staging -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.2/staging -c editor -a arm64 --path .Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-probuilder --packages "upm-ci~/packages/*.tgz" --filter "com.unity.probuilder com.unity.probuilder.tests" --unity .Editor
@@ -418,7 +418,7 @@ validate_-_probuilder_-_6000_3_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.3/staging -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.3/staging -c editor -a arm64 --path .Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-probuilder --packages "upm-ci~/packages/*.tgz" --filter "com.unity.probuilder com.unity.probuilder.tests" --unity .Editor
@@ -620,7 +620,7 @@ validate_-_probuilder_-_6000_4_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 6000.4/staging -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.4/staging -c editor -a arm64 --path .Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-probuilder --packages "upm-ci~/packages/*.tgz" --filter "com.unity.probuilder com.unity.probuilder.tests" --unity .Editor
@@ -822,7 +822,7 @@ validate_-_probuilder_-_6000_5_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u trunk -c editor -a arm64 --path .Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-probuilder --packages "upm-ci~/packages/*.tgz" --filter "com.unity.probuilder com.unity.probuilder.tests" --unity .Editor
