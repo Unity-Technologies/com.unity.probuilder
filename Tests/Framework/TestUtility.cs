@@ -132,7 +132,7 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             }
         }
 
-        class IgnoreAssertScope : IDisposable
+        public class IgnoreAssertScope : IDisposable
         {
             bool m_SavedState;
 

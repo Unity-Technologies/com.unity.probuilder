@@ -9,6 +9,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 [TestFixture]
 public class FacePickerTests
@@ -99,7 +100,7 @@ public class FacePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -125,7 +126,7 @@ public class FacePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -163,7 +164,7 @@ public class FacePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -197,7 +198,7 @@ public class FacePickerTests
 
 
         yield return null;
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
 
             // As per the provided EditorSceneViewPicker.cs (second version),
@@ -267,7 +268,7 @@ public class FacePickerTests
         yield return null;
 
         // --- First click: Should pick the front mesh (mesh3)
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -283,7 +284,7 @@ public class FacePickerTests
         Assert.AreEqual(face3, currentSelection.faces.First(), "First click: The front face should be picked.");
 
         // --- Second click: Should pick the middle mesh due to deep cycling
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -298,7 +299,7 @@ public class FacePickerTests
         Assert.AreEqual(face1, currentSelection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Third click: Should pick the back mesh due to deep cycling
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -313,7 +314,7 @@ public class FacePickerTests
         Assert.AreEqual(face2, currentSelection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Fourth click: Should cycle back to the front mesh (mesh3)
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -347,7 +348,7 @@ public class FacePickerTests
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(centerOfFace_world);
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
                 CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -395,7 +396,7 @@ public class FacePickerTests
         yield return null;
 
         // --- First click: front mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -406,7 +407,7 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "First click: The front offset face should be picked.");
 
         // --- Second click: middle mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -417,7 +418,7 @@ public class FacePickerTests
         Assert.AreEqual(m_Mesh.facesInternal[4], selection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Third click: back mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -428,7 +429,7 @@ public class FacePickerTests
         Assert.AreEqual(backMesh.facesInternal[4], selection.faces.First(), "Third click: The back offset face should be picked.");
 
         // --- Fourth click: front mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -474,7 +475,7 @@ public class FacePickerTests
         yield return null;
 
         // --- First click: front mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -485,7 +486,7 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "First click: The front face should be picked.");
 
         // --- Second click: middle mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -499,7 +500,7 @@ public class FacePickerTests
         Vector2 farMousePos = mousePos + new Vector2(1000, 1000);
 
         // Perform a click at the far position (no object hit) to trigger cycle reset
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(farMousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -511,7 +512,7 @@ public class FacePickerTests
         Assert.IsNull(selection.gameObject, "Cycle reset: No GameObject should be selected.");
 
         // --- Click again on original position: cycle should restart from front mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }
@@ -522,7 +523,7 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "Cycle restart: The front face should be picked again.");
 
         // --- Second click after reset: should pick middle mesh again, NOT back mesh
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
         }

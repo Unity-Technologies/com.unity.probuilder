@@ -9,6 +9,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 [TestFixture]
 public class EdgePickerTests
@@ -99,7 +100,7 @@ public class EdgePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
                 CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -131,7 +132,7 @@ public class EdgePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -155,7 +156,7 @@ public class EdgePickerTests
     {
         Vector2 mousePos = new Vector2(Screen.width / 2f, Screen.height / 2f + 500f);
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -195,7 +196,7 @@ public class EdgePickerTests
 
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(center1_world);
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -235,7 +236,7 @@ public class EdgePickerTests
         Vector3 centerOfEdge_world = (pA_world + pB_world) / 2f;
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(centerOfEdge_world);
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
@@ -278,7 +279,7 @@ public class EdgePickerTests
 
         yield return null;
 
-        using (new IgnoreAssertScope())
+        using (new TestUtility.IgnoreAssertScope())
         {
             EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
