@@ -9,6 +9,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 [TestFixture]
 public class EdgePickerTests
@@ -99,12 +100,13 @@ public class EdgePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
-            CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
-            SelectMode.Edge,
-            m_PickerPreferences);
-
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
+                CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
+                SelectMode.Edge,
+                m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -130,12 +132,13 @@ public class EdgePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
             m_PickerPreferences);
-
+        }
 
         yield return null;
 
@@ -153,11 +156,13 @@ public class EdgePickerTests
     {
         Vector2 mousePos = new Vector2(Screen.width / 2f, Screen.height / 2f + 500f);
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
             m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -191,11 +196,13 @@ public class EdgePickerTests
 
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(center1_world);
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
             m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -229,11 +236,13 @@ public class EdgePickerTests
         Vector3 centerOfEdge_world = (pA_world + pB_world) / 2f;
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(centerOfEdge_world);
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
             m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -270,12 +279,13 @@ public class EdgePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.Expect("Handles.GetClosestPickingID called outside an editor OnGUI");
-        UnityEngine.TestTools.LogAssert.Expect("Assertion failed on expression: 'device.IsInsideFrame()'");
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Edge,
             m_PickerPreferences);
+        }
 
         yield return null;
 
