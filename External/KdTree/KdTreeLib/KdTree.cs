@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace UnityEngine.ProBuilder.KdTree
@@ -25,6 +25,7 @@ namespace UnityEngine.ProBuilder.KdTree
 	}
 
 	[Serializable]
+	[DataContract]
 	class KdTree<TKey, TValue> : IKdTree<TKey, TValue>
 	{
 		public KdTree(int dimensions, ITypeMath<TKey> typeMath)
@@ -40,12 +41,16 @@ namespace UnityEngine.ProBuilder.KdTree
 			AddDuplicateBehavior = addDuplicateBehavior;
 		}
 
+		[DataMember]
 		private int dimensions;
 
+		[DataMember]
 		private ITypeMath<TKey> typeMath = null;
 
+		[DataMember]
 		private KdTreeNode<TKey, TValue> root = null;
 
+		[DataMember]
 		public AddDuplicateBehavior AddDuplicateBehavior { get; private set; }
 
 		public bool Add(TKey[] point, TValue value)
@@ -370,7 +375,8 @@ namespace UnityEngine.ProBuilder.KdTree
 			return neighbourArray;
 		}
 
-		public int Count { get; private set; }
+		[DataMember]
+	public int Count { get; private set; }
 
 		public bool TryFindValueAt(TKey[] point, out TValue value)
 		{
@@ -578,20 +584,20 @@ namespace UnityEngine.ProBuilder.KdTree
 
 		public void SaveToFile(string filename)
 		{
-			BinaryFormatter formatter = new BinaryFormatter();
+			var serializer = new DataContractSerializer(typeof(KdTree<TKey, TValue>));
 			using (FileStream stream = File.Create(filename))
 			{
-				formatter.Serialize(stream, this);
+				serializer.WriteObject(stream, this);
 				stream.Flush();
 			}
 		}
 
 		public static KdTree<TKey, TValue> LoadFromFile(string filename)
 		{
-			BinaryFormatter formatter = new BinaryFormatter();
+			var serializer = new DataContractSerializer(typeof(KdTree<TKey, TValue>));
 			using (FileStream stream = File.Open(filename, FileMode.Open))
 			{
-				return (KdTree<TKey, TValue>)formatter.Deserialize(stream);
+				return (KdTree<TKey, TValue>)serializer.ReadObject(stream);
 			}
 
 		}
