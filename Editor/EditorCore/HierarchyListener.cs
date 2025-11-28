@@ -28,13 +28,21 @@ namespace UnityEditor.ProBuilder
                 if (stream.GetEventType(i) == ObjectChangeKind.CreateGameObjectHierarchy)
                 {
                     stream.GetCreateGameObjectHierarchyEvent(i, out CreateGameObjectHierarchyEventArgs data);
+#if UNITY_6000_4_OR_NEWER
+                    GameObjectCreatedOrStructureModified(data.entityId);
+#else
                     GameObjectCreatedOrStructureModified(data.instanceId);
+#endif
                 }
                 // ProBuilderMesh was created by adding from component menu or pasting component
                 else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructure)
                 {
                     stream.GetChangeGameObjectStructureEvent(i, out var data);
+#if UNITY_6000_4_OR_NEWER
+                    GameObjectCreatedOrStructureModified(data.entityId);
+#else
                     GameObjectCreatedOrStructureModified(data.instanceId);
+#endif
                 }
                 else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructureHierarchy)
                 {
@@ -47,10 +55,13 @@ namespace UnityEditor.ProBuilder
                     // probuilder, then destroy. it's not without risk, as we would be relying on string comparison
                     // of names to assume that scene mesh assets were created by probuilder.
                     stream.GetChangeGameObjectStructureHierarchyEvent(i, out var data);
-
+#if UNITY_6000_4_OR_NEWER
+                    if (UnityEditor.EditorUtility.EntityIdToObject(data.entityId) is GameObject go)
+#else
 #pragma warning disable CS0618 // Type or member is obsolete
                     if (UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go)
 #pragma warning restore CS0618
+#endif
                     {
                         var meshes = go.GetComponentsInChildren<ProBuilderMesh>();
                         foreach (var mesh in meshes)
@@ -62,6 +73,15 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if UNITY_6000_4_OR_NEWER
+        static void GameObjectCreatedOrStructureModified(EntityId entityId)
+        {
+            // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
+            // if so, we need to create a new mesh asset.
+            if (UnityEditor.EditorUtility.EntityIdToObject(entityId) is GameObject go)
+                CheckForProBuilderMeshesCreatedOrModified(go);
+        }
+#else
         static void GameObjectCreatedOrStructureModified(int instanceId)
         {
             // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
@@ -71,6 +91,7 @@ namespace UnityEditor.ProBuilder
 #pragma warning restore CS0618
                 CheckForProBuilderMeshesCreatedOrModified(go);
         }
+#endif
 
         static void CheckForProBuilderMeshesCreatedOrModified(GameObject go)
         {
