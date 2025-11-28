@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Fixed
 
-- [PBLD-279] Fixed an issue where serilization warning would appear upon creating a probuilder shape.
+- [PBLD-279] Fixed an issue where serialization warning would appear upon creating a probuilder shape.
 
 ## [6.0.8] - 2025-11-17
 
