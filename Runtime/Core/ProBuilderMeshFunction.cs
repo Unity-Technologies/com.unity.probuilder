@@ -484,7 +484,8 @@ namespace UnityEngine.ProBuilder
         {
             mesh = mesh != null
                 ? Instantiate(mesh)
-                : new Mesh() { name = $"pb_Mesh{this.GetObjectId()}" };
+                : new Mesh();
+            mesh.name = $"pb_Mesh{this.GetObjectId()}";
 
             if (meshSyncState == MeshSyncState.InSync)
             {
