@@ -6,10 +6,11 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [sprite](../manual/Sprite.html) (a single-unit plane shape).
     /// </summary>
     [Shape("Sprite")]
+    [System.Serializable]
     public class Sprite : Shape
     {
         internal override void SetParametersToBuiltInShape() { }
-        
+
         /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 
