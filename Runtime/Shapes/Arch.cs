@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [arch](../manual/Arch.html) shape.
     /// </summary>
     [Shape("Arch")]
+    [System.Serializable]
     public class Arch : Shape
     {
         /// <summary>

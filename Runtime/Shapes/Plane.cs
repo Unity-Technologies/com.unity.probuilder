@@ -6,6 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [plane](../manual/Plane.html) shape.
     /// </summary>
     [Shape("Plane")]
+    [System.Serializable]
     public class Plane : Shape
     {
         /// <summary>
