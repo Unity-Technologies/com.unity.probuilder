@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [PBLD-279] Fixed an issue where serialization warning would appear upon creating a probuilder shape.
 - [PBLD-284] Fixed instance ID obsolescence warning appearing on 6000.4 and newer versions
 
 ## [6.0.8] - 2025-11-17

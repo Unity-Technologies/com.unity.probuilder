@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [pipe](../manual/Pipe.html) shape.
     /// </summary>
     [Shape("Pipe")]
+    [System.Serializable]
     public class Pipe : Shape
     {
         /// <summary>
@@ -39,7 +40,7 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
-        
+
         internal override void SetParametersToBuiltInShape()
         {
             m_Thickness = 0.25f;
