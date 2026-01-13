@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Xml;
 
 namespace UnityEngine.ProBuilder.KdTree
 {
@@ -586,9 +587,10 @@ namespace UnityEngine.ProBuilder.KdTree
 		{
 			var serializer = new DataContractSerializer(typeof(KdTree<TKey, TValue>));
 			using (FileStream stream = File.Create(filename))
+			using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
 			{
-				serializer.WriteObject(stream, this);
-				stream.Flush();
+				serializer.WriteObject(writer, this);
+				writer.Flush();
 			}
 		}
 
@@ -596,8 +598,9 @@ namespace UnityEngine.ProBuilder.KdTree
 		{
 			var serializer = new DataContractSerializer(typeof(KdTree<TKey, TValue>));
 			using (FileStream stream = File.Open(filename, FileMode.Open))
+			using (var reader = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
 			{
-				return (KdTree<TKey, TValue>)serializer.ReadObject(stream);
+				return (KdTree<TKey, TValue>)serializer.ReadObject(reader);
 			}
 
 		}
