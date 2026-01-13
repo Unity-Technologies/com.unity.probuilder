@@ -129,10 +129,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         AssetTreeView m_AssetsToDeleteTreeView;
         MultiColumnHeader m_MultiColumnHeader;
         Rect m_AssetTreeRect = new Rect(0, 0, 0, 0);
-#pragma warning disable CS0618 // Type or member is obsolete
+
         [SerializeField]
-        TreeViewState m_TreeViewState = null;
-#pragma warning restore CS0618
+        TreeViewState<int> m_TreeViewState = null;
+
         [SerializeField]
         MultiColumnHeaderState m_MultiColumnHeaderState = null;
         GUIContent m_AssetTreeSettingsContent = null;
@@ -178,10 +178,8 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 Debug.LogWarning("Could not find a valid asset id remap file!");
             }
 
-#pragma warning disable CS0618 // Type or member is obsolete
             if (m_TreeViewState == null)
-                m_TreeViewState = new TreeViewState();
-#pragma warning restore CS0618
+                m_TreeViewState = new TreeViewState<int>();
 
             if (m_MultiColumnHeaderState == null)
                 m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
@@ -477,9 +475,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             m_ConversionReadyState = GetReadyState();
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        bool RemoveAssetStoreFiles(TreeViewItem root, StringBuilder log)
-#pragma warning restore CS0618
+        bool RemoveAssetStoreFiles(TreeViewItem<int> root, StringBuilder log)
         {
             AssetTreeItem node = root as AssetTreeItem;
 

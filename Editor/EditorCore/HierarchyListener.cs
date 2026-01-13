@@ -70,9 +70,7 @@ namespace UnityEditor.ProBuilder
 
         static GameObject InstanceIDToObject(int instanceId)
         {
-#pragma warning disable CS0618
             return UnityEditor.EditorUtility.InstanceIDToObject(instanceId) as GameObject;
-#pragma warning restore CS0618
         }
 #endif
 

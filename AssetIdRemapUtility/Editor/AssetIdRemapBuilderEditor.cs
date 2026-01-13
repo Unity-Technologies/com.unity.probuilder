@@ -47,7 +47,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         [SerializeField] string m_SourceDirectory;
         [SerializeField] string m_DestinationDirectory;
 
-        [SerializeField] TreeViewState m_TreeViewState;
+        [SerializeField] TreeViewState<int> m_TreeViewState;
         [SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
         [SerializeField] bool m_DetailsExpanded;
 
@@ -85,7 +85,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             // Check whether there is already a serialized view state (state
             // that survived assembly reloading)
             if (m_TreeViewState == null)
-                m_TreeViewState = new TreeViewState();
+                m_TreeViewState = new TreeViewState<int>();
 
             if (m_MultiColumnHeaderState == null)
                 m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]

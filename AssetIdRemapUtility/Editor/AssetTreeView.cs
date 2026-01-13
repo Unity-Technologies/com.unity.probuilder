@@ -11,9 +11,7 @@ using UObject = UnityEngine.Object;
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-#pragma warning disable CS0618 // Type or member is obsolete
-    sealed class AssetTreeItem : TreeViewItem
-#pragma warning restore CS0618
+    sealed class AssetTreeItem : TreeViewItem<int>
     {
         string m_RelativePath;
         string m_FullPath;
@@ -101,8 +99,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-    class AssetTreeView : TreeView
+    class AssetTreeView : TreeView<int>
     {
         string m_RootDirectory = null;
         GUIContent m_TempContent = new GUIContent();
@@ -134,13 +131,13 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             m_FileIgnorePatterns = regexStrings.Select(x => new Regex(x));
         }
 
-        public AssetTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
+        public AssetTreeView(TreeViewState<int> state, MultiColumnHeader header) : base(state, header)
         {
             showBorder = true;
             columnIndexForTreeFoldouts = 0;
             rowHeight = 18f;
         }
-        protected override TreeViewItem BuildRoot()
+        protected override TreeViewItem<int> BuildRoot()
         {
             AssetTreeItem root = new AssetTreeItem(0, Application.dataPath, "")
             {
@@ -151,7 +148,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             if (string.IsNullOrEmpty(m_RootDirectory) || !Directory.Exists(m_RootDirectory))
             {
                 // if root has no children and you SetupDepthsFromParentsAndChildren nullrefs are thrown
-                var list = new List<TreeViewItem>() {};
+                var list = new List<TreeViewItem<int>>() {};
                 SetupParentsAndChildrenFromDepths(root, list);
             }
             else
@@ -196,7 +193,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 PopulateAssetTree(dir, leaf, ref nodeIdIndex);
         }
 
-        public void ApplyEnabledFilters(TreeViewItem root)
+        public void ApplyEnabledFilters(TreeViewItem<int> root)
         {
             AssetTreeItem node = root as AssetTreeItem;
             AssetTreeItem parent = root.parent as AssetTreeItem;
@@ -309,5 +306,4 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                         GatherTreeItems(child as AssetTreeItem, list);
         }
     }
-#pragma warning restore CS0618 // Type or member is obsolete
 }
