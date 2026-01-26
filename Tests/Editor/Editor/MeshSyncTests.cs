@@ -51,7 +51,6 @@ class MeshSyncTests : TemporaryAssetTest
 #if UNITY_6000_4_OR_NEWER
         return id.GetRawData();
 #else
-        // If it returns int
         return (ulong)id;
 #endif
     }
