@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-276] Fixed a bug where dragging a single face from a connected texture group in the UV Editor caused visual distortion during the drag operation
 - [PBLD-279] Fixed an issue where serialization warning would appear upon creating a probuilder shape.
 - [PBLD-284] Fixed instance ID obsolescence warning appearing on 6000.4 and newer versions
+- Fixed an issue where a proper unique name wasn't set on duplicated ProBuilder meshes.
 
 ## [6.0.8] - 2025-11-17
 
