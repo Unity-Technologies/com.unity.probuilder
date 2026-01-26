@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+#if UNITY_6000_5_OR_NEWER
+using UnityEngine.Assemblies;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -37,7 +40,11 @@ namespace UnityEditor.ProBuilder
 
             if (t == null)
             {
+#if UNITY_6000_5_OR_NEWER
+                IEnumerable<Assembly> assemblies = CurrentAssemblies.GetLoadedAssemblies();
+#else
                 IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
 
                 if (assembly != null)
                     assemblies = assemblies.Where(x => x.FullName.Contains(assembly));

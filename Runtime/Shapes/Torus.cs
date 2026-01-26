@@ -8,6 +8,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [torus](../manual/Torus.html) shape.
     /// </summary>
     [Shape("Torus")]
+    [System.Serializable]
     public class Torus : Shape
     {
         /// <summary>

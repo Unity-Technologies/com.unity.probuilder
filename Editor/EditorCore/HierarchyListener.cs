@@ -24,53 +24,55 @@ namespace UnityEditor.ProBuilder
         {
             for (int i = 0, c = stream.length; i < c; ++i)
             {
-                // ProBuilderMesh was created via duplicate, copy paste
-                if (stream.GetEventType(i) == ObjectChangeKind.CreateGameObjectHierarchy)
+                var type = stream.GetEventType(i);
+
+                if (type == ObjectChangeKind.CreateGameObjectHierarchy)
                 {
-                    stream.GetCreateGameObjectHierarchyEvent(i, out CreateGameObjectHierarchyEventArgs data);
-                    GameObjectCreatedOrStructureModified(data.instanceId);
+                    stream.GetCreateGameObjectHierarchyEvent(i, out var data);
+                    var go = GetGameObject(data);
+                    if (go != null) CheckForProBuilderMeshesCreatedOrModified(go);
                 }
-                // ProBuilderMesh was created by adding from component menu or pasting component
-                else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructure)
+                else if (type == ObjectChangeKind.ChangeGameObjectStructure)
                 {
                     stream.GetChangeGameObjectStructureEvent(i, out var data);
-                    GameObjectCreatedOrStructureModified(data.instanceId);
+                    var go = GetGameObject(data);
+                    if (go != null) CheckForProBuilderMeshesCreatedOrModified(go);
                 }
-                else if (stream.GetEventType(i) == ObjectChangeKind.ChangeGameObjectStructureHierarchy)
+                else if (type == ObjectChangeKind.ChangeGameObjectStructureHierarchy)
                 {
                     // Note 2 : This needs to be called when using a Prefab>Replace action in the menus to refresh the current
                     // ProBuilder Mesh, this is still a problem in 2023.3 as it does not automatically refresh the mesh
                     // Note 1 : that this is leaking meshes when reverting! in 2023.1+ we handle it correctly, but 2022 and
                     // 2021 have the PPtr reset to the serialized value (null) before we have any access. orphaned
-                    // mesh assets are cleaned up on scene or domain reloads, so we'll live with it. the alternative is
-                    // to find all mesh assets, determine which aren't referenced by any component and owned by
-                    // probuilder, then destroy. it's not without risk, as we would be relying on string comparison
-                    // of names to assume that scene mesh assets were created by probuilder.
+                    // mesh assets are cleaned up on scene or domain reloads, so we'll live with it.
                     stream.GetChangeGameObjectStructureHierarchyEvent(i, out var data);
+                    var go = GetGameObject(data);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-                    if (UnityEditor.EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go)
-#pragma warning restore CS0618
+                    if (go != null)
                     {
                         var meshes = go.GetComponentsInChildren<ProBuilderMesh>();
                         foreach (var mesh in meshes)
                             EditorUtility.SynchronizeWithMeshFilter(mesh);
                     }
-
                     ProBuilderEditor.Refresh();
                 }
             }
         }
 
-        static void GameObjectCreatedOrStructureModified(int instanceId)
+#if UNITY_6000_4_OR_NEWER
+        static GameObject GetGameObject(CreateGameObjectHierarchyEventArgs data) => UnityEditor.EditorUtility.EntityIdToObject(data.entityId) as GameObject;
+        static GameObject GetGameObject(ChangeGameObjectStructureEventArgs data) => UnityEditor.EditorUtility.EntityIdToObject(data.entityId) as GameObject;
+        static GameObject GetGameObject(ChangeGameObjectStructureHierarchyEventArgs data) => UnityEditor.EditorUtility.EntityIdToObject(data.entityId) as GameObject;
+#else
+        static GameObject GetGameObject(CreateGameObjectHierarchyEventArgs data) => InstanceIDToObject(data.instanceId);
+        static GameObject GetGameObject(ChangeGameObjectStructureEventArgs data) => InstanceIDToObject(data.instanceId);
+        static GameObject GetGameObject(ChangeGameObjectStructureHierarchyEventArgs data) => InstanceIDToObject(data.instanceId);
+
+        static GameObject InstanceIDToObject(int instanceId)
         {
-            // if the created object is a probuilder mesh, check if it is a copy of an existing instance.
-            // if so, we need to create a new mesh asset.
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (UnityEditor.EditorUtility.InstanceIDToObject(instanceId) is GameObject go)
-#pragma warning restore CS0618
-                CheckForProBuilderMeshesCreatedOrModified(go);
+            return UnityEditor.EditorUtility.InstanceIDToObject(instanceId) as GameObject;
         }
+#endif
 
         static void CheckForProBuilderMeshesCreatedOrModified(GameObject go)
         {
