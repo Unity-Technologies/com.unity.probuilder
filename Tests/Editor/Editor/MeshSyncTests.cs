@@ -44,6 +44,17 @@ class MeshSyncTests : TemporaryAssetTest
         }
     }
 
+    static ulong GetRawId(Object obj)
+    {
+        var id = obj.GetObjectId();
+
+#if UNITY_6000_4_OR_NEWER
+        return id.GetRawData();
+#else
+        return (ulong)id;
+#endif
+    }
+
     [Test]
     [TestCaseSource(nameof(CopyPasteDuplicate))]
     public void ExecuteCopyPasteDuplicate_CreatesUniqueMesh(string[] commands)
@@ -52,7 +63,7 @@ class MeshSyncTests : TemporaryAssetTest
         var cube = ShapeGenerator.CreateShape(ShapeType.Cube, PivotLocation.FirstVertex);
         cube.transform.parent = parent;
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetObjectId();
+        ulong originalMeshId = GetRawId(cube.GetComponent<MeshFilter>().sharedMesh);
 
         Selection.activeObject = cube.gameObject;
 
@@ -72,7 +83,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetObjectId(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(GetRawId(copy.GetComponent<MeshFilter>().sharedMesh), Is.Not.EqualTo(originalMeshId));
     }
 
     //[PBLD-75] Sending the event to the scene view is needed as just calling HierarchyListener.OnObjectCreated
@@ -89,7 +100,7 @@ class MeshSyncTests : TemporaryAssetTest
         cube.transform.parent = emptyGO;
 
         Assume.That(parent.childCount, Is.EqualTo(1));
-        int originalMeshId = cube.GetComponent<MeshFilter>().sharedMesh.GetObjectId();
+        ulong originalMeshId = GetRawId(cube.GetComponent<MeshFilter>().sharedMesh);
 
         Selection.objects = new[] { emptyGO.gameObject };
         ActiveEditorTracker.sharedTracker.ForceRebuild();
@@ -117,7 +128,7 @@ class MeshSyncTests : TemporaryAssetTest
         HierarchyListener.OnObjectCreated(copy);
 
         Assume.That(copy, Is.Not.EqualTo(cube));
-        Assert.That(copy.GetComponent<MeshFilter>().sharedMesh.GetObjectId(), Is.Not.EqualTo(originalMeshId));
+        Assert.That(GetRawId(copy.GetComponent<MeshFilter>().sharedMesh), Is.Not.EqualTo(originalMeshId));
     }
 
     [Test]
