@@ -11,6 +11,7 @@ namespace UnityEngine.ProBuilder
     /// from a set of contiguous points.
     /// </summary>
     [AddComponentMenu("")]
+    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
     [DisallowMultipleComponent]
     [ExcludeFromPreset, ExcludeFromObjectFactory]
     [Icon(k_IconPath)]

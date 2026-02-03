@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-279] Fixed an issue where serialization warning would appear upon creating a probuilder shape.
 - [PBLD-284] Fixed instance ID obsolescence warning appearing on 6000.4 and newer versions
 - Fixed an issue where a proper unique name wasn't set on duplicated ProBuilder meshes.
+- [UUM-133756] Fixed the help icon for ProBuilder components pointing to the wrong documentation link. It now points to https://docs.unity3d.com/Packages/com.unity.probuilder@latest.
 
 ## [6.0.8] - 2025-11-17
 

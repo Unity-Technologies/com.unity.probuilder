@@ -8,6 +8,7 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("")]
+    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
     sealed class Entity : MonoBehaviour
     {
         public EntityType entityType { get { return m_EntityType; } }
