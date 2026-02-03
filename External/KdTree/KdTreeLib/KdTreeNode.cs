@@ -2,10 +2,12 @@
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace UnityEngine.ProBuilder.KdTree
 {
 	[Serializable]
+	[DataContract]
 	class KdTreeNode<TKey, TValue>
 	{
 		public KdTreeNode()
@@ -18,11 +20,16 @@ namespace UnityEngine.ProBuilder.KdTree
 			Value = value;
 		}
 
+		[DataMember]
 		public TKey[] Point;
+		[DataMember]
 		public TValue Value = default(TValue);
+		[DataMember]
 		public List<TValue> Duplicates = null;
 
+		[DataMember]
 		internal KdTreeNode<TKey, TValue> LeftChild = null;
+		[DataMember]
 		internal KdTreeNode<TKey, TValue> RightChild = null;
 
 		internal KdTreeNode<TKey, TValue> this[int compare]
