@@ -11,13 +11,15 @@ namespace UnityEngine.ProBuilder
     /// from a set of contiguous points.
     /// </summary>
     [AddComponentMenu("")]
-    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
+    [HelpURL(k_HelpUrl)]
     [DisallowMultipleComponent]
     [ExcludeFromPreset, ExcludeFromObjectFactory]
     [Icon(k_IconPath)]
     [ProGridsConditionalSnap]
     public sealed class PolyShape : MonoBehaviour
     {
+        const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
+
         /// <summary>
         /// Describes the different input states this tool operates in.
         /// </summary>

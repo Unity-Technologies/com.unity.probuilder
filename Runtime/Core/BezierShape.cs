@@ -5,11 +5,13 @@ using System.Collections.Generic;
 namespace UnityEngine.ProBuilder
 {
     [AddComponentMenu("")]
-    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
+    [HelpURL(k_HelpUrl)]
     [DisallowMultipleComponent, ExcludeFromPreset, ExcludeFromObjectFactory]
     [RequireComponent(typeof(ProBuilderMesh))]
     sealed class BezierShape : MonoBehaviour
     {
+        const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
+
         public List<BezierPoint> points = new List<BezierPoint>();
         public bool closeLoop = false;
         public float radius = .5f;

@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     // The double "//" sets this component as hidden in the menu, but is used by ObjectNames.cs to get the component name.
     [AddComponentMenu("//ProBuilder MeshFilter")]
-    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
+    [HelpURL(k_HelpUrl)]
     // Don't include MeshFilter in the required components because it gets registered with serialization before we have a
     // chance to mark it with the correct HideFlags.
     [RequireComponent(typeof(MeshRenderer))]
@@ -27,6 +27,7 @@ namespace UnityEngine.ProBuilder
 #else
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
 #endif
+        const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
         const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
 
         /// <summary>

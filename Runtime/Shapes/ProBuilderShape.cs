@@ -4,9 +4,10 @@ namespace UnityEngine.ProBuilder.Shapes
 {
     [Icon(k_IconPath)]
     [AddComponentMenu(""), DisallowMultipleComponent]
-    [HelpURL("https://docs.unity3d.com/Packages/com.unity.probuilder@latest")]
+    [HelpURL(k_HelpUrl)]
     sealed class ProBuilderShape : MonoBehaviour
     {
+        const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
         const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
 
         [SerializeReference]
