@@ -157,7 +157,7 @@ namespace UnityEditor.ProBuilder
 #if UNITY_6000_4_OR_NEWER
                 string path = AssetDatabase.GetAssetPath(o.GetEntityId());
 #else
-#pragma warning disable 0618
+#pragma warning disable 0618 // Marked obsolete on 6.3
                 string path = AssetDatabase.GetAssetPath(o.GetInstanceID());
 #pragma warning restore 0618
 #endif
