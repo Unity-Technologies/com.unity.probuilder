@@ -6,7 +6,7 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-#if UNITY_6000_4_OR_NEWER
+#if UNITY_6000_3_OR_NEWER
 using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
 using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
 #else

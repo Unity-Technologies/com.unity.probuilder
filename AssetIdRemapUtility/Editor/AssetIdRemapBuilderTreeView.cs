@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-#if UNITY_6000_4_OR_NEWER
+#if UNITY_6000_3_OR_NEWER
 using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
 using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
 using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;

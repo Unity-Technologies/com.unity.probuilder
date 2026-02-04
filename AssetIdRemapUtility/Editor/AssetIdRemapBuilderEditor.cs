@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 using UnityEditor.IMGUI.Controls;
-#if UNITY_6000_4_OR_NEWER
+#if UNITY_6000_3_OR_NEWER
 using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
 #else
 using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
