@@ -462,7 +462,9 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 #if UNITY_6000_4_OR_NEWER
                 string path = AssetDatabase.GetAssetPath(o.GetEntityId());
 #else
+#pragma warning disable 0618
                 string path = AssetDatabase.GetAssetPath(o.GetInstanceID());
+#pragma warning restore 0618
 #endif
 
                 if (!string.IsNullOrEmpty(path))
