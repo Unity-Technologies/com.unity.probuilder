@@ -4,10 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
 using UObject = UnityEngine.Object;
 using UnityEditor.IMGUI.Controls;
+#if UNITY_6000_4_OR_NEWER
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
@@ -47,7 +51,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         [SerializeField] string m_SourceDirectory;
         [SerializeField] string m_DestinationDirectory;
 
-        [SerializeField] TreeViewState<int> m_TreeViewState;
+        [SerializeField] BaseTreeViewState m_TreeViewState;
         [SerializeField] MultiColumnHeaderState m_MultiColumnHeaderState;
         [SerializeField] bool m_DetailsExpanded;
 
@@ -85,7 +89,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             // Check whether there is already a serialized view state (state
             // that survived assembly reloading)
             if (m_TreeViewState == null)
-                m_TreeViewState = new TreeViewState<int>();
+                m_TreeViewState = new BaseTreeViewState();
 
             if (m_MultiColumnHeaderState == null)
                 m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
