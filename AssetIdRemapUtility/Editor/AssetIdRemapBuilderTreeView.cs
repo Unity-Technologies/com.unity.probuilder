@@ -7,9 +7,19 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
+#if UNITY_6000_3_OR_NEWER
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
+
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-    sealed class AssetIdRemapBuilderTreeView : TreeView<int>
+    sealed class AssetIdRemapBuilderTreeView : BaseTreeView
     {
         AssetIdRemapObject m_RemapObject = null;
         const float k_RowHeight = 20f;
@@ -23,7 +33,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             set { m_RemapObject = value; }
         }
 
-        public AssetIdRemapBuilderTreeView(TreeViewState<int> state, MultiColumnHeader header)
+        public AssetIdRemapBuilderTreeView(BaseTreeViewState state, MultiColumnHeader header)
             : base(state, header)
         {
             rowHeight = 20f;
@@ -32,11 +42,11 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             extraSpaceBeforeIconAndLabel = 18f;
         }
 
-        protected override TreeViewItem<int> BuildRoot()
+        protected override BaseTreeViewItem BuildRoot()
         {
             StringTupleTreeElement root = new StringTupleTreeElement(0, -1, -1, "Root", "", "");
 
-            var all = new List<TreeViewItem<int>>();
+            var all = new List<BaseTreeViewItem>();
 
             int index = 1;
 
@@ -105,7 +115,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             GUI.Label(rect, m_CellContents);
         }
 
-        protected override bool DoesItemMatchSearch(TreeViewItem<int> element, string search)
+        protected override bool DoesItemMatchSearch(BaseTreeViewItem element, string search)
         {
             StringTupleTreeElement tup = element as StringTupleTreeElement;
 
@@ -196,7 +206,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
-    class StringTupleTreeElement : TreeViewItem<int>
+    class StringTupleTreeElement : BaseTreeViewItem
     {
         public string item1;
         public string item2;
