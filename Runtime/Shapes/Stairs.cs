@@ -23,6 +23,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [stairs](../manual/Stairs.html) shape.
     /// </summary>
     [Shape("Stairs")]
+    [System.Serializable]
     public class Stairs : Shape
     {
         /// <summary>
@@ -51,12 +52,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [Range(1, 256)]
         [SerializeField]
         int m_StepsCount = 10;
-        internal int stepsCount 
+        internal int stepsCount
         {
             get => m_StepsCount;
             set => m_StepsCount = value;
         }
-        
+
         /// <summary>
         /// Determines whether to force every step to be the exactly the same height. If disabled,
         /// the height of the last step is smaller than the others depending on the remaining height.
@@ -78,7 +79,7 @@ namespace UnityEngine.ProBuilder.Shapes
         [SerializeField]
         float m_Circumference = 0f;
 
-        internal float circumference 
+        internal float circumference
         {
             get => m_Circumference;
             set => m_Circumference = value;
@@ -103,7 +104,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField, Min(0f)]
         float m_InnerRadius;
-        internal float innerRadius 
+        internal float innerRadius
         {
             get => m_InnerRadius;
             set => m_InnerRadius = value;

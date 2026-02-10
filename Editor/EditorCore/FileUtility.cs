@@ -1,8 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine.ProBuilder;
@@ -158,7 +154,13 @@ namespace UnityEditor.ProBuilder
 
             if (o != null)
             {
-                string path = AssetDatabase.GetAssetPath(o.GetObjectId());
+#if UNITY_6000_4_OR_NEWER
+                string path = AssetDatabase.GetAssetPath(o.GetEntityId());
+#else
+#pragma warning disable 0618 // Marked obsolete on 6.3
+                string path = AssetDatabase.GetAssetPath(o.GetInstanceID());
+#pragma warning restore 0618
+#endif
 
                 if (!string.IsNullOrEmpty(path))
                 {
