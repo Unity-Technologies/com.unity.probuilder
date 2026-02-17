@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [PBLD-284] Fixed InstanceID obsolescence warning appearing on 6000.4 and newer versions.
 - Fixed an issue where a proper unique name wasn't set on duplicated ProBuilder meshes.
 - [UUM-133756] Fixed the help icon for ProBuilder components pointing to the wrong documentation link. It now points to https://docs.unity3d.com/Packages/com.unity.probuilder@latest.
+- [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
 
 ## [6.0.8] - 2025-11-17
 
