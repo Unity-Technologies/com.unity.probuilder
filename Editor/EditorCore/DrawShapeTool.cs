@@ -844,6 +844,11 @@ namespace UnityEditor.ProBuilder
             m_BB_HeightCorner = m_BB_Origin + size;
         }
 
+        void UpdatePlaneRotation()
+        {
+            m_PlaneRotation = Mathf.Approximately(m_PlaneForward.sqrMagnitude, 0f) ? Quaternion.identity : Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+        }
+
         internal void DoDuplicateShapePreviewHandle(Vector3 position)
         {
             var evt = Event.current;
@@ -868,7 +873,7 @@ namespace UnityEditor.ProBuilder
 
             m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
             var lastPreviewRotation = m_PlaneRotation;
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+            UpdatePlaneRotation();
             var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation) ||
                                       m_LastPreviewPivotLocation != pivotLocation;
             m_LastPreviewPivotLocation = pivotLocation;
@@ -919,7 +924,7 @@ namespace UnityEditor.ProBuilder
                 pivot += .5f * size.y * m_Plane.normal;
             else
                 pivot = previewPivotPosition;
-            m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
+            m_DuplicateGO.transform.SetPositionAndRotation(pivot, m_PlaneRotation);
 
             DrawBoundingBox(preview_BB_Origin, preview_BB_HeightCorner, preview_BB_OppositeCorner, false);
         }
@@ -943,7 +948,7 @@ namespace UnityEditor.ProBuilder
             if(Mathf.Abs(m_Bounds.center.y) < 0.0001f)
                 m_Bounds.center = m_Bounds.center + 0.0001f * Vector3.up;
 
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+            UpdatePlaneRotation();
         }
 
         internal void RebuildShape()
