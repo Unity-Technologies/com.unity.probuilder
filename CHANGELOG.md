@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [6.0.8] - 2025-11-17
 
+### Changes
+- PositionToolContext made public
+- TextureToolContext made public
+- MeshSelection.totalVertexCountOptimized made public
+- CutTool made public
+
 ### Fixed
 
 - [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.

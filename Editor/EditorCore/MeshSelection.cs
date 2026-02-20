@@ -419,8 +419,11 @@ namespace UnityEditor.ProBuilder
         /// Gets the number of all selected vertices across the selected ProBuilder meshes, excluding coincident duplicates.
         /// </summary>
         public static int totalCommonVertexCount { get { CacheElementCounts(); return s_TotalCommonVertexCount; } }
-
-        internal static int totalVertexCountOptimized { get { CacheElementCounts(); return s_TotalVertexCountCompiled; } }
+		
+        /// <summary>
+        /// Gets the number of all selected ProBuilder compiled mesh vertices.
+        /// </summary>
+        public static int totalVertexCountOptimized { get { CacheElementCounts(); return s_TotalVertexCountCompiled; } }
 
         /// <summary>
         /// Gets the sum of all selected ProBuilderMesh faces.
