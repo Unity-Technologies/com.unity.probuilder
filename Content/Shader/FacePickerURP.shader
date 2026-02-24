@@ -52,7 +52,7 @@ Shader "Hidden/ProBuilder/FacePickerURP"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                VertexPositionInputs positions = GetVertexPositionInputs(input.positionOS);
+                VertexPositionInputs positions = GetVertexPositionInputs(input.positionOS.xyz);
 
                 output.positionCS = positions.positionCS;
                 output.color = input.color;

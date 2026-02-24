@@ -94,7 +94,7 @@ namespace UnityEngine.ProBuilder
                 {
                     destination = rt
                 };
-                RenderPipelineManager.beginCameraRendering += CustomRenderPass1;
+                RenderPipelineManager.beginCameraRendering += CustomRenderPass;
 
                 if (RenderPipeline.SupportsRenderRequest(renderCam, request) == false)
                     Debug.LogWarning("RenderRequest not supported.");
@@ -109,7 +109,7 @@ namespace UnityEngine.ProBuilder
 
                 RenderTexture.active = prev;
                 RenderTexture.ReleaseTemporary(rt);
-                RenderPipelineManager.beginCameraRendering -= CustomRenderPass1;
+                RenderPipelineManager.beginCameraRendering -= CustomRenderPass;
                 temporaryCamera = null;
                 UObject.DestroyImmediate(go);
 
@@ -119,19 +119,8 @@ namespace UnityEngine.ProBuilder
 #endif
             }
 
-            internal static bool SaveTexture(Texture2D texture, string path)
-            {
-                byte[] bytes = texture.EncodeToPNG();
-
-                if (string.IsNullOrEmpty(path))
-                    return false;
-
-                System.IO.File.WriteAllBytes(path, bytes);
-                AssetDatabase.Refresh();
-                return true;
-            }
-
-            static void CustomRenderPass1(ScriptableRenderContext ctx, Camera camera)
+#if PB_URP_MODE
+            static void CustomRenderPass(ScriptableRenderContext ctx, Camera camera)
             {
                 if (camera != temporaryCamera)
                     return;
@@ -140,6 +129,7 @@ namespace UnityEngine.ProBuilder
 
                 camera.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(customPass);
             }
+#endif
         }
     }
 }

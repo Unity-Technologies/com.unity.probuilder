@@ -46,7 +46,6 @@ Shader "Hidden/ProBuilder/EdgePickerURP"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-
                 output.positionCS = UnityObjectToClipPosWithOffset(input.positionOS.xyz);
                 output.color = input.color;
                 return output;
