@@ -1,5 +1,5 @@
+#if PB_URP_MODE
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
@@ -95,3 +95,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif

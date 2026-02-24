@@ -1,3 +1,4 @@
+#if PB_URP_MODE
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -21,3 +22,4 @@ namespace UnityEngine.ProBuilder
         }
     }
 }
+#endif
