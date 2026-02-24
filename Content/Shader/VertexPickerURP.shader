@@ -52,14 +52,7 @@ Shader "Hidden/ProBuilder/VertexPickerURP"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-
-                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                float3 positionVS = TransformWorldToView(positionWS);
-
-                output.positionCS = float4(positionVS, 1);
-                output.positionCS.xyz *= lerp(0.99, 0.95, ORTHO);
-                output.positionCS = mul(UNITY_MATRIX_P, output.positionCS);
-
+                output.positionCS = UnityObjectToClipPosWithOffset(input.positionOS.xyz);
                 output.positionCS = GetPickerColor(output.positionCS, input.uv1);
                 output.uv = input.uv0.xy;
                 output.color = input.color;

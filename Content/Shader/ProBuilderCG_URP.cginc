@@ -8,11 +8,6 @@
 // How far to pull vertices towards camera in orthographic mode
 const float ORTHO_CAM_OFFSET = .0001;
 
-inline float3 UnityObjectToViewPosURP(float3 pos)
-{
-    return TransformWorldToView(TransformObjectToWorld(pos));
-}
-
 inline float4 ClipToScreen(float4 v)
 {
     v.xy /= v.w;
@@ -30,22 +25,26 @@ inline float4 ScreenToClip(float4 v)
     return v;
 }
 
-inline float4 UnityObjectToClipPosWithOffset(float3 pos)
+inline float4 UnityObjectToClipPosWithOffset(float3 positionOS)
 {
-    float4 ret = float4(UnityObjectToViewPosURP(pos), 1);
+    VertexPositionInputs positions = GetVertexPositionInputs(positionOS);
+
+    float4 ret = float4(positions.positionVS, 1);
     //Offsetting the edges to avoid z-fighting problems
     //Do not offset when using orthographic camera as XY are
     //screen coords, this would shift the rendering
-    ret.xyz *= lerp(.99, 1, unity_OrthoParams.w);
+    ret.xyz *= lerp(0.99, 0.95, ORTHO);
     //Moving edges closer
     //.99 is not sufficient for Orthographic Camera
-    ret.z *= lerp(1, 0.95, unity_OrthoParams.w);
+    ret.w *= lerp(1, 0.95, unity_OrthoParams.w);
     return mul(UNITY_MATRIX_P, ret);
 }
 
-inline float4 UnityObjectToClipPosWithOffsetMetal(float3 pos)
+inline float4 UnityObjectToClipPosWithOffsetMetal(float3 positionOS)
 {
-    float4 ret = float4(UnityObjectToViewPosURP(pos), 1);
+    VertexPositionInputs positions = GetVertexPositionInputs(positionOS);
+
+    float4 ret = float4(positions.positionVS, 1);
     ret *= lerp(.99, .95, ORTHO);
     return mul(UNITY_MATRIX_P, ret);
 }
