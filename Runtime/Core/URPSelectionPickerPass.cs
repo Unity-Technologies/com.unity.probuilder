@@ -8,15 +8,11 @@ namespace UnityEngine.ProBuilder
 {
     class URPSelectionPickerPass : ScriptableRenderPass
     {
-        // Layer mask used to filter objects to put in the renderer list.
-        private LayerMask m_LayerMask;
-
         // List of shader tags used to build the renderer list.
         private List<ShaderTagId> m_ShaderTagIdList = new List<ShaderTagId>();
 
         public URPSelectionPickerPass(LayerMask layerMask)
         {
-            m_LayerMask = layerMask;
         }
 
         // This class stores the data needed by the pass, passed as parameter to the delegate function that executes the pass.
@@ -35,15 +31,11 @@ namespace UnityEngine.ProBuilder
 
             var sortFlags = cameraData.defaultOpaqueSortFlags;
             RenderQueueRange renderQueueRange = RenderQueueRange.opaque;
-            FilteringSettings filterSettings = new FilteringSettings(renderQueueRange, m_LayerMask);
+            FilteringSettings filterSettings = new FilteringSettings(renderQueueRange, -1);
 
             ShaderTagId[] forwardOnlyShaderTagIds = new ShaderTagId[]
             {
-                new ShaderTagId("ProBuilderPickerA"),
-                //new ShaderTagId("UniversalForwardOnly"),
-                //new ShaderTagId("UniversalForward"),
-                //new ShaderTagId("SRPDefaultUnlit"), // Legacy shaders (do not have a gbuffer pass) are considered forward-only for backward compatibility.
-                //new ShaderTagId("LightweightForward") // Legacy shaders (do not have a gbuffer pass) are considered forward-only for backward compatibility.
+                new ShaderTagId("ProBuilderPickerA")
             };
 
             m_ShaderTagIdList.Clear();
@@ -70,7 +62,7 @@ namespace UnityEngine.ProBuilder
         // Each ScriptableRenderPass can use the RenderGraph handle to add multiple render passes to the render graph.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            string passName = "Custom Render Pass";
+            string passName = "ProBuilder Selection Picker Pass";
 
             // This simple pass clears the current active color texture, then renders the scene geometry associated to the m_LayerMask layer.
             // Add scene geometry to your own custom layers and experiment switching the layer mask in the render feature UI.

@@ -69,13 +69,23 @@ namespace UnityEngine.ProBuilder
         static Material s_UnityDefaultDiffuse;
         static Material s_ShapePreviewMaterial;
 
+#if URP_7_1_0_OR_NEWER
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePickerURP";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPickerURP";
+        static string k_FacePickerShader = "Shader Graphs/FacePickerURP";
+
+        static string k_EdgePickerMaterial = "Materials/EdgePickerURP";
+        static string k_FacePickerMaterial = "Materials/FacePickerURP";
+        static string k_VertexPickerMaterial = "Materials/VertexPickerURP";
+#else
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";;
+        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+
         static string k_EdgePickerMaterial = "Materials/EdgePicker";
         static string k_FacePickerMaterial = "Materials/FacePicker";
         static string k_VertexPickerMaterial = "Materials/VertexPicker";
-
-        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
-        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
-        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+#endif
 
         static void Init()
         {
