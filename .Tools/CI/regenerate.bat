@@ -1,2 +1,2 @@
 cd %~dp0../../
-dotnet run --project Tools/CI/ProBuilder.Cookbook.csproj
+dotnet run --project .Tools/CI/ProBuilder.Cookbook.csproj
