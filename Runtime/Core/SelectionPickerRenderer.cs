@@ -858,7 +858,7 @@ namespace UnityEngine.ProBuilder
 
         static bool ShouldUseURP()
         {
-#if URP_7_1_0_OR_NEWER
+#if PB_URP_MODE
             return true;
 #else
             return false;

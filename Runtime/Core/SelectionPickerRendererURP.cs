@@ -1,10 +1,10 @@
 using UnityEditor;
 using UnityEngine.Rendering;
+
+#if PB_URP_MODE
+using UnityEngine.Rendering.Universal;
 using UObject = UnityEngine.Object;
 using static UnityEngine.Rendering.RenderPipeline;
-
-#if URP_7_1_0_OR_NEWER
-using UnityEngine.Rendering.Universal;
 #endif
 
 namespace UnityEngine.ProBuilder
@@ -33,7 +33,7 @@ namespace UnityEngine.ProBuilder
                 int width = -1,
                 int height = -1)
             {
-#if URP_7_1_0_OR_NEWER
+#if PB_URP_MODE
                 bool autoSize = width < 0 || height < 0;
 
                 int _width = autoSize ? (int)camera.pixelRect.width : width;
@@ -106,9 +106,6 @@ namespace UnityEngine.ProBuilder
                 Texture2D img = new Texture2D(_width, _height, textureFormat, false, false);
                 img.ReadPixels(new Rect(0, 0, _width, _height), 0, 0);
                 img.Apply();
-                //FlipTexture2DVertical(img);
-
-                SaveTexture(img, "Assets/Tmp/SelectionPickerTexture.png");
 
                 RenderTexture.active = prev;
                 RenderTexture.ReleaseTemporary(rt);
@@ -120,27 +117,6 @@ namespace UnityEngine.ProBuilder
 #else
                 return null;
 #endif
-            }
-
-            /// <summary>Flips the texture vertically in place (swap rows).</summary>
-            static void FlipTexture2DVertical(Texture2D tex)
-            {
-                int w = tex.width;
-                int h = tex.height;
-                Color[] pixels = tex.GetPixels();
-                for (int y = 0; y < h / 2; y++)
-                {
-                    int top = y * w;
-                    int bot = (h - 1 - y) * w;
-                    for (int x = 0; x < w; x++)
-                    {
-                        var t = pixels[top + x];
-                        pixels[top + x] = pixels[bot + x];
-                        pixels[bot + x] = t;
-                    }
-                }
-                tex.SetPixels(pixels);
-                tex.Apply();
             }
 
             internal static bool SaveTexture(Texture2D texture, string path)
