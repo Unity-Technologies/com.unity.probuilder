@@ -165,9 +165,9 @@ namespace UnityEngine.ProBuilder
             {
                 if (s_PickerRenderer == null)
                     s_PickerRenderer =
-                        ShouldUseHDRP()?
-                        (ISelectionPickerRenderer)new SelectionPickerRendererHDRP()
-                        : new SelectionPickerRendererStandard();
+                        ShouldUseHDRP() ? new SelectionPickerRendererHDRP()
+                            : ShouldUseURP() ? new SelectionPickerRendererURP()
+                                : new SelectionPickerRendererStandard();
                 return s_PickerRenderer;
             }
         }
@@ -850,6 +850,15 @@ namespace UnityEngine.ProBuilder
         static bool ShouldUseHDRP()
         {
 #if HDRP_7_1_0_OR_NEWER
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        static bool ShouldUseURP()
+        {
+#if URP_7_1_0_OR_NEWER
             return true;
 #else
             return false;
