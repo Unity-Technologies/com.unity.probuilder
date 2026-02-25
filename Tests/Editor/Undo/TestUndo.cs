@@ -53,12 +53,19 @@ static class UndoTests
 
         instance.PerformAction();
 
+#if UNITY_6000_5_OR_NEWER
+        var shapes = GameObject.FindObjectsByType<ProBuilderMesh>();
+#else
         var shapes = GameObject.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#endif
         Assume.That(shapes.Length, Is.EqualTo(1));
 
         Undo.PerformUndo();
-
+#if UNITY_6000_5_OR_NEWER
+        shapes = GameObject.FindObjectsByType<ProBuilderMesh>();
+#else
         shapes = GameObject.FindObjectsByType<ProBuilderMesh>(FindObjectsSortMode.None);
+#endif
         Assert.That(shapes.Length, Is.EqualTo(0));
     }
 
