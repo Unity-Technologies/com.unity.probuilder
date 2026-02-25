@@ -453,7 +453,11 @@ namespace UnityEditor.ProBuilder
 
         internal static T[] FindObjectsByType<T>() where T : UObject
         {
+#if UNITY_6000_5_OR_NEWER
+            return UObject.FindObjectsByType<T>();
+#else
             return UObject.FindObjectsByType<T>(FindObjectsSortMode.None);
+#endif
         }
 
         internal static string GetActiveSceneAssetsPath()
