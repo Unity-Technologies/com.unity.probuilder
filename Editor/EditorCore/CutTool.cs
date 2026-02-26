@@ -19,7 +19,7 @@ using Vertex = UnityEngine.ProBuilder.Vertex;
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Cut Tool", typeof(ProBuilderMesh), typeof(PositionToolContext))]
-    class CutTool : EditorTool
+    public class CutTool : EditorTool
     {
         ProBuilderMesh m_Mesh;
 
