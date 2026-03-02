@@ -4,6 +4,11 @@ Shader "Hidden/ProBuilder/VertexPickerURP"
 
     SubShader
     {
+        PackageRequirements
+        {
+            "com.unity.render-pipelines.universal": "17.0"
+        }
+
         Tags
         {
             "ProBuilderPicker"="VertexPass"

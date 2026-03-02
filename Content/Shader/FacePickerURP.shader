@@ -7,6 +7,11 @@ Shader "Hidden/ProBuilder/FacePickerURP"
 
     SubShader
     {
+        PackageRequirements
+        {
+            "com.unity.render-pipelines.universal": "17.0"
+        }
+
         Tags
         {
             "ProBuilderPicker"="Base"
