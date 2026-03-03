@@ -453,7 +453,7 @@ namespace UnityEditor.ProBuilder
 
         internal static T[] FindObjectsByType<T>() where T : UObject
         {
-#if UNITY_6000_5_OR_NEWER
+#if UNITY_6000_4_OR_NEWER
             return UObject.FindObjectsByType<T>();
 #else
             return UObject.FindObjectsByType<T>(FindObjectsSortMode.None);
