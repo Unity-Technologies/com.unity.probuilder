@@ -6,6 +6,7 @@ pull_request_trigger:
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_macos
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_4_-_macos
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_5_-_macos
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_macos
   triggers:
     expression: |-
       NOT pull_request.draft AND
