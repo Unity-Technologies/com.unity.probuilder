@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Linq;
 using UnityEditor.EditorTools;
 using UnityEngine.ProBuilder;
-using Unity.Profiling.Editor.UI;
 
 namespace UnityEditor.ProBuilder
 {
