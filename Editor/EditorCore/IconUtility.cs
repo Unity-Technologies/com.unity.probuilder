@@ -26,10 +26,12 @@ namespace UnityEditor.ProBuilder
         /// <param name="iconName"></param>
         /// <param name="skin"></param>
         /// <returns></returns>
-        public static Texture2D GetIcon(string iconName, IconSkin skin = IconSkin.Default)
+        public static Texture2D GetIcon(string iconName, string withPrefix = "", string withSuffix = "_Light", IconSkin skin = IconSkin.Default)
         {
             bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
-            string name = isDarkSkin ? iconName : iconName + "_Light";
+            string name = isDarkSkin
+                ? withPrefix + iconName
+                : iconName + withSuffix;
 
             Texture2D icon = null;
 
@@ -59,7 +61,6 @@ namespace UnityEditor.ProBuilder
 
                 s_Icons.Add(name, icon);
             }
-
             return icon;
         }
     }

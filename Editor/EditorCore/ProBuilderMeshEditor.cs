@@ -25,7 +25,7 @@ namespace UnityEditor.ProBuilder
 
             const string k_IconPath = "EditableMesh/EditMeshContext";
             const string k_ComponentMessage = "Use the ProBuilder Edit Mode in the Scene Tools Overlay to edit this Mesh.";
-            public static readonly GUIContent helpLabelContentIcon = new GUIContent(IconUtility.GetIcon(k_IconPath));
+            public static readonly GUIContent helpLabelContentIcon = new GUIContent(IconUtility.GetIcon(k_IconPath, "d_", null));
             public static readonly GUIContent helpLabelContent = EditorGUIUtility.TrTextContent(k_ComponentMessage);
 
 
