@@ -1,10 +1,5 @@
 Shader "Hidden/ProBuilder/FacePickerURP"
 {
-    Properties
-    {
-        _Tint ("Picker Color", Color) = (1,1,1,1)
-    }
-
     SubShader
     {
         PackageRequirements
@@ -24,11 +19,10 @@ Shader "Hidden/ProBuilder/FacePickerURP"
         Pass
         {
             Name "Base"
-            // Tags { "LightMode"="SRPDefaultUnlit" }
             Tags { "LightMode"="ProBuilderPickerA" }
             ZTest LEqual
             ZWrite On
-            Cull Off
+            Cull Back
             Blend Off
 
             HLSLPROGRAM
@@ -37,10 +31,6 @@ Shader "Hidden/ProBuilder/FacePickerURP"
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "ProBuilderCG_URP.cginc"
-
-            CBUFFER_START(UnityPerMaterial)
-            float4 _Tint;
-            CBUFFER_END
 
             struct Attributes
             {
@@ -57,8 +47,8 @@ Shader "Hidden/ProBuilder/FacePickerURP"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                VertexPositionInputs positions = GetVertexPositionInputs(input.positionOS.xyz);
 
+                VertexPositionInputs positions = GetVertexPositionInputs(input.positionOS.xyz);
                 output.positionCS = positions.positionCS;
                 output.color = input.color;
 
