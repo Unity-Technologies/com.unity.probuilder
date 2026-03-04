@@ -22,9 +22,8 @@ Shader "Hidden/ProBuilder/EdgePickerURP"
         Pass
         {
             Name "Edges"
-            // Tags { "LightMode"="SRPDefaultUnlit" }
             Tags { "LightMode"="ProBuilderPickerA" }
-            ZTest LEqual
+            ZTest Less
             ZWrite On
             Cull Off
             Blend Off
@@ -64,6 +63,4 @@ Shader "Hidden/ProBuilder/EdgePickerURP"
             ENDHLSL
         }
     }
-
-    Fallback "Hidden/ProBuilder/EdgePicker"
 }
