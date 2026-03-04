@@ -33,7 +33,7 @@ Shader "Hidden/ProBuilder/EdgePickerURP"
             #pragma fragment frag
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "ProBuilderCG_URP.cginc"
+            #include "ProBuilderCG_URP.hlsl"
 
             struct Attributes
             {
