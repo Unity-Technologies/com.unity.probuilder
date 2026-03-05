@@ -18,7 +18,7 @@ namespace UnityEditor.ProBuilder
 
     [Icon("Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditMeshContext.png")]
     [EditorToolContext("ProBuilder", typeof(ProBuilderMesh))]
-    class PositionToolContext : EditorToolContext
+    public class PositionToolContext : EditorToolContext
     {
         internal class ProBuilderShortcutContext : IShortcutContext
         {
@@ -407,7 +407,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    class TextureToolContext : EditorToolContext
+    public class TextureToolContext : EditorToolContext
     {
         ProBuilderEditor m_Editor;
 
