@@ -30,7 +30,7 @@ namespace UnityEngine.ProBuilder
             Height,
             Edit
         }
-        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
+        const string k_IconPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditableMesh.png";
 
         ProBuilderMesh m_Mesh;
 

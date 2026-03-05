@@ -1,6 +1,6 @@
-using UnityEngine;
-using System;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace UnityEditor.ProBuilder
 {
@@ -18,48 +18,28 @@ namespace UnityEditor.ProBuilder
     {
         static Dictionary<string, Texture2D> s_Icons = new Dictionary<string, Texture2D>();
 
-        static string s_IconFolderPath = "Content/Icons/";
+        static string s_IconFolderPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/";
 
         /// <summary>
-        /// Load an icon from the ProBuilder/Icons folder. IconName must *not* include the extension or `_Light` mode suffix.
+        /// Load an icon from icons folder located in the package's 'Editor Default Resources'.
+        /// Naming convention is: "path/to/iconName" (without extension). Use the 'd_' prefix for dark skin  icons.
+        /// No prefix or suffit for light skin icons. If the icon is not found, an error will be logged and null returned.
+        /// This method assumes the file is .png.
         /// </summary>
-        /// <param name="iconName"></param>
-        /// <param name="skin"></param>
+        /// <param name="iconName">Relative path to the icon without the file extension in the filename.</param>
         /// <returns></returns>
-        public static Texture2D GetIcon(string iconName, string withPrefix = "", string withSuffix = "_Light", IconSkin skin = IconSkin.Default)
+        public static Texture2D GetIcon(string iconName)
         {
-            bool isDarkSkin = skin == IconSkin.Default ? EditorGUIUtility.isProSkin : skin == IconSkin.Pro;
-            string name = isDarkSkin
-                ? withPrefix + iconName
-                : iconName + withSuffix;
-
             Texture2D icon = null;
 
-            if (!s_Icons.TryGetValue(name, out icon))
+            if (!s_Icons.TryGetValue(iconName, out icon))
             {
-                int i = 0;
+                string fullPath = Path.Combine(s_IconFolderPath, iconName + (Path.HasExtension(iconName)? string.Empty: ".png"));
 
-                do
-                {
-                    // if in light mode:
-                    // - do one lap searching for light in 2x first and then in normal if no 2X found
-                    // - if nothing found, next searching for default
-                    string fullPath;
-                    if(EditorGUIUtility.pixelsPerPoint > 1)
-                    {
-                        fullPath = string.Format("{0}{1}@2x.png", s_IconFolderPath, i == 0 ? name : iconName);
-                        icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
-                    }
-
-                    if(icon == null)
-                    {
-                        fullPath = string.Format("{0}{1}.png", s_IconFolderPath, i == 0 ? name : iconName);
-                        icon = FileUtility.LoadInternalAsset<Texture2D>(fullPath);
-                    }
-                }
-                while (!isDarkSkin && ++i < 2 && icon == null);
-
-                s_Icons.Add(name, icon);
+                icon = EditorGUIUtility.LoadIcon(fullPath);
+                if (icon == null)
+                    Debug.LogError($"ProBuilder: Unable to load icon at path: {fullPath}");
+                s_Icons.Add(iconName, icon);
             }
             return icon;
         }
