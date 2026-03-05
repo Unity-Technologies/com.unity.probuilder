@@ -1,25 +1,21 @@
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using UnityEditor.ProBuilder;
-using UnityEngine;
 
-namespace UnityEditor.ProBuilder.Tests.EditorCore
+/// <summary>
+/// Tests that every icon path used in IconUtility.GetIcon() across the codebase loads a non-null texture.
+/// Icon list is kept in sync with all call sites to IconUtility.GetIcon().
+/// </summary>
+static class IconUtilityTests
 {
     /// <summary>
-    /// Tests that every icon path used in IconUtility.GetIcon() across the codebase loads a non-null texture.
-    /// Icon list is kept in sync with all call sites to IconUtility.GetIcon().
+    /// All literal icon paths passed to IconUtility.GetIcon() in the codebase (no runtime/variable paths).
+    /// About the paths in comment, they are disabled because icons are not currently used in the UI,
+    /// so they are not packed with the package.
+    /// Re-enable these tests if/when the icons are used again.
     /// </summary>
-    static class IconUtilityTests
+    static readonly string[] k_AllLiteralIconPaths =
     {
-        /// <summary>
-        /// All literal icon paths passed to IconUtility.GetIcon() in the codebase (no runtime/variable paths).
-        /// About the paths in comment, they are disabled because icons are not currently used in the UI,
-        /// so they are not packed with the package.
-        /// Re-enable these tests if/when the icons are used again.
-        /// </summary>
-        static readonly string[] k_AllLiteralIconPaths =
-        {
             // SelectionSettingsButtons.cs
             "Modes/Mode_Face",
             "Modes/Mode_Edge",
@@ -146,30 +142,29 @@ namespace UnityEditor.ProBuilder.Tests.EditorCore
             //"Toolbar/Panel_Materials",
         };
 
-        static IEnumerable<string> GetAllIconPaths()
+    static IEnumerable<string> GetAllIconPaths()
+    {
+        var seen = new HashSet<string>();
+        foreach (var path in k_AllLiteralIconPaths)
         {
-            var seen = new HashSet<string>();
-            foreach (var path in k_AllLiteralIconPaths)
-            {
-                if (seen.Add(path))
-                    yield return path;
-            }
-
-            // Dynamic paths: EditorShapeUtility uses "Tools/ShapeTool/" + name for each shape type
-            foreach (var name in EditorShapeUtility.shapeTypes)
-            {
-                var path = "Tools/ShapeTool/" + name;
-                if (seen.Add(path))
-                    yield return path;
-            }
+            if (seen.Add(path))
+                yield return path;
         }
 
-        [Test]
-        [TestCaseSource(nameof(GetAllIconPaths))]
-        public static void GetIcon_ReturnNonNull(string iconPath)
+        // Dynamic paths: EditorShapeUtility uses "Tools/ShapeTool/" + name for each shape type
+        foreach (var name in EditorShapeUtility.shapeTypes)
         {
-            var texture = IconUtility.GetIcon(iconPath);
-            Assert.That(texture, Is.Not.Null, $"IconUtility.GetIcon(\"{iconPath}\")");
+            var path = "Tools/ShapeTool/" + name;
+            if (seen.Add(path))
+                yield return path;
         }
+    }
+
+    [Test]
+    [TestCaseSource(nameof(GetAllIconPaths))]
+    public static void GetIcon_ReturnNonNull(string iconPath)
+    {
+        var texture = IconUtility.GetIcon(iconPath);
+        Assert.That(texture, Is.Not.Null, $"IconUtility.GetIcon(\"{iconPath}\")");
     }
 }
