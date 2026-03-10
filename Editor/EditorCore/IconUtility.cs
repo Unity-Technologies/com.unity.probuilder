@@ -23,8 +23,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Load an icon from icons folder located in the package's 'Editor Default Resources'.
         /// Naming convention is: "path/to/iconName" (without extension). Use the 'd_' prefix for dark skin  icons.
-        /// No prefix or suffit for light skin icons. If the icon is not found, an error will be logged and null returned.
-        /// This method assumes the file is .png.
+        /// No prefix or suffit for light skin icons. This method assumes the file is .png.
         /// </summary>
         /// <param name="iconName">Relative path to the icon without the file extension in the filename.</param>
         /// <returns></returns>
@@ -37,8 +36,6 @@ namespace UnityEditor.ProBuilder
                 string fullPath = Path.Combine(s_IconFolderPath, iconName + (Path.HasExtension(iconName)? string.Empty: ".png"));
 
                 icon = EditorGUIUtility.LoadIcon(fullPath);
-                if (icon == null)
-                    Debug.LogError($"ProBuilder: Unable to load icon at path: {fullPath}");
                 s_Icons.Add(iconName, icon);
             }
             return icon;
