@@ -26,7 +26,7 @@ namespace UnityEditor.ProBuilder
         /// No prefix or suffit for light skin icons. This method assumes the file is .png.
         /// </summary>
         /// <param name="iconName">Relative path to the icon without the file extension in the filename.</param>
-        /// <returns></returns>
+        /// <returns>A valid icon texture. Otherwise null is returned.</returns>
         public static Texture2D GetIcon(string iconName)
         {
             Texture2D icon = null;
