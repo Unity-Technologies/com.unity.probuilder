@@ -14,7 +14,7 @@ namespace UnityEngine.ProBuilder
 
         internal class SelectionPickerRendererURP : ISelectionPickerRenderer
         {
-            public static Camera temporaryCamera;
+            static Camera m_LastCamera;
 
             /// <summary>
             /// Render the camera with a replacement shader and return the resulting image.
@@ -39,20 +39,7 @@ namespace UnityEngine.ProBuilder
                 int _width = autoSize ? (int)camera.pixelRect.width : width;
                 int _height = autoSize ? (int)camera.pixelRect.height : height;
 
-                GameObject go = new GameObject();
-                Camera renderCam = go.AddComponent<Camera>();
-                temporaryCamera = renderCam;
-                renderCam.CopyFrom(camera);
-
-                renderCam.renderingPath = RenderingPath.Forward;
-                renderCam.enabled = false;
-                renderCam.clearFlags = CameraClearFlags.SolidColor;
-                renderCam.backgroundColor = Color.white;
-                renderCam.allowHDR = false;
-                renderCam.allowMSAA = false;
-                renderCam.forceIntoRenderTexture = true;
-
-                renderCam.GetUniversalAdditionalCameraData();
+                m_LastCamera = camera;
 
                 RenderTextureDescriptor descriptor = new RenderTextureDescriptor()
                 {
@@ -96,10 +83,10 @@ namespace UnityEngine.ProBuilder
                 };
                 RenderPipelineManager.beginCameraRendering += CustomRenderPass;
 
-                if (RenderPipeline.SupportsRenderRequest(renderCam, request) == false)
+                if (RenderPipeline.SupportsRenderRequest(camera, request) == false)
                     Debug.LogWarning("RenderRequest not supported.");
 
-                RenderPipeline.SubmitRenderRequest<StandardRequest>(renderCam, request);
+                RenderPipeline.SubmitRenderRequest<StandardRequest>(camera, request);
                 RenderTexture prev = RenderTexture.active;
                 RenderTexture.active = rt;
 
@@ -110,8 +97,7 @@ namespace UnityEngine.ProBuilder
                 RenderTexture.active = prev;
                 RenderTexture.ReleaseTemporary(rt);
                 RenderPipelineManager.beginCameraRendering -= CustomRenderPass;
-                temporaryCamera = null;
-                UObject.DestroyImmediate(go);
+                m_LastCamera = null;
 
                 return img;
 #else
@@ -122,7 +108,7 @@ namespace UnityEngine.ProBuilder
 #if PB_URP_MODE
             static void CustomRenderPass(ScriptableRenderContext ctx, Camera camera)
             {
-                if (camera != temporaryCamera)
+                if (camera != m_LastCamera)
                     return;
                 var customPass = new URPSelectionPickerPass(-1);
                 customPass.renderPassEvent = RenderPassEvent.AfterRendering;
