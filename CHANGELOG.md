@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
 - [UUM-133531] Fixed component icons in Light theme.
+- Fixed warnings related to obsolete API calls with Unity 6.4 and onwards.
 
 ## [6.0.9] - 2026-01-30
 

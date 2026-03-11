@@ -49,7 +49,7 @@ class MeshSyncTests : TemporaryAssetTest
         var id = obj.GetObjectId();
 
 #if UNITY_6000_4_OR_NEWER
-        return id.GetRawData();
+        return EntityId.ToULong(id);
 #else
         return (ulong)id;
 #endif
