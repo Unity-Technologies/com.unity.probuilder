@@ -6,7 +6,7 @@ using UnityEditor.ProBuilder;
 /// Tests that every icon path used in IconUtility.GetIcon() across the codebase loads a non-null texture.
 /// Icon list is kept in sync with all call sites to IconUtility.GetIcon().
 /// </summary>
-static class IconUtilityTests
+class IconUtilityTests
 {
     /// <summary>
     /// All literal icon paths passed to IconUtility.GetIcon() in the codebase (no runtime/variable paths).
@@ -31,7 +31,7 @@ static class IconUtilityTests
             "Toolbar/Selection_SelectHidden-Off",
             "Toolbar/Selection_SelectHidden-On",
             // ProBuilderMeshEditor.cs
-            "EditableMesh/EditMeshContext_HelpBox",
+            "EditableMesh/EditMeshContext",
             // ExtrudeFaces.cs
             //"Toolbar/ExtrudeFace_Individual",
             //"Toolbar/ExtrudeFace_VertexNormals",
@@ -162,9 +162,16 @@ static class IconUtilityTests
 
     [Test]
     [TestCaseSource(nameof(GetAllIconPaths))]
-    public static void GetIcon_ReturnNonNull(string iconPath)
+    public void GetIcon_ReturnsNonNull(string iconPath)
     {
         var texture = IconUtility.GetIcon(iconPath);
         Assert.That(texture, Is.Not.Null, $"IconUtility.GetIcon(\"{iconPath}\")");
+    }
+
+    [Test]
+    public void GetIcon_WithInvalidPath_ReturnsNull()
+    {
+        var texture = IconUtility.GetIcon("NonExistent/Icon");
+        Assert.That(texture, Is.Null);
     }
 }
