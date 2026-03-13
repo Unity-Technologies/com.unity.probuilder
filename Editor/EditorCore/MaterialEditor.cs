@@ -361,6 +361,8 @@ namespace UnityEditor.ProBuilder
                         System.Array.Copy(materials, 0, temp, 0, materials.Length - 1);
                         materials = temp;
                         SaveUserMaterials(materials);
+                        GUILayout.EndHorizontal();
+                        GUILayout.EndScrollView();
                         return;
                     }
                     GUI.backgroundColor = Color.white;
