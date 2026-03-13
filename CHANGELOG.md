@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
+- [UUM-133526] Material Editor: fixed a warning (`GUI Error: Invalid GUILayout state in MaterialEditor view.`) that was thrown when deleting an extra material slot.
 - Fixed warnings related to obsolete API calls with Unity 6.4 and onwards.
 
 ## [6.0.9] - 2026-01-30
