@@ -38,8 +38,10 @@ namespace ProBuilder.ExampleActions
 		/// <returns></returns>
 		public override bool enabled
 		{
-			get { return MeshSelection.selectedFaceCount > 0; }
+			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
 		}
+
+		protected override bool hasFileMenuEntry => false;
 
 		/// <summary>
 		/// This action is applicable in Face selection modes.
