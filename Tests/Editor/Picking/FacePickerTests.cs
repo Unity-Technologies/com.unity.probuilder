@@ -9,6 +9,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.TestTools;
+using UnityEngine.ProBuilder.Tests.Framework;
 
 [TestFixture]
 public class FacePickerTests
@@ -99,12 +100,13 @@ public class FacePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true; // Ignore logs due to not executing OnGUI loop
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face, // Select faces
             m_PickerPreferences);
-
+        }
         yield return null;
 
         SceneSelection currentSelection = EditorSceneViewPicker.selection;
@@ -124,12 +126,13 @@ public class FacePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
-
+        }
         yield return null;
 
         SceneSelection currentSelection = EditorSceneViewPicker.selection;
@@ -161,12 +164,13 @@ public class FacePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
-
+        }
         yield return null;
 
         SceneSelection currentSelection = EditorSceneViewPicker.selection;
@@ -194,14 +198,16 @@ public class FacePickerTests
 
 
         yield return null;
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
+        using (new TestUtility.IgnoreAssertScope())
+        {
 
-        // As per the provided EditorSceneViewPicker.cs (second version),
-        // ProBuilder faces are prioritized if any are hit.
-        EditorSceneViewPicker.DoMouseClick(
+            // As per the provided EditorSceneViewPicker.cs (second version),
+            // ProBuilder faces are prioritized if any are hit.
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -261,13 +267,14 @@ public class FacePickerTests
 
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-
         // --- First click: Should pick the front mesh (mesh3)
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
+        }
 
         yield return null;
 
@@ -277,11 +284,13 @@ public class FacePickerTests
         Assert.AreEqual(face3, currentSelection.faces.First(), "First click: The front face should be picked.");
 
         // --- Second click: Should pick the middle mesh due to deep cycling
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
-
+        }
         yield return null;
 
         currentSelection = EditorSceneViewPicker.selection;
@@ -290,11 +299,13 @@ public class FacePickerTests
         Assert.AreEqual(face1, currentSelection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Third click: Should pick the back mesh due to deep cycling
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
-
+        }
         yield return null;
 
         currentSelection = EditorSceneViewPicker.selection;
@@ -303,10 +314,13 @@ public class FacePickerTests
         Assert.AreEqual(face2, currentSelection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Fourth click: Should cycle back to the front mesh (mesh3)
-        EditorSceneViewPicker.DoMouseClick(
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
             CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
             SelectMode.Face,
             m_PickerPreferences);
+        }
         yield return null;
 
         currentSelection = EditorSceneViewPicker.selection;
@@ -334,11 +348,13 @@ public class FacePickerTests
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(centerOfFace_world);
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-        EditorSceneViewPicker.DoMouseClick(
-            CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
-            SelectMode.Face,
-            m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(
+                CreateMouseEvent(mousePos, EventType.MouseDown, EventModifiers.None),
+                SelectMode.Face,
+                m_PickerPreferences);
+        }
         yield return null;
 
         SceneSelection currentSelection = EditorSceneViewPicker.selection;
@@ -379,10 +395,11 @@ public class FacePickerTests
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(baseCenterWorld);
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-
         // --- First click: front mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         SceneSelection selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(frontMesh, selection.mesh, "First click: Front offset ProBuilder mesh should be picked.");
@@ -390,7 +407,10 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "First click: The front offset face should be picked.");
 
         // --- Second click: middle mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(m_Mesh, selection.mesh, "Second click: Middle ProBuilder mesh should be picked.");
@@ -398,7 +418,10 @@ public class FacePickerTests
         Assert.AreEqual(m_Mesh.facesInternal[4], selection.faces.First(), "Second click: The middle face should be picked.");
 
         // --- Third click: back mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(backMesh, selection.mesh, "Third click: Back offset ProBuilder mesh should be picked.");
@@ -406,7 +429,10 @@ public class FacePickerTests
         Assert.AreEqual(backMesh.facesInternal[4], selection.faces.First(), "Third click: The back offset face should be picked.");
 
         // --- Fourth click: front mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(frontMesh, selection.mesh, "Fourth click: Front offset ProBuilder mesh should be picked.");
@@ -448,10 +474,11 @@ public class FacePickerTests
         Vector2 mousePos = UnityEditor.HandleUtility.WorldToGUIPoint(GetFaceCenterWorld(m_Mesh, baseFace));
         yield return null;
 
-        UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-
         // --- First click: front mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         SceneSelection selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(frontMesh, selection.mesh, "First click: Front ProBuilder mesh should be picked.");
@@ -459,7 +486,10 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "First click: The front face should be picked.");
 
         // --- Second click: middle mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(m_Mesh, selection.mesh, "Second click: Middle ProBuilder mesh should be picked.");
@@ -470,7 +500,10 @@ public class FacePickerTests
         Vector2 farMousePos = mousePos + new Vector2(1000, 1000);
 
         // Perform a click at the far position (no object hit) to trigger cycle reset
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(farMousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(farMousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null; // Let the frame advance
 
         selection = EditorSceneViewPicker.selection;
@@ -479,7 +512,10 @@ public class FacePickerTests
         Assert.IsNull(selection.gameObject, "Cycle reset: No GameObject should be selected.");
 
         // --- Click again on original position: cycle should restart from front mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(frontMesh, selection.mesh, "Cycle restart: Front ProBuilder mesh should be picked again.");
@@ -487,7 +523,10 @@ public class FacePickerTests
         Assert.AreEqual(frontMesh.facesInternal[4], selection.faces.First(), "Cycle restart: The front face should be picked again.");
 
         // --- Second click after reset: should pick middle mesh again, NOT back mesh
-        EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        using (new TestUtility.IgnoreAssertScope())
+        {
+            EditorSceneViewPicker.DoMouseClick(CreateMouseEvent(mousePos), SelectMode.Face, m_PickerPreferences);
+        }
         yield return null;
         selection = EditorSceneViewPicker.selection;
         Assert.AreEqual(m_Mesh, selection.mesh, "After reset second click: Middle ProBuilder mesh should be picked.");

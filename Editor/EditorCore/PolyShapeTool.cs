@@ -31,6 +31,8 @@ namespace UnityEditor.ProBuilder
         PolyShape m_PolyShape = null;
 
         static GUIContent s_IconContent;
+
+        /// <inheritdoc />
         public override GUIContent toolbarIcon
         {
             get
@@ -354,6 +356,8 @@ namespace UnityEditor.ProBuilder
         }
 
         static GUIContent s_IconContent;
+
+        /// <inheritdoc />
         public override GUIContent toolbarIcon
         {
             get

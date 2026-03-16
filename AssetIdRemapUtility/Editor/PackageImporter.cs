@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using UnityEngine.Assemblies;
+#endif
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
@@ -133,7 +136,11 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 
         internal static bool IsProBuilder4OrGreaterLoaded()
         {
+#if UNITY_6000_5_OR_NEWER
+            return CurrentAssemblies.GetLoadedAssemblies().Any(x => x.ToString().Contains("Unity.ProBuilder"));
+#else
             return AppDomain.CurrentDomain.GetAssemblies().Any(x => x.ToString().Contains("Unity.ProBuilder"));
+#endif
         }
     }
 }

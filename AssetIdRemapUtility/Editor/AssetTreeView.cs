@@ -1,19 +1,24 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using UnityEditor.VersionControl;
-using UnityEngine;
 using UObject = UnityEngine.Object;
+
+#if UNITY_6000_3_OR_NEWER
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-#pragma warning disable CS0618 // Type or member is obsolete
-    sealed class AssetTreeItem : TreeViewItem
-#pragma warning restore CS0618
+    sealed class AssetTreeItem : BaseTreeViewItem
     {
         string m_RelativePath;
         string m_FullPath;
@@ -101,8 +106,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-    class AssetTreeView : TreeView
+    class AssetTreeView : BaseTreeView
     {
         string m_RootDirectory = null;
         GUIContent m_TempContent = new GUIContent();
@@ -134,13 +138,13 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             m_FileIgnorePatterns = regexStrings.Select(x => new Regex(x));
         }
 
-        public AssetTreeView(TreeViewState state, MultiColumnHeader header) : base(state, header)
+        public AssetTreeView(BaseTreeViewState state, MultiColumnHeader header) : base(state, header)
         {
             showBorder = true;
             columnIndexForTreeFoldouts = 0;
             rowHeight = 18f;
         }
-        protected override TreeViewItem BuildRoot()
+        protected override BaseTreeViewItem BuildRoot()
         {
             AssetTreeItem root = new AssetTreeItem(0, Application.dataPath, "")
             {
@@ -151,7 +155,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             if (string.IsNullOrEmpty(m_RootDirectory) || !Directory.Exists(m_RootDirectory))
             {
                 // if root has no children and you SetupDepthsFromParentsAndChildren nullrefs are thrown
-                var list = new List<TreeViewItem>() {};
+                var list = new List<BaseTreeViewItem>() {};
                 SetupParentsAndChildrenFromDepths(root, list);
             }
             else
@@ -196,7 +200,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 PopulateAssetTree(dir, leaf, ref nodeIdIndex);
         }
 
-        public void ApplyEnabledFilters(TreeViewItem root)
+        public void ApplyEnabledFilters(BaseTreeViewItem root)
         {
             AssetTreeItem node = root as AssetTreeItem;
             AssetTreeItem parent = root.parent as AssetTreeItem;
@@ -309,5 +313,4 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                         GatherTreeItems(child as AssetTreeItem, list);
         }
     }
-#pragma warning restore CS0618 // Type or member is obsolete
 }

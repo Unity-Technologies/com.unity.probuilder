@@ -20,11 +20,11 @@ UpgradeProjects~/*/.idea/**
 upm-ci~/**
 
 # Wrench
-!Tools/**/*sln
-!Tools/**/*csproj
-Tools/**/.idea/
-Tools/**/.vs/
-Tools/**/*.meta
-Tools.meta
+!.Tools/**/*sln
+!.Tools/**/*csproj
+.Tools/**/.idea/
+.Tools/**/.vs/
+.Tools/**/*.meta
+.Tools.meta
 bin
 obj

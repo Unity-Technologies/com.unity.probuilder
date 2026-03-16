@@ -92,14 +92,11 @@ namespace UnityEditor.ProBuilder
         static readonly Color SELECTED_COLOR_MANUAL = new Color(1f, .68f, 0f, .39f);
         static readonly Color SELECTED_COLOR_AUTO = new Color(0f, .785f, 1f, .39f);
 
-#if UNITY_STANDALONE_OSX
-        public bool ControlKey { get { return Event.current.modifiers == EventModifiers.Command; } }
-    #else
         public bool ControlKey
         {
-            get { return Event.current.modifiers == EventModifiers.Control; }
+            get { return EditorGUI.actionKey; }
         }
-#endif
+
         public bool ShiftKey
         {
             get { return Event.current.modifiers == EventModifiers.Shift; }
@@ -547,13 +544,17 @@ namespace UnityEditor.ProBuilder
             GUI.FocusControl(string.Empty);
             bool update = false;
 
+            Vector2 originalHandlePosition = handlePosition;
+
             // Make sure all TextureGroups are auto-selected
             for (int i = 0; i < selection.Length; i++)
             {
                 if (selection[i].selectedFaceCount > 0)
                 {
                     int fc = selection[i].selectedFaceCount;
-                    selection[i].SetSelectedFaces(SelectTextureGroups(selection[i], selection[i].selectedFacesInternal));
+                    selection[i].SetSelectedFaces(
+                        SelectTextureGroups(selection[i], selection[i].selectedFacesInternal)
+                    );
 
                     // kinda lame... this will cause setSelectedUVsWithSceneView to be called again.
                     if (fc != selection[i].selectedFaceCount)
@@ -567,9 +568,8 @@ namespace UnityEditor.ProBuilder
             if (update)
             {
                 // UpdateSelection clears handlePosition
-                Vector2 storedHandlePosition = handlePosition;
                 ProBuilderEditor.Refresh();
-                SetHandlePosition(storedHandlePosition, true);
+                SetHandlePosition(originalHandlePosition, true);
             }
 
             CopySelectionUVs(out uv_origins);

@@ -1,13 +1,18 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
-using UnityEngine;
-using UObject = UnityEngine.Object;
+
+#if UNITY_6000_3_OR_NEWER
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+#else
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem;
+#endif
 
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
@@ -129,10 +134,10 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         AssetTreeView m_AssetsToDeleteTreeView;
         MultiColumnHeader m_MultiColumnHeader;
         Rect m_AssetTreeRect = new Rect(0, 0, 0, 0);
-#pragma warning disable CS0618 // Type or member is obsolete
+
         [SerializeField]
-        TreeViewState m_TreeViewState = null;
-#pragma warning restore CS0618
+        BaseTreeViewState m_TreeViewState = null;
+
         [SerializeField]
         MultiColumnHeaderState m_MultiColumnHeaderState = null;
         GUIContent m_AssetTreeSettingsContent = null;
@@ -178,10 +183,8 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
                 Debug.LogWarning("Could not find a valid asset id remap file!");
             }
 
-#pragma warning disable CS0618 // Type or member is obsolete
             if (m_TreeViewState == null)
-                m_TreeViewState = new TreeViewState();
-#pragma warning restore CS0618
+                m_TreeViewState = new BaseTreeViewState();
 
             if (m_MultiColumnHeaderState == null)
                 m_MultiColumnHeaderState = new MultiColumnHeaderState(new MultiColumnHeaderState.Column[]
@@ -477,9 +480,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             m_ConversionReadyState = GetReadyState();
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        bool RemoveAssetStoreFiles(TreeViewItem root, StringBuilder log)
-#pragma warning restore CS0618
+        bool RemoveAssetStoreFiles(BaseTreeViewItem root, StringBuilder log)
         {
             AssetTreeItem node = root as AssetTreeItem;
 

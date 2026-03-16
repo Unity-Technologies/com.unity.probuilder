@@ -58,6 +58,11 @@ static class IntVectorTests
     [Test]
     public static void TestHashCollisions_IVEC3()
     {
+#if UNITY_EDITOR_OSX
+        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
+            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
+#endif
+
         IntVec3[] ivec3 = ArrayUtility.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3)RandVec3(); });
         Assert.IsTrue(TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f);
     }
@@ -65,6 +70,11 @@ static class IntVectorTests
     [Test]
     public static void TestVectorHashOverflow()
     {
+#if UNITY_EDITOR_OSX
+        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
+            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
+#endif
+
         Vector3 over = new Vector3(((float)int.MaxValue) + 10f, 0f, 0f);
         Vector3 under = new Vector3(((float)-int.MaxValue) - 10f, 0f, 0f);
         Vector3 inf = new Vector3(Mathf.Infinity, 0f, 0f);
@@ -80,6 +90,11 @@ static class IntVectorTests
     [Test]
     public static void TestComparison_IVEC3()
     {
+#if UNITY_EDITOR_OSX
+        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
+            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
+#endif
+
         IntVec3 a = (IntVec3)RandVec3();
         IntVec3 b = (IntVec3)(a.value * 2.3f);
         IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);

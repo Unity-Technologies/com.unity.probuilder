@@ -4,13 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
+#if UNITY_6000_3_OR_NEWER
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using BaseTreeView = UnityEditor.IMGUI.Controls.TreeView;
+using BaseTreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem;
+using BaseTreeViewState = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
+
 namespace UnityEngine.ProBuilder.AssetIdRemapUtility
 {
-    sealed class AssetIdRemapBuilderTreeView : TreeView
+    sealed class AssetIdRemapBuilderTreeView : BaseTreeView
     {
         AssetIdRemapObject m_RemapObject = null;
         const float k_RowHeight = 20f;
@@ -24,7 +33,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             set { m_RemapObject = value; }
         }
 
-        public AssetIdRemapBuilderTreeView(TreeViewState state, MultiColumnHeader header)
+        public AssetIdRemapBuilderTreeView(BaseTreeViewState state, MultiColumnHeader header)
             : base(state, header)
         {
             rowHeight = 20f;
@@ -33,13 +42,11 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             extraSpaceBeforeIconAndLabel = 18f;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        protected override TreeViewItem BuildRoot()
+        protected override BaseTreeViewItem BuildRoot()
         {
             StringTupleTreeElement root = new StringTupleTreeElement(0, -1, -1, "Root", "", "");
 
-            var all = new List<TreeViewItem>();
-#pragma warning restore CS0618
+            var all = new List<BaseTreeViewItem>();
 
             int index = 1;
 
@@ -108,9 +115,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
             GUI.Label(rect, m_CellContents);
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        protected override bool DoesItemMatchSearch(TreeViewItem element, string search)
-#pragma warning restore CS0618
+        protected override bool DoesItemMatchSearch(BaseTreeViewItem element, string search)
         {
             StringTupleTreeElement tup = element as StringTupleTreeElement;
 
@@ -201,9 +206,7 @@ namespace UnityEngine.ProBuilder.AssetIdRemapUtility
         }
     }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-    class StringTupleTreeElement : TreeViewItem
-#pragma warning restore CS0618
+    class StringTupleTreeElement : BaseTreeViewItem
     {
         public string item1;
         public string item2;

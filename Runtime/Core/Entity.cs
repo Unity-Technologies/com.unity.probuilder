@@ -8,8 +8,10 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("")]
+    [HelpURL(k_HelpUrl)]
     sealed class Entity : MonoBehaviour
     {
+        const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
         public EntityType entityType { get { return m_EntityType; } }
 
         [SerializeField]

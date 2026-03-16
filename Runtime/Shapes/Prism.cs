@@ -6,10 +6,11 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [prism](../manual/Prism.html) shape.
     /// </summary>
     [Shape("Prism")]
+    [System.Serializable]
     public class Prism : Shape
     {
         internal override void SetParametersToBuiltInShape() { }
-        
+
         /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 

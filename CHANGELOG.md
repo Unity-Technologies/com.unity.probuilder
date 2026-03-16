@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+### Fixed
+
+- [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
+- [UUM-133526] Material Editor: fixed a warning (`GUI Error: Invalid GUILayout state in MaterialEditor view.`) that was thrown when deleting an extra material slot.
+- Fixed warnings related to obsolete API calls with Unity 6.4 and onwards.
+
+## [6.0.9] - 2026-01-30
+
+### Fixed
+
+- [PBLD-276] Fixed a bug where dragging a single face from a connected texture group in the UV Editor caused a visual distortion during the drag operation.
+- [PBLD-279] Fixed an issue where serialization warning would appear upon creating a ProBuilder Shape.
+- [PBLD-284] Fixed InstanceID obsolescence warning appearing on 6000.4 and newer versions.
+- Fixed an issue where a proper unique name wasn't set on duplicated ProBuilder meshes.
+- [UUM-133756] Fixed the help icon for ProBuilder components pointing to the wrong documentation link. It now points to https://docs.unity3d.com/Packages/com.unity.probuilder@latest.
+
+## [6.0.8] - 2025-11-17
 
 ### Changes
 - PositionToolContext made public
