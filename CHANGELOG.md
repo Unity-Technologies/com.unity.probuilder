@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changes
+- Removed a non-necessary utility dictionary that would allocate unnecessary large space in a build. 
+
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
