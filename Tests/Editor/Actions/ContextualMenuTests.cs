@@ -6,56 +6,47 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
-
 /// <summary>
 /// Test the construction of the contextual menu in the Scene View.
 /// It doesn't cover the cases where a MenuAction has a file menu entry.
 /// </summary>
-[ProBuilderMenuAction]
-public class ConfigurableMenuAction : MenuAction
-{
-    internal const string actionName = "Action Without File Menu Entry";
-    internal static bool userHasFileMenuEntry { get; set; }
-    internal static SelectMode userSelectMode { get; set; }
-    internal static bool userEnabled { get;  set; }
-
-    public override ToolbarGroup group
-    {
-        get { return ToolbarGroup.Geometry; }
-    }
-
-    public override Texture2D icon => null;
-
-    public override string iconPath => string.Empty;
-
-    public override TooltipContent tooltip => new TooltipContent(
-        actionName,
-        @"This action should not have a file menu entry."
-    );
-
-    public ConfigurableMenuAction()
-    {
-    }
-
-    protected override ActionResult PerformActionImplementation()
-    {
-        return ActionResult.Success;
-    }
-
-    public override SelectMode validSelectModes => userSelectMode;
-    public override bool enabled => userEnabled;
-    protected internal override bool hasFileMenuEntry => userHasFileMenuEntry;
-}
-
 public class ContextualMenuTests
 {
-    // Cases:
-    // - MenuAction with hasFileMenuEntry = false should show in the Contextual Menu.
-    // - MenuAction with hasFileMenuEntry = true should not show in the File Menu.
-    // - MenuAction with validSelectModes not matching the current selection should be disabled.
-    // - MenuAction with validSelectModes matching the current selection should be enabled.
-    // - MenuAction with enabled = false should be disabled in the Contextual Menu.
-    // - MenuAction with enabled = true should be enabled in the Contextual Menu.
+    [ProBuilderMenuAction]
+    public class ConfigurableMenuAction : MenuAction
+    {
+        internal const string actionName = "Action Without File Menu Entry";
+        internal static bool userHasFileMenuEntry { get; set; }
+        internal static SelectMode userSelectMode { get; set; }
+        internal static bool userEnabled { get; set; }
+
+        public override ToolbarGroup group
+        {
+            get { return ToolbarGroup.Geometry; }
+        }
+
+        public override Texture2D icon => null;
+
+        public override string iconPath => string.Empty;
+
+        public override TooltipContent tooltip => new TooltipContent(
+            actionName,
+            @"This action should not have a file menu entry."
+        );
+
+        public ConfigurableMenuAction()
+        {
+        }
+
+        protected override ActionResult PerformActionImplementation()
+        {
+            return ActionResult.Success;
+        }
+
+        public override SelectMode validSelectModes => userSelectMode;
+        public override bool enabled => userEnabled;
+        protected internal override bool hasFileMenuEntry => userHasFileMenuEntry;
+    }
 
     ProBuilderMesh m_PBMesh;
 
@@ -65,6 +56,7 @@ public class ContextualMenuTests
         m_PBMesh = ShapeFactory.Instantiate(typeof(UnityEngine.ProBuilder.Shapes.Plane));
     }
 
+    [TearDown]
     public void TearDown()
     {
         if (m_PBMesh)
