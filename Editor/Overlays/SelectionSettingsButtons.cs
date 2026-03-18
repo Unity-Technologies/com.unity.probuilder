@@ -155,7 +155,7 @@ namespace UnityEditor.ProBuilder.UI
         ToggleHandleOrientation m_MenuAction;
         readonly List<GUIContent> m_OptionContents = new List<GUIContent>();
 
-        const string k_NormalRotationIconPath = "Packages/com.unity.probuilder/Content/Icons/Modes/ToolHandleElement.png";
+        const string k_NormalRotationIconPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/Modes/ToolHandleElement.png";
 
         public HandleOrientationDropdown()
         {
