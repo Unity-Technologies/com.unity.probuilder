@@ -8,7 +8,6 @@ using UnityEngine.UIElements;
 
 /// <summary>
 /// Test the construction of the contextual menu in the Scene View.
-/// It doesn't cover the cases where a MenuAction has a file menu entry.
 /// </summary>
 public class ContextualMenuTests
 {
