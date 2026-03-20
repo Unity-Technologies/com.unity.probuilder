@@ -10,12 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
-<<<<<<< bugfix/sample-menuaction-disabled
 - [UUM-133530] Fixed the `Set Double Sided` custom action in the Editor Sample, which was previously remaining disabled.
 - [UUM-133530] Ensured that the context menu respects the value of `MenuAction.enabled`.
-=======
 - [UUM-133531] Fixed component icons in Light theme.
->>>>>>> master
 - [UUM-133526] Material Editor: fixed a warning (`GUI Error: Invalid GUILayout state in MaterialEditor view.`) that was thrown when deleting an extra material slot.
 - Fixed warnings related to obsolete API calls with Unity 6.4 and onwards.
 
