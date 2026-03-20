@@ -35,7 +35,6 @@ namespace ProBuilder.ExampleActions
 		/// <summary>
 		/// Determines if the action should be enabled or grayed out.
 		/// </summary>
-		/// <returns></returns>
 		public override bool enabled
 		{
 			get { return base.enabled && MeshSelection.selectedFaceCount > 0; }
@@ -54,7 +53,6 @@ namespace ProBuilder.ExampleActions
 		/// <summary>
 		/// Return a pb_ActionResult indicating the success/failure of action.
 		/// </summary>
-		/// <returns></returns>
 		protected override ActionResult PerformActionImplementation()
 		{
 			var selection = MeshSelection.top.ToArray();
