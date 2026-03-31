@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changes
+
+- [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
+
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
