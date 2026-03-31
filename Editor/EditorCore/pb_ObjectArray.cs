@@ -29,6 +29,16 @@ namespace UnityEditor.ProBuilder
 
             for (int i = 0; i < array.Length; i++)
             {
+#if UNITY_6000_6_OR_NEWER
+                if (array[i] is T)
+                {
+                    arr[i] = (T)System.Convert.ChangeType(array[i], typeof(T));
+                }
+                else
+                {
+                    arr[i] = default(T);
+                }
+#else
                 if (array[i] is ProceduralMaterial)
                 {
                     arr[i] = (T)System.Convert.ChangeType(array[i], typeof(ProceduralMaterial));
@@ -44,8 +54,8 @@ namespace UnityEditor.ProBuilder
                         arr[i] = default(T);
                     }
                 }
+#endif
             }
-
             return (T[])arr;
         }
 
