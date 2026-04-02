@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 ### Changes
-- Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
+- [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
 
 ### Fixed
 
