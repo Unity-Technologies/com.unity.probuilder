@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 
 static class BridgeEdgesTests
 {
@@ -21,16 +24,16 @@ static class BridgeEdgesTests
         cube.ToMesh();
         cube.Refresh();
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
         TestUtility.SaveAssetTemplate(cube.mesh, cube.name);
 #endif
-        TestUtility.AssertMeshAttributesValid(cube.mesh);
-        var template = TestUtility.GetAssetTemplate<Mesh>(cube.name);
+        RuntimeUtility.AssertMeshAttributesValid(cube.mesh);
+        var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(cube.name));
         Assert.IsNotNull(template);
-        TestUtility.AssertAreEqual(template, cube.mesh);
+        RuntimeUtility.AssertAreEqual(template, cube.mesh);
 
-        UnityEngine.Object.DestroyImmediate(cube);
-    }
+        Object.DestroyImmediate(cube);
+     }
 
     [Test]
     public static void Bridge_TwoConnectedEdges_CreatesTriangle()
@@ -45,14 +48,14 @@ static class BridgeEdgesTests
         cube.ToMesh();
         cube.Refresh();
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
         TestUtility.SaveAssetTemplate(cube.mesh, cube.name);
 #endif
-        TestUtility.AssertMeshAttributesValid(cube.mesh);
-        var template = TestUtility.GetAssetTemplate<Mesh>(cube.name);
+        RuntimeUtility.AssertMeshAttributesValid(cube.mesh);
+        var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(cube.name));
         Assert.IsNotNull(template);
-        TestUtility.AssertAreEqual(template, cube.mesh);
+        RuntimeUtility.AssertAreEqual(template, cube.mesh);
 
-        UnityEngine.Object.DestroyImmediate(cube);
+        Object.DestroyImmediate(cube);
     }
 }

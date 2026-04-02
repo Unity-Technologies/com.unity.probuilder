@@ -6,12 +6,17 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 
 static class SubdivideElementsTests
 {
-    public static List<Type> shapeTypes {
-        get {
+    public static List<Type> shapeTypes
+    {
+        get
+        {
             var list = new List<Type>();
             var types = typeof(Shape).Assembly.GetTypes();
             foreach (var type in types)
@@ -38,8 +43,8 @@ static class SubdivideElementsTests
             pb.ToMesh();
             pb.Refresh();
 
-            TestUtility.AssertMeshIsValid(pb);
-            TestUtility.AssertMeshAttributesValid(pb.mesh);
+            RuntimeUtility.AssertMeshIsValid(pb);
+            RuntimeUtility.AssertMeshAttributesValid(pb.mesh);
 
             Assert.That(faceCount, Is.LessThan(pb.faceCount));
         }
@@ -68,7 +73,7 @@ static class SubdivideElementsTests
     [Test]
     public static void SubdivideSplitFaces_SeparatesAndSubdivides()
     {
-        var cube = TestUtility.CreateCubeWithNonContiguousMergedFace();
+        var cube = RuntimeUtility.CreateCubeWithNonContiguousMergedFace();
 
         try
         {
@@ -79,7 +84,7 @@ static class SubdivideElementsTests
         }
         finally
         {
-            if(cube.item1 != null)
+            if (cube.item1 != null)
                 UObject.DestroyImmediate(cube.item1.gameObject);
         }
     }

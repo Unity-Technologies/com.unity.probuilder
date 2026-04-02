@@ -4,7 +4,10 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 using Sprite = UnityEngine.Sprite;
 
 static class TextureUnwrapTests
@@ -52,16 +55,15 @@ static class TextureUnwrapTests
             mesh.ToMesh();
             mesh.Refresh();
 
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
 
-            string templateName = shape.ToString() + "offset: " + offset.ToString() + " rotation: " + rotation;
-
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
 
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-            TestUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
         }
         catch (System.Exception e)
         {
@@ -100,12 +102,14 @@ static class TextureUnwrapTests
             var name = mesh.name + "-Anchor(" + anchor + ")";
             mesh.name = name;
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, name);
 #endif
 
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(name);
-            TestUtility.AssertAreEqual(template, mesh.mesh, message: name);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh, message: name);
         }
         catch (System.Exception e)
         {
@@ -157,12 +161,14 @@ static class TextureUnwrapTests
             var name = shape.name + "-Fill(" + fill + ")";
             shape.name = name;
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(shape.mesh, name);
 #endif
 
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(name);
-            TestUtility.AssertAreEqual(template, shape.mesh, message: name);
+            RuntimeUtility.AssertMeshAttributesValid(shape.mesh);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, shape.mesh, message: name);
         }
         catch (System.Exception e)
         {
@@ -191,12 +197,14 @@ static class TextureUnwrapTests
         shape.Refresh();
         shape.name += "-UV-World-Space";
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
         TestUtility.SaveAssetTemplate(shape.mesh, shape.name);
 #endif
 
-        Mesh template = TestUtility.GetAssetTemplate<Mesh>(shape.name);
-        TestUtility.AssertAreEqual(template, shape.mesh, message: shape.name);
+        RuntimeUtility.AssertMeshAttributesValid(shape.mesh);
+        var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(shape.name));
+        Assert.IsNotNull(template);
+        RuntimeUtility.AssertAreEqual(template, shape.mesh, message: shape.name);
         UObject.DestroyImmediate(shape.gameObject);
     }
 }

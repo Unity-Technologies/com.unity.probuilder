@@ -4,7 +4,10 @@ using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 
 static class VertexColorTests
 {
@@ -19,12 +22,13 @@ static class VertexColorTests
         dup.ToMesh();
         dup.Refresh();
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
         TestUtility.SaveAssetTemplate(dup.mesh, dup.name);
 #endif
-        var compare = TestUtility.GetAssetTemplate<Mesh>(dup.name);
-
-        TestUtility.AssertAreEqual(compare, dup.mesh);
+        RuntimeUtility.AssertMeshAttributesValid(dup.mesh);
+        var compare = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(dup.name));
+        Assert.IsNotNull(compare);
+        RuntimeUtility.AssertAreEqual(compare, dup.mesh);
 
         UObject.DestroyImmediate(cube);
         UObject.DestroyImmediate(dup);

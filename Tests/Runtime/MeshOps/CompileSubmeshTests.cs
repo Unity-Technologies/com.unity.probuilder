@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UObject = UnityEngine.Object;
-using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Tests;
 
 static class CompileSubmeshTests
 {
@@ -55,8 +55,8 @@ static class CompileSubmeshTests
 
         mesh.renderer.sharedMaterials = new Material[2]
         {
-            TestUtility.redMaterial,
-            TestUtility.blueMaterial
+            RuntimeUtility.redMaterial,
+            RuntimeUtility.blueMaterial
         };
 
         // Should map to submesh 0
@@ -78,8 +78,8 @@ static class CompileSubmeshTests
 
         mesh.renderer.sharedMaterials = new Material[2]
         {
-            TestUtility.redMaterial,
-            TestUtility.blueMaterial
+            RuntimeUtility.redMaterial,
+            RuntimeUtility.blueMaterial
         };
 
         mesh.facesInternal[0].submeshIndex = 1;
@@ -92,8 +92,8 @@ static class CompileSubmeshTests
         var compiled0 = mesh.mesh.GetTriangles(0);
         var compiled1 = mesh.mesh.GetTriangles(1);
 
-        TestUtility.AssertSequenceEqual(submesh0, compiled0);
-        TestUtility.AssertSequenceEqual(submesh1, compiled1);
+        RuntimeUtility.AssertSequenceEqual(submesh0, compiled0);
+        RuntimeUtility.AssertSequenceEqual(submesh1, compiled1);
 
         UObject.DestroyImmediate(mesh);
     }
@@ -105,9 +105,9 @@ static class CompileSubmeshTests
 
         mesh.renderer.sharedMaterials = new Material[3]
         {
-            TestUtility.redMaterial,
-            TestUtility.blueMaterial,
-            TestUtility.greenMaterial
+            RuntimeUtility.redMaterial,
+            RuntimeUtility.blueMaterial,
+            RuntimeUtility.greenMaterial
         };
 
         // Should map to 0
@@ -129,9 +129,9 @@ static class CompileSubmeshTests
         var compiled1 = mesh.mesh.GetTriangles(1);
         var compiled2 = mesh.mesh.GetTriangles(2);
 
-        TestUtility.AssertSequenceEqual(submesh0, compiled0);
-        TestUtility.AssertSequenceEqual(submesh1, compiled1);
-        TestUtility.AssertSequenceEqual(submesh2, compiled2);
+        RuntimeUtility.AssertSequenceEqual(submesh0, compiled0);
+        RuntimeUtility.AssertSequenceEqual(submesh1, compiled1);
+        RuntimeUtility.AssertSequenceEqual(submesh2, compiled2);
 
         UObject.DestroyImmediate(mesh);
     }
@@ -168,17 +168,17 @@ static class CompileSubmeshTests
 
         mesh.renderer.sharedMaterials = new Material[]
         {
-            TestUtility.redMaterial,
-            TestUtility.greenMaterial,
-            TestUtility.blueMaterial
+            RuntimeUtility.redMaterial,
+            RuntimeUtility.greenMaterial,
+            RuntimeUtility.blueMaterial
         };
 
         foreach (var face in mesh.facesInternal)
             face.submeshIndex = -1;
 
 #pragma warning disable 618
-        mesh.facesInternal[0].material = TestUtility.greenMaterial;
-        mesh.facesInternal[1].material = TestUtility.blueMaterial;
+        mesh.facesInternal[0].material = RuntimeUtility.greenMaterial;
+        mesh.facesInternal[1].material = RuntimeUtility.blueMaterial;
 #pragma warning restore 618
 
         mesh.ToMesh();

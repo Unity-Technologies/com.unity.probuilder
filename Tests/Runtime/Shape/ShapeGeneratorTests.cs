@@ -1,10 +1,13 @@
 using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Tests;
 using System.Collections.Generic;
 using System;
 using UnityEngine.ProBuilder.Shapes;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
+using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 
 class ShapeGeneratorTests
 {
@@ -30,7 +33,7 @@ class ShapeGeneratorTests
 
         Assume.That(pb, Is.Not.Null);
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
         // save a template mesh. the mesh is saved in a the Templates folder with the path extracted from:
         // Templates/{Asset Type}/{CallingFilePathRelativeToTests}/{MethodName}/{AssetName}.asset
         // note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need
@@ -39,11 +42,11 @@ class ShapeGeneratorTests
 #else
         try
         {
-            TestUtility.AssertMeshAttributesValid(pb.mesh);
 
-            // Loads an asset by name from the template path. See also pb_TestUtility.GetTemplatePath
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(type.ToString());
-            Assert.IsTrue(TestUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
+            RuntimeUtility.AssertMeshAttributesValid(pb.mesh);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(type.ToString()));
+            Assert.IsNotNull(template);
+            Assert.IsTrue(RuntimeUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
         }
         finally
         {
