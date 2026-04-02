@@ -39,7 +39,7 @@ public class ProBuilderSettings : AnnotatedSettingsBase
                 ReleaseOptions = new ReleaseOptions() { IsReleasing = true },
                 ValidationOptions = new ValidationOptions()
                 {
-                    AdditionalUtrArguments = ["--fail-on-assert"]
+                    AdditionalUtrArguments = ["--fail-on-assert --coverage-pkg-version=1.3.0"]
                 }
             }
         }
