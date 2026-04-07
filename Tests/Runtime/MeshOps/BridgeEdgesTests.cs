@@ -32,7 +32,7 @@ static class BridgeEdgesTests
         Assert.IsNotNull(template);
         RuntimeUtility.AssertAreEqual(template, cube.mesh);
 
-        Object.DestroyImmediate(cube);
+        Object.DestroyImmediate(cube.gameObject);
      }
 
     [Test]
@@ -56,6 +56,6 @@ static class BridgeEdgesTests
         Assert.IsNotNull(template);
         RuntimeUtility.AssertAreEqual(template, cube.mesh);
 
-        Object.DestroyImmediate(cube);
+        Object.DestroyImmediate(cube.gameObject);
     }
 }

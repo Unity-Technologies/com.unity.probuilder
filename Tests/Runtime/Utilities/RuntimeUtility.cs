@@ -220,12 +220,6 @@ namespace UnityEngine.ProBuilder.Tests
                 return null;
             }
 
-            // Get the calling file path relative to the `Tests/` directory
-            string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
-            //string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
-            //string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
-            //string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).Replace("\\", "/").TrimStart('/');
-
             string methodName = calling.GetMethod().Name;
 
             return string.Format("{0}/{1}/{2}/{3}",

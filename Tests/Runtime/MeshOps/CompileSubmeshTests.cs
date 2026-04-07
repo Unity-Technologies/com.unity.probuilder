@@ -95,7 +95,7 @@ static class CompileSubmeshTests
         RuntimeUtility.AssertSequenceEqual(submesh0, compiled0);
         RuntimeUtility.AssertSequenceEqual(submesh1, compiled1);
 
-        UObject.DestroyImmediate(mesh);
+        UObject.DestroyImmediate(mesh.gameObject);
     }
 
     [Test]
