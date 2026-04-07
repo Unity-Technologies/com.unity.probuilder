@@ -45,7 +45,7 @@ static class CompileSubmeshTests
         mesh.ToMesh();
         Assert.AreEqual(3, mesh.mesh.subMeshCount);
 
-        UObject.DestroyImmediate(mesh.gameObject);
+        UObject.Destroy(mesh.gameObject);
     }
 
     [Test]
@@ -95,7 +95,7 @@ static class CompileSubmeshTests
         RuntimeUtility.AssertSequenceEqual(submesh0, compiled0);
         RuntimeUtility.AssertSequenceEqual(submesh1, compiled1);
 
-        UObject.DestroyImmediate(mesh.gameObject);
+        UObject.Destroy(mesh.gameObject);
     }
 
     [Test]
@@ -133,7 +133,7 @@ static class CompileSubmeshTests
         RuntimeUtility.AssertSequenceEqual(submesh1, compiled1);
         RuntimeUtility.AssertSequenceEqual(submesh2, compiled2);
 
-        UObject.DestroyImmediate(mesh);
+        UObject.Destroy(mesh);
     }
 
     [Test]
@@ -193,6 +193,6 @@ static class CompileSubmeshTests
         Assert.AreEqual(1, mesh.facesInternal[0].submeshIndex);
         Assert.AreEqual(2, mesh.facesInternal[1].submeshIndex);
 
-        UObject.DestroyImmediate(mesh.gameObject);
+        UObject.Destroy(mesh.gameObject);
     }
 }
