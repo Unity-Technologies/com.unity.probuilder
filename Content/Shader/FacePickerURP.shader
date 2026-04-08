@@ -64,5 +64,5 @@ Shader "Hidden/ProBuilder/FacePickerURP"
     }
     
     // Fallback to built-in renderer version
-    Fallback "Hidden/ProBuilder/VertexPicker"
+    Fallback "Hidden/ProBuilder/FacePicker"
 }

@@ -1,7 +1,5 @@
 Shader "Hidden/ProBuilder/VertexPickerURP"
 {
-    Properties {}
-
     SubShader
     {
         PackageRequirements
@@ -61,7 +59,7 @@ Shader "Hidden/ProBuilder/VertexPickerURP"
                 output.positionCS = GetPickerColor(output.positionCS, input.uv1);
                 output.uv = input.uv0.xy;
                 output.color = input.color;
-
+                
                 return output;
             }
 

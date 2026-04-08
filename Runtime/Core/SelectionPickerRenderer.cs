@@ -494,7 +494,7 @@ namespace UnityEngine.ProBuilder
 
             GenerateVertexPickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-            BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+            BuiltinMaterials.vertexPickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
             Texture2D tex = pickerRenderer.RenderLookupTexture(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
@@ -536,7 +536,7 @@ namespace UnityEngine.ProBuilder
             GameObject[] depthObjects, pickerObjects;
             GenerateEdgePickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
 
-            BuiltinMaterials.facePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
+            BuiltinMaterials.edgePickerMaterial.SetColor(k_FacePickerOcclusionTintUniform, k_Blackf);
 
             Texture2D tex = pickerRenderer.RenderLookupTexture(camera, BuiltinMaterials.selectionPickerShader, "ProBuilderPicker", width, height);
 
@@ -632,7 +632,7 @@ namespace UnityEngine.ProBuilder
                     var pb = selection[i];
 
                     GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Depth Mask)", pb.transform, pb.mesh,
-                        BuiltinMaterials.facePickerMaterial, true);
+                        BuiltinMaterials.vertexPickerMaterial, true);
 
                     depthObjects[i] = go;
                 }
@@ -678,7 +678,7 @@ namespace UnityEngine.ProBuilder
 
                     // copy the select gameobject just for z-write
                     GameObject go = InternalUtility.MeshGameObjectWithTransform(pb.name + " (Depth Mask)", pb.transform, pb.mesh,
-                        BuiltinMaterials.facePickerMaterial, true);
+                        BuiltinMaterials.edgePickerMaterial, true);
 
                     depthObjects[i] = go;
                 }

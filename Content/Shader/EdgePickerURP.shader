@@ -1,7 +1,5 @@
 Shader "Hidden/ProBuilder/EdgePickerURP"
 {
-    Properties {}
-
     SubShader
     {
         PackageRequirements
@@ -63,4 +61,7 @@ Shader "Hidden/ProBuilder/EdgePickerURP"
             ENDHLSL
         }
     }
+    
+    // Fallback to built-in renderer version
+    Fallback "Hidden/ProBuilder/EdgePicker"
 }
