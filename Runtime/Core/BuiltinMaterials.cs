@@ -69,13 +69,13 @@ namespace UnityEngine.ProBuilder
         static Material s_UnityDefaultDiffuse;
         static Material s_ShapePreviewMaterial;
 
-        static string k_EdgePickerMaterial = "Materials/EdgePicker";
-        static string k_FacePickerMaterial = "Materials/FacePicker";
-        static string k_VertexPickerMaterial = "Materials/VertexPicker";
+        const string k_EdgePickerMaterial = "Materials/EdgePicker";
+        const string k_FacePickerMaterial = "Materials/FacePicker";
+        const string k_VertexPickerMaterial = "Materials/VertexPicker";
 
-        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
-        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
-        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+        const string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
+        const string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
+        const string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
 
         static void Init()
         {
@@ -108,6 +108,21 @@ namespace UnityEngine.ProBuilder
                 s_EdgePickerMaterial = new Material(Shader.Find(k_EdgePickerShader));
             }
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset the static variables to their initial values, these 3 static variables will be re-initialized when accessed
+            s_DefaultMaterial = null;
+            s_UnityDefaultDiffuse = null;
+            s_ShapePreviewMaterial = null;
+
+            // Re-initialize the rest of the static variables
+            s_IsInitialized = false;
+            Init();
+        }
+#endif
 
         /// <summary>
         /// Tests whether the current graphics device supports geometry shaders.
