@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [UUM-138957] Removed ProBuilder Runtime tests references to UnityEditor.
 
+### Changes
+
+- [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
+
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
