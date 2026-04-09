@@ -8,7 +8,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 
-class ProBuilderizeTests : TemporaryAssetTest
+class MeshImporterTests : TemporaryAssetTest
 {
     [Test]
     public static void ImportCube_MatchesDefaultCube()
@@ -50,20 +50,20 @@ class ProBuilderizeTests : TemporaryAssetTest
         Assert.IsNotNull(source);
 
         var instance = (GameObject)UObject.Instantiate(source);
-            var mf = instance.gameObject.GetComponent<MeshFilter>();
-            var mr = instance.gameObject.GetComponent<MeshRenderer>();
+        var mf = instance.gameObject.GetComponent<MeshFilter>();
+        var mr = instance.gameObject.GetComponent<MeshRenderer>();
         var result = new GameObject().AddComponent<ProBuilderMesh>();
-            var importer = new MeshImporter(mf.sharedMesh, mr.sharedMaterials, result);
+        var importer = new MeshImporter(mf.sharedMesh, mr.sharedMaterials, result);
 
-            Assert.DoesNotThrow(() =>
+        Assert.DoesNotThrow(() =>
+        {
+            importer.Import(new MeshImportSettings()
             {
-                importer.Import(new MeshImportSettings()
-                {
-                    quads = true,
-                    smoothing = false,
-                    smoothingAngle = 1f
-                });
+                quads = true,
+                smoothing = false,
+                smoothingAngle = 1f
             });
+        });
 
         result.Rebuild();
 

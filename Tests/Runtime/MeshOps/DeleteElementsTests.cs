@@ -4,9 +4,12 @@ using UnityEngine;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.ProBuilder.Tests.Framework;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
+using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 
 static class DeleteElementsTests
 {
@@ -99,13 +102,13 @@ static class DeleteElementsTests
             mesh.ToMesh();
             mesh.Refresh();
 
-#if PB_CREATE_TEST_MESH_TEMPLATES
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
             Assert.IsNotNull(template);
-            TestUtility.AssertAreEqual(template, mesh.mesh);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh);
         }
         catch (System.Exception e)
         {
@@ -229,7 +232,7 @@ static class DeleteElementsTests
         mesh.ToMesh();
         mesh.Refresh();
 
-        TestUtility.AssertMeshAttributesValid(mesh.mesh);
+        RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
         Assert.AreEqual(mesh.vertexCount, meshVertexCount - totalFaceVertexCount);
     }
 
