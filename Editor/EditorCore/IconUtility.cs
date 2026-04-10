@@ -20,6 +20,14 @@ namespace UnityEditor.ProBuilder
 
         static string s_IconFolderPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/";
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_Icons.Clear();
+        }
+#endif
+
         /// <summary>
         /// Load an icon from icons folder located in the package's 'Editor Default Resources'.
         /// Naming convention is: "path/to/iconName" (without extension). Use the 'd_' prefix for dark skin  icons.

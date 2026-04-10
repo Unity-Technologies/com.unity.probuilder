@@ -53,6 +53,16 @@ namespace UnityEditor.ProBuilder
                 miniButton.padding = new RectOffset(6, 6, 3, 3);
                 miniButton.margin = new RectOffset(4, 4, 4, 0);
             }
+
+#if UNITY_EDITOR
+            internal static void Reset()
+            {
+                s_Initialized = false;
+                miniButton = null;
+                unwrapSettingsFoldout = false;
+                Init();
+            }
+#endif
         }
 
         [UserSettingBlock("Mesh Settings")]
@@ -105,6 +115,14 @@ namespace UnityEditor.ProBuilder
             UL.bakeCompleted += OnLightmappingCompleted;
             Undo.postprocessModifications += PostprocessModifications;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            Styles.Reset();
+        }
+#endif
 
         /// <summary>
         /// Toggles the LightmapStatic bit of an objects Static flags.

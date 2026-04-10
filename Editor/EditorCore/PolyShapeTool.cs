@@ -48,6 +48,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetDrawPolyShapeToolStatics()
+        {
+            s_IconContent = null;
+        }
+#endif
+
         /// <inheritdoc/>
         public override void OnActivated()
         {
@@ -372,6 +380,15 @@ namespace UnityEditor.ProBuilder
                 return s_IconContent;
             }
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetPolyShapeToolStatics()
+        {
+            s_HeightMouseOffset = 0f;
+            s_IconContent = null;
+        }
+#endif
 
         void OnEnable()
         {

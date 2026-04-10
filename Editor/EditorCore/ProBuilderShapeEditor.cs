@@ -37,6 +37,14 @@ namespace UnityEditor.ProBuilder
 
         static bool s_foldoutEnabled = true;
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_foldoutEnabled = true;
+        }
+#endif
+
         public GUIContent m_ShapePropertyLabel = new GUIContent("Shape Properties");
         readonly GUIContent k_ShapePivotLabel = new GUIContent("Pivot");
 
