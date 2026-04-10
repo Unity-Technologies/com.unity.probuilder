@@ -216,7 +216,7 @@ namespace UnityEditor.ProBuilder
                 pb.Optimize();
             }
 
-            EditorUtility.ShowNotification("Set Vertex Colors\n" + ColorUtility.GetColorName(col));
+            EditorUtility.ShowNotification("Vertex Colors Set");
         }
     }
 }
