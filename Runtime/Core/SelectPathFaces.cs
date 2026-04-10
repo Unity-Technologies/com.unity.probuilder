@@ -12,6 +12,19 @@ namespace UnityEngine.ProBuilder
         static List<WingedEdge> s_cachedWings;
         static Dictionary<Face, int> s_cachedFacesIndex = new Dictionary<Face, int>();
 
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_cachedPredecessors = null;
+            s_cachedStart = -1;
+            s_cachedMesh = null;
+            s_cachedFacesCount = -1;
+            s_cachedWings = null;
+            s_cachedFacesIndex.Clear();
+        }
+#endif
+
         /// <summary>
         /// Calculates the indexes of all faces in the shortest path between start and end
         /// </summary>
@@ -30,7 +43,7 @@ namespace UnityEngine.ProBuilder
 
             List<int> path;
 
-            if (start == s_cachedStart && mesh == s_cachedMesh &&  mesh.faceCount == s_cachedFacesCount)
+            if (start == s_cachedStart && mesh == s_cachedMesh && mesh.faceCount == s_cachedFacesCount)
                 return GetMinimalPath(s_cachedPredecessors, start, end);
 
             var predecessors = Dijkstra(mesh, start);

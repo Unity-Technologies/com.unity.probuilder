@@ -10,6 +10,14 @@ namespace UnityEngine.ProBuilder
     {
         static Dictionary<Transform, Transform[]> s_ChildStack = new Dictionary<Transform, Transform[]>();
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_ChildStack.Clear();
+        }
+#endif
+
         /// <summary>
         /// Unparent all children from a transform, saving them for later re-parenting (see ReparentChildren).
         /// </summary>

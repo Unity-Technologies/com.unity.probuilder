@@ -17,6 +17,18 @@ namespace UnityEngine.ProBuilder
         static readonly Vector2 k_Billboard2 = new Vector2( 1f, -1f);
         static readonly Vector2 k_Billboard3 = new Vector2( 1f,  1f);
 
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_Vector2List.Clear();
+            s_Vector3List.Clear();
+            s_Vector4List.Clear();
+            s_IndexList.Clear();
+            s_SharedVertexIndexList.Clear();
+        }
+#endif
+
         internal static void CreateFaceMesh(ProBuilderMesh mesh, Mesh target)
         {
             target.Clear();

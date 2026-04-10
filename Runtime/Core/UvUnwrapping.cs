@@ -8,6 +8,15 @@ namespace UnityEngine.ProBuilder
         static Vector2 s_TempVector2 = Vector2.zero;
         static readonly List<int> s_IndexBuffer = new List<int>(64);
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad_UvUnwrapping()
+        {
+            s_TempVector2 = Vector2.zero;
+            s_IndexBuffer.Clear();
+        }
+#endif
+
         internal static void Unwrap(ProBuilderMesh mesh, Face face, Vector3 projection = default)
         {
             Projection.PlanarProject(mesh, face, projection != Vector3.zero ? projection : Vector3.zero);

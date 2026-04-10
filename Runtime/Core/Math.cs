@@ -570,6 +570,17 @@ namespace UnityEngine.ProBuilder
         // Temporary vector3 values
         static Vector3 tv1, tv2, tv3, tv4;
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            tv1 = default;
+            tv2 = default;
+            tv3 = default;
+            tv4 = default;
+        }
+#endif
+
         /// <summary>
         /// Non-allocating version of Ray / Triangle intersection.
         /// </summary>
@@ -1290,7 +1301,7 @@ namespace UnityEngine.ProBuilder
         {
             return Mathf.Abs(value.sqrMagnitude) < float.Epsilon ? Vector2.right : value.normalized;
         }
-        
+
         internal static Vector3 EnsureUnitVector(Vector3 value)
         {
             return Mathf.Abs(value.sqrMagnitude) < float.Epsilon ? Vector3.up : value.normalized;

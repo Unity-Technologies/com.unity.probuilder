@@ -81,13 +81,21 @@ namespace UnityEngine.ProBuilder
 
 		static List<Vector2> s_UVTransformProjectionBuffer = new List<Vector2>(8);
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad_UvAutoManualConversion()
+        {
+            s_UVTransformProjectionBuffer.Clear();
+        }
+#endif
+
         /// <summary>
-        /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped (manualUV = false),
-        /// this returns an unmodified copy of the AutoUnwrapSettings. If the face is manually unwrapped, it returns
-        /// the auto unwrap settings computed from GetUVTransform.
-        /// </summary>
-        /// <returns></returns>
-        internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
+		/// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped (manualUV = false),
+		/// this returns an unmodified copy of the AutoUnwrapSettings. If the face is manually unwrapped, it returns
+		/// the auto unwrap settings computed from GetUVTransform.
+		/// </summary>
+		/// <returns></returns>
+		internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
         {
             if (!face.manualUV)
                 return new AutoUnwrapSettings(face.uv);
