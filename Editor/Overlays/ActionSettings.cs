@@ -116,6 +116,14 @@ namespace UnityEditor.ProBuilder
             s_Instance?.Dispose();
         }
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        internal static void ResetPreviewActionManagerStatics()
+        {
+            Cancel();
+        }
+#endif
+
         internal static void Validate()
         {
             s_Instance?.ValidateInternal();
@@ -224,7 +232,15 @@ namespace UnityEditor.ProBuilder
     public class MenuActionSettings : EditorAction
     {
         static bool s_CanTriggerNewAction = true;
-        
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetMenuActionSettingsStatics()
+        {
+            s_CanTriggerNewAction = true;
+        }
+#endif
+
         /// <summary>
         /// MenuActionSettings constructor.
         /// </summary>
