@@ -35,6 +35,15 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 	 */
 	class TriangulationUtil {
 		public static double EPSILON = 1e-12;
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            EPSILON = 1e-12;
+        }
+#endif
+
 		/// <summary>
 		///   Requirements:
 		/// 1. a,b and c form a triangle.
@@ -59,7 +68,8 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 		/// <param name="pc">triangle point</param>
 		/// <param name="pd">point opposite a</param>
 		/// <returns>true if d is inside circle, false if on circle edge</returns>
-		public static bool SmartIncircle( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd ) {
+		public static bool SmartIncircle(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
+		{
 			double pdx = pd.X;
 			double pdy = pd.Y;
 			double adx = pa.X - pdx;
