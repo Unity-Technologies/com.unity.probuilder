@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
             m_Overlay.displayed = true;
+            SceneView.RepaintAll();
         }
 
         public void Dispose()
