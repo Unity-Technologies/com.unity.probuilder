@@ -77,6 +77,21 @@ namespace UnityEngine.ProBuilder
         const string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
         const string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset the static variables to their initial values, these 3 static variables will be re-initialized when accessed
+            s_DefaultMaterial = null;
+            s_UnityDefaultDiffuse = null;
+            s_ShapePreviewMaterial = null;
+
+            // Re-initialize the rest of the static variables
+            s_IsInitialized = false;
+            Init();
+        }
+#endif
+
         static void Init()
         {
             if (s_IsInitialized)
@@ -109,20 +124,6 @@ namespace UnityEngine.ProBuilder
             }
         }
 
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void ResetStaticsOnLoad()
-        {
-            // Reset the static variables to their initial values, these 3 static variables will be re-initialized when accessed
-            s_DefaultMaterial = null;
-            s_UnityDefaultDiffuse = null;
-            s_ShapePreviewMaterial = null;
-
-            // Re-initialize the rest of the static variables
-            s_IsInitialized = false;
-            Init();
-        }
-#endif
 
         /// <summary>
         /// Tests whether the current graphics device supports geometry shaders.

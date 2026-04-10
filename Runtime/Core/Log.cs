@@ -57,6 +57,17 @@ namespace UnityEngine.ProBuilder
         // Path to the log file.
         static string s_LogFilePath = k_ProBuilderLogFileName;
 
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_logStack.Clear();
+            s_LogLevel = LogLevel.All;
+            s_Output = LogOutput.Console;
+            s_LogFilePath = k_ProBuilderLogFileName;
+        }
+#endif
+
         /// <summary>
         /// Push the current log level in the stack. See also PopLogLevel.
         /// </summary>
