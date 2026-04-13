@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 ### Changes
+
+- [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
 - [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
 
 ### Fixed
