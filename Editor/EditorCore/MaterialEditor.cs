@@ -173,24 +173,8 @@ namespace UnityEditor.ProBuilder
                     if (s_CurrentPalette != null)
                         return s_CurrentPalette;
 
-                    // If no existing pb_MaterialPalette objects in project:
-                    // - create a new one
-                    // - check for the older pb_ObjectArray and copy data to new default
+                    // If no existing pb_MaterialPalette objects in project create a new one
                     s_CurrentPalette = FileUtility.LoadRequired<MaterialPalette>(s_MaterialPalettePath);
-
-                    string[] m_LegacyMaterialArrays = AssetDatabase.FindAssets("t:pb_ObjectArray");
-
-                    for (int i = 0; m_LegacyMaterialArrays != null && i < m_LegacyMaterialArrays.Length; i++)
-                    {
-                        pb_ObjectArray poa = AssetDatabase.LoadAssetAtPath<pb_ObjectArray>(AssetDatabase.GUIDToAssetPath(m_LegacyMaterialArrays[i]));
-
-                        // Make sure there's actually something worth copying
-                        if (poa != null && poa.array != null && poa.array.Any(x => x != null && x is Material))
-                        {
-                            s_CurrentPalette.array = poa.GetArray<Material>();
-                            break;
-                        }
-                    }
                 }
                 return s_CurrentPalette;
             }
@@ -361,6 +345,8 @@ namespace UnityEditor.ProBuilder
                         System.Array.Copy(materials, 0, temp, 0, materials.Length - 1);
                         materials = temp;
                         SaveUserMaterials(materials);
+
+                        GUIUtility.ExitGUI();
                         return;
                     }
                     GUI.backgroundColor = Color.white;

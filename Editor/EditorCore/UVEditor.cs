@@ -313,11 +313,11 @@ namespace UnityEditor.ProBuilder
             Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ScaleTool" });
             Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ViewToolMove" });
 
-            icon_textureMode_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On", IconSkin.Pro);
-            icon_textureMode_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off", IconSkin.Pro);
+            icon_textureMode_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On");
+            icon_textureMode_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off");
 
-            icon_sceneUV_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On", IconSkin.Pro);
-            icon_sceneUV_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off", IconSkin.Pro);
+            icon_sceneUV_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On");
+            icon_sceneUV_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off");
 
             gc_RenderUV.image = IconUtility.GetIcon("UVEditor/camera-64x64");
 

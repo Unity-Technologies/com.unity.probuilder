@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder
         internal const HideFlags k_MeshFilterHideFlags = HideFlags.HideInInspector | HideFlags.NotEditable;
 #endif
         const string k_HelpUrl = "https://docs.unity3d.com/Packages/com.unity.probuilder@latest";
-        const string k_IconPath = "Packages/com.unity.probuilder/Content/Icons/EditableMesh/EditableMesh.png";
+        const string k_IconPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditableMesh.png";
 
         /// <summary>
         /// Stores the maximum number of UV channels that the ProBuilderMesh format supports.
