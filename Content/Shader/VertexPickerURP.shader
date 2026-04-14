@@ -20,7 +20,6 @@ Shader "Hidden/ProBuilder/VertexPickerURP"
         Pass
         {
             Name "Vertices"
-            // Tags { "LightMode"="SRPDefaultUnlit" }
             Tags { "LightMode"="ProBuilderPickerA" }
 
             ZTest LEqual
