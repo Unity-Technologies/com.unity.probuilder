@@ -22,7 +22,7 @@ public class Triggers : RecipeBase
         HashSet<IJobBuilder> builders =
         [
             JobBuilder.Create("Pull Request Trigger")
-                .WithDependencies(allValidationJobs.Where(d => d.JobId.Contains("macos")))
+                .WithDependencies(allValidationJobs.Where(d => d.JobId.Contains("macos") || d.JobId.Contains("windows")))
                 .WithPullRequestTrigger(pr => pr.ExcludeDraft().And().WithTargetBranch("master"),
                     true, cancelLeftoverJobs: CancelLeftoverJobs.Always)
         ];
