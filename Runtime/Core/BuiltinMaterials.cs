@@ -69,13 +69,27 @@ namespace UnityEngine.ProBuilder
         static Material s_UnityDefaultDiffuse;
         static Material s_ShapePreviewMaterial;
 
+#if PB_URP_MODE
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePickerURP";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPickerURP";
+        static string k_FacePickerShader = "Hidden/ProBuilder/FacePickerURP";
+
+        static string k_EdgePickerMaterial = "Materials/EdgePickerURP";
+        static string k_FacePickerMaterial = "Materials/FacePickerURP";
+        static string k_VertexPickerMaterial = "Materials/VertexPickerURP";
+
+        const string k_SelectionPickerShader = "Hidden/ProBuilder/SelectionPickerURP";
+#else
+        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
+        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
+        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+
         static string k_EdgePickerMaterial = "Materials/EdgePicker";
         static string k_FacePickerMaterial = "Materials/FacePicker";
         static string k_VertexPickerMaterial = "Materials/VertexPicker";
 
-        static string k_EdgePickerShader = "Hidden/ProBuilder/EdgePicker";
-        static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
-        static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
+        const string k_SelectionPickerShader = "Hidden/ProBuilder/SelectionPicker";
+#endif
 
         static void Init()
         {
@@ -88,7 +102,7 @@ namespace UnityEngine.ProBuilder
             s_GeometryShadersSupported = geo != null && geo.isSupported;
 
             // SelectionPicker shader
-            s_SelectionPickerShader = (Shader)Shader.Find("Hidden/ProBuilder/SelectionPicker");
+            s_SelectionPickerShader = (Shader)Shader.Find(k_SelectionPickerShader);
 
             if ((s_FacePickerMaterial = Resources.Load<Material>(k_FacePickerMaterial)) == null)
             {
