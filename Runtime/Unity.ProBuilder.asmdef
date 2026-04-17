@@ -1,9 +1,12 @@
 {
     "name": "Unity.ProBuilder",
+    "rootNamespace": "",
     "references": [
         "Unity.ProBuilder.Poly2Tri",
         "Unity.ProBuilder.KdTree",
-        "Unity.RenderPipelines.HighDefinition.Runtime"
+        "Unity.RenderPipelines.HighDefinition.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -22,6 +25,11 @@
             "name": "com.unity.modules.particlesystem",
             "expression": "1.0.0",
             "define": "USING_PARTICLE_SYSTEM"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "17.0.0",
+            "define": "PB_URP_MODE"
         }
     ],
     "noEngineReferences": false
