@@ -54,7 +54,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetMeshEditorStylesOnLoad()
         {
             Styles.ResetForPlayMode();

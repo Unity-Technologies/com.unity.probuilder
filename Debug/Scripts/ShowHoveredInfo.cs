@@ -11,7 +11,7 @@ namespace UnityEngine.ProBuilder.Debug
         bool m_IsHovering;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             m_Material = null;

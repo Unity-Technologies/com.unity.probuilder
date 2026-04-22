@@ -140,7 +140,7 @@ namespace UnityEditor.ProBuilder
             OnObjectSelectionChanged();
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_ActiveMesh = null;

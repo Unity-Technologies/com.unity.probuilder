@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder.Actions
         static bool s_ActionAlreadyTriggered = false;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_ActionAlreadyTriggered = false;

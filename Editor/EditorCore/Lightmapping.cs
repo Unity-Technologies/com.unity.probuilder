@@ -117,7 +117,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             Styles.Reset();

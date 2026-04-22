@@ -132,7 +132,7 @@ namespace UnityEditor.ProBuilder
         static MaterialPalette s_CurrentPalette = null;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_CurrentPalette = null;

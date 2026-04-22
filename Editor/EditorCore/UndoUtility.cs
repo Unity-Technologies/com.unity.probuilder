@@ -34,7 +34,7 @@ namespace UnityEditor.ProBuilder
         static int s_PreviewGroupIndex = -1;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_PreviewGroupIndex = -1;

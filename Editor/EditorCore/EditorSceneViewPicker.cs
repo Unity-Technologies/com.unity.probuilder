@@ -33,7 +33,7 @@ namespace UnityEditor.ProBuilder
         // When enabled, a mouse click on an unselected mesh will select both the GameObject and the mesh element picked.
         const bool k_AllowUnselected = true;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_DeepSelectionPrevious = 0x0;

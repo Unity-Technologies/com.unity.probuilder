@@ -118,7 +118,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         internal static void ResetPreviewActionManagerStatics()
         {
             Cancel();
@@ -235,7 +235,7 @@ namespace UnityEditor.ProBuilder
         static bool s_CanTriggerNewAction = true;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetMenuActionSettingsStatics()
         {
             s_CanTriggerNewAction = true;

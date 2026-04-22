@@ -21,7 +21,7 @@ namespace UnityEditor.ProBuilder
         static string s_IconFolderPath = "Packages/com.unity.probuilder/Editor Default Resources/Icons/";
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_Icons.Clear();

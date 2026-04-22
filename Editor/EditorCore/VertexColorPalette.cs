@@ -19,7 +19,7 @@ namespace UnityEditor.ProBuilder
         static VertexColorPalette s_Instance = null;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_Instance = null;

@@ -38,7 +38,7 @@ namespace UnityEditor.ProBuilder
         static bool s_foldoutEnabled = true;
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_foldoutEnabled = true;

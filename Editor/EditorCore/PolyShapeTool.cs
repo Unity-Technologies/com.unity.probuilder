@@ -49,7 +49,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetDrawPolyShapeToolStatics()
         {
             s_IconContent = null;
@@ -382,7 +382,7 @@ namespace UnityEditor.ProBuilder
         }
 
 #if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnEnterPlayMode]
         static void ResetPolyShapeToolStatics()
         {
             s_HeightMouseOffset = 0f;
