@@ -117,13 +117,11 @@ namespace UnityEditor.ProBuilder
             s_Instance?.Dispose();
         }
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         internal static void ResetPreviewActionManagerStatics()
         {
             Cancel();
         }
-#endif
 
         internal static void Validate()
         {
@@ -234,13 +232,11 @@ namespace UnityEditor.ProBuilder
     {
         static bool s_CanTriggerNewAction = true;
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetMenuActionSettingsStatics()
         {
             s_CanTriggerNewAction = true;
         }
-#endif
 
         /// <summary>
         /// MenuActionSettings constructor.

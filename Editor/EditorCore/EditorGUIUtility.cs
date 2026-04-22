@@ -45,6 +45,15 @@ namespace UnityEditor.ProBuilder.UI
                     : new GUIContent("FCE", "Face Selection"),
                 };
             }
+
+            internal static void ResetForPlayMode()
+            {
+                selectModeIcons = null;
+                s_ObjectIcon = null;
+                s_VertexIcon = null;
+                s_EdgeIcon = null;
+                s_FaceIcon = null;
+            }
         }
 
         static readonly Color TOOL_SETTINGS_COLOR = UnityEditor.EditorGUIUtility.isProSkin
@@ -468,6 +477,18 @@ namespace UnityEditor.ProBuilder.UI
         }
 
         static GUIStyle _sceneBoldLabel = null;
+
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            Styles.ResetForPlayMode();
+            _splitStyle = null;
+            _centeredGreyMiniLabel = null;
+            _solidBackgroundStyle = null;
+            _buttonNoBackgroundSmallMarginStyle = null;
+            _sceneBoldLabel = null;
+            sceneLabelRect = new Rect(0f, 0f, 0f, 0f);
+        }
 
         /**
          *  Draw a label in the scene view with a solid color background.

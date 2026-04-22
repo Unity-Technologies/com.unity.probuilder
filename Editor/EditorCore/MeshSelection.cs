@@ -143,13 +143,7 @@ namespace UnityEditor.ProBuilder
         [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
-            s_ActiveMesh = null;
-            s_TopSelection.Clear();
-            s_ElementSelection.Clear();
             s_SelectedFacesInEditArea.Clear();
-            s_UnitySelectionChangeMeshes.Clear();
-            InvalidateCaches();
-
             s_SelectedObjectCount = 0;
             s_SelectedVertexCount = 0;
             s_SelectedSharedVertexCount = 0;
@@ -173,12 +167,9 @@ namespace UnityEditor.ProBuilder
             OnObjectSelectionChanged();
         }
 
-#if UNITY_EDITOR
-#endif
-
         static void PrefabInstanceReverted(GameObject obj)
         {
-            if(obj.TryGetComponent<ProBuilderMesh>(out _))
+            if (obj.TryGetComponent<ProBuilderMesh>(out _))
                 OnObjectSelectionChanged();
         }
 

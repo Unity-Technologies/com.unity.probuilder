@@ -48,13 +48,11 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetDrawPolyShapeToolStatics()
         {
             s_IconContent = null;
         }
-#endif
 
         /// <inheritdoc/>
         public override void OnActivated()
@@ -381,14 +379,12 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetPolyShapeToolStatics()
         {
             s_HeightMouseOffset = 0f;
             s_IconContent = null;
         }
-#endif
 
         void OnEnable()
         {

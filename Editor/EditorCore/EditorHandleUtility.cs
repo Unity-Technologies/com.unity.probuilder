@@ -67,6 +67,19 @@ namespace UnityEditor.ProBuilder
         public static int CurrentID { get { return currentId; } }
         static int currentId = -1;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            if (s_HandleMaterial != null)
+                Object.DestroyImmediate(s_HandleMaterial);
+            s_HandleMaterial = null;
+            currentId = -1;
+            s_HandleMatrix.Clear();
+            handleOffset = Vector2.zero;
+            initialMousePosition = Vector2.zero;
+            axisConstraint = new HandleConstraint2D(0, 0);
+        }
+
         static Vector2 handleOffset = Vector2.zero;
         static Vector2 initialMousePosition = Vector2.zero;
 

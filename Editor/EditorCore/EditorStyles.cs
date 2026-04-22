@@ -28,6 +28,13 @@ namespace UnityEditor.ProBuilder.UI
         static GUIStyle s_HeaderLabel;
         static GUIStyle s_SceneTextBox;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_Initialized = false;
+            Init();
+        }
+
         public static GUIStyle buttonStyle { get { Init(); return s_ButtonStyle; } }
         public static GUIStyle toolbarHelpIcon { get { Init(); return s_ToolbarHelpIcon; } }
         public static GUIStyle settingsGroup { get { Init(); return s_SettingsGroup; } }

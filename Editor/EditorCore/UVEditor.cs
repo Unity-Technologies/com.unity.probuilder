@@ -2529,6 +2529,12 @@ namespace UnityEditor.ProBuilder
         static Rect ActionWindowDragRect = new Rect(0, 6, 10000, 30);
         static Editor uv2Editor = null;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            uv2Editor = null;
+        }
+
         void DrawActionWindow(int windowIndex)
         {
             if (channel == 0)

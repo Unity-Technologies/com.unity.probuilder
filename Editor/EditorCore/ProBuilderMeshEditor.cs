@@ -53,13 +53,11 @@ namespace UnityEditor.ProBuilder
 #endif
         }
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetMeshEditorStylesOnLoad()
         {
             Styles.ResetForPlayMode();
         }
-#endif
 
         internal static event System.Action onGetFrameBoundsEvent;
         ProBuilderMesh m_Mesh;

@@ -10,13 +10,11 @@ namespace UnityEngine.ProBuilder.Debug
         static Material m_Material;
         bool m_IsHovering;
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             m_Material = null;
         }
-#endif
 
         void Start()
         {

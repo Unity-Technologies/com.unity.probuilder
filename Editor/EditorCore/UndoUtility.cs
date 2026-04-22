@@ -33,13 +33,11 @@ namespace UnityEditor.ProBuilder
 
         static int s_PreviewGroupIndex = -1;
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_PreviewGroupIndex = -1;
         }
-#endif
 
         internal static void StartPreview()
         {

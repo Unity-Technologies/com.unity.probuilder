@@ -195,6 +195,14 @@ namespace UnityEditor.ProBuilder.UI
         static int s_ResizeHandleAreaDimension = 6;
         static int s_MoveWindowAreaHeight = 30;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_RowToggle = true;
+            s_ResizeHandleAreaDimension = 6;
+            s_MoveWindowAreaHeight = 30;
+        }
+
         public static Rect DoResizeHandle(Rect rect, int minimumWidth, int minimumHeight)
         {
             var evt = Event.current;

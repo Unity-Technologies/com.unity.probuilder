@@ -116,13 +116,11 @@ namespace UnityEditor.ProBuilder
             Undo.postprocessModifications += PostprocessModifications;
         }
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             Styles.Reset();
         }
-#endif
 
         /// <summary>
         /// Toggles the LightmapStatic bit of an objects Static flags.

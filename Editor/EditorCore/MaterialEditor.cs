@@ -131,14 +131,12 @@ namespace UnityEditor.ProBuilder
         // The currently loaded material palette asset.
         static MaterialPalette s_CurrentPalette = null;
 
-#if UNITY_EDITOR
         [InitializeOnEnterPlayMode]
         static void ResetStaticsOnLoad()
         {
             s_CurrentPalette = null;
             instance?.RefreshAvailablePalettes();
         }
-#endif
 
         // The user set "quick material"
         Pref<Material> m_QueuedMaterial = new Pref<Material>("materialEditor.quickMaterial", null, SettingsScope.User);
