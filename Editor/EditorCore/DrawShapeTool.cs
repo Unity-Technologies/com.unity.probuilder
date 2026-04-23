@@ -723,6 +723,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += OnActiveToolChanged;
             ToolManager.activeContextChanged += OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             if (m_CurrentState == null)
                 m_CurrentState = InitStateMachine();
@@ -741,6 +742,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged -= OnActiveToolChanged;
             ToolManager.activeContextChanged -= OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
             if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
                 m_CurrentState = ShapeState.ResetState();
@@ -764,6 +766,19 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.activeContextType != typeof(GameObjectToolContext))
                 ToolManager.RestorePreviousPersistentTool();
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode || state == PlayModeStateChange.ExitingPlayMode)
+            {
+                // Reset tool state when entering/exiting playmode
+                if (ToolManager.IsActiveTool(this))
+                {
+                    m_CurrentState = ShapeState.ResetState();
+                    ToolManager.RestorePreviousPersistentTool();
+                }
+            }
         }
 
         void HandleUndoRedoPerformed()

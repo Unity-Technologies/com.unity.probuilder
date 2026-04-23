@@ -405,6 +405,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ToolManager.activeContextChanged += OnActiveContextChanged;
             Undo.undoRedoPerformed += UndoRedoPerformed;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             m_Target = null;
             UpdateTarget();
@@ -417,6 +418,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ToolManager.activeContextChanged -= OnActiveContextChanged;
             Undo.undoRedoPerformed -= UndoRedoPerformed;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             if(polygon != null && polygon.polyEditMode != PolyShape.PolyEditMode.None)
                 SetPolyEditMode(PolyShape.PolyEditMode.None);
 
@@ -454,6 +456,16 @@ namespace UnityEditor.ProBuilder
             SetPolyEditMode(PolyShape.PolyEditMode.None);
             polygon = null;
             ToolManager.RestorePreviousPersistentTool();
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode || state == PlayModeStateChange.ExitingPlayMode)
+            {
+                // Reset tool state when entering/exiting playmode
+                if (ToolManager.IsActiveTool(this))
+                    LeaveTool();
+            }
         }
 
         /// <summary>

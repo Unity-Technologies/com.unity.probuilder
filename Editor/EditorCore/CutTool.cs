@@ -201,6 +201,7 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed += UndoRedoPerformed;
             MeshSelection.objectSelectionChanged += UpdateTarget;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
 
         public override void OnWillBeDeactivated()
@@ -210,6 +211,7 @@ namespace UnityEditor.ProBuilder
             Undo.undoRedoPerformed -= UndoRedoPerformed;
             MeshSelection.objectSelectionChanged -= UpdateTarget;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         }
 
         /// <summary>
@@ -240,6 +242,16 @@ namespace UnityEditor.ProBuilder
         {
             Clear();
             ToolManager.RestorePreviousTool();
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode || state == PlayModeStateChange.ExitingPlayMode)
+            {
+                // Reset tool state when entering/exiting playmode
+                if (ToolManager.IsActiveTool(this))
+                    ExitTool();
+            }
         }
 
         /// <summary>
