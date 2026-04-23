@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 ### Changes
+
+- [UUM-131032] Added a reset of static variables when entering playmode to allow fast enter playmode compatibility.
 - [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
 
 ### Fixed
