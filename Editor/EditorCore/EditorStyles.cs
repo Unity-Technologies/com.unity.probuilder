@@ -32,7 +32,6 @@ namespace UnityEditor.ProBuilder.UI
         static void ResetStaticsOnLoad()
         {
             s_Initialized = false;
-            Init();
         }
 
         public static GUIStyle buttonStyle { get { Init(); return s_ButtonStyle; } }
