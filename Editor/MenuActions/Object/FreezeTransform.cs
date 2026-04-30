@@ -58,7 +58,10 @@ namespace UnityEditor.ProBuilder.Actions
 
                 foreach(Face face in pb.facesInternal)
                 {
-                    face.manualUV = true;
+                    // Do NOT force manualUV = true here.
+                    // Auto-UV faces (manualUV == false) must stay auto so that ProBuilder
+                    // can re-project UVs from the new baked vertex positions, keeping UV
+                    // tiling proportionally correct and allowing proper lightmap UV2 generation.
                     if(flipFaces)
                         face.Reverse();
                 }
