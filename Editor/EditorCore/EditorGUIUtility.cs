@@ -12,7 +12,8 @@ namespace UnityEditor.ProBuilder.UI
     {
         internal static class Styles
         {
-            public static GUIStyle command = "command";
+            private static GUIStyle s_Command;
+            public static GUIStyle command => s_Command ??= "command";
             public static GUIContent[] selectModeIcons;
 
             static Texture2D s_ObjectIcon;
