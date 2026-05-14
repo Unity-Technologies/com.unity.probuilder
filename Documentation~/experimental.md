@@ -8,7 +8,7 @@ ProBuilder includes three experimental features:
 
 These features are still under development; they're not fully tested, and might reduce ProBuilder's stability. They are disabled by default; use them with caution.
 
-To enable experimental featuresL
+To enable experimental features:
 
 1. In the main menu, go to **Edit** > **Preferences** (macOS: **Unity** > **Settings**).
 1. Select the **ProBuilder** tab. 
