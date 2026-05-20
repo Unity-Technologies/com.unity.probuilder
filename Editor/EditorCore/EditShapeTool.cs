@@ -13,6 +13,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Edit Shape", typeof(ProBuilderShape))]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/EditShape.png")]
     sealed class EditShapeTool : EditorTool
     {
         [MenuItem("Tools/ProBuilder/Edit/Edit Shape", true, PreferenceKeys.menuEditor + 10)]
@@ -115,26 +116,9 @@ namespace UnityEditor.ProBuilder
             s_CurrentArrowHovered = -1;
             s_ShapeRotation = Quaternion.identity;
             s_ArrowsLines = null;
-            s_IconContent = null;
         }
 
         public override bool gridSnapEnabled => true;
-
-        static GUIContent s_IconContent;
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Tools/EditShape"),
-                        text = "Edit Shape",
-                        tooltip = "Edit ProBuilder Shape"
-                    };
-                return s_IconContent;
-            }
-        }
 
         void OnEnable()
         {

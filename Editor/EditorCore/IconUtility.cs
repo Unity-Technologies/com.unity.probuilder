@@ -42,7 +42,8 @@ namespace UnityEditor.ProBuilder
                 string fullPath = Path.Combine(s_IconFolderPath, iconName + (Path.HasExtension(iconName)? string.Empty: ".png"));
 
                 icon = EditorGUIUtility.LoadIcon(fullPath);
-                s_Icons.Add(iconName, icon);
+                if(icon != null)
+                    s_Icons.Add(iconName, icon);
             }
             return icon;
         }
