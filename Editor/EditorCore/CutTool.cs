@@ -120,6 +120,7 @@ namespace UnityEditor.ProBuilder
         Edge m_SnapedEdge = Edge.Empty;
 
         bool m_SnapToGeometry;
+        bool m_SnapToGrid;
         float m_SnappingDistance;
 
         //Overlay fields
@@ -132,6 +133,7 @@ namespace UnityEditor.ProBuilder
         Vector3 m_RectStartPoint = Vector3.positiveInfinity;
         Vector3 m_RectEndPoint = Vector3.positiveInfinity;
         bool m_RectDragging;
+        const string k_SnapToGridPrefKey = "VertexInsertion.snapToGrid";
         const string k_RectangleModePrefKey = "VertexInsertion.rectangleMode";
         static readonly Color k_RectPreviewColor = new Color(1f, 1f, 0f, 0.4f);
         static readonly Color k_RectOutlineColor = new Color(1f, 1f, 0f, 1f);
@@ -171,6 +173,8 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        public override bool gridSnapEnabled => true;
+
         public override bool IsAvailable()
         {
             return MeshSelection.selectedObjectCount == 1;
@@ -190,6 +194,7 @@ namespace UnityEditor.ProBuilder
 
             m_OverlayTitle = new GUIContent("Cut Settings");
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
+            m_SnapToGrid = EditorPrefs.GetBool( k_SnapToGridPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
             m_RectangleMode = EditorPrefs.GetBool( k_RectangleModePrefKey, false );
 
@@ -417,6 +422,9 @@ namespace UnityEditor.ProBuilder
 
             m_RectangleMode = DoOverlayToggle(L10n.Tr("Rectangle Mode"), m_RectangleMode);
             EditorPrefs.SetBool(k_RectangleModePrefKey, m_RectangleMode);
+
+            m_SnapToGrid = DoOverlayToggle(L10n.Tr("Snap to Grid"), m_SnapToGrid);
+            EditorPrefs.SetBool(k_SnapToGridPrefKey, m_SnapToGrid);
 
             if(m_RectangleMode)
             {
@@ -702,6 +710,15 @@ namespace UnityEditor.ProBuilder
                 Vector3 corner2 = end;
                 Vector3 corner3 = start + faceUp * upDot;
 
+                // Snap all corners to grid if enabled
+                if (m_SnapToGrid && EditorSnapSettings.gridSnapActive)
+                {
+                    corner0 = ProBuilderSnapping.Snap(corner0, EditorSnapping.activeMoveSnapValue);
+                    corner1 = ProBuilderSnapping.Snap(corner1, EditorSnapping.activeMoveSnapValue);
+                    corner2 = ProBuilderSnapping.Snap(corner2, EditorSnapping.activeMoveSnapValue);
+                    corner3 = ProBuilderSnapping.Snap(corner3, EditorSnapping.activeMoveSnapValue);
+                }
+
                 if (HasSignificantRectangle(corner0, corner2))
                 {
                     // Build cut path: 4 corners + close back to start to form a loop
@@ -880,6 +897,20 @@ namespace UnityEditor.ProBuilder
 
             if (m_CurrentVertexTypes == VertexTypes.None && !m_ModifyingPoint)
                 CheckPointInMesh();
+
+            // Only apply grid snap if the point is a free-floating new vertex on the face
+            // (don't pull already-snapped edge/vertex points off their targets)
+            if (m_CurrentVertexTypes == VertexTypes.NewVertex || m_CurrentVertexTypes == VertexTypes.None)
+                ApplyGridSnap();
+        }
+
+        /// <summary>
+        /// Snap the current position to Unity's grid if grid snapping is enabled.
+        /// </summary>
+        void ApplyGridSnap()
+        {
+            if (m_SnapToGrid && EditorSnapSettings.gridSnapActive)
+                m_CurrentPosition = ProBuilderSnapping.Snap(m_CurrentPosition, EditorSnapping.activeMoveSnapValue);
         }
 
         /// <summary>
