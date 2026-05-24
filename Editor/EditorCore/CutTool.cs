@@ -127,6 +127,15 @@ namespace UnityEditor.ProBuilder
         const string k_SnapToGeometryPrefKey = "VertexInsertion.snapToGeometry";
         const string k_SnappingDistancePrefKey = "VertexInsertion.snappingDistance";
 
+        //Rectangle mode fields
+        bool m_RectangleMode;
+        Vector3 m_RectStartPoint = Vector3.positiveInfinity;
+        Vector3 m_RectEndPoint = Vector3.positiveInfinity;
+        bool m_RectDragging;
+        const string k_RectangleModePrefKey = "VertexInsertion.rectangleMode";
+        static readonly Color k_RectPreviewColor = new Color(1f, 1f, 0f, 0.4f);
+        static readonly Color k_RectOutlineColor = new Color(1f, 1f, 0f, 1f);
+
         public bool isALoop
         {
             get
@@ -182,6 +191,7 @@ namespace UnityEditor.ProBuilder
             m_OverlayTitle = new GUIContent("Cut Settings");
             m_SnapToGeometry = EditorPrefs.GetBool( k_SnapToGeometryPrefKey, false );
             m_SnappingDistance = EditorPrefs.GetFloat( k_SnappingDistancePrefKey, 0.1f );
+            m_RectangleMode = EditorPrefs.GetBool( k_RectangleModePrefKey, false );
 
             m_CutCursorTexture = IconUtility.GetIcon("Cursors/cutCursor");
             m_CutAddCursorTexture = IconUtility.GetIcon("Cursors/cutCursor-add");
@@ -205,7 +215,8 @@ namespace UnityEditor.ProBuilder
 
         public override void OnWillBeDeactivated()
         {
-            ExecuteCut(false);
+            if(!m_RectangleMode)
+                ExecuteCut(false);
 
             Undo.undoRedoPerformed -= UndoRedoPerformed;
             MeshSelection.objectSelectionChanged -= UpdateTarget;
@@ -224,6 +235,10 @@ namespace UnityEditor.ProBuilder
             m_CurrentCutCursor = null;
             m_CutPath.Clear();
             m_MeshConnections.Clear();
+
+            m_RectDragging = false;
+            m_RectStartPoint = Vector3.positiveInfinity;
+            m_RectEndPoint = Vector3.positiveInfinity;
 
             m_SelectedVertices = null;
             m_SelectedEdges = null;
@@ -338,7 +353,10 @@ namespace UnityEditor.ProBuilder
                 if(currentEvent.type == EventType.Layout)
                     HandleUtility.AddDefaultControl(m_ControlId);
 
-                DoPointPlacement(window);
+                if(m_RectangleMode)
+                    DoRectanglePlacement(window);
+                else
+                    DoPointPlacement(window);
 
                 //Refresh the cut shape if points have been added to it or removed.
                 if(m_Dirty)
@@ -346,7 +364,11 @@ namespace UnityEditor.ProBuilder
 
                 if(currentEvent.type == EventType.Repaint)
                 {
-                    DrawGuideLine();
+                    if(m_RectangleMode)
+                        DoRectanglePreview();
+                    else
+                        DrawGuideLine();
+
                     DoCurrentPointsGUI();
                     DoVisualCues();
 
@@ -393,10 +415,26 @@ namespace UnityEditor.ProBuilder
 
             GUI.enabled = MeshSelection.selectedObjectCount == 1;
 
-            m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
-            EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+            m_RectangleMode = DoOverlayToggle(L10n.Tr("Rectangle Mode"), m_RectangleMode);
+            EditorPrefs.SetBool(k_RectangleModePrefKey, m_RectangleMode);
 
-            if(!m_SnapToGeometry)
+            if(m_RectangleMode)
+            {
+                EditorGUI.indentLevel++;
+                using(new GUILayout.HorizontalScope())
+                {
+                    EditorGUILayout.LabelField(L10n.Tr("Click & drag to draw a rectangle cut"), GUILayout.Width(250));
+                }
+                EditorGUI.indentLevel--;
+            }
+            else
+            {
+                m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
+                EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+
+            }
+
+            if(!m_RectangleMode && !m_SnapToGeometry)
                 GUI.enabled = false;
             EditorGUI.indentLevel++;
             using(new GUILayout.HorizontalScope())
@@ -571,6 +609,199 @@ namespace UnityEditor.ProBuilder
             {
                 ProBuilderEditor.instance.HandleMouseEvent(SceneView.lastActiveSceneView, m_ControlId);
             }
+        }
+
+        /// <summary>
+        /// Rectangle mode: click and drag to define a rectangular cut on the face.
+        /// On mouse up, auto-places the 4 corners and executes the cut.
+        /// </summary>
+        void DoRectanglePlacement(EditorWindow window)
+        {
+            Event evt = Event.current;
+            EventType evtType = evt.type;
+
+            bool hasHitPosition = UpdateHitPosition();
+
+            // Visual helpers
+            if (evtType == EventType.Repaint)
+            {
+                m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
+                m_ModifyingPoint = false;
+
+                if (hasHitPosition && IsCursorInSceneView(window))
+                {
+                    m_CurrentCutCursor = m_CutCursorTexture;
+                    m_CurrentHandleColor = k_HandleColorAddNewVertex;
+                }
+                else
+                {
+                    m_CurrentCutCursor = null;
+                    m_CurrentPosition = Vector3.positiveInfinity;
+                }
+            }
+
+            // Mouse down: start rectangle drag
+            if (hasHitPosition
+                && evtType == EventType.MouseDown && evt.button == 0
+                && HandleUtility.nearestControl == m_ControlId
+                && !m_RectDragging)
+            {
+                m_RectDragging = true;
+                m_RectStartPoint = m_CurrentPosition;
+                m_RectEndPoint = m_CurrentPosition;
+                m_TargetFace = m_CurrentFace;
+
+                var edges = m_TargetFace.edges;
+                m_SelectedVertices = edges.Select(e => e.a).ToArray();
+                m_SelectedEdges = edges.ToArray();
+
+                m_CutPath.Clear();
+                m_MeshConnections.Clear();
+                evt.Use();
+            }
+
+            // Mouse drag: update rectangle end point
+            if (m_RectDragging && evtType == EventType.MouseDrag && evt.button == 0)
+            {
+                if (hasHitPosition && m_CurrentFace == m_TargetFace)
+                {
+                    m_RectEndPoint = m_CurrentPosition;
+                }
+                evt.Use();
+            }
+
+            // Mouse up: finalize the rectangle and execute cut
+            if (m_RectDragging
+                && (evtType == EventType.MouseUp && evt.button == 0))
+            {
+                m_RectDragging = false;
+
+                // Project start/end onto the face plane to compute the other 2 corners
+                Vector3 start = m_RectStartPoint;
+                Vector3 end = m_RectEndPoint;
+
+                // Compute face normal for projection
+                Vector3 faceNormal = Math.Normal(m_Mesh, m_TargetFace);
+
+                // Create a local coordinate system on the face plane
+                Vector3 faceRight, faceUp;
+                if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
+                    faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
+                else
+                    faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
+                faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+
+                // Decompose rect diagonals in face space
+                Vector3 diagonal = end - start;
+                float rightDot = Vector3.Dot(diagonal, faceRight);
+                float upDot = Vector3.Dot(diagonal, faceUp);
+
+                // Compute the 4 rectangle corners in world space
+                Vector3 corner0 = start;
+                Vector3 corner1 = start + faceRight * rightDot;
+                Vector3 corner2 = end;
+                Vector3 corner3 = start + faceUp * upDot;
+
+                if (HasSignificantRectangle(corner0, corner2))
+                {
+                    // Build cut path: 4 corners + close back to start to form a loop
+                    UndoUtility.RecordObject(this, "Rectangle Cut");
+
+                    m_CurrentPosition = corner0;
+                    m_CurrentPositionNormal = faceNormal;
+                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    m_CurrentFace = m_TargetFace;
+                    AddCurrentPositionToPath(false);
+
+                    m_CurrentPosition = corner1;
+                    m_CurrentPositionNormal = faceNormal;
+                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    AddCurrentPositionToPath(false);
+
+                    m_CurrentPosition = corner2;
+                    m_CurrentPositionNormal = faceNormal;
+                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    AddCurrentPositionToPath(false);
+
+                    m_CurrentPosition = corner3;
+                    m_CurrentPositionNormal = faceNormal;
+                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    AddCurrentPositionToPath(false);
+
+                    // Close the loop by returning to the start corner
+                    m_CurrentPosition = corner0;
+                    m_CurrentPositionNormal = faceNormal;
+                    m_CurrentVertexTypes = VertexTypes.VertexInShape;
+                    m_CurrentFace = m_TargetFace;
+                    AddCurrentPositionToPath(false);
+
+                    RebuildCutShape(true);
+
+                    // Execute the cut immediately
+                    ActionResult result = DoCut();
+                    EditorUtility.ShowNotification(result.notification);
+
+                    Clear();
+                }
+
+                m_RectStartPoint = Vector3.positiveInfinity;
+                m_RectEndPoint = Vector3.positiveInfinity;
+                evt.Use();
+            }
+
+            // Pass through to ProBuilder selection if not interacting
+            if(!m_RectDragging
+                && m_CutPath.Count == 0
+                && !hasHitPosition
+                && HandleUtility.nearestControl == m_ControlId)
+            {
+                ProBuilderEditor.instance.HandleMouseEvent(SceneView.lastActiveSceneView, m_ControlId);
+            }
+        }
+
+        bool HasSignificantRectangle(Vector3 start, Vector3 end)
+        {
+            return Vector3.Distance(start, end) > 0.001f;
+        }
+
+        /// <summary>
+        /// Draw the rectangle preview during a drag operation.
+        /// </summary>
+        void DoRectanglePreview()
+        {
+            if (!m_RectDragging || m_Mesh == null || m_TargetFace == null)
+                return;
+
+            Transform trs = m_Mesh.transform;
+            Vector3 startW = trs.TransformPoint(m_RectStartPoint);
+            Vector3 endW = trs.TransformPoint(m_RectEndPoint);
+
+            // Compute face plane
+            Vector3 faceNormal = Math.Normal(m_Mesh, m_TargetFace);
+
+            Vector3 faceRight, faceUp;
+            if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
+                faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
+            else
+                faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
+            faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+
+            Vector3 diagonal = endW - startW;
+            float rightDot = Vector3.Dot(diagonal, faceRight);
+            float upDot = Vector3.Dot(diagonal, faceUp);
+
+            Vector3 c0 = startW;
+            Vector3 c1 = startW + faceRight * rightDot;
+            Vector3 c2 = endW;
+            Vector3 c3 = startW + faceUp * upDot;
+
+            // Draw filled rectangle
+            Handles.color = k_RectPreviewColor;
+            Handles.DrawAAConvexPolygon(new Vector3[] { c0, c1, c2, c3 });
+
+            // Draw outline
+            Handles.color = k_RectOutlineColor;
+            Handles.DrawAAPolyLine(2f, new Vector3[] { c0, c1, c2, c3, c0 });
         }
 
         bool CanAppendCurrentPointToPath()
