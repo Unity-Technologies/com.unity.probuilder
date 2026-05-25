@@ -118,10 +118,12 @@ namespace UnityEditor.ProBuilder
                 Vector3 corner2 = start + faceRight * rightDot + faceUp * upDot;
                 Vector3 corner3 = start + faceUp * upDot;
 
-                // Snap only start point to grid; recompute derived corners to stay on-plane
+                // Snap only start point to grid, then project back onto face plane
                 if (m_SnapToGrid)
                 {
-                    corner0 = ProBuilderSnapping.Snap(corner0, EditorSnapping.activeMoveSnapValue);
+                    Vector3 snapped = ProBuilderSnapping.Snap(corner0, EditorSnapping.activeMoveSnapValue);
+                    Plane facePlane = new Plane(faceNormal, corner0);
+                    corner0 = facePlane.ClosestPointOnPlane(snapped);
                     corner1 = corner0 + faceRight * rightDot;
                     corner2 = corner0 + faceRight * rightDot + faceUp * upDot;
                     corner3 = corner0 + faceUp * upDot;

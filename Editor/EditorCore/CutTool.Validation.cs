@@ -44,11 +44,7 @@ namespace UnityEditor.ProBuilder
                 : Vector3.up;
 
             Vector3 faceRight, faceUp;
-            if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
-                faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
-            else
-                faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
-            faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+            GetFacePlaneAxes(faceNormal, out faceRight, out faceUp);
 
             Vector2[] cutPath2D = new Vector2[m_CutPath.Count];
             for (int i = 0; i < m_CutPath.Count; i++)

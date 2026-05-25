@@ -61,7 +61,11 @@ namespace UnityEditor.ProBuilder
         void ApplyGridSnap()
         {
             if (m_SnapToGrid)
-                m_CurrentPosition = ProBuilderSnapping.Snap(m_CurrentPosition, EditorSnapping.activeMoveSnapValue);
+            {
+                Vector3 snapped = ProBuilderSnapping.Snap(m_CurrentPosition, EditorSnapping.activeMoveSnapValue);
+                Plane facePlane = new Plane(m_CurrentPositionNormal, m_CurrentPosition);
+                m_CurrentPosition = facePlane.ClosestPointOnPlane(snapped);
+            }
         }
 
         /// <summary>
@@ -141,8 +145,12 @@ namespace UnityEditor.ProBuilder
                 if(bestVertexIndexToEnd >= 0)
                     m_MeshConnections.Add(new SimpleTuple<int, int>(m_CutPath.Count - 1,bestVertexIndexToEnd));
             }
-            else if(isALoop && connectionsToBordersCount < 2)
+            else if(isALoop)
             {
+                int requiredConnections = m_RectangleMode ? 4 : 2;
+                if (connectionsToBordersCount >= requiredConnections)
+                    return;
+
                 //The path must have minimum connections with the face borders, find the closest vertices
                 foreach(var vertexIndex in m_TargetFace.distinctIndexes)
                 {
@@ -188,7 +196,6 @@ namespace UnityEditor.ProBuilder
                     (int)Mathf.Sign(Vector3.Distance(m_CutPath[a.item1].position, verticesPositions[a.item2])
                                     - Vector3.Distance(m_CutPath[b.item1].position, verticesPositions[b.item2])));
 
-                int requiredConnections = m_RectangleMode ? 4 : 2;
                 int connectionsCount = Mathf.Max(0, requiredConnections - connectionsToBordersCount);
                 connectionsCount = Mathf.Min(connectionsCount, m_MeshConnections.Count);
                 m_MeshConnections.RemoveRange(connectionsCount,m_MeshConnections.Count - connectionsCount);
