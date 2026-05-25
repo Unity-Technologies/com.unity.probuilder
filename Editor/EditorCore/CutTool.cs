@@ -450,6 +450,9 @@ namespace UnityEditor.ProBuilder
             m_SnapToGrid = DoOverlayToggle(L10n.Tr("Snap to Grid"), m_SnapToGrid);
             EditorPrefs.SetBool(k_SnapToGridPrefKey, m_SnapToGrid);
 
+            m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
+            EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+
             if(m_RectangleMode)
             {
                 EditorGUI.indentLevel++;
@@ -458,12 +461,6 @@ namespace UnityEditor.ProBuilder
                     EditorGUILayout.LabelField(L10n.Tr("Click & drag to draw a rectangle cut"), GUILayout.Width(250));
                 }
                 EditorGUI.indentLevel--;
-            }
-            else
-            {
-                m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
-                EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
-
             }
 
             if(!m_RectangleMode && !m_SnapToGeometry)
@@ -557,14 +554,14 @@ namespace UnityEditor.ProBuilder
             Event evt = Event.current;
             EventType evtType = evt.type;
 
+            m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
+            m_ModifyingPoint = evt.shift;
+
             bool hasHitPosition = UpdateHitPosition();
 
             //Updating visual helpers to get the right position and color to help in the placement
             if (evtType == EventType.Repaint)
             {
-                m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
-                m_ModifyingPoint = evt.shift;
-
                 if(!m_SnappingPoint &&
                    !m_ModifyingPoint &&
                    !m_PlacingPoint)
@@ -655,14 +652,14 @@ namespace UnityEditor.ProBuilder
             Event evt = Event.current;
             EventType evtType = evt.type;
 
+            m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
+            m_ModifyingPoint = false;
+
             bool hasHitPosition = UpdateHitPosition();
 
             // Visual helpers
             if (evtType == EventType.Repaint)
             {
-                m_SnappingPoint = m_SnapToGeometry || (evt.modifiers & EventModifiers.Control) != 0;
-                m_ModifyingPoint = false;
-
                 if (hasHitPosition && IsCursorInSceneView(window))
                 {
                     m_CurrentCutCursor = m_CutCursorTexture;
@@ -738,7 +735,7 @@ namespace UnityEditor.ProBuilder
                 Vector3 corner3 = start + faceUp * upDot;
 
                 // Snap all corners to grid if enabled
-                if (m_SnapToGrid && EditorSnapSettings.gridSnapActive)
+                if (m_SnapToGrid)
                 {
                     corner0 = ProBuilderSnapping.Snap(corner0, EditorSnapping.activeMoveSnapValue);
                     corner1 = ProBuilderSnapping.Snap(corner1, EditorSnapping.activeMoveSnapValue);
@@ -938,7 +935,7 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void ApplyGridSnap()
         {
-            if (m_SnapToGrid && EditorSnapSettings.gridSnapActive)
+            if (m_SnapToGrid)
                 m_CurrentPosition = ProBuilderSnapping.Snap(m_CurrentPosition, EditorSnapping.activeMoveSnapValue);
         }
 
@@ -1136,7 +1133,7 @@ namespace UnityEditor.ProBuilder
                 if(f == null)
                     return new ActionResult(ActionResult.Status.Failure, L10n.Tr("Cut Shape is not valid"));
 
-                f.submeshIndex = m_TargetFace.submeshIndex;
+                ApplySourceFaceSettings(f, m_TargetFace);
 
                 Vector3 nrm = Math.Normal(m_Mesh, f);
                 Vector3 targetNrm = Math.Normal(m_Mesh, m_TargetFace);
@@ -1245,7 +1242,7 @@ namespace UnityEditor.ProBuilder
                              Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
                              if (newFace != null && newFace.indexesInternal != null)
                              {
-                                 newFace.submeshIndex = m_TargetFace.submeshIndex;
+                                ApplySourceFaceSettings(newFace, m_TargetFace);
                                  newFaces.Add(newFace);
                                  facesToDelete.AddRange(toDelete);
                              }
@@ -1390,6 +1387,19 @@ namespace UnityEditor.ProBuilder
             }
 
             return bestFace;
+        }
+
+        void ApplySourceFaceSettings(Face destination, Face source)
+        {
+            if (destination == null || source == null)
+                return;
+
+            destination.submeshIndex = source.submeshIndex;
+            destination.manualUV = source.manualUV;
+            destination.uv = new AutoUnwrapSettings(source.uv);
+            destination.textureGroup = source.textureGroup;
+            destination.smoothingGroup = source.smoothingGroup;
+            destination.elementGroup = source.elementGroup;
         }
 
         bool TryGetFaceArea(Face face, List<Vertex> meshVertices, IList<SharedVertex> uniqueIdToVertexIndex,
