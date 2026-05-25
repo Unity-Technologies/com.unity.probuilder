@@ -112,19 +112,19 @@ namespace UnityEditor.ProBuilder
                 float rightDot = Vector3.Dot(diagonal, faceRight);
                 float upDot = Vector3.Dot(diagonal, faceUp);
 
-                // Compute the 4 rectangle corners in local space
+                // Compute all 4 corners strictly on the face plane (coplanar)
                 Vector3 corner0 = start;
                 Vector3 corner1 = start + faceRight * rightDot;
-                Vector3 corner2 = end;
+                Vector3 corner2 = start + faceRight * rightDot + faceUp * upDot;
                 Vector3 corner3 = start + faceUp * upDot;
 
-                // Snap all corners to grid if enabled
+                // Snap only start point to grid; recompute derived corners to stay on-plane
                 if (m_SnapToGrid)
                 {
                     corner0 = ProBuilderSnapping.Snap(corner0, EditorSnapping.activeMoveSnapValue);
-                    corner1 = ProBuilderSnapping.Snap(corner1, EditorSnapping.activeMoveSnapValue);
-                    corner2 = ProBuilderSnapping.Snap(corner2, EditorSnapping.activeMoveSnapValue);
-                    corner3 = ProBuilderSnapping.Snap(corner3, EditorSnapping.activeMoveSnapValue);
+                    corner1 = corner0 + faceRight * rightDot;
+                    corner2 = corner0 + faceRight * rightDot + faceUp * upDot;
+                    corner3 = corner0 + faceUp * upDot;
                 }
 
                 if (HasSignificantRectangle(corner0, corner2))
@@ -132,32 +132,49 @@ namespace UnityEditor.ProBuilder
                     // Build cut path: 4 corners + close back to start to form a loop
                     UndoUtility.RecordObject(this, "Rectangle Cut");
 
-                    m_CurrentPosition = corner0;
                     m_CurrentPositionNormal = faceNormal;
-                    m_CurrentVertexTypes = VertexTypes.NewVertex;
                     m_CurrentFace = m_TargetFace;
+
+                    // Corner 0: run geometry snap so it connects to existing vertices/edges
+                    m_CurrentPosition = corner0;
+                    m_CurrentVertexTypes = VertexTypes.None;
+                    if (m_SnapToGeometry)
+                        CheckPointInMesh();
+                    if (m_CurrentVertexTypes == VertexTypes.None)
+                        m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    corner0 = m_CurrentPosition;
                     AddCurrentPositionToPath(false);
 
+                    // Corner 1
                     m_CurrentPosition = corner1;
-                    m_CurrentPositionNormal = faceNormal;
-                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    m_CurrentVertexTypes = VertexTypes.None;
+                    if (m_SnapToGeometry)
+                        CheckPointInMesh();
+                    if (m_CurrentVertexTypes == VertexTypes.None)
+                        m_CurrentVertexTypes = VertexTypes.NewVertex;
                     AddCurrentPositionToPath(false);
 
+                    // Corner 2
                     m_CurrentPosition = corner2;
-                    m_CurrentPositionNormal = faceNormal;
-                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    m_CurrentVertexTypes = VertexTypes.None;
+                    if (m_SnapToGeometry)
+                        CheckPointInMesh();
+                    if (m_CurrentVertexTypes == VertexTypes.None)
+                        m_CurrentVertexTypes = VertexTypes.NewVertex;
                     AddCurrentPositionToPath(false);
 
+                    // Corner 3
                     m_CurrentPosition = corner3;
-                    m_CurrentPositionNormal = faceNormal;
-                    m_CurrentVertexTypes = VertexTypes.NewVertex;
+                    m_CurrentVertexTypes = VertexTypes.None;
+                    if (m_SnapToGeometry)
+                        CheckPointInMesh();
+                    if (m_CurrentVertexTypes == VertexTypes.None)
+                        m_CurrentVertexTypes = VertexTypes.NewVertex;
                     AddCurrentPositionToPath(false);
 
                     // Close the loop by returning to the start corner
                     m_CurrentPosition = corner0;
-                    m_CurrentPositionNormal = faceNormal;
                     m_CurrentVertexTypes = VertexTypes.VertexInShape;
-                    m_CurrentFace = m_TargetFace;
                     AddCurrentPositionToPath(false);
 
                     // Don't auto-execute—let user click Complete button like point mode

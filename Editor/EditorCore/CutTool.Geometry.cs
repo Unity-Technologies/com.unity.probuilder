@@ -249,13 +249,10 @@ namespace UnityEditor.ProBuilder
 
             int polygonFirstSharedIndex = sharedToUnique[polygonFirstVertex];
 
-            bool hasConnection = m_MeshConnections.Exists(tup => sharedToUnique.ContainsKey(tup.item2)
-                && sharedToUnique[tup.item2] == polygonFirstSharedIndex);
-            SimpleTuple<int,int> connection = default;
-
-            if (hasConnection)
-                connection = m_MeshConnections.Find(tup => sharedToUnique.ContainsKey(tup.item2)
-                    && sharedToUnique[tup.item2] == polygonFirstSharedIndex);
+            int connectionIndex = m_MeshConnections.FindIndex(tup =>
+                sharedToUnique.ContainsKey(tup.item2) && sharedToUnique[tup.item2] == polygonFirstSharedIndex);
+            bool hasConnection = connectionIndex >= 0;
+            SimpleTuple<int,int> connection = hasConnection ? m_MeshConnections[connectionIndex] : default;
 
             List<List<int>> closureCandidates = new List<List<int>>();
 
@@ -366,7 +363,7 @@ namespace UnityEditor.ProBuilder
             if (face == null || face.indexesInternal == null)
                 return false;
 
-            Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
+            Vector3[] vertices = m_Mesh.positionsInternal;
             int[] indexes = new int[face.indexesInternal.Length];
 
             for (int i = 0; i < face.indexesInternal.Length; i++)

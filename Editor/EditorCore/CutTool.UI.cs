@@ -193,7 +193,10 @@ namespace UnityEditor.ProBuilder
         void DrawCutLine()
         {
             Handles.color = m_IsCutValid ? k_LineColor : k_InvalidLineColor;
-            Handles.DrawPolyLine(m_CutPath.Select(tup => m_Mesh.transform.TransformPoint(tup.position)).ToArray());
+            Transform trs = m_Mesh.transform;
+            for (int i = 0; i < m_CutPath.Count - 1; i++)
+                Handles.DrawLine(trs.TransformPoint(m_CutPath[i].position),
+                                 trs.TransformPoint(m_CutPath[i + 1].position));
             Handles.color = Color.white;
         }
 
@@ -221,19 +224,20 @@ namespace UnityEditor.ProBuilder
         {
             if(m_MeshConnections.Count > 0 && m_Mesh != null)
             {
-                Vertex[] vertices = m_Mesh.GetVertices();
+                Vector3[] pos = m_Mesh.positionsInternal;
+                Transform trs = m_Mesh.transform;
                 for (int i = m_MeshConnections.Count - 1; i >= 0; i--)
                 {
                     var connection = m_MeshConnections[i];
                     if (connection.item1 < 0 || connection.item1 >= m_CutPath.Count
-                        || connection.item2 < 0 || connection.item2 >= vertices.Length)
+                        || connection.item2 < 0 || connection.item2 >= pos.Length)
                     {
                         m_MeshConnections.RemoveAt(i);
                         continue;
                     }
                     Handles.color = k_ConnectionsLineColor;
-                    Handles.DrawDottedLine(m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position),
-                                            m_Mesh.transform.TransformPoint(vertices[connection.item2].position), 5f);
+                    Handles.DrawDottedLine(trs.TransformPoint(m_CutPath[connection.item1].position),
+                                            trs.TransformPoint(pos[connection.item2]), 5f);
                     Handles.color = Color.white;
                 }
             }
