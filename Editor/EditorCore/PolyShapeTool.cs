@@ -16,7 +16,7 @@ namespace UnityEditor.ProBuilder
     /// Represents the [PolyShape tool](../manual/polyshape.html) button on the [ProBuilder toolbar](../manual/toolbar.html) in the Editor.
     /// </summary>
     [EditorTool("Create PolyShape", toolPriority = 1001)]
-    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Toolbar/CreatePolyShape")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Toolbar/CreatePolyShape.png")]
     public class DrawPolyShapeTool : PolyShapeTool
     {
         GameObject m_LastPolyShape = null;
@@ -29,30 +29,6 @@ namespace UnityEditor.ProBuilder
         }
 
         PolyShape m_PolyShape = null;
-
-        static GUIContent s_IconContent;
-
-        /// <inheritdoc />
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if (s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape.png"),
-                        text = "Create PolyShape",
-                        tooltip = "Create PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
-
-        [InitializeOnEnterPlayMode]
-        static void ResetDrawPolyShapeToolStatics()
-        {
-            s_IconContent = null;
-        }
 
         /// <inheritdoc/>
         public override void OnActivated()
@@ -361,29 +337,10 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        static GUIContent s_IconContent;
-
-        /// <inheritdoc />
-        public override GUIContent toolbarIcon
-        {
-            get
-            {
-                if (s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Toolbar/CreatePolyShape"),
-                        text = "Edit PolyShape",
-                        tooltip = "Edit PolyShape"
-                    };
-                return s_IconContent;
-            }
-        }
-
         [InitializeOnEnterPlayMode]
         static void ResetPolyShapeToolStatics()
         {
             s_HeightMouseOffset = 0f;
-            s_IconContent = null;
         }
 
         void OnEnable()
