@@ -220,7 +220,7 @@ namespace UnityEditor.ProBuilder
 
         public override void OnWillBeDeactivated()
         {
-            if(!m_RectangleMode)
+            if(!m_RectangleMode && m_TargetFace != null && m_CutPath.Count > 1)
                 ExecuteCut(false);
 
             Undo.undoRedoPerformed -= UndoRedoPerformed;
@@ -233,20 +233,44 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void Clear()
         {
-            m_Mesh = null;
+            ResetToolState(false);
+        }
+
+        void ResetToolState(bool keepTarget)
+        {
+            if (!keepTarget)
+                m_Mesh = null;
+
             m_TargetFace = null;
             m_CurrentFace = null;
             m_PlacingPoint = false;
+            m_SnappingPoint = false;
+            m_ModifyingPoint = false;
             m_CurrentCutCursor = null;
+            m_CurrentPosition = Vector3.positiveInfinity;
+            m_CurrentPositionNormal = Vector3.up;
+            m_CurrentVertexTypes = VertexTypes.None;
             m_CutPath.Clear();
             m_MeshConnections.Clear();
+            m_SnapedVertexId = -1;
+            m_SnapedEdge = Edge.Empty;
+            m_SelectedIndex = -2;
+            m_Dirty = false;
 
             m_RectDragging = false;
             m_RectStartPoint = Vector3.positiveInfinity;
             m_RectEndPoint = Vector3.positiveInfinity;
 
-            m_SelectedVertices = null;
-            m_SelectedEdges = null;
+            if (keepTarget && m_Mesh != null)
+            {
+                m_SelectedVertices = m_Mesh.sharedVertexLookup.Keys.ToArray();
+                m_SelectedEdges = m_Mesh.faces.SelectMany(f => f.edges).Distinct().ToArray();
+            }
+            else
+            {
+                m_SelectedVertices = null;
+                m_SelectedEdges = null;
+            }
 
             EditorHandleDrawing.ClearHandles();
 
@@ -470,8 +494,11 @@ namespace UnityEditor.ProBuilder
                 }
                 else
                 {
-                    if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
-                        ExecuteCut();
+                    if(!m_RectangleMode && m_CutPath.Count > 1)
+                    {
+                        if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
+                            ExecuteCut();
+                    }
 
                     if(GUILayout.Button(EditorGUIUtility.TrTextContent("Cancel")))
                         ExitTool();
@@ -761,8 +788,6 @@ namespace UnityEditor.ProBuilder
                         ActionResult result = DoCut();
                         EditorUtility.ShowNotification(result.notification);
                     }
-
-                    Clear();
                 }
 
                 m_RectStartPoint = Vector3.positiveInfinity;
@@ -1149,7 +1174,7 @@ namespace UnityEditor.ProBuilder
             m_Mesh.SetSelectedFaces(newFaces);
             ProBuilderEditor.Refresh();
 
-            Clear();
+            ResetToolState(true);
 
             return new ActionResult(ActionResult.Status.Success, L10n.Tr("Cut executed"));
         }
