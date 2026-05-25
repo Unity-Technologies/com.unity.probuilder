@@ -26,14 +26,11 @@ namespace UnityEditor.ProBuilder
 
             GUI.enabled = MeshSelection.selectedObjectCount == 1;
 
+            EditorGUI.BeginChangeCheck();
+
             m_RectangleMode = DoOverlayToggle(L10n.Tr("Rectangle Mode"), m_RectangleMode);
-            EditorPrefs.SetBool(k_RectangleModePrefKey, m_RectangleMode);
-
             m_SnapToGrid = DoOverlayToggle(L10n.Tr("Snap to Grid"), m_SnapToGrid);
-            EditorPrefs.SetBool(k_SnapToGridPrefKey, m_SnapToGrid);
-
             m_SnapToGeometry = DoOverlayToggle(L10n.Tr("Snap to existing edges and vertices"), m_SnapToGeometry);
-            EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
 
             if(m_RectangleMode)
             {
@@ -52,9 +49,16 @@ namespace UnityEditor.ProBuilder
             {
                 EditorGUILayout.LabelField(L10n.Tr("Snapping distance"), GUILayout.Width(200));
                 m_SnappingDistance = EditorGUILayout.FloatField(m_SnappingDistance);
-                EditorPrefs.SetFloat( k_SnappingDistancePrefKey, m_SnappingDistance);
             }
             EditorGUI.indentLevel--;
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorPrefs.SetBool(k_RectangleModePrefKey, m_RectangleMode);
+                EditorPrefs.SetBool(k_SnapToGridPrefKey, m_SnapToGrid);
+                EditorPrefs.SetBool(k_SnapToGeometryPrefKey, m_SnapToGeometry);
+                EditorPrefs.SetFloat(k_SnappingDistancePrefKey, m_SnappingDistance);
+            }
 
             GUI.enabled = true;
 

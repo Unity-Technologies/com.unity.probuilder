@@ -232,7 +232,6 @@ namespace UnityEditor.ProBuilder
         /// <returns>the valid face that need to be kept in the resulting mesh</returns>
         Face ComputeFaceClosure( List<int> polygonStart, int currentIndex, List<int> cutIndexes, out List<Face> facesToDelete)
         {
-            List<Vertex> meshVertices = new List<Vertex>();
             IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
 
@@ -307,13 +306,11 @@ namespace UnityEditor.ProBuilder
                 closure.AddRange(polygonStart);
 
                 Face face = m_Mesh.CreatePolygon(closure, false);
-                meshVertices.Clear();
-                m_Mesh.GetVerticesInList(meshVertices);
                 uniqueIdToVertexIndex = m_Mesh.sharedVertices;
                 sharedToUnique = m_Mesh.sharedVertexLookup;
 
                 float area;
-                if (!TryGetFaceArea(face, meshVertices, uniqueIdToVertexIndex, sharedToUnique, out area))
+                if (!TryGetFaceArea(face, uniqueIdToVertexIndex, sharedToUnique, out area))
                 {
                     if (face != null)
                         facesToDelete.Add(face);
@@ -355,7 +352,7 @@ namespace UnityEditor.ProBuilder
             destination.elementGroup = source.elementGroup;
         }
 
-        bool TryGetFaceArea(Face face, List<Vertex> meshVertices, IList<SharedVertex> uniqueIdToVertexIndex,
+        bool TryGetFaceArea(Face face, IList<SharedVertex> uniqueIdToVertexIndex,
             Dictionary<int, int> sharedToUnique, out float area)
         {
             area = 0f;

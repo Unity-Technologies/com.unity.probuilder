@@ -248,9 +248,9 @@ namespace UnityEditor.ProBuilder
             m_SnapedEdge = Edge.Empty;
 
             Vector3[] vertexPositions = m_Mesh.positionsInternal;
-            List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
+            IList<Edge> peripheralEdges = m_CurrentFace.edges;
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
-                peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
+                peripheralEdges = m_TargetFace.edges;
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
                 if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnappingPoint)
