@@ -752,11 +752,15 @@ namespace UnityEditor.ProBuilder
                     m_CurrentFace = m_TargetFace;
                     AddCurrentPositionToPath(false);
 
-                    RebuildCutShape(true);
+                    // RebuildCutShape(true) already executes the cut if the path is valid
+                    // Don't call DoCut() again — it would run on already-cleared data
+                    RebuildCutShape(false);
 
-                    // Execute the cut immediately
-                    ActionResult result = DoCut();
-                    EditorUtility.ShowNotification(result.notification);
+                    if (m_CutPath.Count >= 2 && m_IsCutValid)
+                    {
+                        ActionResult result = DoCut();
+                        EditorUtility.ShowNotification(result.notification);
+                    }
 
                     Clear();
                 }
@@ -1103,10 +1107,11 @@ namespace UnityEditor.ProBuilder
             if (isALoop)
             {
                 Face f = m_Mesh.CreatePolygon(cutIndexes, false);
-                f.submeshIndex = m_TargetFace.submeshIndex;
 
                 if(f == null)
                     return new ActionResult(ActionResult.Status.Failure, L10n.Tr("Cut Shape is not valid"));
+
+                f.submeshIndex = m_TargetFace.submeshIndex;
 
                 Vector3 nrm = Math.Normal(m_Mesh, f);
                 Vector3 targetNrm = Math.Normal(m_Mesh, m_TargetFace);
@@ -1213,10 +1218,12 @@ namespace UnityEditor.ProBuilder
                          {
                              List<Face> toDelete;
                              Face newFace = ComputeFaceClosure(polygon, index, cutVertexSharedIndexes, out toDelete);
-                             newFace.submeshIndex = m_TargetFace.submeshIndex;
-
-                             newFaces.Add(newFace);
-                             facesToDelete.AddRange(toDelete);
+                             if (newFace != null && newFace.indexesInternal != null)
+                             {
+                                 newFace.submeshIndex = m_TargetFace.submeshIndex;
+                                 newFaces.Add(newFace);
+                                 facesToDelete.AddRange(toDelete);
+                             }
                          }
 
                          //Start a new polygon
@@ -1251,10 +1258,26 @@ namespace UnityEditor.ProBuilder
             IList<SharedVertex> uniqueIdToVertexIndex = m_Mesh.sharedVertices;
             Dictionary<int, int> sharedToUnique = m_Mesh.sharedVertexLookup;
 
+            facesToDelete = new List<Face>();
+
+            if (polygonStart == null || polygonStart.Count == 0 || cutIndexes == null || cutIndexes.Count == 0)
+                return null;
+
             int polygonFirstVertex = polygonStart[0];
             int startIndex = cutIndexes.IndexOf(currentIndex);
 
-            SimpleTuple<int,int> connection = m_MeshConnections.Find(tup => sharedToUnique[tup.item2] == sharedToUnique[polygonFirstVertex]);
+            if (startIndex < 0 || !sharedToUnique.ContainsKey(polygonFirstVertex))
+                return null;
+
+            int polygonFirstSharedIndex = sharedToUnique[polygonFirstVertex];
+
+            bool hasConnection = m_MeshConnections.Exists(tup => sharedToUnique.ContainsKey(tup.item2)
+                && sharedToUnique[tup.item2] == polygonFirstSharedIndex);
+            SimpleTuple<int,int> connection = default;
+
+            if (hasConnection)
+                connection = m_MeshConnections.Find(tup => sharedToUnique.ContainsKey(tup.item2)
+                    && sharedToUnique[tup.item2] == polygonFirstSharedIndex);
 
             List<List<int>> closureCandidates = new List<List<int>>();
 
@@ -1267,8 +1290,9 @@ namespace UnityEditor.ProBuilder
             {
                 int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(index + cutIndexes.Count) % cutIndexes.Count]][0];
                 candidate.Add(vertexIndex);
-                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex] ||
-                   sharedToUnique[vertexIndex] == sharedToUnique[connection.item1])
+                if(sharedToUnique[vertexIndex] == polygonFirstSharedIndex ||
+                   (hasConnection && sharedToUnique.ContainsKey(connection.item1)
+                    && sharedToUnique[vertexIndex] == sharedToUnique[connection.item1]))
                 {
                     connected = true;
                     break;
@@ -1287,8 +1311,9 @@ namespace UnityEditor.ProBuilder
             {
                 int vertexIndex = uniqueIdToVertexIndex[cutIndexes[index % cutIndexes.Count]][0];
                 candidate.Add(vertexIndex);
-                if(sharedToUnique[vertexIndex] == sharedToUnique[polygonFirstVertex] ||
-                   sharedToUnique[vertexIndex] == sharedToUnique[connection.item1])
+                if(sharedToUnique[vertexIndex] == polygonFirstSharedIndex ||
+                   (hasConnection && sharedToUnique.ContainsKey(connection.item1)
+                    && sharedToUnique[vertexIndex] == sharedToUnique[connection.item1]))
                 {
                     connected = true;
                     break;
@@ -1300,7 +1325,6 @@ namespace UnityEditor.ProBuilder
                 closureCandidates.Add(candidate);
 
             //Go through the different candidate and keep the best one
-            facesToDelete = new List<Face>();
             Face bestFace = null;
             float bestArea = 0f;
             foreach(var closure in closureCandidates)
@@ -1308,15 +1332,22 @@ namespace UnityEditor.ProBuilder
                 closure.AddRange(polygonStart);
 
                 Face face = m_Mesh.CreatePolygon(closure, false);
+                meshVertices.Clear();
                 m_Mesh.GetVerticesInList(meshVertices);
                 uniqueIdToVertexIndex = m_Mesh.sharedVertices;
                 sharedToUnique = m_Mesh.sharedVertexLookup;
 
+                float area;
+                if (!TryGetFaceArea(face, meshVertices, uniqueIdToVertexIndex, sharedToUnique, out area))
+                {
+                    if (face != null)
+                        facesToDelete.Add(face);
+
+                    continue;
+                }
+
                 if(bestFace != null)
                 {
-                    Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
-                    int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
-                    float area = Math.PolygonArea(vertices, indexes);
                     if(area < bestArea)
                     {
                         facesToDelete.Add(bestFace);
@@ -1329,16 +1360,42 @@ namespace UnityEditor.ProBuilder
                 else
                 {
                     bestFace = face;
-                    if (face.indexesInternal != null)
-                    {
-                        Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
-                        int[] indexes = face.indexesInternal.Select(i => uniqueIdToVertexIndex[sharedToUnique[i]][0]).ToArray();
-                        bestArea = Math.PolygonArea(vertices, indexes);
-                    }
+                    bestArea = area;
                 }
             }
 
             return bestFace;
+        }
+
+        bool TryGetFaceArea(Face face, List<Vertex> meshVertices, IList<SharedVertex> uniqueIdToVertexIndex,
+            Dictionary<int, int> sharedToUnique, out float area)
+        {
+            area = 0f;
+
+            if (face == null || face.indexesInternal == null)
+                return false;
+
+            Vector3[] vertices = meshVertices.Select(vertex => vertex.position).ToArray();
+            int[] indexes = new int[face.indexesInternal.Length];
+
+            for (int i = 0; i < face.indexesInternal.Length; i++)
+            {
+                int uniqueIndex;
+                if (!sharedToUnique.TryGetValue(face.indexesInternal[i], out uniqueIndex))
+                    return false;
+
+                if (uniqueIndex < 0 || uniqueIndex >= uniqueIdToVertexIndex.Count)
+                    return false;
+
+                SharedVertex sharedVertex = uniqueIdToVertexIndex[uniqueIndex];
+                if (sharedVertex == null || sharedVertex.Count < 1)
+                    return false;
+
+                indexes[i] = sharedVertex[0];
+            }
+
+            area = Math.PolygonArea(vertices, indexes);
+            return true;
         }
 
         /// <summary>
@@ -1818,11 +1875,18 @@ namespace UnityEditor.ProBuilder
         /// </summary>
         void DrawMeshConnectionsHandles()
         {
-            if(m_MeshConnections.Count > 0)
+            if(m_MeshConnections.Count > 0 && m_Mesh != null)
             {
                 Vertex[] vertices = m_Mesh.GetVertices();
-                foreach(var connection in m_MeshConnections)
+                for (int i = m_MeshConnections.Count - 1; i >= 0; i--)
                 {
+                    var connection = m_MeshConnections[i];
+                    if (connection.item1 < 0 || connection.item1 >= m_CutPath.Count
+                        || connection.item2 < 0 || connection.item2 >= vertices.Length)
+                    {
+                        m_MeshConnections.RemoveAt(i);
+                        continue;
+                    }
                     Handles.color = k_ConnectionsLineColor;
                     Handles.DrawDottedLine(m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position),
                                             m_Mesh.transform.TransformPoint(vertices[connection.item2].position), 5f);
