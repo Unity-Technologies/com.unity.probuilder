@@ -91,8 +91,7 @@ namespace UnityEditor.ProBuilder
 
             //Compute the rest of the new faces (faces outside of the loop or division of the original face)
             List<Face> faces = ComputeNewFaces(m_TargetFace, cutIndexes);
-            if(!isALoop)
-                newFaces.AddRange(faces);
+            newFaces.AddRange(faces);
 
             //Remove inserted vertices only if they were inserted for the process
             List<int> verticesIndexesToDelete = new List<int>();

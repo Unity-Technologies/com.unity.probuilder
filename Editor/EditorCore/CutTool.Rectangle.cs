@@ -153,15 +153,8 @@ namespace UnityEditor.ProBuilder
                     m_CurrentFace = m_TargetFace;
                     AddCurrentPositionToPath(false);
 
-                    // RebuildCutShape(true) already executes the cut if the path is valid
-                    // Don't call DoCut() again — it would run on already-cleared data
+                    // Don't auto-execute—let user click Complete button like point mode
                     RebuildCutShape(false);
-
-                    if (m_CutPath.Count >= 2 && m_IsCutValid)
-                    {
-                        ActionResult result = DoCut();
-                        EditorUtility.ShowNotification(result.notification);
-                    }
                 }
 
                 m_RectStartPoint = Vector3.positiveInfinity;

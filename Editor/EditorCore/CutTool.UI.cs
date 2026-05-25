@@ -73,7 +73,7 @@ namespace UnityEditor.ProBuilder
                 }
                 else
                 {
-                    if(!m_RectangleMode && m_CutPath.Count > 1)
+                    if(m_CutPath.Count > 1 && m_IsCutValid)
                     {
                         if(GUILayout.Button(EditorGUIUtility.TrTextContent("Complete")))
                             ExecuteCut();
