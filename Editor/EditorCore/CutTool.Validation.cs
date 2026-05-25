@@ -37,14 +37,32 @@ namespace UnityEditor.ProBuilder
 
             m_IsCutValid = true;
 
-            // Pre-calculate all 2D screen positions to avoid expensive WorldToGUIPoint calls in nested loops
-            Transform trs = m_Mesh.transform;
+            // Project all points onto the face plane (2D) for view-independent intersection testing.
+            // Using screen-space projection causes false positives for faces viewed at an angle (e.g. floors).
+            Vector3 faceNormal = m_TargetFace != null
+                ? Math.Normal(m_Mesh, m_TargetFace)
+                : Vector3.up;
+
+            Vector3 faceRight, faceUp;
+            if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
+                faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
+            else
+                faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
+            faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+
             Vector2[] cutPath2D = new Vector2[m_CutPath.Count];
-            Vector2[] meshConnection2D = new Vector2[m_MeshConnections.Count];
             for (int i = 0; i < m_CutPath.Count; i++)
-                cutPath2D[i] = HandleUtility.WorldToGUIPoint(trs.TransformPoint(m_CutPath[i].position));
+            {
+                Vector3 p = m_CutPath[i].position;
+                cutPath2D[i] = new Vector2(Vector3.Dot(p, faceRight), Vector3.Dot(p, faceUp));
+            }
+
+            Vector2[] meshConnection2D = new Vector2[m_MeshConnections.Count];
             for (int i = 0; i < m_MeshConnections.Count; i++)
-                meshConnection2D[i] = HandleUtility.WorldToGUIPoint(trs.TransformPoint(verticesPositions[m_MeshConnections[i].item2]));
+            {
+                Vector3 p = verticesPositions[m_MeshConnections[i].item2];
+                meshConnection2D[i] = new Vector2(Vector3.Dot(p, faceRight), Vector3.Dot(p, faceUp));
+            }
 
             //For all segments of the current cut
             for(int i = 0; i < m_CutPath.Count-1 && m_IsCutValid; i++)
