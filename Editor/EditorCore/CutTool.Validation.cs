@@ -37,11 +37,20 @@ namespace UnityEditor.ProBuilder
 
             m_IsCutValid = true;
 
+            // Pre-calculate all 2D screen positions to avoid expensive WorldToGUIPoint calls in nested loops
+            Transform trs = m_Mesh.transform;
+            Vector2[] cutPath2D = new Vector2[m_CutPath.Count];
+            Vector2[] meshConnection2D = new Vector2[m_MeshConnections.Count];
+            for (int i = 0; i < m_CutPath.Count; i++)
+                cutPath2D[i] = HandleUtility.WorldToGUIPoint(trs.TransformPoint(m_CutPath[i].position));
+            for (int i = 0; i < m_MeshConnections.Count; i++)
+                meshConnection2D[i] = HandleUtility.WorldToGUIPoint(trs.TransformPoint(verticesPositions[m_MeshConnections[i].item2]));
+
             //For all segments of the current cut
             for(int i = 0; i < m_CutPath.Count-1 && m_IsCutValid; i++)
             {
-                Vector2 segment1Start2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i].position));
-                Vector2 segment1End2D = HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[i+1].position));
+                Vector2 segment1Start2D = cutPath2D[i];
+                Vector2 segment1End2D = cutPath2D[i + 1];
 
                 int lastVertexIndex = (isALoop && i == 0) ? m_CutPath.Count-2 : m_CutPath.Count-1;
                 //Test intersections with the rest of the cut path
@@ -49,10 +58,8 @@ namespace UnityEditor.ProBuilder
                 {
                     if(((m_CutPath[j].types | m_CutPath[j+1].types) & VertexTypes.VertexInShape) == 0)
                     {
-                        Vector2 segment2Start2D =
-                            HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j].position));
-                        Vector2 segment2End2D =
-                            HandleUtility.WorldToGUIPoint(m_Mesh.transform.TransformPoint(m_CutPath[j + 1].position));
+                        Vector2 segment2Start2D = cutPath2D[j];
+                        Vector2 segment2End2D = cutPath2D[j + 1];
 
                         m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D,
                             segment2End2D);
@@ -68,12 +75,8 @@ namespace UnityEditor.ProBuilder
 
                         if(connection.item1 != i && connection.item1 != i + 1)
                         {
-                            Vector2 segment2Start2D =
-                                HandleUtility.WorldToGUIPoint(
-                                    m_Mesh.transform.TransformPoint(m_CutPath[connection.item1].position));
-                            Vector2 segment2End2D =
-                                HandleUtility.WorldToGUIPoint(
-                                    m_Mesh.transform.TransformPoint(verticesPositions[connection.item2]));
+                            Vector2 segment2Start2D = cutPath2D[connection.item1];
+                            Vector2 segment2End2D = meshConnection2D[j];
 
                             m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D,
                                 segment2Start2D,
@@ -87,24 +90,16 @@ namespace UnityEditor.ProBuilder
             for(int i = 0; i <  m_MeshConnections.Count-1 && m_IsCutValid; i++)
             {
                 SimpleTuple<int,int> connection1 = m_MeshConnections[i];
-                Vector2 segment1Start2D =
-                    HandleUtility.WorldToGUIPoint(
-                        m_Mesh.transform.TransformPoint(m_CutPath[connection1.item1].position) );
-                Vector2 segment1End2D =
-                    HandleUtility.WorldToGUIPoint(
-                        m_Mesh.transform.TransformPoint(verticesPositions[connection1.item2]));
+                Vector2 segment1Start2D = cutPath2D[connection1.item1];
+                Vector2 segment1End2D = meshConnection2D[i];
 
                 //Test intersection with the other connections to the face vertices
                 for(int j = i+1; j < m_MeshConnections.Count && m_IsCutValid; j++)
                 {
                     SimpleTuple<int,int> connection2 = m_MeshConnections[j];
 
-                    Vector2 segment2Start2D =
-                        HandleUtility.WorldToGUIPoint(
-                            m_Mesh.transform.TransformPoint(m_CutPath[connection2.item1].position));
-                    Vector2 segment2End2D =
-                        HandleUtility.WorldToGUIPoint(
-                            m_Mesh.transform.TransformPoint(verticesPositions[connection2.item2]));
+                    Vector2 segment2Start2D = cutPath2D[connection2.item1];
+                    Vector2 segment2End2D = meshConnection2D[j];
 
                     m_IsCutValid = !Math.GetLineSegmentIntersect(segment1Start2D, segment1End2D, segment2Start2D, segment2End2D);
                 }

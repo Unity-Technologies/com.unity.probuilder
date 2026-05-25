@@ -57,15 +57,21 @@ namespace UnityEditor.ProBuilder
             //Insert cut vertices in the mesh
             List<Vertex> cutVertices = InsertVertices();
             m_Mesh.GetVerticesInList(meshVertices);
+
+            // Build vertex→index dictionary for O(1) lookups instead of O(N) IndexOf
+            Dictionary<Vertex, int> vertexIndexMap = new Dictionary<Vertex, int>();
+            for (int i = 0; i < meshVertices.Count; i++)
+                vertexIndexMap[meshVertices[i]] = i;
+
             //Retrieve indexes of the cut points in the mesh vertices
-            int[] cutIndexes = cutVertices.Select(vert => meshVertices.IndexOf(vert)).ToArray();
+            int[] cutIndexes = cutVertices.Select(vert => vertexIndexMap[vert]).ToArray();
 
             //Update mesh connections with new indexes
             for(int i = 0; i<m_MeshConnections.Count; i++)
             {
                 SimpleTuple<int, int> connection = m_MeshConnections[i];
-                connection.item1 = meshVertices.IndexOf(cutVertices[connection.item1]);
-                connection.item2 = meshVertices.IndexOf(formerVertices[i]);
+                connection.item1 = vertexIndexMap[cutVertices[connection.item1]];
+                connection.item2 = vertexIndexMap[formerVertices[i]];
                 m_MeshConnections[i] = connection;
             }
 
@@ -111,8 +117,17 @@ namespace UnityEditor.ProBuilder
             m_Mesh.Optimize();
 
             //Update mesh selection after the cut has been performed
+            // For loop cuts, select only the central cutout so user can immediately manipulate it
             MeshSelection.ClearElementSelection();
-            m_Mesh.SetSelectedFaces(newFaces);
+            if (isALoop)
+            {
+                // Select only the central loop face (first in the list)
+                m_Mesh.SetSelectedFaces(new Face[] { newFaces[0] });
+            }
+            else
+            {
+                m_Mesh.SetSelectedFaces(newFaces);
+            }
             ProBuilderEditor.Refresh();
 
             ResetToolState(true);
@@ -434,7 +449,7 @@ namespace UnityEditor.ProBuilder
         /// <returns>The inew vertex inserted</returns>
         Vertex InsertVertexOnExistingEdge(Vector3 vertexPosition)
         {
-            List<Vertex> vertices = m_Mesh.GetVertices().ToList();
+            Vector3[] vertexPositions = m_Mesh.positionsInternal;
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
 
             int bestIndex = -1;
@@ -442,8 +457,8 @@ namespace UnityEditor.ProBuilder
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
                 float dist = UnityEngine.ProBuilder.Math.DistancePointLineSegment(vertexPosition,
-                        vertices[peripheralEdges[i].a].position,
-                        vertices[peripheralEdges[i].b].position);
+                        vertexPositions[peripheralEdges[i].a],
+                        vertexPositions[peripheralEdges[i].b]);
 
                 if (dist < bestDistance)
                 {

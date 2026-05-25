@@ -74,7 +74,7 @@ namespace UnityEditor.ProBuilder
                 return;
 
             List<Vector3> existingVerticesInCut =
-                m_CutPath.Where(v => ( v.types | VertexTypes.ExistingVertex ) != 0)
+                m_CutPath.Where(v => ( v.types & VertexTypes.ExistingVertex ) != 0)
                          .Select(v => v.position).ToList();
 
             Vector3[] verticesPositions = m_Mesh.positionsInternal;
@@ -247,7 +247,7 @@ namespace UnityEditor.ProBuilder
             m_SnapedVertexId = -1;
             m_SnapedEdge = Edge.Empty;
 
-            Vertex[] vertices = m_Mesh.GetVertices();
+            Vector3[] vertexPositions = m_Mesh.positionsInternal;
             List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
                 peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
@@ -255,7 +255,7 @@ namespace UnityEditor.ProBuilder
             {
                 if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnappingPoint)
                 {
-                    if (Math.Approx3(vertices[peripheralEdges[i].a].position,
+                    if (Math.Approx3(vertexPositions[peripheralEdges[i].a],
                         m_CurrentPosition,
                         snapDistance))
                     {
@@ -267,8 +267,8 @@ namespace UnityEditor.ProBuilder
                     {
                         float dist = Math.DistancePointLineSegment(
                             m_CurrentPosition,
-                            vertices[peripheralEdges[i].a].position,
-                            vertices[peripheralEdges[i].b].position);
+                            vertexPositions[peripheralEdges[i].a],
+                            vertexPositions[peripheralEdges[i].b]);
 
                         if (dist < Mathf.Min(snapDistance, bestDistance))
                         {
@@ -280,7 +280,7 @@ namespace UnityEditor.ProBuilder
                 //Even with no snapping, try to detect if the first point is on a existing geometry
                 else if(m_TargetFace == null && !m_SnappingPoint)
                 {
-                    if (Math.Approx3(vertices[peripheralEdges[i].a].position,
+                    if (Math.Approx3(vertexPositions[peripheralEdges[i].a],
                         m_CurrentPosition,
                         0.01f))
                     {
@@ -292,8 +292,8 @@ namespace UnityEditor.ProBuilder
                     {
                         float dist = Math.DistancePointLineSegment(
                             m_CurrentPosition,
-                            vertices[peripheralEdges[i].a].position,
-                            vertices[peripheralEdges[i].b].position);
+                            vertexPositions[peripheralEdges[i].a],
+                            vertexPositions[peripheralEdges[i].b]);
 
                         if (dist < Mathf.Min(0.01f, bestDistance))
                         {
@@ -305,11 +305,11 @@ namespace UnityEditor.ProBuilder
                 else if(m_CurrentFace != m_TargetFace && m_TargetFace != null )
                 {
                     float edgeDist = Math.DistancePointLineSegment(m_CurrentPosition,
-                        vertices[peripheralEdges[i].a].position,
-                        vertices[peripheralEdges[i].b].position);
+                        vertexPositions[peripheralEdges[i].a],
+                        vertexPositions[peripheralEdges[i].b]);
 
                     float vertexDist = Vector3.Distance(m_CurrentPosition,
-                        vertices[peripheralEdges[i].a].position);
+                        vertexPositions[peripheralEdges[i].a]);
 
                     if (edgeDist < vertexDist && edgeDist < bestDistance)
                     {
@@ -330,7 +330,7 @@ namespace UnityEditor.ProBuilder
             //We found a close vertex
             if (snapedOnVertex)
             {
-                m_CurrentPosition = vertices[peripheralEdges[bestIndex].a].position;
+                m_CurrentPosition = vertexPositions[peripheralEdges[bestIndex].a];
                 m_CurrentVertexTypes = VertexTypes.ExistingVertex;
                 m_SelectedIndex = -1;
 
@@ -342,8 +342,8 @@ namespace UnityEditor.ProBuilder
             {
                 if (m_TargetFace == null || m_TargetFace == m_CurrentFace)
                 {
-                    Vector3 left = vertices[peripheralEdges[bestIndex].a].position,
-                        right = vertices[peripheralEdges[bestIndex].b].position;
+                    Vector3 left = vertexPositions[peripheralEdges[bestIndex].a],
+                        right = vertexPositions[peripheralEdges[bestIndex].b];
 
                     float x = (m_CurrentPosition - left).magnitude;
                     float y = (m_CurrentPosition - right).magnitude;
@@ -353,13 +353,13 @@ namespace UnityEditor.ProBuilder
                 else //if(m_CurrentFace != m_TargetFace)
                 {
                     Vector3 a = m_CurrentPosition -
-                                vertices[peripheralEdges[bestIndex].a].position;
-                    Vector3 b = vertices[peripheralEdges[bestIndex].b].position -
-                                vertices[peripheralEdges[bestIndex].a].position;
+                                vertexPositions[peripheralEdges[bestIndex].a];
+                    Vector3 b = vertexPositions[peripheralEdges[bestIndex].b] -
+                                vertexPositions[peripheralEdges[bestIndex].a];
 
                     float angle = Vector3.Angle(b, a);
                     m_CurrentPosition = Vector3.Magnitude(a) * Mathf.Cos(angle * Mathf.Deg2Rad) * b / Vector3.Magnitude(b);
-                    m_CurrentPosition += vertices[peripheralEdges[bestIndex].a].position;
+                    m_CurrentPosition += vertexPositions[peripheralEdges[bestIndex].a];
                 }
 
                 m_SnapedEdge = peripheralEdges[bestIndex];

@@ -21,6 +21,18 @@ namespace UnityEditor.ProBuilder
     partial class CutTool
     {
         /// <summary>
+        /// Create a local coordinate system on the face plane.
+        /// </summary>
+        static void GetFacePlaneAxes(Vector3 faceNormal, out Vector3 faceRight, out Vector3 faceUp)
+        {
+            if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
+                faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
+            else
+                faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
+            faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+        }
+
+        /// <summary>
         /// Rectangle mode: click and drag to define a rectangular cut on the face.
         /// On mouse up, auto-places the 4 corners and executes the cut.
         /// </summary>
@@ -92,20 +104,15 @@ namespace UnityEditor.ProBuilder
                 // Compute face normal for projection
                 Vector3 faceNormal = Math.Normal(m_Mesh, m_TargetFace);
 
-                // Create a local coordinate system on the face plane
                 Vector3 faceRight, faceUp;
-                if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
-                    faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
-                else
-                    faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
-                faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+                GetFacePlaneAxes(faceNormal, out faceRight, out faceUp);
 
                 // Decompose rect diagonals in face space
                 Vector3 diagonal = end - start;
                 float rightDot = Vector3.Dot(diagonal, faceRight);
                 float upDot = Vector3.Dot(diagonal, faceUp);
 
-                // Compute the 4 rectangle corners in world space
+                // Compute the 4 rectangle corners in local space
                 Vector3 corner0 = start;
                 Vector3 corner1 = start + faceRight * rightDot;
                 Vector3 corner2 = end;
@@ -180,27 +187,21 @@ namespace UnityEditor.ProBuilder
                 return;
 
             Transform trs = m_Mesh.transform;
-            Vector3 startW = trs.TransformPoint(m_RectStartPoint);
-            Vector3 endW = trs.TransformPoint(m_RectEndPoint);
 
-            // Compute face plane
+            // Compute the 4 corners in local space
             Vector3 faceNormal = Math.Normal(m_Mesh, m_TargetFace);
 
             Vector3 faceRight, faceUp;
-            if (Mathf.Abs(Vector3.Dot(faceNormal, Vector3.up)) > 0.99f)
-                faceRight = Vector3.Cross(faceNormal, Vector3.forward).normalized;
-            else
-                faceRight = Vector3.Cross(faceNormal, Vector3.up).normalized;
-            faceUp = Vector3.Cross(faceNormal, faceRight).normalized;
+            GetFacePlaneAxes(faceNormal, out faceRight, out faceUp);
 
-            Vector3 diagonal = endW - startW;
+            Vector3 diagonal = m_RectEndPoint - m_RectStartPoint;
             float rightDot = Vector3.Dot(diagonal, faceRight);
             float upDot = Vector3.Dot(diagonal, faceUp);
 
-            Vector3 c0 = startW;
-            Vector3 c1 = startW + faceRight * rightDot;
-            Vector3 c2 = endW;
-            Vector3 c3 = startW + faceUp * upDot;
+            Vector3 c0 = trs.TransformPoint(m_RectStartPoint);
+            Vector3 c1 = trs.TransformPoint(m_RectStartPoint + faceRight * rightDot);
+            Vector3 c2 = trs.TransformPoint(m_RectEndPoint);
+            Vector3 c3 = trs.TransformPoint(m_RectStartPoint + faceUp * upDot);
 
             // Draw filled rectangle
             Handles.color = k_RectPreviewColor;
