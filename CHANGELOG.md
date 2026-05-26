@@ -7,14 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Internal
+
+- [UUM-138957] Removed ProBuilder Runtime tests references to UnityEditor.
+
 ### Changes
 
 - [UUM-131032] Added a reset of static variables when entering playmode to allow fast enter playmode compatibility.
+- [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
 - [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
 
 ### Fixed
 
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
+- [UUM-133859] Fixed an issue in URP projects where the Editor would recompile scripts when after a rectangle selection in ProBuilder. 
 - [UUM-133530] Fixed the `Set Double Sided` custom action in the Editor Sample, which was previously remaining disabled.
 - [UUM-133530] Ensured that the context menu respects the value of `MenuAction.enabled`.
 - [UUM-133531] Fixed component icons in Light theme.

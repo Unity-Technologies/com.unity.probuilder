@@ -287,12 +287,16 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Vertex:
                 case SelectMode.TextureVertex:
                 {
+                    var lastSceneView = SceneView.lastActiveSceneView;
+                    var isDrawingGizmos = lastSceneView.drawGizmos;
+                    lastSceneView.drawGizmos = false;
                     Dictionary<ProBuilderMesh, HashSet<int>> selected = SelectionPicker.PickVerticesInRect(
-                            SceneView.lastActiveSceneView.camera,
+                            lastSceneView.camera,
                             mouseDragRect,
                             MeshSelection.topInternal,
                             pickingOptions,
                             EditorGUIUtility.pixelsPerPoint);
+                    lastSceneView.drawGizmos = isDrawingGizmos;
 
                     foreach (var kvp in selected)
                     {
@@ -324,12 +328,16 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Face:
                 case SelectMode.TextureFace:
                 {
+                    var lastSceneView = SceneView.lastActiveSceneView;
+                    var isDrawingGizmos = lastSceneView.drawGizmos;
+                    lastSceneView.drawGizmos = false;
                     Dictionary<ProBuilderMesh, HashSet<Face>> selected = SelectionPicker.PickFacesInRect(
-                            SceneView.lastActiveSceneView.camera,
+                        lastSceneView.camera,
                             mouseDragRect,
                             MeshSelection.topInternal,
                             pickingOptions,
                             EditorGUIUtility.pixelsPerPoint);
+                    lastSceneView.drawGizmos = isDrawingGizmos;
 
                     foreach (var kvp in selected)
                     {
@@ -359,12 +367,16 @@ namespace UnityEditor.ProBuilder
                 case SelectMode.Edge:
                 case SelectMode.TextureEdge:
                 {
+                    var lastSceneView = SceneView.lastActiveSceneView;
+                    var isDrawingGizmos = lastSceneView.drawGizmos;
+                    lastSceneView.drawGizmos = false;
                     var selected = SelectionPicker.PickEdgesInRect(
-                            SceneView.lastActiveSceneView.camera,
+                        lastSceneView.camera,
                             mouseDragRect,
                             MeshSelection.topInternal,
                             pickingOptions,
                             EditorGUIUtility.pixelsPerPoint);
+                    lastSceneView.drawGizmos = isDrawingGizmos;
 
                     foreach (var kvp in selected)
                     {

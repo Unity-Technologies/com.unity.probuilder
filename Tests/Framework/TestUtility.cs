@@ -85,53 +85,6 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             get { return k_TempDirectory; }
         }
 
-        public class BuiltInPrimitives : IDisposable, IEnumerable<ProBuilderMesh>
-        {
-            ProBuilderMesh[] m_Shapes;
-
-            public static ProBuilderMesh[] GetBasicShapes()
-            {
-                var shapes = Enum.GetValues(typeof(ShapeType)) as ShapeType[];
-                ProBuilderMesh[] primitives = new ProBuilderMesh[shapes.Length];
-
-                for (int i = 0, c = shapes.Length; i < c; i++)
-                {
-                    primitives[i] = ShapeGenerator.CreateShape(shapes[i]);
-                    primitives[i].GetComponent<MeshFilter>().sharedMesh.name = shapes[i].ToString();
-                }
-                return primitives;
-            }
-
-            public BuiltInPrimitives()
-            {
-                m_Shapes = GetBasicShapes();
-            }
-
-            public int Count { get { return m_Shapes.Length; } }
-
-            public ProBuilderMesh this[int i]
-            {
-                get { return m_Shapes[i]; }
-                set { m_Shapes[i] = value; }
-            }
-
-            public void Dispose()
-            {
-                for (int i = 0, c = m_Shapes.Length; i < c; i++)
-                    UObject.DestroyImmediate(m_Shapes[i].gameObject);
-            }
-
-            IEnumerator<ProBuilderMesh> IEnumerable<ProBuilderMesh>.GetEnumerator()
-            {
-                return ((IEnumerable<ProBuilderMesh>)m_Shapes).GetEnumerator();
-            }
-
-            public IEnumerator GetEnumerator()
-            {
-                return m_Shapes.GetEnumerator();
-            }
-        }
-
         public class IgnoreAssertScope : IDisposable
         {
             bool m_SavedState;
@@ -156,14 +109,6 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         static string ToAssetPath(string path)
         {
             return path.Replace("\\", "/").Replace(Application.dataPath, "Assets/");
-        }
-
-        public static void AssertSequenceEqual<T>(IList<T> left, IList<T> right)
-        {
-            Assert.AreEqual(left.Count, right.Count, "Count");
-
-            for (int i = 0, c = left.Count; i < c; i++)
-                Assert.AreEqual(left[i], right[i], "index " + i);
         }
 
         public static void AssertMeshAttributesValid(Mesh mesh)
@@ -527,45 +472,6 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         public static Material greenMaterial
         {
             get { return AssetDatabase.LoadAssetAtPath<Material>(k_GreenMaterialPath); }
-        }
-
-        public static SimpleTuple<ProBuilderMesh, Face> CreateCubeWithNonContiguousMergedFace()
-        {
-            var cube = ShapeFactory.Instantiate<Cube>();
-
-            Assume.That(cube, Is.Not.Null);
-
-            int index = 1;
-            Face a = cube.faces[0], b = cube.faces[index++];
-            Assume.That(a, Is.Not.Null);
-            Assume.That(b, Is.Not.Null);
-
-            while (FacesAreAdjacent(cube, a, b) && index < cube.faceCount)
-                b = cube.faces[index++];
-
-            Assume.That(FacesAreAdjacent(cube, a, b), Is.False);
-
-            var res = MergeElements.Merge(cube, new Face[] { a, b });
-
-            return new SimpleTuple<ProBuilderMesh, Face>(cube, res);
-        }
-
-        static bool FacesAreAdjacent(ProBuilderMesh mesh, Face a, Face b)
-        {
-            for (int i = 0, c = a.edgesInternal.Length; i < c; i++)
-            {
-                var ea = mesh.GetSharedVertexHandleEdge(a.edgesInternal[i]);
-
-                for (int n = 0; n < b.edgesInternal.Length; n++)
-                {
-                    var eb = mesh.GetSharedVertexHandleEdge(b.edgesInternal[n]);
-
-                    if (ea == eb)
-                        return true;
-                }
-            }
-
-            return false;
         }
 
         public static void AssertMeshIsValid(ProBuilderMesh mesh)

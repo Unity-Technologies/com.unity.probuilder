@@ -6,7 +6,10 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.ProBuilder.Tests;
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
+#endif
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
@@ -45,7 +48,7 @@ class ExtrudeTests
             Assert.IsTrue(pb.Extrude(edges, .5f, true, true) != null, "Do allow manifold edge extrude");
             pb.ToMesh();
             pb.Refresh();
-            TestUtility.AssertMeshAttributesValid(pb.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(pb.mesh);
             Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
         }
         finally
@@ -70,7 +73,7 @@ class ExtrudeTests
             Assert.IsTrue(pb.Extrude(edges, .5f, true, true) != null, "Do allow manifold edge extrude");
             pb.ToMesh();
             pb.Refresh();
-            TestUtility.AssertMeshAttributesValid(pb.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(pb.mesh);
             Assert.AreEqual(vertexCount + edges.Length * 4, pb.vertexCount);
         }
         finally
@@ -90,12 +93,13 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-#if PB_CREATE_TEST_MESH_TEMPLATES
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-            TestUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh);
         }
         catch (Exception e)
         {
@@ -121,12 +125,13 @@ class ExtrudeTests
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
             Assert.AreNotEqual(vertexCountBeforeExtrude, mesh.vertexCount);
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-#if PB_CREATE_TEST_MESH_TEMPLATES
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-            TestUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh);
         }
         catch (Exception e)
         {
@@ -150,12 +155,13 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-#if PB_CREATE_TEST_MESH_TEMPLATES
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            Mesh template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
-            TestUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
+            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            Assert.IsNotNull(template);
+            RuntimeUtility.AssertAreEqual(template, mesh.mesh);
         }
         catch (Exception e)
         {
@@ -191,8 +197,8 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
-#if PB_CREATE_TEST_MESH_TEMPLATES
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
+#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
             Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, mesh.vertexCount);
@@ -221,7 +227,7 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
             Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, mesh.vertexCount);
 
             initialVertexCount = mesh.vertexCount;
@@ -229,7 +235,7 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
             Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, mesh.vertexCount);
 
             initialVertexCount = mesh.vertexCount;
@@ -237,7 +243,7 @@ class ExtrudeTests
             mesh.ToMesh();
             mesh.Refresh();
             LogAssert.NoUnexpectedReceived();
-            TestUtility.AssertMeshAttributesValid(mesh.mesh);
+            RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
             Assert.AreEqual(initialVertexCount + face.edgesInternal.Length * 4, mesh.vertexCount);
         }
         catch (Exception e)
