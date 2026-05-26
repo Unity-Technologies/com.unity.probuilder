@@ -146,8 +146,12 @@ namespace UnityEngine.ProBuilder.Shapes
 
         internal void SetShape(Shape shape)
         {
+            bool wasFlat = m_Shape is Plane || m_Shape is Sprite;
+            bool isFlat = shape is Plane || shape is Sprite;
+
             m_Shape = shape;
-            if(m_Shape is Plane || m_Shape is Sprite)
+
+            if(isFlat)
             {
                 Bounds bounds = new Bounds(m_LocalCenter, size);
                 var newCenter = bounds.center;
@@ -158,6 +162,15 @@ namespace UnityEngine.ProBuilder.Shapes
                 size = newSize;
                 m_Size.y = 0;
             }
+            else if(wasFlat && !isFlat)
+            {
+                // Transitioning FROM a 2D shape TO a 3D shape - restore Y dimension
+                if(Mathf.Abs(m_Size.y) < Mathf.Epsilon)
+                {
+                    m_Size.y = 1f;
+                }
+            }
+
             UpdateShape();
 
             m_UnmodifiedMeshVersion = mesh.versionIndex;
