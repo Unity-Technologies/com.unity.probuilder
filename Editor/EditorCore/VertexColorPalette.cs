@@ -18,6 +18,12 @@ namespace UnityEditor.ProBuilder
 
         static VertexColorPalette s_Instance = null;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_Instance = null;
+        }
+
         [SerializeField]
         ColorPalette m_ColorPalette = null;
 

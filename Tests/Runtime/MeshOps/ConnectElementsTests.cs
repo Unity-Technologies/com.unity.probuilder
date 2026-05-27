@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
-using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Tests;
 
 static class ConnectElementsTests
 {
@@ -43,7 +43,7 @@ static class ConnectElementsTests
             mesh.ToMesh();
             mesh.Refresh();
 
-            TestUtility.AssertMeshIsValid(mesh);
+            RuntimeUtility.AssertMeshIsValid(mesh);
             Assert.That(previousEdgeCount, Is.LessThan(mesh.edgeCount));
         }
         catch (System.Exception e)
@@ -63,8 +63,8 @@ static class ConnectElementsTests
 
         mesh.renderer.sharedMaterials = new[]
         {
-            TestUtility.redMaterial,
-            TestUtility.greenMaterial
+            RuntimeUtility.redMaterial,
+            RuntimeUtility.greenMaterial
         };
 
         mesh.facesInternal[0].submeshIndex = 1;

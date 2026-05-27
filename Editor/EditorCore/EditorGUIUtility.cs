@@ -12,7 +12,8 @@ namespace UnityEditor.ProBuilder.UI
     {
         internal static class Styles
         {
-            public static GUIStyle command = "command";
+            private static GUIStyle s_Command;
+            public static GUIStyle command => s_Command ??= "command";
             public static GUIContent[] selectModeIcons;
 
             static Texture2D s_ObjectIcon;
@@ -44,6 +45,15 @@ namespace UnityEditor.ProBuilder.UI
                     ? new GUIContent(s_FaceIcon, "Face Selection")
                     : new GUIContent("FCE", "Face Selection"),
                 };
+            }
+
+            internal static void ResetForPlayMode()
+            {
+                selectModeIcons = null;
+                s_ObjectIcon = null;
+                s_VertexIcon = null;
+                s_EdgeIcon = null;
+                s_FaceIcon = null;
             }
         }
 
@@ -468,6 +478,18 @@ namespace UnityEditor.ProBuilder.UI
         }
 
         static GUIStyle _sceneBoldLabel = null;
+
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            Styles.ResetForPlayMode();
+            _splitStyle = null;
+            _centeredGreyMiniLabel = null;
+            _solidBackgroundStyle = null;
+            _buttonNoBackgroundSmallMarginStyle = null;
+            _sceneBoldLabel = null;
+            sceneLabelRect = new Rect(0f, 0f, 0f, 0f);
+        }
 
         /**
          *  Draw a label in the scene view with a solid color background.

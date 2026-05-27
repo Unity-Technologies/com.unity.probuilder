@@ -20,6 +20,16 @@ namespace UnityEngine.ProBuilder
                 s_CachedIntArray[i] = 0;
         }
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_SmoothAvg = new Vector3[Smoothing.smoothRangeMax];
+            s_SmoothAvgCount = new float[Smoothing.smoothRangeMax];
+            s_CachedIntArray = new int[ushort.MaxValue];
+        }
+#endif
+
         /// <summary>
         /// Calculates the tangents for a mesh.
         /// </summary>

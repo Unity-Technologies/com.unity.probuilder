@@ -42,6 +42,21 @@ namespace UnityEditor.ProBuilder
                 helpBox = new GUIStyle(EditorStyles.helpBox);
                 helpBox.padding = new RectOffset(2, 2, 2, 2);
             }
+
+#if UNITY_EDITOR
+            internal static void ResetForPlayMode()
+            {
+                s_Initialized = false;
+                miniButton = null;
+                helpBox = null;
+            }
+#endif
+        }
+
+        [InitializeOnEnterPlayMode]
+        static void ResetMeshEditorStylesOnLoad()
+        {
+            Styles.ResetForPlayMode();
         }
 
         internal static event System.Action onGetFrameBoundsEvent;

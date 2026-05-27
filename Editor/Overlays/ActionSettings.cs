@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
             m_Overlay.displayed = true;
+            SceneView.RepaintAll();
         }
 
         public void Dispose()
@@ -114,6 +115,12 @@ namespace UnityEditor.ProBuilder
         internal static void EndPreview()
         {
             s_Instance?.Dispose();
+        }
+
+        [InitializeOnEnterPlayMode]
+        internal static void ResetPreviewActionManagerStatics()
+        {
+            Cancel();
         }
 
         internal static void Validate()
@@ -224,7 +231,13 @@ namespace UnityEditor.ProBuilder
     public class MenuActionSettings : EditorAction
     {
         static bool s_CanTriggerNewAction = true;
-        
+
+        [InitializeOnEnterPlayMode]
+        static void ResetMenuActionSettingsStatics()
+        {
+            s_CanTriggerNewAction = true;
+        }
+
         /// <summary>
         /// MenuActionSettings constructor.
         /// </summary>

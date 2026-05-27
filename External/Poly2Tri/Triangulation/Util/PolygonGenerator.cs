@@ -34,22 +34,37 @@ using System;
 namespace UnityEngine.ProBuilder.Poly2Tri {
 	class PolygonGenerator {
 		static readonly System.Random RNG = new System.Random();
-
 		private static double PI_2 = 2.0 * Math.PI;
 
-		public static Polygon RandomCircleSweep(double scale, int vertexCount) {
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            PI_2 = 2.0 * Math.PI;
+        }
+#endif
+
+		public static Polygon RandomCircleSweep(double scale, int vertexCount)
+		{
 			PolygonPoint point;
 			PolygonPoint[] points;
 			double radius = scale / 4;
 
 			points = new PolygonPoint[vertexCount];
-			for (int i = 0; i < vertexCount; i++) {
-				do {
-					if (i % 250 == 0) {
+			for (int i = 0; i < vertexCount; i++)
+			{
+				do
+				{
+					if (i % 250 == 0)
+					{
 						radius += scale / 2 * (0.5 - RNG.NextDouble());
-					} else if (i % 50 == 0) {
+					}
+					else if (i % 50 == 0)
+					{
 						radius += scale / 5 * (0.5 - RNG.NextDouble());
-					} else {
+					}
+					else
+					{
 						radius += 25 * scale / vertexCount * (0.5 - RNG.NextDouble());
 					}
 					radius = radius > scale / 2 ? scale / 2 : radius;

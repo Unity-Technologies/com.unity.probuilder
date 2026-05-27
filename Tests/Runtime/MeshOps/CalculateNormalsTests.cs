@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Tests;
 
 static class CalculateNormalsTests
 {
@@ -13,7 +12,7 @@ static class CalculateNormalsTests
     [Test]
     public static void Calculate_HardNormals_AreNormalized()
     {
-        using (var shapes = new TestUtility.BuiltInPrimitives())
+        using (var shapes = new RuntimeUtility.BuiltInPrimitives())
         {
             foreach (var pb in (IEnumerable<ProBuilderMesh>)shapes)
             {
@@ -35,7 +34,7 @@ static class CalculateNormalsTests
     [Test]
     public static void Calculate_SoftNormals_AreNormalized()
     {
-        using (var shapes = new TestUtility.BuiltInPrimitives())
+        using (var shapes = new RuntimeUtility.BuiltInPrimitives())
         {
             foreach (var pb in (IEnumerable<ProBuilderMesh>)shapes)
             {
@@ -57,7 +56,7 @@ static class CalculateNormalsTests
     [Test]
     public static void Calculate_SoftNormals_AreSoft()
     {
-        using (var shapes = new TestUtility.BuiltInPrimitives())
+        using (var shapes = new RuntimeUtility.BuiltInPrimitives())
         {
             foreach (var pb in (IEnumerable<ProBuilderMesh>)shapes)
             {

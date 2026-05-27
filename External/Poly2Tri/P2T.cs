@@ -33,9 +33,19 @@ namespace UnityEngine.ProBuilder.Poly2Tri {
 	static class P2T {
 		private static TriangulationAlgorithm _defaultAlgorithm = TriangulationAlgorithm.DTSweep;
 
-		public static void Triangulate(PolygonSet ps) {
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            _defaultAlgorithm = TriangulationAlgorithm.DTSweep;
+        }
+#endif
+
+		public static void Triangulate(PolygonSet ps)
+		{
 			TriangulationContext tcx = CreateContext(_defaultAlgorithm);
-			foreach (Polygon p in ps.Polygons) {
+			foreach (Polygon p in ps.Polygons)
+			{
 				tcx.PrepareTriangulation(p);
 				Triangulate(tcx);
 				tcx.Clear();

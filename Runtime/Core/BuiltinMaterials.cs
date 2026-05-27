@@ -90,6 +90,21 @@ namespace UnityEngine.ProBuilder
 
         const string k_SelectionPickerShader = "Hidden/ProBuilder/SelectionPicker";
 #endif
+  
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset the static variables to their initial values, these 3 static variables will be re-initialized when accessed
+            s_DefaultMaterial = null;
+            s_UnityDefaultDiffuse = null;
+            s_ShapePreviewMaterial = null;
+
+            // Re-initialize the rest of the static variables
+            s_IsInitialized = false;
+            Init();
+        }
+#endif
 
         static void Init()
         {
@@ -122,6 +137,7 @@ namespace UnityEngine.ProBuilder
                 s_EdgePickerMaterial = new Material(Shader.Find(k_EdgePickerShader));
             }
         }
+
 
         /// <summary>
         /// Tests whether the current graphics device supports geometry shaders.

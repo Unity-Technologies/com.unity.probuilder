@@ -103,6 +103,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_AvailableShapeTypes = null;
+            s_ShapeTypes = null;
+            s_ShapeTypesGUILists = null;
+        }
+
         static EditorShapeUtility()
         {
             ResetPrefs();

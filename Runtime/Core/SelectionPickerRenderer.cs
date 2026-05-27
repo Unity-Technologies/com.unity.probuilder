@@ -148,11 +148,21 @@ namespace UnityEngine.ProBuilder
 
         static RenderTextureFormat s_RenderTextureFormat = RenderTextureFormat.Default;
 
-        static RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
+        static readonly RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
         {
             RenderTextureFormat.ARGB32,
             RenderTextureFormat.ARGBFloat,
         };
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_Initialized = false;
+            s_PickerRenderer = null;
+            s_RenderTextureFormat = RenderTextureFormat.Default;
+        }
+#endif
 
         /// <summary>
         /// Returns an appropriate implementation based on the graphic pipeline

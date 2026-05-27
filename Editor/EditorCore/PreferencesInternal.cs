@@ -53,6 +53,13 @@ namespace UnityEditor.ProBuilder
         static PreferenceDictionary s_Preferences = null;
         static bool s_Initialized;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_Initialized = false;
+            s_Preferences = null;
+        }
+
         static void LoadPreferencesObject()
         {
             string preferencesPath = FileUtility.GetLocalDataDirectory() + k_PrefsAssetName;
