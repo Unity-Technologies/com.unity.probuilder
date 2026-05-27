@@ -137,6 +137,8 @@ namespace UnityEditor.ProBuilder
         const string k_RectangleModePrefKey = "VertexInsertion.rectangleMode";
         static readonly Color k_RectPreviewColor = new Color(1f, 1f, 0f, 0.4f);
         static readonly Color k_RectOutlineColor = new Color(1f, 1f, 0f, 1f);
+        readonly Vector3[] m_RectConvexPolygon = new Vector3[4];
+        readonly Vector3[] m_RectPreviewPath = new Vector3[5];
 
         public bool isALoop
         {

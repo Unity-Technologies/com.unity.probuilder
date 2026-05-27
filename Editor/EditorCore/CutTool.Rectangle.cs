@@ -222,13 +222,22 @@ namespace UnityEditor.ProBuilder
             Vector3 c2 = trs.TransformPoint(m_RectEndPoint);
             Vector3 c3 = trs.TransformPoint(m_RectStartPoint + faceUp * upDot);
 
-            // Draw filled rectangle
+            // Draw filled rectangle (reuse cached arrays to avoid per-frame allocation)
             Handles.color = k_RectPreviewColor;
-            Handles.DrawAAConvexPolygon(new Vector3[] { c0, c1, c2, c3 });
+            m_RectConvexPolygon[0] = c0;
+            m_RectConvexPolygon[1] = c1;
+            m_RectConvexPolygon[2] = c2;
+            m_RectConvexPolygon[3] = c3;
+            Handles.DrawAAConvexPolygon(m_RectConvexPolygon);
 
             // Draw outline
             Handles.color = k_RectOutlineColor;
-            Handles.DrawAAPolyLine(2f, new Vector3[] { c0, c1, c2, c3, c0 });
+            m_RectPreviewPath[0] = c0;
+            m_RectPreviewPath[1] = c1;
+            m_RectPreviewPath[2] = c2;
+            m_RectPreviewPath[3] = c3;
+            m_RectPreviewPath[4] = c0;
+            Handles.DrawAAPolyLine(2f, m_RectPreviewPath);
         }
 
         bool TryPassThroughSelection(EditorWindow window, bool hasHitPosition)

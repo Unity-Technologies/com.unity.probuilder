@@ -93,7 +93,16 @@ namespace UnityEditor.ProBuilder
                 {
                     if(existingVerticesInCut.Count > 0)
                     {
-                        if(existingVerticesInCut.Exists(vert => Math.Approx3(verticesPositions[vertexIndex], vert)))
+                        bool alreadyExists = false;
+                        for (int ev = 0; ev < existingVerticesInCut.Count; ev++)
+                        {
+                            if (Math.Approx3(verticesPositions[vertexIndex], existingVerticesInCut[ev]))
+                            {
+                                alreadyExists = true;
+                                break;
+                            }
+                        }
+                        if (alreadyExists)
                             continue;
                     }
 
@@ -156,7 +165,16 @@ namespace UnityEditor.ProBuilder
                 {
                     if(existingVerticesInCut.Count > 0)
                     {
-                        if(existingVerticesInCut.Exists(vert => Math.Approx3(verticesPositions[vertexIndex], vert)))
+                        bool alreadyExists = false;
+                        for (int ev = 0; ev < existingVerticesInCut.Count; ev++)
+                        {
+                            if (Math.Approx3(verticesPositions[vertexIndex], existingVerticesInCut[ev]))
+                            {
+                                alreadyExists = true;
+                                break;
+                            }
+                        }
+                        if (alreadyExists)
                             continue;
                     }
 
@@ -177,13 +195,22 @@ namespace UnityEditor.ProBuilder
 
                     if(pathIndex >= 0)
                     {
-                        if(m_MeshConnections.Exists(tup => tup.item1 == pathIndex))
+                        int connIdx = -1;
+                        for (int k = 0; k < m_MeshConnections.Count; k++)
                         {
-                            var tuple = m_MeshConnections.Find(tup => tup.item1 == pathIndex);
+                            if (m_MeshConnections[k].item1 == pathIndex)
+                            {
+                                connIdx = k;
+                                break;
+                            }
+                        }
+                        if(connIdx >= 0)
+                        {
+                            var tuple = m_MeshConnections[connIdx];
                             if(Vector3.Distance(m_CutPath[tuple.item1].position, verticesPositions[tuple.item2])
                                > Vector3.Distance(m_CutPath[pathIndex].position, verticesPositions[vertexIndex]))
                             {
-                                m_MeshConnections.Remove(tuple);
+                                m_MeshConnections.RemoveAt(connIdx);
                                 m_MeshConnections.Add(new SimpleTuple<int, int>(pathIndex, vertexIndex));
                             }
                         }
@@ -255,9 +282,9 @@ namespace UnityEditor.ProBuilder
             m_SnapedEdge = Edge.Empty;
 
             Vector3[] vertexPositions = m_Mesh.positionsInternal;
-            IList<Edge> peripheralEdges = m_CurrentFace.edges;
+            List<Edge> peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_CurrentFace);
             if (m_TargetFace != null && m_CurrentFace != m_TargetFace)
-                peripheralEdges = m_TargetFace.edges;
+                peripheralEdges = WingedEdge.SortEdgesByAdjacency(m_TargetFace);
             for (int i = 0; i < peripheralEdges.Count; i++)
             {
                 if ((m_TargetFace == null || m_TargetFace == m_CurrentFace) && m_SnappingPoint)

@@ -58,10 +58,13 @@ namespace UnityEditor.ProBuilder
             List<Vertex> cutVertices = InsertVertices();
             m_Mesh.GetVerticesInList(meshVertices);
 
-            // Build vertex→index dictionary for O(1) lookups instead of O(N) IndexOf
+            // Build vertex→index dictionary for O(1) lookups (preserve first-index behavior like IndexOf)
             Dictionary<Vertex, int> vertexIndexMap = new Dictionary<Vertex, int>();
             for (int i = 0; i < meshVertices.Count; i++)
-                vertexIndexMap[meshVertices[i]] = i;
+            {
+                if (!vertexIndexMap.ContainsKey(meshVertices[i]))
+                    vertexIndexMap[meshVertices[i]] = i;
+            }
 
             //Retrieve indexes of the cut points in the mesh vertices
             int[] cutIndexes = cutVertices.Select(vert => vertexIndexMap[vert]).ToArray();
@@ -253,6 +256,10 @@ namespace UnityEditor.ProBuilder
             bool hasConnection = connectionIndex >= 0;
             SimpleTuple<int,int> connection = hasConnection ? m_MeshConnections[connectionIndex] : default;
 
+            // Hoist loop-invariant dictionary lookups for connection.item1
+            int connectionSharedItem1 = -1;
+            bool hasConnectionSharedItem1 = hasConnection && sharedToUnique.TryGetValue(connection.item1, out connectionSharedItem1);
+
             List<List<int>> closureCandidates = new List<List<int>>();
 
             //Go through the cut in reverse direction
@@ -265,8 +272,7 @@ namespace UnityEditor.ProBuilder
                 int vertexIndex = uniqueIdToVertexIndex[cutIndexes[(index + cutIndexes.Count) % cutIndexes.Count]][0];
                 candidate.Add(vertexIndex);
                 if(sharedToUnique[vertexIndex] == polygonFirstSharedIndex ||
-                   (hasConnection && sharedToUnique.ContainsKey(connection.item1)
-                    && sharedToUnique[vertexIndex] == sharedToUnique[connection.item1]))
+                   (hasConnectionSharedItem1 && sharedToUnique[vertexIndex] == connectionSharedItem1))
                 {
                     connected = true;
                     break;
@@ -286,8 +292,7 @@ namespace UnityEditor.ProBuilder
                 int vertexIndex = uniqueIdToVertexIndex[cutIndexes[index % cutIndexes.Count]][0];
                 candidate.Add(vertexIndex);
                 if(sharedToUnique[vertexIndex] == polygonFirstSharedIndex ||
-                   (hasConnection && sharedToUnique.ContainsKey(connection.item1)
-                    && sharedToUnique[vertexIndex] == sharedToUnique[connection.item1]))
+                   (hasConnectionSharedItem1 && sharedToUnique[vertexIndex] == connectionSharedItem1))
                 {
                     connected = true;
                     break;
