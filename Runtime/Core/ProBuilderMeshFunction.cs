@@ -24,6 +24,12 @@ namespace UnityEngine.ProBuilder
             InvalidateCaches();
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_CachedHashSet.Clear();
+        }
+
 #if ENABLE_DRIVEN_PROPERTIES
         // Using the internal callbacks here to avoid registering this component as "enable-able"
         void OnEnableINTERNAL()

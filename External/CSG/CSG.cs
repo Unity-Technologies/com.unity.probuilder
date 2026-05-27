@@ -46,6 +46,15 @@ namespace UnityEngine.ProBuilder.Csg
             set => s_Epsilon = value;
         }
 
+
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_Epsilon = k_DefaultEpsilon;
+        }
+#endif
+
         /// <summary>
         /// Performs a boolean operation on two GameObjects.
         /// </summary>

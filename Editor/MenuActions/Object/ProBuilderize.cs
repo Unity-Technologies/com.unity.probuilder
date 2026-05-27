@@ -70,6 +70,12 @@ namespace UnityEditor.ProBuilder.Actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_ActionAlreadyTriggered = false;
+        }
+
         [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true, 11)]
         static bool ProBuilderizeMeshAction_Validate(MenuCommand command)
         {

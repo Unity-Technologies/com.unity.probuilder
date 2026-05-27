@@ -184,6 +184,12 @@ namespace UnityEditor.ProBuilder
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_ActionAlreadyTriggered = false;
+        }
+
         [MenuItem("CONTEXT/ProBuilderMesh/Conform Normals", true)]
         static bool ValidateConformObjectNormalsAction()
         {

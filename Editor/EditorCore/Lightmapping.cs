@@ -37,7 +37,8 @@ namespace UnityEditor.ProBuilder
             public static readonly GUIContent areaError = new GUIContent("Area Error", "");
 
             static bool s_Initialized;
-            public static GUIStyle miniButton;
+            public static GUIStyle s_MiniButton;
+            public static GUIStyle miniButton { get { Init(); return s_MiniButton; } }
             public static bool unwrapSettingsFoldout;
 
             public static void Init()
@@ -47,12 +48,20 @@ namespace UnityEditor.ProBuilder
 
                 s_Initialized = true;
 
-                miniButton = new GUIStyle(GUI.skin.button);
-                miniButton.stretchHeight = false;
-                miniButton.stretchWidth = false;
-                miniButton.padding = new RectOffset(6, 6, 3, 3);
-                miniButton.margin = new RectOffset(4, 4, 4, 0);
+                s_MiniButton = new GUIStyle(GUI.skin.button);
+                s_MiniButton.stretchHeight = false;
+                s_MiniButton.stretchWidth = false;
+                s_MiniButton.padding = new RectOffset(6, 6, 3, 3);
+                s_MiniButton.margin = new RectOffset(4, 4, 4, 0);
             }
+
+#if UNITY_EDITOR
+            internal static void Reset()
+            {
+                s_Initialized = false;
+                unwrapSettingsFoldout = false;
+            }
+#endif
         }
 
         [UserSettingBlock("Mesh Settings")]
@@ -104,6 +113,12 @@ namespace UnityEditor.ProBuilder
         {
             UL.bakeCompleted += OnLightmappingCompleted;
             Undo.postprocessModifications += PostprocessModifications;
+        }
+
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            Styles.Reset();
         }
 
         /// <summary>

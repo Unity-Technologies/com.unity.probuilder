@@ -179,6 +179,19 @@ namespace UnityEditor.ProBuilder
                     padding = new RectOffset(0, 0, 0, 0)
                 };
             }
+
+            internal static void ResetForPlayMode()
+            {
+                s_Init = false;
+                s_SelectionRect = null;
+                Init();
+            }
+        }
+
+        [InitializeOnEnterPlayMode]
+        static void ResetSceneStylesOnLoad()
+        {
+            SceneStyles.ResetForPlayMode();
         }
         
         /// <summary>

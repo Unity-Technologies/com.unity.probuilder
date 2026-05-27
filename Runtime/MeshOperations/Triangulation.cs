@@ -24,6 +24,14 @@ namespace UnityEngine.ProBuilder.MeshOperations
             }
         }
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_TriangulationContext = null;
+        }
+#endif
+
         /// <summary>
         /// Given a set of points this method will format the points into a boundary contour and triangulate, returning
         /// a set of indexes that corresponds to the original ordering.

@@ -31,6 +31,26 @@ namespace UnityEditor.ProBuilder
             };
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_IsSceneViewDragAndDrop = false;
+            s_IsFaceDragAndDropOverrideEnabled = false;
+            s_CurrentPreview = null;
+            s_PreviewMaterial = null;
+            s_GetDefaultMaterialDelegate = null;
+            if (s_PreviewMesh == null)
+            {
+                s_PreviewMesh = new Mesh()
+                {
+                    name = "pb_DragAndDropListener::PreviewMesh",
+                    hideFlags = HideFlags.HideAndDontSave
+                };
+            }
+            else
+                s_PreviewMesh.Clear();
+        }
+
         static void OnBeforeAssemblyReload()
         {
             UObject.DestroyImmediate(s_PreviewMesh);

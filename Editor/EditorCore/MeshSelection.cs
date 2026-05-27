@@ -140,9 +140,36 @@ namespace UnityEditor.ProBuilder
             OnObjectSelectionChanged();
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_SelectedFacesInEditArea.Clear();
+            s_SelectedObjectCount = 0;
+            s_SelectedVertexCount = 0;
+            s_SelectedSharedVertexCount = 0;
+            s_SelectedFaceCount = 0;
+            s_SelectedEdgeCount = 0;
+
+            s_SelectedFaceCountObjectMax = 0;
+            s_SelectedEdgeCountObjectMax = 0;
+            s_SelectedVertexCountObjectMax = 0;
+            s_SelectedSharedVertexCountObjectMax = 0;
+            s_SelectedCoincidentVertexCountMax = 0;
+
+            s_TotalVertexCount = 0;
+            s_TotalFaceCount = 0;
+            s_TotalEdgeCount = 0;
+            s_TotalCommonVertexCount = 0;
+            s_TotalVertexCountCompiled = 0;
+            s_TotalTriangleCountCompiled = 0;
+            s_SelectionBounds = new Bounds();
+
+            OnObjectSelectionChanged();
+        }
+
         static void PrefabInstanceReverted(GameObject obj)
         {
-            if(obj.TryGetComponent<ProBuilderMesh>(out _))
+            if (obj.TryGetComponent<ProBuilderMesh>(out _))
                 OnObjectSelectionChanged();
         }
 

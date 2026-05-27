@@ -33,6 +33,12 @@ namespace UnityEditor.ProBuilder
 
         static int s_PreviewGroupIndex = -1;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_PreviewGroupIndex = -1;
+        }
+
         internal static void StartPreview()
         {
             // Using this Undo method to remove the preview actions from the redo stack

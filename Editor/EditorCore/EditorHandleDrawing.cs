@@ -200,17 +200,36 @@ namespace UnityEditor.ProBuilder
             ResetPreferences();
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            ReleaseResources();
+            s_Initialized = false;
+            s_WireHandles = null;
+            s_VertexHandles = null;
+            s_SelectedFaceHandles = null;
+            s_SelectedVertexHandles = null;
+            s_SelectedEdgeHandles = null;
+            s_TemporaryHandles = null;
+        }
+
         internal static void ReleaseResources()
         {
             ClearHandles();
-            if(s_MeshPool2 != null)
-                s_MeshPool2.Dispose();
-            if(s_EdgeMaterial != null) UnityObject.DestroyImmediate(s_EdgeMaterial);
-            if(s_WireMaterial != null) UnityObject.DestroyImmediate(s_WireMaterial);
-            if(s_LineMaterial != null) UnityObject.DestroyImmediate(s_LineMaterial);
-            if(s_VertMaterial != null) UnityObject.DestroyImmediate(s_VertMaterial);
-            if(s_GlWireMaterial != null) UnityObject.DestroyImmediate(s_GlWireMaterial);
-            if(s_FaceMaterial != null) UnityObject.DestroyImmediate(s_FaceMaterial);
+            if (s_MeshPool2 != null) s_MeshPool2.Dispose();
+            if (s_FaceMaterial != null) UnityObject.DestroyImmediate(s_FaceMaterial);
+            if (s_EdgeMaterial != null) UnityObject.DestroyImmediate(s_EdgeMaterial);
+            if (s_VertMaterial != null) UnityObject.DestroyImmediate(s_VertMaterial);
+            if (s_WireMaterial != null) UnityObject.DestroyImmediate(s_WireMaterial);
+            if (s_LineMaterial != null) UnityObject.DestroyImmediate(s_LineMaterial);
+            if (s_GlWireMaterial != null) UnityObject.DestroyImmediate(s_GlWireMaterial);
+            s_MeshPool2 = null;
+            s_FaceMaterial = null;
+            s_EdgeMaterial = null;
+            s_VertMaterial = null;
+            s_WireMaterial = null;
+            s_LineMaterial = null;
+            s_GlWireMaterial = null;
         }
 
         internal static void ResetPreferences()

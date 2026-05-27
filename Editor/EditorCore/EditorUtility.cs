@@ -28,6 +28,22 @@ namespace UnityEditor.ProBuilder
         static EditorWindow s_NotificationWindow;
         static bool s_IsNotificationDisplayed;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_IsNotificationDisplayed = false;
+            EditorApplication.update -= NotifUpdate;
+            if (s_NotificationWindow != null)
+            {
+                // Window may be destroyed when entering Play Mode without domain reload.
+                try { s_NotificationWindow.RemoveNotification(); }
+                catch {}
+            }
+
+            s_NotificationWindow = null;
+            s_NotificationTimer = 0f;
+        }
+
         [UserSetting("General", "Show Action Notifications", "Enable or disable notification popups when performing actions.")]
         static Pref<bool> s_ShowNotifications = new Pref<bool>("editor.showEditorNotifications", false);
 
