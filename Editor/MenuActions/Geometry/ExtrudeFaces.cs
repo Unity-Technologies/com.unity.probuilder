@@ -106,6 +106,11 @@ namespace UnityEditor.ProBuilder.Actions
             });
             root.Add(distanceField);
 
+            PreviewActionManager.delayedPreviewChanged += () =>
+            {
+                distanceField.isDelayed = PreviewActionManager.delayedPreview;
+            };
+
             return root;
         }
 

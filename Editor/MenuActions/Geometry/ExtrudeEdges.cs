@@ -53,6 +53,10 @@ namespace UnityEditor.ProBuilder.Actions
             floatField.tooltip = "Extrude Amount determines how far an edge will be moved along it's normal when extruding. This value can be negative.";
             floatField.SetValueWithoutNotify(m_ExtrudeEdgeDistance);
             floatField.RegisterCallback<ChangeEvent<float>>(OnExtrudeChanged);
+            PreviewActionManager.delayedPreviewChanged += () =>
+            {
+                floatField.isDelayed = PreviewActionManager.delayedPreview;
+            };
             root.Add(floatField);
 
             return root;

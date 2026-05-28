@@ -69,6 +69,10 @@ namespace UnityEditor.ProBuilder.Actions
                     m_WeldDistance.SetValue(evt.newValue);
                 PreviewActionManager.UpdatePreview();
             });
+            PreviewActionManager.delayedPreviewChanged += () =>
+            {
+                floatField.isDelayed = PreviewActionManager.delayedPreview;
+            };
             root.Add(floatField);
             return root;
         }

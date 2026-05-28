@@ -61,6 +61,11 @@ namespace UnityEditor.ProBuilder.Actions
                     PreviewActionManager.UpdatePreview();
                 }
             });
+
+            PreviewActionManager.delayedPreviewChanged += () =>
+            {
+                floatField.isDelayed = PreviewActionManager.delayedPreview;
+            };
             root.Add(floatField);
 
             return root;
