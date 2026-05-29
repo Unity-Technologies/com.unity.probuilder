@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [UUM-141074] Fixed an issue where the CreateShape and CreatePolyshape tools would not properly snap to the grid.
+- [UUM-133529] Fixed an issue where ProBuilder GameObjects could not change back to 3D shapes after being changed to Plane or Sprite.
 - [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
 - [UUM-133859] Fixed an issue in URP projects where the Editor would recompile scripts when after a rectangle selection in ProBuilder. 
 - [UUM-133530] Fixed the `Set Double Sided` custom action in the Editor Sample, which was previously remaining disabled.
