@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
+using Debug = UnityEngine.Debug;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 namespace UnityEditor.ProBuilder
@@ -133,7 +137,7 @@ namespace UnityEditor.ProBuilder
             if(foldoutEnabled)
             {
                 EditorGUI.indentLevel++;
-                EditorGUIUtility.labelWidth = 90;
+                EditorGUIUtility.labelWidth = 120;
 
                 if (tool)
                     tool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, tool.pivotLocation);
@@ -179,14 +183,31 @@ namespace UnityEditor.ProBuilder
                 {
                     if(comp is ProBuilderShape shapeComponent && shapeComponent.isEditable)
                     {
-                        UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
+                        Stopwatch stopWatch = new Stopwatch();
+                        stopWatch.Start();
+                        //UndoUtility.RecordComponents<Transform, ProBuilderMesh, ProBuilderShape>(shapeComponent.GetComponents(typeof(Component)),"Resize Shape");
+                        // Undo.RecordObject(shapeComponent, "Edit Shape");
+
+                        //Undo.RecordObject(shapeComponent.transform, "Edit Shape");
+                        //Undo.RecordObject(shapeComponent, "Edit Shape");
+
+                        Undo.RegisterCompleteObjectUndo(shapeComponent.mesh, "Edit Shape");
+
+                        TimeSpan ts1 = stopWatch.Elapsed;
                         shapeComponent.UpdateShape();
+
+                        TimeSpan ts2 = stopWatch.Elapsed;
                         if(tool != null)
                         {
                             tool.SetBounds(shapeComponent.size);
                             tool.SaveShapeParams(shapeComponent);
                         }
                         ProBuilderEditor.Refresh();
+
+                        stopWatch.Stop();
+                        // Get the elapsed time as a TimeSpan value.
+                        TimeSpan ts3 = stopWatch.Elapsed;
+                        Debug.Log($"Time spend = ({ts1.TotalMilliseconds}, {ts2.TotalMilliseconds}, {ts3.TotalMilliseconds}) ms");
                     }
                 }
             }
