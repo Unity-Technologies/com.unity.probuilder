@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- [UUM-136930] Fixed Arch circumference field not being fully readable in the editor.
 - [UUM-131032] Added a reset of static variables when entering playmode to allow fast enter playmode compatibility.
 - [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
 - [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
