@@ -51,9 +51,9 @@ namespace UnityEditor.ProBuilder.Actions
 
             var spaceField = new EnumField("Coordinate Space", coord);
             root.Add(spaceField);
-            spaceField.RegisterCallback<ChangeEvent<string>>(evt =>
+            spaceField.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
-                Enum.TryParse(evt.newValue, out CoordinateSpace newValue);
+                CoordinateSpace newValue = (CoordinateSpace)evt.newValue;
                 if (s_CoordinateSpace.value == newValue)
                     return;
                 s_CoordinateSpace.SetValue(newValue);
@@ -70,10 +70,15 @@ namespace UnityEditor.ProBuilder.Actions
                 PreviewActionManager.UpdatePreview();
             });
 
-            PreviewActionManager.delayedPreviewChanged += () =>
+            Action onDelayedPreviewChanged = () =>
             {
                 distField.Query<FloatField>().ForEach(ff => ff.isDelayed = PreviewActionManager.delayedPreview);
             };
+            PreviewActionManager.delayedPreviewChanged += onDelayedPreviewChanged;
+            root.RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                PreviewActionManager.delayedPreviewChanged -= onDelayedPreviewChanged;
+            });
 
             return root;
         }

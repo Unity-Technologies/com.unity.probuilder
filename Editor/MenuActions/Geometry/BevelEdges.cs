@@ -62,10 +62,15 @@ namespace UnityEditor.ProBuilder.Actions
                 }
             });
 
-            PreviewActionManager.delayedPreviewChanged += () =>
+            System.Action onDelayedPreviewChanged = () =>
             {
                 floatField.isDelayed = PreviewActionManager.delayedPreview;
             };
+            PreviewActionManager.delayedPreviewChanged += onDelayedPreviewChanged;
+            root.RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                PreviewActionManager.delayedPreviewChanged -= onDelayedPreviewChanged;
+            });
             root.Add(floatField);
 
             return root;

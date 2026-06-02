@@ -85,10 +85,15 @@ Grow by angle is enabled by Option + Clicking the <b>Grow Selection</b> button."
                 m_GrowSelectionAngleIterative.SetValue(evt.newValue);
                 PreviewActionManager.UpdatePreview();
             });
-            PreviewActionManager.delayedPreviewChanged += () =>
+            System.Action onDelayedPreviewChanged = () =>
             {
                 floatField.isDelayed = PreviewActionManager.delayedPreview;
             };
+            PreviewActionManager.delayedPreviewChanged += onDelayedPreviewChanged;
+            root.RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                PreviewActionManager.delayedPreviewChanged -= onDelayedPreviewChanged;
+            });
             return root;
         }
 
