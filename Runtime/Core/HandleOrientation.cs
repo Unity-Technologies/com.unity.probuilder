@@ -5,8 +5,8 @@ namespace UnityEngine.ProBuilder
     /// </summary>
     /// <remarks>
     /// This overrides the Unity Pivot / Global setting when editing vertices, faces, or edges.
+    /// Editor only.
     /// </remarks>
-    /// <remarks>Editor only.</remarks>
     public enum HandleOrientation
     {
         /// <summary>

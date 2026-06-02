@@ -197,6 +197,12 @@ namespace UnityEditor.ProBuilder.Actions
 
         static List<Vector3> s_Points = new List<Vector3>();
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_Points.Clear();
+        }
+
         internal static void OnSceneGUI(SceneView view)
         {
             s_Points.Clear();

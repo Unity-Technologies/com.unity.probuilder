@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [arch](../manual/Arch.html) shape.
     /// </summary>
     [Shape("Arch")]
+    [System.Serializable]
     public class Arch : Shape
     {
         /// <summary>
@@ -45,6 +46,15 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_Thickness = 1f;
+            m_NumberOfSides = 8;
+            m_ArchDegrees = 180f;
+            m_EndCaps = true;
+            m_Smooth = false;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

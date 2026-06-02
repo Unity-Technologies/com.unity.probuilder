@@ -81,13 +81,21 @@ namespace UnityEngine.ProBuilder
 
 		static List<Vector2> s_UVTransformProjectionBuffer = new List<Vector2>(8);
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad_UvAutoManualConversion()
+        {
+            s_UVTransformProjectionBuffer.Clear();
+        }
+#endif
+
         /// <summary>
-        /// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped (manualUV = false),
-        /// this returns an unmodified copy of the AutoUnwrapSettings. If the face is manually unwrapped, it returns
-        /// the auto unwrap settings computed from GetUVTransform.
-        /// </summary>
-        /// <returns></returns>
-        internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
+		/// Returns the auto unwrap settings for a face. In cases where the face is auto unwrapped (manualUV = false),
+		/// this returns an unmodified copy of the AutoUnwrapSettings. If the face is manually unwrapped, it returns
+		/// the auto unwrap settings computed from GetUVTransform.
+		/// </summary>
+		/// <returns></returns>
+		internal static AutoUnwrapSettings GetAutoUnwrapSettings(ProBuilderMesh mesh, Face face)
         {
             if (!face.manualUV)
                 return new AutoUnwrapSettings(face.uv);
@@ -140,11 +148,29 @@ namespace UnityEngine.ProBuilder
 	        Vector2 dstSize = GetRotatedSize(dst, dstIndices, dstCenter, -rotation);
 	        Bounds2D srcBounds = srcIndices == null ? new Bounds2D(src) : new Bounds2D(src, srcIndices);
             Vector2 scale = dstSize.DivideBy(srcBounds.size);
-            Vector2 srcCenter = srcBounds.center * scale;
+
+            // Calculate new bounds after rotation
+            Vector2 min = new Vector2(float.MaxValue, float.MaxValue);
+            Vector2 max = new Vector2(float.MinValue, float.MinValue);
+
+            int count = srcIndices?.Count ?? src.Count;
+            for (int i = 0; i < count; i++)
+            {
+                int index = GetIndex(srcIndices, i);
+                Vector2 rotated = Math.RotateAroundPoint(src[index], srcBounds.center, rotation);
+                min.x = Mathf.Min(min.x, rotated.x);
+                min.y = Mathf.Min(min.y, rotated.y);
+                max.x = Mathf.Max(max.x, rotated.x);
+                max.y = Mathf.Max(max.y, rotated.y);
+            }
+
+            // Calculate center of rotated bounds, and apply the calculated scale afterwards
+            Vector2 rotatedCenter = (min + max) * 0.5f;
+            Vector2 srcTransformedCenter = rotatedCenter * scale;
 
 			return new UVTransform()
 			{
-				translation = dstCenter - srcCenter,
+				translation =  dstCenter - srcTransformedCenter,
 				rotation = rotation,
 				scale = dstSize.DivideBy(srcBounds.size)
 			};

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.ProBuilder.Tests;
 
 public class FaceTests
 {
@@ -40,7 +40,7 @@ public class FaceTests
     [Test]
     public void MeshValidation_IsSplitFace_DetectsDisconnectedTriangles()
     {
-        var cube = TestUtility.CreateCubeWithNonContiguousMergedFace();
+        var cube = RuntimeUtility.CreateCubeWithNonContiguousMergedFace();
         Assume.That(cube.item1.faceCount, Is.EqualTo(5));
         Assert.That(MeshValidation.ContainsNonContiguousTriangles(cube.item1, cube.item2), Is.True);
     }

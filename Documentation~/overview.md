@@ -35,5 +35,5 @@ For more information, see [Materials, Shaders, Textures, and UVs](workflow-textu
 
 ## Exporting to other formats
 
-You can also [export your ProBuilder Meshes](workflow-exporting.md) to several file formats, such as `.asset`, `.obj`, and `.stl`. Then you can reimport them into Unity and use them as Prefabs or spawn them. However, as soon as you convert a ProBuilder Mesh to the `.asset` format, it becomes a regular Unity GameObject, and you can't modify it with ProBuilder tools any more.
+You can also [export your ProBuilder Meshes](workflow-exporting.md) to several file formats, such as `.asset`, `.obj`, and `.stl`. Then you can reimport them into Unity and use them as Prefabs or spawn them. However, as soon as you convert a ProBuilder Mesh to the `.asset` format, it becomes a regular Unity GameObject, and you can't modify it with ProBuilder tools anymore.
 

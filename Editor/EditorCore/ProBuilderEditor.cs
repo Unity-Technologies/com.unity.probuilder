@@ -52,22 +52,22 @@ namespace UnityEditor.ProBuilder
         internal static Pref<bool> s_AllowNonManifoldActions =
             new Pref<bool>("editor.allowNonManifoldActions", false, SettingsScope.User);
 
-        static Pref<bool> m_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
+        static Pref<bool> s_BackfaceSelectEnabled = new Pref<bool>("editor.backFaceSelectEnabled", false);
 
-        static Pref<RectSelectMode> m_DragSelectRectMode =
+        static Pref<RectSelectMode> s_DragSelectRectMode =
             new Pref<RectSelectMode>("editor.dragSelectRectMode", RectSelectMode.Partial);
 
         internal static event Action rectSelectModeChanged;
         internal static RectSelectMode rectSelectMode
         {
-            get { return m_DragSelectRectMode.value; }
+            get { return s_DragSelectRectMode.value; }
 
             set
             {
-                if (m_DragSelectRectMode.value == value)
+                if (s_DragSelectRectMode.value == value)
                     return;
 
-                m_DragSelectRectMode.SetValue(value, true);
+                s_DragSelectRectMode.SetValue(value, true);
                 if(rectSelectModeChanged != null)
                     rectSelectModeChanged();
 
@@ -79,14 +79,14 @@ namespace UnityEditor.ProBuilder
         internal static event Action backfaceSelectionEnabledChanged;
         internal static bool backfaceSelectionEnabled
         {
-            get { return m_BackfaceSelectEnabled.value; }
+            get { return s_BackfaceSelectEnabled.value; }
 
             set
             {
-                if (value == m_BackfaceSelectEnabled.value)
+                if (value == s_BackfaceSelectEnabled.value)
                     return;
 
-                m_BackfaceSelectEnabled.SetValue(value, true);
+                s_BackfaceSelectEnabled.SetValue(value, true);
                 if(backfaceSelectionEnabledChanged != null)
                     backfaceSelectionEnabledChanged();
 
@@ -179,8 +179,27 @@ namespace UnityEditor.ProBuilder
                     padding = new RectOffset(0, 0, 0, 0)
                 };
             }
+
+            internal static void ResetForPlayMode()
+            {
+                s_Init = false;
+                s_SelectionRect = null;
+                Init();
+            }
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetSceneStylesOnLoad()
+        {
+            SceneStyles.ResetForPlayMode();
+        }
+        
+        /// <summary>
+        /// Static getter for the ProBuilderEditor instance.
+        /// </summary>
+        /// <value>
+        /// Static instance of ProBuilderEditor.
+        /// </value>
         public static ProBuilderEditor instance => s_Instance;
 
         internal ProBuilderEditor()
@@ -205,6 +224,9 @@ namespace UnityEditor.ProBuilder
             EditorApplication.delayCall += () => UpdateSelection();
         }
 
+        /// <summary>
+        /// Clears static state and unsubscribes from events.
+        /// </summary>
         public void Dispose()
         {
             VertexManipulationTool.beforeMeshModification -= BeforeMeshModification;
@@ -253,8 +275,8 @@ namespace UnityEditor.ProBuilder
 
             m_ScenePickerPreferences = new ScenePickerPreferences()
             {
-                cullMode = m_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
-                rectSelectMode = m_DragSelectRectMode
+                cullMode = s_BackfaceSelectEnabled ? CullingMode.None : CullingMode.Back,
+                rectSelectMode = s_DragSelectRectMode
             };
         }
 
@@ -274,7 +296,11 @@ namespace UnityEditor.ProBuilder
         {
             instance?.UpdateSelection(vertexCountChanged);
         }
-
+        
+        /// <summary>
+        /// Called when handling events in Scene view.
+        /// </summary>
+        /// <param name="sceneView">SceneView for which OnSceneGUI method is called.</param>
         public void OnSceneGUI(SceneView sceneView)
         {
             if (!EditorToolUtility.IsBuiltinOverride(EditorToolManager.activeTool))

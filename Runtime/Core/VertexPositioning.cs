@@ -13,6 +13,14 @@ namespace UnityEngine.ProBuilder
     {
         static List<int> s_CoincidentVertices = new List<int>();
 
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_CoincidentVertices.Clear();
+        }
+#endif
+
         /// <summary>
         /// Returns a copy of a mesh positions array transformed into world coordinates.
         /// </summary>

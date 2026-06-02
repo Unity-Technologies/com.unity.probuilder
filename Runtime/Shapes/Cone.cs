@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [cone](../manual/Cone.html) shape.
     /// </summary>
     [Shape("Cone")]
+    [System.Serializable]
     public class Cone : Shape
     {
         /// <summary>
@@ -25,6 +26,13 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_NumberOfSides = 8;
+            m_Radius = 0.5f;
+            m_Smooth = false;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

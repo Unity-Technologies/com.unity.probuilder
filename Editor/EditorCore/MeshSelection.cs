@@ -140,9 +140,36 @@ namespace UnityEditor.ProBuilder
             OnObjectSelectionChanged();
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_SelectedFacesInEditArea.Clear();
+            s_SelectedObjectCount = 0;
+            s_SelectedVertexCount = 0;
+            s_SelectedSharedVertexCount = 0;
+            s_SelectedFaceCount = 0;
+            s_SelectedEdgeCount = 0;
+
+            s_SelectedFaceCountObjectMax = 0;
+            s_SelectedEdgeCountObjectMax = 0;
+            s_SelectedVertexCountObjectMax = 0;
+            s_SelectedSharedVertexCountObjectMax = 0;
+            s_SelectedCoincidentVertexCountMax = 0;
+
+            s_TotalVertexCount = 0;
+            s_TotalFaceCount = 0;
+            s_TotalEdgeCount = 0;
+            s_TotalCommonVertexCount = 0;
+            s_TotalVertexCountCompiled = 0;
+            s_TotalTriangleCountCompiled = 0;
+            s_SelectionBounds = new Bounds();
+
+            OnObjectSelectionChanged();
+        }
+
         static void PrefabInstanceReverted(GameObject obj)
         {
-            if(obj.TryGetComponent<ProBuilderMesh>(out _))
+            if (obj.TryGetComponent<ProBuilderMesh>(out _))
                 OnObjectSelectionChanged();
         }
 
@@ -382,7 +409,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Get all selected ProBuilderMesh components. Corresponds to <![CDATA[Selection.gameObjects.Select(x => x.GetComponent<ProBuilderMesh>().Where(y => y != null);]]>.
         /// </summary>
-        /// <summary>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</summary>
+        /// <value>An array of the currently selected ProBuilderMesh components. Does not include children of selected objects.</value>
         public static IEnumerable<ProBuilderMesh> top
         {
             get { return new ReadOnlyCollection<ProBuilderMesh>(s_TopSelection); }
@@ -396,7 +423,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// Gets all selected ProBuilderMesh components, including those on the children of selected objects.
         /// </summary>
-        /// <returns>All selected ProBuilderMesh components, including those on the children of selected objects.</returns>
+        /// <value>All selected ProBuilderMesh components, including those on the children of selected objects.</value>
         public static IEnumerable<ProBuilderMesh> deep
         {
             get { return Selection.gameObjects.SelectMany(x => x.GetComponentsInChildren<ProBuilderMesh>()); }

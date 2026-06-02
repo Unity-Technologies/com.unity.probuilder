@@ -12,7 +12,7 @@ namespace UnityEditor.ProBuilder
 {
 
     [EditorTool("Create Cube", variantGroup = typeof(DrawShapeTool), variantPriority = 0)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cube.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Cube.png")]
     class CreateCubeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cube  %#K", false, PreferenceKeys.menuEditor + 1)]
@@ -41,7 +41,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Sphere",variantGroup = typeof(DrawShapeTool), variantPriority = 1)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sphere.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Sphere.png")]
     class CreateSphereTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sphere", false, PreferenceKeys.menuEditor + 2)]
@@ -70,7 +70,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Plane", variantGroup = typeof(DrawShapeTool), variantPriority = 2)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Plane.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Plane.png")]
     class CreatePlaneTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Plane", false, PreferenceKeys.menuEditor + 3)]
@@ -99,7 +99,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Cylinder",variantGroup = typeof(DrawShapeTool), variantPriority = 3)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cylinder.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Cylinder.png")]
     class CreateCylinderTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cylinder", false, PreferenceKeys.menuEditor + 4)]
@@ -128,7 +128,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Cone", variantGroup = typeof(DrawShapeTool), variantPriority = 4)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Cone.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Cone.png")]
     class CreateConeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Cone", false, PreferenceKeys.menuEditor + 5)]
@@ -157,7 +157,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Prism",variantGroup = typeof(DrawShapeTool), variantPriority = 5)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Prism.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Prism.png")]
     class CreatePrismTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Prism", false, PreferenceKeys.menuEditor + 6)]
@@ -186,7 +186,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Stairs", variantGroup = typeof(DrawShapeTool), variantPriority = 6)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Stairs.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Stairs.png")]
     class CreateStairsTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Stairs", false, PreferenceKeys.menuEditor + 7)]
@@ -215,7 +215,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Torus",variantGroup = typeof(DrawShapeTool), variantPriority = 7)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Torus.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Torus.png")]
     class CreateTorusTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Torus", false, PreferenceKeys.menuEditor + 8)]
@@ -244,7 +244,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Pipe",variantGroup = typeof(DrawShapeTool), variantPriority = 8)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Pipe.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Pipe.png")]
     class CreatePipeTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Pipe", false, PreferenceKeys.menuEditor + 9)]
@@ -273,7 +273,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Arch",variantGroup = typeof(DrawShapeTool), variantPriority = 9)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Arch.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Arch.png")]
     class CreateArchTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Arch", false, PreferenceKeys.menuEditor + 10)]
@@ -302,7 +302,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Door",variantGroup = typeof(DrawShapeTool), variantPriority = 10)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Door.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Door.png")]
     class CreateDoorTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Door", false, PreferenceKeys.menuEditor + 11)]
@@ -331,7 +331,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [EditorTool("Create Sprite",variantGroup = typeof(DrawShapeTool), variantPriority = 11)]
-    [Icon("Packages/com.unity.probuilder/Content/Icons/Tools/ShapeTool/Sprite.png")]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/ShapeTool/Sprite.png")]
     class CreateSpriteTool : DrawShapeTool
     {
         [MenuItem(EditorToolbarMenuItem.k_MenuPrefix + "Editors/Create Shape/Sprite", false, PreferenceKeys.menuEditor + 12)]
@@ -543,6 +543,7 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged += OnActiveToolChanged;
             ToolManager.activeContextChanged += OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             if (m_CurrentState == null)
                 m_CurrentState = InitStateMachine();
@@ -561,8 +562,9 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeToolChanged -= OnActiveToolChanged;
             ToolManager.activeContextChanged -= OnActiveContextChanged;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
-            if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
+            if (m_ProBuilderShape != null)
                 m_CurrentState = ShapeState.ResetState();
 
             if (m_DuplicateGO != null)
@@ -584,6 +586,19 @@ namespace UnityEditor.ProBuilder
         {
             if(ToolManager.activeContextType != typeof(GameObjectToolContext))
                 ToolManager.RestorePreviousPersistentTool();
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode || state == PlayModeStateChange.ExitingPlayMode)
+            {
+                // Reset tool state when entering/exiting playmode
+                if (ToolManager.IsActiveTool(this))
+                {
+                    m_CurrentState = ShapeState.ResetState();
+                    ToolManager.RestorePreviousPersistentTool();
+                }
+            }
         }
 
         void HandleUndoRedoPerformed()
@@ -664,6 +679,11 @@ namespace UnityEditor.ProBuilder
             m_BB_HeightCorner = m_BB_Origin + size;
         }
 
+        void UpdatePlaneRotation()
+        {
+            m_PlaneRotation = Mathf.Approximately(m_PlaneForward.sqrMagnitude, 0f) ? Quaternion.identity : Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+        }
+
         internal void DoDuplicateShapePreviewHandle(Vector3 position)
         {
             var evt = Event.current;
@@ -688,7 +708,7 @@ namespace UnityEditor.ProBuilder
 
             m_Bounds.center = cornerPosition + new Vector3(size.x / 2f, 0, size.z / 2f) + (size.y / 2f) * m_Plane.normal;
             var lastPreviewRotation = m_PlaneRotation;
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward, m_Plane.normal);
+            UpdatePlaneRotation();
             var forceRebuildPreview = !m_PlaneRotation.Equals(lastPreviewRotation) ||
                                       m_LastPreviewPivotLocation != pivotLocation;
             m_LastPreviewPivotLocation = pivotLocation;
@@ -739,7 +759,7 @@ namespace UnityEditor.ProBuilder
                 pivot += .5f * size.y * m_Plane.normal;
             else
                 pivot = previewPivotPosition;
-            m_DuplicateGO.transform.SetPositionAndRotation(pivot, Quaternion.LookRotation(m_PlaneForward, m_Plane.normal));
+            m_DuplicateGO.transform.SetPositionAndRotation(pivot, m_PlaneRotation);
 
             DrawBoundingBox(preview_BB_Origin, preview_BB_HeightCorner, preview_BB_OppositeCorner, false);
         }
@@ -763,7 +783,7 @@ namespace UnityEditor.ProBuilder
             if(Mathf.Abs(m_Bounds.center.y) < 0.0001f)
                 m_Bounds.center = m_Bounds.center + 0.0001f * Vector3.up;
 
-            m_PlaneRotation = Quaternion.LookRotation(m_PlaneForward,m_Plane.normal);
+            UpdatePlaneRotation();
         }
 
         internal void RebuildShape()

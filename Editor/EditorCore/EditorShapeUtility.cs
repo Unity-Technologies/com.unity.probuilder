@@ -103,6 +103,14 @@ namespace UnityEditor.ProBuilder
             }
         }
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_AvailableShapeTypes = null;
+            s_ShapeTypes = null;
+            s_ShapeTypesGUILists = null;
+        }
+
         static EditorShapeUtility()
         {
             ResetPrefs();
@@ -167,7 +175,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public static Shape CreateShape(Type type)
+        public static Shape CreateShape(Type type, bool copyLastParams = true)
         {
             Shape shape = null;
             try
@@ -182,11 +190,12 @@ namespace UnityEditor.ProBuilder
             if(shape == null)
                 return null;
 
-            CopyLastParams(shape, type);
+            if (copyLastParams)
+                CopyLastParams(shape, type);
 
             return shape;
         }
-
+        
         public sealed class FaceData
         {
             public Vector3 CenterPosition;

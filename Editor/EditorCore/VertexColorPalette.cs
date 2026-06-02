@@ -18,6 +18,12 @@ namespace UnityEditor.ProBuilder
 
         static VertexColorPalette s_Instance = null;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_Instance = null;
+        }
+
         [SerializeField]
         ColorPalette m_ColorPalette = null;
 
@@ -216,7 +222,7 @@ namespace UnityEditor.ProBuilder
                 pb.Optimize();
             }
 
-            EditorUtility.ShowNotification("Set Vertex Colors\n" + ColorUtility.GetColorName(col));
+            EditorUtility.ShowNotification("Vertex Colors Set");
         }
     }
 }

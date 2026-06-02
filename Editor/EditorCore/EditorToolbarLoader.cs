@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using System.Linq;
 using System.Reflection;
+#if UNITY_6000_5_OR_NEWER
+using UnityEngine.Assemblies;
+#endif
 
 namespace UnityEditor.ProBuilder
 {
@@ -132,7 +135,11 @@ namespace UnityEditor.ProBuilder
 
         static void SearchForMenuAttributes(List<MenuAction> list)
         {
+#if UNITY_6000_5_OR_NEWER
+            foreach (var assembly in CurrentAssemblies.GetLoadedAssemblies())
+#else
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+#endif
             {
                 try
                 {

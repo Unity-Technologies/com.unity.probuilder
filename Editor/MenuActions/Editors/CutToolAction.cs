@@ -16,6 +16,7 @@ namespace UnityEditor.ProBuilder.Actions
             get { return ToolbarGroup.Tool; }
         }
 
+        /// <inheritdoc/>
         public override string iconPath => "Toolbar/CutTool";
 
         /// <inheritdoc/>

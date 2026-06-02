@@ -6,6 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [sphere](../manual/Sphere.html) shape.
     /// </summary>
     [Shape("Sphere")]
+    [System.Serializable]
     public class Sphere : Shape
     {
         static readonly Vector3[] k_IcosphereVertices = new Vector3[12]
@@ -67,11 +68,17 @@ namespace UnityEngine.ProBuilder.Shapes
         int m_BottomMostVertexIndex = 0;
 
         /// <summary>
-        /// Determines whether to smooth the edges of the polygons. 
+        /// Determines whether to smooth the edges of the polygons.
         /// This property is enabled by default.
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_Subdivisions = 2;
+            m_Smooth = false;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

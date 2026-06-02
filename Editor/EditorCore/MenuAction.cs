@@ -150,7 +150,9 @@ namespace UnityEditor.ProBuilder
         public virtual string menuTitle { get { return tooltip.title; } }
 
         /// <summary>
-        /// Gets whether this class should have an entry built into the hardware menu. This is not implemented for custom actions.
+        /// This should be true for actions that have settings that can be changed, allowing the user
+        /// to preview and confirm their changes. For actions that have no settings, this needs to
+        /// be overridden to return false.
         /// </summary>
         protected internal virtual bool hasFileMenuEntry { get { return true; } }
 
@@ -158,7 +160,7 @@ namespace UnityEditor.ProBuilder
         /// Gets a flag that indicates both the visibility and enabled state of an action
         /// to determine whether the current mode and selection is valid for it.
         /// </summary>
-        /// <returns>.</returns>
+        /// <value>Flag indicating current state of the MenuItem.</value>
         public MenuActionState menuActionState
         {
             get
@@ -272,6 +274,9 @@ namespace UnityEditor.ProBuilder
             MenuOption.Show(OnSettingsGUI, OnSettingsEnable, OnSettingsDisable);
         }
 
+        /// <summary>
+        /// Performs the action for this menu item when in Text mode.
+        /// </summary>
         public void PerformAltAction() => DoAlternateAction();
 
         /// <summary>
@@ -279,6 +284,7 @@ namespace UnityEditor.ProBuilder
         /// Creates a custom settings window for this action. Populate a root visual element in that method with
         /// the settings content.
         /// </summary>
+        /// <returns>A VisualElement containing settings content.</returns>
         public virtual VisualElement CreateSettingsContent()
         {
             return null;
@@ -287,6 +293,7 @@ namespace UnityEditor.ProBuilder
         /// <summary>
         /// If extra handles or gizmos are needed during the action execution in the scene, implement them here.
         /// </summary>
+        /// <param name="sceneView">SceneView for which the DoSceneGUI method is called.</param>
         public virtual void DoSceneGUI(SceneView sceneView) {}
 
         /// <summary>
@@ -321,12 +328,25 @@ namespace UnityEditor.ProBuilder
             return false;
         }
 
+        /// <summary>
+        /// Raised when MenuAction contents change.
+        /// </summary>
         public event Action changed;
 
+        /// <summary>
+        /// Called during PerformAction.
+        /// Calling this method triggers the <see cref="changed"/> event.
+        /// </summary>
         protected void ContentsChanged() => changed?.Invoke();
 
+        /// <summary>
+        /// Override to register <see cref="ContentsChanged"/> to event callbacks.
+        /// </summary>
         public virtual void RegisterChangedCallbacks() { }
 
+        /// <summary>
+        /// Override to unregister <see cref="ContentsChanged"/> from event callbacks.
+        /// </summary>
         public virtual void UnregisterChangedCallbacks() { }
     }
 }

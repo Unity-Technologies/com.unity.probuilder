@@ -60,6 +60,7 @@ namespace UnityEditor.ProBuilder
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
             m_Overlay.displayed = true;
+            SceneView.RepaintAll();
         }
 
         public void Dispose()
@@ -72,6 +73,8 @@ namespace UnityEditor.ProBuilder
             ToolManager.activeContextChanged -= Validate;
             ToolManager.activeToolChanged -= Validate;
             Selection.selectionChanged -= ObjectSelectionChanged;
+
+            UndoUtility.ExitAndValidatePreview();
         }
 
         internal static bool IsCurrentAction(MenuAction action)
@@ -112,6 +115,12 @@ namespace UnityEditor.ProBuilder
         internal static void EndPreview()
         {
             s_Instance?.Dispose();
+        }
+
+        [InitializeOnEnterPlayMode]
+        internal static void ResetPreviewActionManagerStatics()
+        {
+            Cancel();
         }
 
         internal static void Validate()
@@ -216,10 +225,24 @@ namespace UnityEditor.ProBuilder
         }
     }
 
+    /// <summary>
+    /// An EditorAction for displaying MenuAction settings overlay and action previewing.
+    /// </summary>
     public class MenuActionSettings : EditorAction
     {
         static bool s_CanTriggerNewAction = true;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetMenuActionSettingsStatics()
+        {
+            s_CanTriggerNewAction = true;
+        }
+
+        /// <summary>
+        /// MenuActionSettings constructor.
+        /// </summary>
+        /// <param name="action">The MenuAction for which to display a settings overlay.</param>
+        /// <param name="hasPreview">Indicates if the action can be previewed.</param>
         public MenuActionSettings(MenuAction action, bool hasPreview = false)
         {
             if (!s_CanTriggerNewAction)

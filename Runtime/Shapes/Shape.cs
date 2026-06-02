@@ -35,6 +35,8 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         /// <param name="shape">The <see cref="Shape" /> to copy property values from.</param>
         public abstract void CopyShape(Shape shape);
+
+        internal abstract void SetParametersToBuiltInShape();
     }
 
     /// <summary>

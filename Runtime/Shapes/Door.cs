@@ -7,6 +7,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [door](../manual/Door.html) shape.
     /// </summary>
     [Shape("Door")]
+    [System.Serializable]
     public class Door : Shape
     {
         /// <summary>
@@ -24,6 +25,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [Min(0.01f)]
         [SerializeField]
         float m_LegWidth = .75f;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_DoorHeight = 0.5f;
+            m_LegWidth = 0.75f;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

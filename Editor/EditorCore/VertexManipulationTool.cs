@@ -320,6 +320,9 @@ namespace UnityEditor.ProBuilder
             var selection = MeshSelection.topInternal;
             var selectMode = ProBuilderEditor.selectMode;
 
+            // A small epsilon is added to avoid the created face being detected as a degenerate triangle
+            const float epsilon = .00001f;
+
             foreach (var mesh in selection)
             {
                 switch (selectMode)
@@ -329,7 +332,7 @@ namespace UnityEditor.ProBuilder
                             goto default;
 
                         Edge[] newEdges = mesh.Extrude(mesh.selectedEdges,
-                                0f,
+                                epsilon,
                                 s_ExtrudeEdgesAsGroup,
                                 ProBuilderEditor.s_AllowNonManifoldActions);
 
@@ -345,7 +348,7 @@ namespace UnityEditor.ProBuilder
 
                         if (len > 0)
                         {
-                            mesh.Extrude(mesh.selectedFacesInternal, s_ExtrudeMethod, 0f);
+                            mesh.Extrude(mesh.selectedFacesInternal, s_ExtrudeMethod, epsilon);
                             mesh.SetSelectedFaces(mesh.selectedFacesInternal);
                             ef += len;
                         }
@@ -362,17 +365,6 @@ namespace UnityEditor.ProBuilder
                 EditorUtility.ShowNotification("Extrude");
                 ProBuilderEditor.Refresh();
             }
-        }
-
-        /// <summary>
-        /// Find the nearest vertex among all visible objects.
-        /// </summary>
-        /// <param name="mousePosition"></param>
-        /// <param name="vertex"></param>
-        /// <returns></returns>
-        protected static bool FindNearestVertex(Vector2 mousePosition, out Vector3 vertex)
-        {
-            return HandleUtility.FindNearestVertex(mousePosition, out vertex);
         }
     }
 }

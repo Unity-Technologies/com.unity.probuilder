@@ -8,6 +8,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [torus](../manual/Torus.html) shape.
     /// </summary>
     [Shape("Torus")]
+    [System.Serializable]
     public class Torus : Shape
     {
         /// <summary>
@@ -60,6 +61,15 @@ namespace UnityEngine.ProBuilder.Shapes
         /// </summary>
         [SerializeField]
         bool m_Smooth = true;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_Rows = 12;
+            m_Columns = 16;
+            m_TubeRadius = 0.3f;
+            m_HorizontalCircumference = m_VerticalCircumference = 360;
+            m_Smooth = true;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

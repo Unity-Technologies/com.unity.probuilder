@@ -6,6 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [cube](../manual/Cube.html) shape.
     /// </summary>
     [Shape("Cube")]
+    [System.Serializable]
     public class Cube : Shape
     {
         /// <summary>
@@ -33,6 +34,8 @@ namespace UnityEngine.ProBuilder.Shapes
             0, 1, 4, 5, 1, 2, 5, 6, 2, 3, 6, 7, 3, 0, 7, 4, 4, 5, 7, 6, 3, 2, 0, 1
         };
 
+        internal override void SetParametersToBuiltInShape() { }
+
         /// <inheritdoc/>
         public override void CopyShape(Shape shape) {}
 
@@ -47,6 +50,11 @@ namespace UnityEngine.ProBuilder.Shapes
                 points[i] = rotation * Vector3.Scale(k_CubeVertices[k_CubeTriangles[i]], Math.Abs(size));
 
             mesh.GeometryWithPoints(points);
+
+            UvUnwrapping.SetAutoUV(mesh, mesh.facesInternal, true);
+            foreach (var face in mesh.facesInternal)
+                face.uv = new AutoUnwrapSettings(face.uv) { anchor = AutoUnwrapSettings.Anchor.UpperLeft};
+            mesh.RefreshUV(mesh.faces);
 
             return mesh.mesh.bounds;
         }

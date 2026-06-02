@@ -70,6 +70,12 @@ namespace UnityEditor.ProBuilder.Actions
         // are called on the entire selection and not per element.
         static bool s_ActionAlreadyTriggered = false;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            s_ActionAlreadyTriggered = false;
+        }
+
         [MenuItem("CONTEXT/MeshFilter/ProBuilderize", true, 11)]
         static bool ProBuilderizeMeshAction_Validate(MenuCommand command)
         {
@@ -247,6 +253,12 @@ namespace UnityEditor.ProBuilder.Actions
                         continue;
 
                     GameObject go = mf.gameObject;
+                    var renderer = go.GetComponent<MeshRenderer>();
+                    if (renderer.isPartOfStaticBatch)
+                    {
+                        Debug.LogError($"Probuilderize is not supported for renderers that have `IsPartOfStaticBatch` set.\n{go.name} will not probuilderize.");
+                        continue;
+                    }
                     Mesh sourceMesh = mf.sharedMesh;
                     Material[] sourceMaterials = go.GetComponent<MeshRenderer>()?.sharedMaterials;
 

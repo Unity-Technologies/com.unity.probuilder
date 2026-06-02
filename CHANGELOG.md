@@ -5,29 +5,110 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Unreleased 
+## Unreleased
+
+### Internal
+
+- [UUM-138957] Removed ProBuilder Runtime tests references to UnityEditor.
 
 ### Changes
 
-- Improved DrawShape tool performance when placing the first vertex.
+- [UUM-132698] Fixed incorrect snapping of the UV Editor MoveTool in the scene. 
+- [UUM-131032] Added a reset of static variables when entering playmode to allow fast enter playmode compatibility.
+- [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
+- [UUM-138960] Removed a large utility dictionary to reduce binary size and runtime memory overhead. 
 
 ### Fixed
 
+- [UUM-141074] Fixed an issue where the CreateShape and CreatePolyshape tools would not properly snap to the grid.
+- [UUM-133529] Fixed an issue where ProBuilder GameObjects could not change back to 3D shapes after being changed to Plane or Sprite.
+- [UUM-133861] Fixed "Look rotation viewing vector is zero" log being spammed when holding shift while using a create tool such as Create Sprite.
+- [UUM-133859] Fixed an issue in URP projects where the Editor would recompile scripts when after a rectangle selection in ProBuilder. 
+- [UUM-133530] Fixed the `Set Double Sided` custom action in the Editor Sample, which was previously remaining disabled.
+- [UUM-133530] Ensured that the context menu respects the value of `MenuAction.enabled`.
+- [UUM-133531] Fixed component icons in Light theme.
+- [UUM-133526] Material Editor: fixed a warning (`GUI Error: Invalid GUILayout state in MaterialEditor view.`) that was thrown when deleting an extra material slot.
+- Fixed warnings related to obsolete API calls with Unity 6.4 and onwards.
+
+## [6.0.9] - 2026-01-30
+
+### Fixed
+
+- [PBLD-276] Fixed a bug where dragging a single face from a connected texture group in the UV Editor caused a visual distortion during the drag operation.
+- [PBLD-279] Fixed an issue where serialization warning would appear upon creating a ProBuilder Shape.
+- [PBLD-284] Fixed InstanceID obsolescence warning appearing on 6000.4 and newer versions.
+- Fixed an issue where a proper unique name wasn't set on duplicated ProBuilder meshes.
+- [UUM-133756] Fixed the help icon for ProBuilder components pointing to the wrong documentation link. It now points to https://docs.unity3d.com/Packages/com.unity.probuilder@latest.
+
+## [6.0.8] - 2025-11-17
+
+### Fixed
+
+- [PBLD-240] Fixed a bug where buttons for "Create Cube" and "Create PolyShape" appeared incorrectly on Light theme.
+- [PBLD-258] Fixed an bug where clicking a highlighted edge might select a hidden edge instead.
+- [PBLD-262] Fixed a bug in the deep cycling of face selection where faces from hidden meshes would get prioritized
+
+## [6.0.7] - 2025-08-28
+
+### Fixed
+
+- [PBLD-242] Fixed a bug where edges were being incorrectly selected when one or both vertices were behind the camera's near plane, causing flipped lines and inconsistent selection behavior.
+- [PBLD-226] Fixed a bug where ProBuilder faces could not selected when obscured by another GameObject
+- [PBLD-164] Fixed a bug with UV autostitching where the position offset would not take into account the face rotation center offset.
+- [PBLD-251] Fixed a bug which would cause out of bounds exceptions when exporting meshes with quad topology
+- [PBLD-253] Removed a call to internal API that is being removed.
+- [PBLD-255] Fixed an issue where faces being extruded using the shift+click were invisible
+- Fixed warnings about materials being altered when the package is imported in Unity 6.2.
+
+## [6.0.6] - 2025-07-01
+
+### Changes
+
+- [PBLD-228] Updated function to access shader property types.
+
+### Fixed
+
+- [PBLD-224] Fixed rect selection in HDRP.
+- [PBLD-236] Fixed a bug where degenerate triangles were being added to output meshes, causing occasional rendering artifacts.
+- [PBLD-220] Fixed an error in the SoftDeleteEdges sample code that was preventing it from appearing in the context menu.
+- [PBLD-231] Fixed a bug where Extrude was not being disabled in the context menu when 'allow non-manifold actions' was not selected in the ProBuilder preferences.
+- [PBLD-238] Fixed a bug that could cause users to lose any work that they did on a ProBuilder mesh between two usages of tool actions that had previews (options overlays).
+- [PBLD-222] Fixed crash by preventing user from probuilderizing a gameobject that has isPartOfStaticBatch set to true.
+- [PBLD-245] Fixed warnings about obsolete API usage when using Unity 6.2 and later. Updated the API usage where the alternatives were available in Unity 2022.3.
+
+## [6.0.5] - 2025-03-11
+
+### Changes
+
+- Improved DrawShape tool performance when you place the first vertex.
+
+### Fixed
+
+- Fixed a bug where undoing a PolyShape creation then redoing it did not restore the PolyShape.
+- Fixed a bug where you could progress to the Edit Height stage of the Polyshape creation tool without forming a base polygon with at least three points.
+- Fixed a bug where shapes created by pressing Enter or Space using the Polyshape creation tool were not selectable or added to the scene hierarchy.
+- [PBLD-213] Fixed a bug where selection changes made while the PolyShape creation tool was active were being reverted.
+- [PBLD-192] Fixed a bug where vertices were not able to snap on other vertices from the same mesh.
+- [PBLD-189] Fixed a bug where using the auto-stitch functionality of the UV Editor would not work properly on MacOS.
 - [PBLD-187] Fixed a bug where the object size was incorrect when using the DrawShape tool on angled surfaces.
-- [PBLD-180] Fixed an issue in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
-- Fixed a bug where Undo was not working correctly with Polyshape creation tool. 
-- [PBLD-196] Fixed a bug where Polyshape creation tool was not working with orthographic camera.
+- [PBLD-180] Fixed a bug in the Material Editor where an exception was thrown because it attempted to retrieve `MenuItem` shortcuts before the main menu was fully loaded.
+- [PBLD-210] Fixed a bug where Undo was not working correctly with the Polyshape creation tool. 
+- [PBLD-196] Fixed a bug where the Polyshape creation tool was not working with an orthographic camera.
 - [STO-3429] Fixed a bug where increment snapping was ignored when drawing ProBuilder shapes.
-- [STO-3432] Fixed a bug where Polyshape creation tool was not placing properly the first point on a custom grids.
-- [PBLD-183] Fixed a bug where the 'Extrude by' setting of the 'Extrude Faces' action would always be set to 'Individual Faces'.
+- [STO-3432] Fixed a bug where the Polyshape creation tool was not placing the first point on a custom grids correctly.
+- [PBLD-183] Fixed a bug where the **Extrude by** setting of the **Extrude Faces** action was always set to **Individual Faces**.
 - [STO-3442] Fixed a bug where hover-highlighted elements are not always selected.
+- [PBLD-208] Fixed an issue "Apply Quick Material" shortcut would always be present in the Shortcut Helper Bar.
+- [PBLD-202] Fixed an issue where creating ProBuilder shapes using the Hierarchy menu would not result in procedurally editable `ProBuilderShape` meshes. 
+- [PBLD-205] Fixed a bug where the `Edit PolyShape` tool would revert previously merged PolyShape objects.
+- [PBLD-199] Fixed a bug where an exception was thrown if you placed two cut tool vertices on the same edge.
 
 ## [6.0.4] - 2024-09-12
 
 ### Changes
 
-- [PBLD-169] "Edit Vertices/Edges/Faces" shortcuts now automatically enter the ProBuilder context.
-- [PBLD-167] Removed "Toggle ProBuilder Context" shortcut - the built-in "Cycle Tool Modes" shortcut should be used instead.
+- [PBLD-169] Using the **Edit Vertices**, **Edit Edges**, and **Edit Faces** shortcuts now automatically activate the the ProBuilder tool context.
+- [PBLD-167] Removed the **Toggle ProBuilder Context** shortcut. Use the the built-in **Cycle Tool Modes** shortcut instead.
 
 ## [6.0.3] - 2024-08-20
 

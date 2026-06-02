@@ -304,6 +304,24 @@ namespace UnityEditor.ProBuilder
 
         static bool s_IsMovingVertices = false;
 
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            if (s_FaceMaterial != null)
+                UnityEngine.Object.DestroyImmediate(s_FaceMaterial);
+            s_FaceMaterial = null;
+            if (s_NormalPreviewMaterial != null)
+                UnityEngine.Object.DestroyImmediate(s_NormalPreviewMaterial);
+            s_NormalPreviewMaterial = null;
+            s_GroupButtonStyle = null;
+            s_GroupButtonSelectedStyle = null;
+            s_GroupButtonInUseStyle = null;
+            s_GroupButtonMixedSelectionStyle = null;
+            s_ColorKeyStyle = null;
+            s_WordWrappedRichText = null;
+            s_IsMovingVertices = false;
+        }
+
         static Pref<bool> s_ShowPreview = new Pref<bool>("smoothing.showPreview", false);
         static Pref<bool> s_ShowNormals = new Pref<bool>("smoothing.showNormals", false);
         static Pref<bool> s_ShowHelp = new Pref<bool>("smoothing.showHelp", false);

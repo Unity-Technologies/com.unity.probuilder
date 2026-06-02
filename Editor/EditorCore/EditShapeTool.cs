@@ -13,6 +13,7 @@ using ToolManager = UnityEditor.EditorTools.ToolManager;
 namespace UnityEditor.ProBuilder
 {
     [EditorTool("Edit Shape", typeof(ProBuilderShape))]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/Tools/EditShape.png")]
     sealed class EditShapeTool : EditorTool
     {
         [MenuItem("Tools/ProBuilder/Edit/Edit Shape", true, PreferenceKeys.menuEditor + 10)]
@@ -94,23 +95,30 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        public override bool gridSnapEnabled => true;
-
-        static GUIContent s_IconContent;
-        public override GUIContent toolbarIcon
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
         {
-            get
-            {
-                if(s_IconContent == null)
-                    s_IconContent = new GUIContent()
-                    {
-                        image = IconUtility.GetIcon("Tools/EditShape"),
-                        text = "Edit Shape",
-                        tooltip = "Edit ProBuilder Shape"
-                    };
-                return s_IconContent;
-            }
+            s_Faces = null;
+            s_CurrentId = -1;
+            s_SizeManipulationInit = false;
+            s_SizeDelta = 0f;
+            s_StartMousePosition = Vector2.zero;
+            s_StartSize = Vector3.zero;
+            s_StartPositionLocal = Vector3.zero;
+            s_StartPositionGlobal = Vector3.zero;
+            s_StartScale = Vector3.zero;
+            s_StartScaleInverse = Vector3.zero;
+            s_StartCenter = Vector3.zero;
+            s_Direction = Vector3.zero;
+            s_DefaultMidpointHandleSize = 0.03f;
+            s_DefaultMidpointSquareSize = 0.15f;
+            s_CurrentAngle = 0f;
+            s_CurrentArrowHovered = -1;
+            s_ShapeRotation = Quaternion.identity;
+            s_ArrowsLines = null;
         }
+
+        public override bool gridSnapEnabled => true;
 
         void OnEnable()
         {

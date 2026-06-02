@@ -135,5 +135,39 @@ namespace UnityEngine.ProBuilder
                 component = gameObject.AddComponent<T>();
             return component;
         }
+
+#if UNITY_6000_4_OR_NEWER
+        /// <summary>
+        /// Returns the <see cref="EntityId"/> identifier for the given <see cref="UnityEngine.Object"/>.
+        /// This method abstracts the Unity version differences between <c>GetEntityId()</c>
+        /// (available in Unity 6000.4 or newer) and <c>GetInstanceID()</c> in older Unity versions.
+        ///
+        /// Use this method to obtain an object identifier that is compatible with APIs expecting
+        /// <see cref="EntityId"/> in newer Unity versions, such as
+        /// <see cref="UnityEditor.AssetDatabase.GetAssetPath(EntityId)"/>.
+        /// </summary>
+        /// <param name="o">The Unity object to get an identifier for.</param>
+        /// <returns>The object's unique <see cref="EntityId"/>.</returns>
+        internal static EntityId GetObjectId(this Object o)
+        {
+            return o.GetEntityId();
+        }
+#else
+        /// <summary>
+        /// Returns the integer identifier for the given <see cref="UnityEngine.Object"/>.
+        /// This method abstracts the Unity version differences between <c>GetEntityId()</c>
+        /// (available in Unity 6000.4 or newer) and <c>GetInstanceID()</c> in older Unity versions.
+        ///
+        /// Use this method to obtain an object identifier that is compatible with APIs expecting
+        /// an integer in older Unity versions, such as
+        /// <see cref="UnityEditor.AssetDatabase.GetAssetPath(int)"/>.
+        /// </summary>
+        /// <param name="o">The Unity object to get an identifier for.</param>
+        /// <returns>The object's unique integer identifier.</returns>
+        internal static int GetObjectId(this Object o)
+        {
+            return o.GetInstanceID();
+        }
+#endif
     }
 }

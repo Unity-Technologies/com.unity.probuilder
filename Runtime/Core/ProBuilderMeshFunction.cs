@@ -24,6 +24,12 @@ namespace UnityEngine.ProBuilder
             InvalidateCaches();
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_CachedHashSet.Clear();
+        }
+
 #if ENABLE_DRIVEN_PROPERTIES
         // Using the internal callbacks here to avoid registering this component as "enable-able"
         void OnEnableINTERNAL()
@@ -335,7 +341,7 @@ namespace UnityEngine.ProBuilder
 #if ENABLE_DRIVEN_PROPERTIES
                 SerializationUtility.RegisterDrivenProperty(this, this, "m_Mesh");
 #endif
-                mesh = new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+                mesh = new Mesh() { name = $"pb_Mesh{this.GetObjectId()}" };
             }
             else if (mesh.vertexCount != vertexCount)
             {
@@ -405,7 +411,48 @@ namespace UnityEngine.ProBuilder
                 }
 
                 submeshes[i].submeshIndex = currentSubmeshIndex;
-                mesh.SetIndices(submeshes[i].m_Indexes, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
+
+                // remove any indices that contain degenerate triangles
+                int numBadIndices = 0;
+                int[] indexes = submeshes[i].m_Indexes;
+
+                if (submeshes[i].m_Topology == MeshTopology.Triangles && indexes.Length % 3 == 0)
+                {
+                    for (var tri = 0; tri < indexes.Length; tri += 3)
+                    {
+                        if (tri + 2 >= indexes.Length ||
+                            indexes[tri] >= positions.Count ||
+                            indexes[tri + 1] >= positions.Count ||
+                            indexes[tri + 2] >= positions.Count)
+                            continue;
+
+                        Vector3 ab = positions[indexes[tri + 1]] - positions[indexes[tri]];
+                        Vector3 ac = positions[indexes[tri + 2]] - positions[indexes[tri]];
+                        if (Vector3.Cross(ab, ac).sqrMagnitude < Mathf.Epsilon)
+                        {
+                            numBadIndices += 3;
+                        }
+                        else
+                        {
+                            indexes[tri - numBadIndices] = indexes[tri];
+                            indexes[tri - numBadIndices + 1] = indexes[tri + 1];
+                            indexes[tri - numBadIndices + 2] = indexes[tri + 2];
+                        }
+                    }
+                }
+
+                int[] fixedIndices;
+                if (numBadIndices > 0)
+                {
+                    fixedIndices = new int[indexes.Length - numBadIndices];
+                    Array.Copy(indexes, 0, fixedIndices, 0, fixedIndices.Length);
+                }
+                else
+                {
+                    fixedIndices = submeshes[i].m_Indexes;
+                }
+
+                mesh.SetIndices(fixedIndices, submeshes[i].m_Topology, submeshes[i].submeshIndex, false);
                 currentSubmeshIndex++;
             }
 
@@ -443,7 +490,8 @@ namespace UnityEngine.ProBuilder
         {
             mesh = mesh != null
                 ? Instantiate(mesh)
-                : new Mesh() { name = $"pb_Mesh{GetInstanceID()}" };
+                : new Mesh();
+            mesh.name = $"pb_Mesh{this.GetObjectId()}";
 
             if (meshSyncState == MeshSyncState.InSync)
             {

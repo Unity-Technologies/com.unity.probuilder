@@ -42,6 +42,21 @@ namespace UnityEditor.ProBuilder
                 helpBox = new GUIStyle(EditorStyles.helpBox);
                 helpBox.padding = new RectOffset(2, 2, 2, 2);
             }
+
+#if UNITY_EDITOR
+            internal static void ResetForPlayMode()
+            {
+                s_Initialized = false;
+                miniButton = null;
+                helpBox = null;
+            }
+#endif
+        }
+
+        [InitializeOnEnterPlayMode]
+        static void ResetMeshEditorStylesOnLoad()
+        {
+            Styles.ResetForPlayMode();
         }
 
         internal static event System.Action onGetFrameBoundsEvent;
@@ -106,19 +121,23 @@ namespace UnityEditor.ProBuilder
 
             Styles.Init();
 
+#if UNITY_6000_5_OR_NEWER
+            EditorGUILayout.HelpBox(new GUIContent(Styles.helpLabelContent.text, Styles.helpLabelContentIcon.image));
+#else
             // [SPLB-132] Reverting to custom helpbox as the default helpbox style as a trouble to handle custom icons
             // when using a screen with PixelPerPoints different than 1. This is done in trunk by setting the
             // Texture2d.pixelsPerPoints which is an internal property than cannot be access from here.
             EditorGUILayout.BeginHorizontal(Styles.helpBox);
+
             EditorGUIUtility.SetIconSize(new Vector2(32f, 32f));
             EditorGUILayout.LabelField(Styles.helpLabelContentIcon,
                 GUILayout.Width(34), GUILayout.MinHeight(34), GUILayout.ExpandHeight(true));
             EditorGUIUtility.SetIconSize(Vector2.zero);
             EditorGUILayout.LabelField(Styles.helpLabelContent,
-                new GUIStyle(EditorStyles.label){wordWrap = Styles.helpBox.wordWrap, fontSize = Styles.helpBox.fontSize, padding = new RectOffset(-2, 0, 0, 0)},
+                new GUIStyle(EditorStyles.label) { wordWrap = Styles.helpBox.wordWrap, fontSize = Styles.helpBox.fontSize, padding = new RectOffset(-2, 0, 0, 0) },
                 GUILayout.ExpandHeight(true));
             EditorGUILayout.EndHorizontal();
-
+#endif
             GUILayout.Box("Mesh property is driven by the ProBuilder component.", EditorStyles.helpBox);
             var guiEnabled = GUI.enabled;
             GUI.enabled = false;
@@ -177,8 +196,8 @@ namespace UnityEditor.ProBuilder
 
             GUILayout.Label("Identifiers", EditorStyles.boldLabel);
             EditorGUI.showMixedValue = targets.Length > 1;
-            EditorGUILayout.IntField("ProBuilderMesh", m_Mesh.GetInstanceID());
-            EditorGUILayout.IntField("UnityEngine.Mesh", sharedMesh != null ? sharedMesh.GetInstanceID() : -1);
+            EditorGUILayout.TextField("ProBuilderMesh", m_Mesh.GetObjectId().ToString());
+            EditorGUILayout.TextField("UnityEngine.Mesh", sharedMesh != null ? sharedMesh.GetObjectId().ToString() : "null");
             EditorGUILayout.TextField("UnityEngine.Mesh.name", sharedMesh != null ? sharedMesh.name : "null");
             EditorGUI.showMixedValue = false;
 #endif

@@ -8,6 +8,14 @@ namespace UnityEngine.ProBuilder
     {
         internal static List<Material> s_MaterialArray = new List<Material>();
 
+#if UNITY_EDITOR   
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_MaterialArray.Clear();
+        }
+#endif
+
         internal static int GetMaterialCount(Renderer renderer)
         {
             s_MaterialArray.Clear();

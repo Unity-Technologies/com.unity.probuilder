@@ -66,7 +66,6 @@ namespace UnityEngine.ProBuilder
         /// Creates a specific shape with default parameters.
         /// </summary>
         /// <param name="shape">The <see cref="Shape" /> to create.</param>
-        /// <param name="pivotType">By default, new shapes pivot around the center of the bounding box but you can specify <see cref="PivotLocation.FirstCorner" /> instead. </param>
         /// <returns>A new GameObject with the ProBuilderMesh initialized to the primitive <see cref="Shape" />.</returns>
         public static ProBuilderMesh Instantiate(Shape shape)
         {

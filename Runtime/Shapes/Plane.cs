@@ -6,6 +6,7 @@ namespace UnityEngine.ProBuilder.Shapes
     /// Represents a basic [plane](../manual/Plane.html) shape.
     /// </summary>
     [Shape("Plane")]
+    [System.Serializable]
     public class Plane : Shape
     {
         /// <summary>
@@ -23,6 +24,12 @@ namespace UnityEngine.ProBuilder.Shapes
         [Min(0)]
         [SerializeField]
         int m_WidthSegments = 1;
+
+        internal override void SetParametersToBuiltInShape()
+        {
+            m_HeightSegments = 5;
+            m_WidthSegments = 5;
+        }
 
         /// <inheritdoc/>
         public override void CopyShape(Shape shape)

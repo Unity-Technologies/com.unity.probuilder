@@ -14,9 +14,9 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets or sets whether to perform depth testing when testing elements with raycasting.
         /// </summary>
-        /// <returns>
+        /// <value>
         /// True to select only visible elements; false to select all elements regardless of visibility.
-        /// </returns>
+        /// </value>
         public bool depthTest { get; set; }
 
         /// <summary>
@@ -148,11 +148,21 @@ namespace UnityEngine.ProBuilder
 
         static RenderTextureFormat s_RenderTextureFormat = RenderTextureFormat.Default;
 
-        static RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
+        static readonly RenderTextureFormat[] s_PreferredFormats = new RenderTextureFormat[]
         {
             RenderTextureFormat.ARGB32,
             RenderTextureFormat.ARGBFloat,
         };
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void ResetStaticsOnLoad()
+        {
+            s_Initialized = false;
+            s_PickerRenderer = null;
+            s_RenderTextureFormat = RenderTextureFormat.Default;
+        }
+#endif
 
         /// <summary>
         /// Returns an appropriate implementation based on the graphic pipeline
@@ -165,9 +175,9 @@ namespace UnityEngine.ProBuilder
             {
                 if (s_PickerRenderer == null)
                     s_PickerRenderer =
-                        ShouldUseHDRP()?
-                        (ISelectionPickerRenderer)new SelectionPickerRendererHDRP()
-                        : new SelectionPickerRendererStandard();
+                        ShouldUseHDRP() ? new SelectionPickerRendererHDRP()
+                            : ShouldUseURP() ? new SelectionPickerRendererURP()
+                                : new SelectionPickerRendererStandard();
                 return s_PickerRenderer;
             }
         }
@@ -850,6 +860,15 @@ namespace UnityEngine.ProBuilder
         static bool ShouldUseHDRP()
         {
 #if HDRP_7_1_0_OR_NEWER
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        static bool ShouldUseURP()
+        {
+#if PB_URP_MODE
             return true;
 #else
             return false;

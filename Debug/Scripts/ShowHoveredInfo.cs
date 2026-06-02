@@ -10,6 +10,14 @@ namespace UnityEngine.ProBuilder.Debug
         static Material m_Material;
         bool m_IsHovering;
 
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod]
+        static void ResetStaticsOnLoad()
+        {
+            m_Material = null;
+        }
+#endif
+
         void Start()
         {
             if (m_Material == null)

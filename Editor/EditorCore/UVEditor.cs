@@ -19,6 +19,14 @@ namespace UnityEditor.ProBuilder
             get { return ProBuilderEditor.instance; }
         }
 
+
+        UVEditorShortcutContext m_ShortcutContext;
+        internal class UVEditorShortcutContext : IShortcutContext
+        {
+            public bool active => UVEditor.instance != null;
+        }
+
+
         public override void AddItemsToMenu(GenericMenu menu)
         {
             base.AddItemsToMenu(menu);
@@ -84,14 +92,11 @@ namespace UnityEditor.ProBuilder
         static readonly Color SELECTED_COLOR_MANUAL = new Color(1f, .68f, 0f, .39f);
         static readonly Color SELECTED_COLOR_AUTO = new Color(0f, .785f, 1f, .39f);
 
-#if UNITY_STANDALONE_OSX
-        public bool ControlKey { get { return Event.current.modifiers == EventModifiers.Command; } }
-    #else
         public bool ControlKey
         {
-            get { return Event.current.modifiers == EventModifiers.Control; }
+            get { return EditorGUI.actionKey; }
         }
-#endif
+
         public bool ShiftKey
         {
             get { return Event.current.modifiers == EventModifiers.Shift; }
@@ -259,6 +264,8 @@ namespace UnityEditor.ProBuilder
             ObjectSelectionChanged();
             instance = this;
             nearestElement.Clear();
+
+            ShortcutManager.RegisterContext(m_ShortcutContext ??= new UVEditorShortcutContext());
         }
 
         void OnDisable()
@@ -278,6 +285,8 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged -= SelectModeChanged;
             ProBuilderMeshEditor.onGetFrameBoundsEvent -= OnGetFrameBoundsEvent;
             Undo.undoRedoPerformed -= ObjectSelectionChanged;
+
+            ShortcutManager.UnregisterContext(m_ShortcutContext);
         }
 
         /**
@@ -304,11 +313,11 @@ namespace UnityEditor.ProBuilder
             Texture2D scaleIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ScaleTool" });
             Texture2D viewIcon = (Texture2D)loadIconMethod.Invoke(null, new object[] { "ViewToolMove" });
 
-            icon_textureMode_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On", IconSkin.Pro);
-            icon_textureMode_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off", IconSkin.Pro);
+            icon_textureMode_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_On");
+            icon_textureMode_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_ShowTexture_Off");
 
-            icon_sceneUV_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On", IconSkin.Pro);
-            icon_sceneUV_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off", IconSkin.Pro);
+            icon_sceneUV_on = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_On");
+            icon_sceneUV_off = IconUtility.GetIcon("UVEditor/ProBuilderGUI_UV_Manip_Off");
 
             gc_RenderUV.image = IconUtility.GetIcon("UVEditor/camera-64x64");
 
@@ -535,13 +544,17 @@ namespace UnityEditor.ProBuilder
             GUI.FocusControl(string.Empty);
             bool update = false;
 
+            Vector2 originalHandlePosition = handlePosition;
+
             // Make sure all TextureGroups are auto-selected
             for (int i = 0; i < selection.Length; i++)
             {
                 if (selection[i].selectedFaceCount > 0)
                 {
                     int fc = selection[i].selectedFaceCount;
-                    selection[i].SetSelectedFaces(SelectTextureGroups(selection[i], selection[i].selectedFacesInternal));
+                    selection[i].SetSelectedFaces(
+                        SelectTextureGroups(selection[i], selection[i].selectedFacesInternal)
+                    );
 
                     // kinda lame... this will cause setSelectedUVsWithSceneView to be called again.
                     if (fc != selection[i].selectedFaceCount)
@@ -555,9 +568,8 @@ namespace UnityEditor.ProBuilder
             if (update)
             {
                 // UpdateSelection clears handlePosition
-                Vector2 storedHandlePosition = handlePosition;
                 ProBuilderEditor.Refresh();
-                SetHandlePosition(storedHandlePosition, true);
+                SetHandlePosition(originalHandlePosition, true);
             }
 
             CopySelectionUVs(out uv_origins);
@@ -698,69 +710,78 @@ namespace UnityEditor.ProBuilder
             return true;
         }
 
-        /**
-         * return true if shortcut should eat the event
-         */
-        internal bool ClickShortcutCheck(ProBuilderMesh pb, Face selectedFace)
+        [Shortcut("ProBuilder/Editor/Auto-stitch UV", typeof(UVEditorShortcutContext), KeyCode.Mouse0,
+            ShortcutModifiers.Action | ShortcutModifiers.Shift | ShortcutModifiers.Alt)]
+        static void TriggerAutoStitchUV()
         {
-            Event e = Event.current;
-
-            // Copy UV settings
-            if (IsCopyUVSettingsModifiers(e.modifiers))
+            var selection = ProBuilderEditor.instance.hovering;
+            var mesh = selection.mesh;
+            foreach (var face in selection.faces)
             {
-                return CopyFaceUVSettings(pb, selectedFace);
+                UVEditor uvEditor = instance;
+                if (uvEditor != null)
+                    uvEditor.ClickShortcutCheck(mesh, face);
             }
-            else if (e.modifiers == EventModifiers.Control)
+        }
+
+        [Shortcut("ProBuilder/Editor/Copy UV Settings", typeof(UVEditorShortcutContext), KeyCode.Mouse0,
+            ShortcutModifiers.Action | ShortcutModifiers.Alt)]
+        static void CopyUVSettings()
+        {
+            var selection = ProBuilderEditor.instance.hovering;
+            var mesh = selection.mesh;
+            foreach (var face in selection.faces)
             {
-                int len = pb.selectedFacesInternal == null ? 0 : pb.selectedFacesInternal.Length;
-
-                if (len < 1)
-                    return false;
-
-                Face anchor = pb.selectedFacesInternal[len - 1];
-
-                if (anchor == selectedFace)
-                    return false;
-
-                UndoUtility.RecordObject(pb, "AutoStitch");
-
-                pb.ToMesh();
-
-                bool success = UVEditing.AutoStitch(pb, anchor, selectedFace, channel);
-
-                if (success)
-                {
-                    RefreshElementGroups(pb);
-
-                    pb.SetSelectedFaces(new Face[] { selectedFace });
-
-                    // // only need to do this for one pb_Object...
-                    // for(int i = 0; i < selection.Length; i++)
-                    //  selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
-
-                    pb.Refresh();
-                    pb.Optimize();
-
-                    SetSelectedUVsWithSceneView();
-
-                    RefreshUVCoordinates();
-
-                    EditorUtility.ShowNotification("Autostitch");
-
-                    ProBuilderEditor.Refresh();
-
-                    Repaint();
-                }
-                else
-                {
-                    pb.Refresh();
-                    pb.Optimize();
-                }
-
-                return success;
+                instance.CopyFaceUVSettings(mesh, face);
             }
+        }
 
-            return false;
+        internal void ClickShortcutCheck(ProBuilderMesh pb, Face selectedFace)
+        {
+            int len = pb.selectedFacesInternal == null ? 0 : pb.selectedFacesInternal.Length;
+
+            if (len < 1)
+                return ;
+
+            Face anchor = pb.selectedFacesInternal[len - 1];
+
+            if (anchor == selectedFace)
+                return ;
+
+            UndoUtility.RecordObject(pb, "AutoStitch");
+
+            pb.ToMesh();
+
+            bool success = UVEditing.AutoStitch(pb, anchor, selectedFace, channel);
+
+            if (success)
+            {
+                RefreshElementGroups(pb);
+
+                pb.SetSelectedFaces(new Face[] { selectedFace });
+
+                // // only need to do this for one pb_Object...
+                // for(int i = 0; i < selection.Length; i++)
+                //  selection[i].RefreshUV( editor.SelectedFacesInEditZone[i] );
+
+                pb.Refresh();
+                pb.Optimize();
+
+                SetSelectedUVsWithSceneView();
+
+                RefreshUVCoordinates();
+
+                EditorUtility.ShowNotification("Autostitch");
+
+                ProBuilderEditor.Refresh();
+
+                Repaint();
+            }
+            else
+            {
+                pb.Refresh();
+                pb.Optimize();
+            }
         }
 
         #endregion
@@ -2507,6 +2528,12 @@ namespace UnityEditor.ProBuilder
 
         static Rect ActionWindowDragRect = new Rect(0, 6, 10000, 30);
         static Editor uv2Editor = null;
+
+        [InitializeOnEnterPlayMode]
+        static void ResetStaticsOnLoad()
+        {
+            uv2Editor = null;
+        }
 
         void DrawActionWindow(int windowIndex)
         {

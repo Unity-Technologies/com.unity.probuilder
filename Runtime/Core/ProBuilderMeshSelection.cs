@@ -28,7 +28,7 @@ namespace UnityEngine.ProBuilder
         /// Gets or sets whether elements can be selected.
         /// Used by <see cref="UnityEditor.ProBuilder.ProBuilderEditor" />.
         /// </summary>
-        /// <returns>False if mesh elements are not selectable. </returns>
+        /// <value>False if mesh elements are not selectable. </value>
         public bool selectable
         {
             get { return m_IsSelectable; }
@@ -38,7 +38,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the number of faces that are currently selected on this object.
         /// </summary>
-        /// <returns>Number of selected faces. </returns>
+        /// <value>Number of selected faces. </value>
         public int selectedFaceCount
         {
             get { return m_SelectedFaces.Length; }
@@ -47,7 +47,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the number of selected vertex indices.
         /// </summary>
-        /// <returns>Number of selected vertices. </returns>
+        /// <value>Number of selected vertices. </value>
         public int selectedVertexCount
         {
             get { return m_SelectedVertices.Length; }
@@ -56,7 +56,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets the number of selected edges.
         /// </summary>
-        /// <returns>Number of selected edges. </returns>
+        /// <value>Number of selected edges. </value>
         public int selectedEdgeCount
         {
             get { return m_SelectedEdges.Length; }
@@ -150,7 +150,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets a collection of the currently selected faces by their index in the <see cref="ProBuilderMesh.faces" /> array.
         /// </summary>
-        /// <returns>Array of indices representing the currently selected faces. </returns>
+        /// <value>Array of indices representing the currently selected faces. </value>
         public ReadOnlyCollection<int> selectedFaceIndexes
         {
             get { return new ReadOnlyCollection<int>(m_SelectedFaces); }
@@ -159,7 +159,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets a collection of the currently selected vertices by their index in the <see cref="ProBuilderMesh.positions" /> array.
         /// </summary>
-        /// <returns>Array of indices representing the currently selected vertices. </returns>
+        /// <value>Array of indices representing the currently selected vertices. </value>
         public ReadOnlyCollection<int> selectedVertices
         {
             get { return new ReadOnlyCollection<int>(m_SelectedVertices); }
@@ -168,7 +168,7 @@ namespace UnityEngine.ProBuilder
         /// <summary>
         /// Gets a collection of the currently selected edges.
         /// </summary>
-        /// <returns>Collection of <see cref="Edge" /> objects representing the currently selected edges. </returns>
+        /// <value>Collection of <see cref="Edge" /> objects representing the currently selected edges. </value>
         public ReadOnlyCollection<Edge> selectedEdges
         {
             get { return new ReadOnlyCollection<Edge>(m_SelectedEdges); }
