@@ -26,15 +26,18 @@ namespace UnityEditor.ProBuilder
         VisualElement m_Color;
         VisualElement m_Icon;
 
-        static Texture2D s_IconTexture = null;
-        static Texture2D iconTexture
+        Texture2D m_IconTexture = null;
+        Texture2D iconTexture
         {
             get
             {
-                if (s_IconTexture == null)
-                    s_IconTexture = IconUtility.GetIcon("Tools/EditShape");
+                if (m_IconTexture == null && m_Action != null)
+                    m_IconTexture = m_Action.icon;
 
-                return s_IconTexture;
+                if (m_IconTexture == null)
+                    m_IconTexture = IconUtility.GetIcon("Tools/EditShape");
+
+                return m_IconTexture;
             }
         }
 
@@ -120,6 +123,7 @@ namespace UnityEditor.ProBuilder
     }
 
     [Overlay(typeof(SceneView), overlayId, k_DisplayName)]
+    [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditMeshContext.png")]
     class ProBuilderActionsOverlay : Overlay, ICreateHorizontalToolbar, ICreateVerticalToolbar
     {
         const string k_DisplayName = "ProBuilder Actions";
@@ -127,10 +131,6 @@ namespace UnityEditor.ProBuilder
 
         static readonly HashSet<Type> k_ContextMenuBlacklist = new HashSet<Type>()
         {
-            typeof(OpenSmoothingEditor),
-            typeof(OpenMaterialEditor),
-            typeof(OpenUVEditor),
-            typeof(OpenVertexColorEditor),
             typeof(ToggleHandleOrientation),
             typeof(ToggleDragRectMode),
             typeof(ToggleSelectBackFaces)
