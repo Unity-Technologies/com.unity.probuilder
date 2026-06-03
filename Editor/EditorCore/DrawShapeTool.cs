@@ -564,7 +564,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
-            if (m_ProBuilderShape != null && !( m_CurrentState is ShapeState_InitShape ))
+            if (m_ProBuilderShape != null)
                 m_CurrentState = ShapeState.ResetState();
 
             if (m_DuplicateGO != null)

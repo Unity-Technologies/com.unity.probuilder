@@ -59,11 +59,11 @@ namespace UnityEditor.ProBuilder
 
             Handles.color = Color.green;
 
-            m_Position = Handles.Slider(m_Position, Vector3.up);
+            m_Position = Handles.Slider(m_Position, Vector3.up, HandleUtility.GetHandleSize(m_Position), Handles.ArrowHandleCap, 0f);
 
             Handles.color = Color.red;
 
-            m_Position = Handles.Slider(m_Position, Vector3.right);
+            m_Position = Handles.Slider(m_Position, Vector3.right, HandleUtility.GetHandleSize(m_Position), Handles.ArrowHandleCap, 0f);
 
             Handles.color = Color.white;
 
