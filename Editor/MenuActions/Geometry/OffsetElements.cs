@@ -51,9 +51,9 @@ namespace UnityEditor.ProBuilder.Actions
 
             var spaceField = new EnumField("Coordinate Space", coord);
             root.Add(spaceField);
-            spaceField.RegisterCallback<ChangeEvent<string>>(evt =>
+            spaceField.RegisterCallback<ChangeEvent<Enum>>(evt =>
             {
-                Enum.TryParse(evt.newValue, out CoordinateSpace newValue);
+                CoordinateSpace newValue = (CoordinateSpace)evt.newValue;
                 if (s_CoordinateSpace.value == newValue)
                     return;
                 s_CoordinateSpace.SetValue(newValue);
@@ -62,13 +62,22 @@ namespace UnityEditor.ProBuilder.Actions
 
             var distField = new Vector3Field("Translate");
             distField.SetValueWithoutNotify(dist);
-            if(PreviewActionManager.delayedPreview)
-                distField.Query<FloatField>().ForEach(ff => ff.isDelayed = true);
+            distField.Query<FloatField>().ForEach(ff => ff.isDelayed = PreviewActionManager.delayedPreview);
             root.Add(distField);
             distField.RegisterCallback<ChangeEvent<Vector3>>(evt =>
             {
                 s_Translation.SetValue(evt.newValue, true);
                 PreviewActionManager.UpdatePreview();
+            });
+
+            Action onDelayedPreviewChanged = () =>
+            {
+                distField.Query<FloatField>().ForEach(ff => ff.isDelayed = PreviewActionManager.delayedPreview);
+            };
+            PreviewActionManager.delayedPreviewChanged += onDelayedPreviewChanged;
+            root.RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                PreviewActionManager.delayedPreviewChanged -= onDelayedPreviewChanged;
             });
 
             return root;
