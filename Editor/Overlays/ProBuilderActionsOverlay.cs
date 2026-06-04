@@ -216,7 +216,6 @@ namespace UnityEditor.ProBuilder
 
         void UpdateContent()
         {
-            Debug.Log("UPdating content");
             RefreshAvailableActions();
             UpdateGrid();
             UpdateToolbar();
