@@ -182,7 +182,7 @@ namespace UnityEditor.ProBuilder
         }
 
         [SerializeField] private DisplayMode m_CurrentMode = DisplayMode.Full;
-        [SerializeField] private bool m_DisplayEditors = false;
+        [SerializeField] private bool m_DisplayEditors = true;
         [SerializeField] private bool m_DisplaySelection = false;
 
         public ProBuilderActionsOverlay()
