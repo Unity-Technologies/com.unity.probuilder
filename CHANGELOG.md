@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- Added the ProBuilder Actions overlay to add another way for users to directly access actions in the scene.
 - [UUM-138261] Fixed an issue where the move handle could create an incorrect displacement of selected elements.
 - [UUM-136930] Fixed Arch circumference field not being fully readable in the editor.
 - [UUM-132698] Fixed incorrect snapping of the UV Editor MoveTool in the scene. 
