@@ -308,7 +308,7 @@ namespace UnityEditor.ProBuilder
                 mesh.Optimize();
             }
 
-            ProBuilderEditor.Refresh();
+            ProBuilderEditor.Refresh(false);
 
             if (afterMeshModification != null)
                 afterMeshModification(selection);

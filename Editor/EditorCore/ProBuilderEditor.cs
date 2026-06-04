@@ -193,7 +193,7 @@ namespace UnityEditor.ProBuilder
         {
             SceneStyles.ResetForPlayMode();
         }
-        
+
         /// <summary>
         /// Static getter for the ProBuilderEditor instance.
         /// </summary>
@@ -296,7 +296,7 @@ namespace UnityEditor.ProBuilder
         {
             instance?.UpdateSelection(vertexCountChanged);
         }
-        
+
         /// <summary>
         /// Called when handling events in Scene view.
         /// </summary>
@@ -755,7 +755,7 @@ namespace UnityEditor.ProBuilder
         {
             UpdateMeshHandles();
 
-            if (selectionUpdated != null)
+            if (selectionChanged && selectionUpdated != null)
                 selectionUpdated(selection);
 
             SceneView.RepaintAll();
