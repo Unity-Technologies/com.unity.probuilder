@@ -1,0 +1,17 @@
+.ellipsis-menu
+{
+    width: 16px;
+    height: 16px;
+    align-self: flex-end;
+    background-image: var(--unity-icons-ellipsis-menu);
+    background-color: transparent;
+    border-color: transparent;
+    border-width: 1px;
+    border-radius: 4px;
+    transition-duration: 0.2s; /* Smooth out the transition */
+}
+
+.ellipsis-menu:hover {
+    border-color: #0055CC; /* Change to your desired border color */
+    border-width: 1px;
+}
