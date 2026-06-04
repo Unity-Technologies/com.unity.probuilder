@@ -117,9 +117,9 @@ namespace UnityEditor.ProBuilder
         {
             if (s_PivotRotation != Tools.pivotRotation)
             {
-                s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Global
-                    ? HandleOrientation.World
-                    : HandleOrientation.ActiveObject);
+                s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Local
+                    ? HandleOrientation.ActiveObject
+                    : HandleOrientation.World);
                 s_PivotRotation = Tools.pivotRotation;
                 MeshSelection.InvalidateCaches();
                 pivotRotationChanged?.Invoke();
@@ -127,15 +127,18 @@ namespace UnityEditor.ProBuilder
             }
 
             var value = s_HandleOrientation.value;
-            var unity = value == HandleOrientation.ActiveObject ? PivotRotation.Local : PivotRotation.Global;
-
-            if (value != HandleOrientation.ActiveElement)
+            var customUnityPivotRotation = Tools.pivotRotation != PivotRotation.Global && Tools.pivotRotation != PivotRotation.Local;
+            // We only sync pivot modes that are compatible with probuilder: Global and Local
+            if (!customUnityPivotRotation && value != HandleOrientation.ActiveElement)
             {
+                var unity = PivotRotation.Global;
+                if (value == HandleOrientation.ActiveObject)
+                    unity = PivotRotation.Local;
                 if (unity != Tools.pivotRotation)
                 {
-                    s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Global
-                            ? HandleOrientation.World
-                            : HandleOrientation.ActiveObject,
+                    s_HandleOrientation.SetValue(Tools.pivotRotation == PivotRotation.Local
+                            ? HandleOrientation.ActiveObject
+                            : HandleOrientation.World,
                         true);
                     MeshSelection.InvalidateCaches();
                     pivotRotationChanged?.Invoke();

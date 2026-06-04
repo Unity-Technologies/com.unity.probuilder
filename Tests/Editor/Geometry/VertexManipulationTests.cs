@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -12,6 +13,77 @@ using UObject = UnityEngine.Object;
 
 class VertexManipulationTests
 {
+    HandleOrientation m_OriginalOrientation;
+    PivotRotation m_OriginalPivotRotation;
+
+    [SetUp]
+    public void SetUp()
+    {
+        m_OriginalOrientation = VertexManipulationTool.handleOrientation;
+        m_OriginalPivotRotation = Tools.pivotRotation;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        VertexManipulationTool.handleOrientation = m_OriginalOrientation;
+        Tools.pivotRotation = m_OriginalPivotRotation;
+    }
+
+#if UNITY_6000_4_OR_NEWER
+    [Test]
+    public void SyncPivotRotation_PivotRotationGrid_HandleOrientationIsWorld()
+    {
+        Tools.pivotRotation = PivotRotation.Grid;
+        _ = VertexManipulationTool.handleOrientation; // flush sync
+
+        Assert.That(VertexManipulationTool.handleOrientation, Is.EqualTo(HandleOrientation.World));
+    }
+#endif
+
+    [Test]
+    public void SyncPivotRotation_PivotChangesToLocal_HandleOrientationIsActiveObject()
+    {
+        Tools.pivotRotation = PivotRotation.Global;
+        _ = VertexManipulationTool.handleOrientation; // flush sync
+
+        Tools.pivotRotation = PivotRotation.Local;
+        Assert.That(VertexManipulationTool.handleOrientation, Is.EqualTo(HandleOrientation.ActiveObject));
+    }
+
+    [Test]
+    public void SyncPivotRotation_PivotChangesToGlobal_HandleOrientationIsWorld()
+    {
+        Tools.pivotRotation = PivotRotation.Local;
+        _ = VertexManipulationTool.handleOrientation; // flush sync
+
+        Tools.pivotRotation = PivotRotation.Global;
+        Assert.That(VertexManipulationTool.handleOrientation, Is.EqualTo(HandleOrientation.World));
+    }
+
+    [Test]
+    public void HandleOrientation_RepeatedAccessWhenInSync_DoesNotFirePivotRotationChangedEvent()
+    {
+        VertexManipulationTool.handleOrientation = HandleOrientation.ActiveObject;
+        Assume.That(Tools.pivotRotation, Is.EqualTo(PivotRotation.Local));
+
+        int syncCount = 0;
+        Action countSync = () => syncCount++;
+        VertexManipulationTool.pivotRotationChanged += countSync;
+        try
+        {
+            for (int i = 0; i < 20; i++)
+                _ = VertexManipulationTool.handleOrientation;
+        }
+        finally
+        {
+            VertexManipulationTool.pivotRotationChanged -= countSync;
+        }
+
+        Assert.That(syncCount, Is.EqualTo(0),
+            "Accessing handleOrientation in a consistent state must not fire pivotRotationChanged");
+    }
+
     [UnityTest, Ignore("LINUX_EDITOR")]
     public static IEnumerator ExtrudeOrthogonally_OneElementManyTimes_NoYOffsetAccumulates()
     {

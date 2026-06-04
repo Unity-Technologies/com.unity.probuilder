@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changes
 
+- [UUM-138261] Fixed an issue where the move handle could create an incorrect displacement of selected elements.
+- [UUM-136930] Fixed Arch circumference field not being fully readable in the editor.
 - [UUM-132698] Fixed incorrect snapping of the UV Editor MoveTool in the scene. 
 - [UUM-131032] Added a reset of static variables when entering playmode to allow fast enter playmode compatibility.
 - [UUM-138539] Removed the pb_ObjectArray file that was deprecated 8 years ago and is not used amymore.
