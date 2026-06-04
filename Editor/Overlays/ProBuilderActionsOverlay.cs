@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.GraphToolkit.Editor;
 using UnityEditor.Actions;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
@@ -9,6 +8,7 @@ using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
+using UnityEditor.SettingsManagement;
 
 namespace UnityEditor.ProBuilder
 {
@@ -107,7 +107,7 @@ namespace UnityEditor.ProBuilder
             m_Icon.RemoveFromClassList("toolbarMode");
         }
 
-        internal void UpdateContent(ProBuilderActionsOverlay.DisplayMode mode)
+        internal void UpdateContent()
         {
             style.flexGrow = 1f;
             m_Button.style.flexGrow = 1f;
@@ -122,8 +122,8 @@ namespace UnityEditor.ProBuilder
                 m_Button.AddToClassList("enabledAction");
             m_Button.AddToClassList("unity-overlay");
             m_Button.AddToClassList("unity-toolbar-toggle");
-            m_Icon.style.display = mode == ProBuilderActionsOverlay.DisplayMode.Text ? DisplayStyle.None : DisplayStyle.Flex;
-            m_Label.style.display = mode == ProBuilderActionsOverlay.DisplayMode.Icon ? DisplayStyle.None : DisplayStyle.Flex;
+            m_Icon.style.display = ProBuilderActionsOverlay.s_CurrentMode == ProBuilderActionsOverlay.DisplayMode.Text ? DisplayStyle.None : DisplayStyle.Flex;
+            m_Label.style.display = ProBuilderActionsOverlay.s_CurrentMode == ProBuilderActionsOverlay.DisplayMode.Icon ? DisplayStyle.None : DisplayStyle.Flex;
         }
 
         internal void UpdateContentForToolbar(Layout layout)
@@ -174,16 +174,21 @@ namespace UnityEditor.ProBuilder
         GridView m_Grid;
         OverlayToolbar m_Toolbar;
 
-        internal enum DisplayMode
+        public enum DisplayMode
         {
             Icon,
             Text,
             Full
         }
 
-        [SerializeField] private DisplayMode m_CurrentMode = DisplayMode.Full;
-        [SerializeField] private bool m_DisplayEditors = true;
-        [SerializeField] private bool m_DisplaySelection = false;
+        [UserSetting("Actions Overlay", "Display Mode", "Change the display mode of ProBuilder actions in the overlay when using Panel mode")]
+        internal static Pref<DisplayMode> s_CurrentMode = new Pref<DisplayMode>("pb_overlay.displaymode", DisplayMode.Full, SettingsScope.User);
+
+        [UserSetting("Actions Overlay", "Display Editors", "Toggle the display of editors actions in the ProBuilder overlay")]
+        static Pref<bool> s_DisplayEditors = new Pref<bool>("pb_overlay.displayeditors", true, SettingsScope.User);
+
+        [UserSetting("Actions Overlay", "Display Selection", "Toggle the display of selection actions in the ProBuilder overlay")]
+        static Pref<bool> s_DisplaySelection = new Pref<bool>("pb_overlay.displayselection", false, SettingsScope.User);
 
         public ProBuilderActionsOverlay()
         {
@@ -250,7 +255,7 @@ namespace UnityEditor.ProBuilder
             if (index >= 0 && index < m_AvailableActions.Count)
             {
                 e.Bind(m_AvailableActions[index]);
-                e.UpdateContent(m_CurrentMode);
+                e.UpdateContent();
                 e.style.flexGrow = 1f;
             }
         }
@@ -278,8 +283,8 @@ namespace UnityEditor.ProBuilder
                 if (action.group == ToolbarGroup.Entity)
                     continue;
 
-                var shouldDisplayAsEditor = m_DisplayEditors && action.group == ToolbarGroup.Tool;
-                var shouldDisplayAsSelection = m_DisplaySelection && action.group == ToolbarGroup.Selection;
+                var shouldDisplayAsEditor = s_DisplayEditors && action.group == ToolbarGroup.Tool;
+                var shouldDisplayAsSelection = s_DisplaySelection && action.group == ToolbarGroup.Selection;
                 var shouldDisplay = action.group != ToolbarGroup.Tool && action.group != ToolbarGroup.Selection;
 
                 var hidden = action.hidden;
@@ -306,7 +311,7 @@ namespace UnityEditor.ProBuilder
             if (m_Grid != null)
             {
                 m_Grid.itemsSource = m_AvailableActions;
-                m_Grid.fixedItemWidth = m_CurrentMode == DisplayMode.Icon ? 40f : 180f;
+                m_Grid.fixedItemWidth = s_CurrentMode == DisplayMode.Icon ? 40f : 180f;
                 m_Grid.Rebuild();
                 m_Grid.RefreshItems();
             }
@@ -319,33 +324,33 @@ namespace UnityEditor.ProBuilder
             if (layout == Layout.Panel)
             {
                 menu.AppendAction(L10n.Tr("Icon Mode"), _ => { SetMode(DisplayMode.Icon); },
-                    m_CurrentMode == DisplayMode.Icon ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                    s_CurrentMode == DisplayMode.Icon ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
                 menu.AppendAction(L10n.Tr("Text Mode"), _ => { SetMode(DisplayMode.Text); },
-                    m_CurrentMode == DisplayMode.Text ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                    s_CurrentMode == DisplayMode.Text ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
                 menu.AppendAction(L10n.Tr("Text & Icon Mode"), _ => { SetMode(DisplayMode.Full); },
-                    m_CurrentMode == DisplayMode.Full ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                    s_CurrentMode == DisplayMode.Full ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
                 menu.AppendSeparator();
             }
 
             menu.AppendAction(L10n.Tr("Display Editors Actions"), _ =>
                 {
-                    m_DisplayEditors = !m_DisplayEditors;
+                    s_DisplayEditors.SetValue(!s_DisplayEditors);
                     UpdateContent();
                 },
-                m_DisplayEditors ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                s_DisplayEditors ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
 
             menu.AppendAction(L10n.Tr("Display Select Actions"), _ =>
                 {
-                    m_DisplaySelection = !m_DisplaySelection;
+                    s_DisplaySelection.SetValue(!s_DisplaySelection);
                     UpdateContent();
                 },
-                m_DisplaySelection ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                s_DisplaySelection ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
 
         }
 
         private void SetMode(DisplayMode mode)
         {
-            m_CurrentMode = mode;
+            s_CurrentMode.SetValue(mode);
             UpdateContent();
         }
 
