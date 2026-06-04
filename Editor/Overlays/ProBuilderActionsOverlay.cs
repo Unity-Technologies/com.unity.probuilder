@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Unity.GraphToolkit.Editor;
 using UnityEditor.Actions;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
@@ -41,7 +42,7 @@ namespace UnityEditor.ProBuilder
             }
         }
 
-        internal ProBuilderActionButton(MenuAction action)
+        internal ProBuilderActionButton()
         {
             if (s_ButtonAsset == null)
                 s_ButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UxmlPath);
@@ -55,7 +56,15 @@ namespace UnityEditor.ProBuilder
             m_Label = this.Q<Label>();
             m_Color = this.Q<VisualElement>("ActionColor");
             m_Icon = this.Q<VisualElement>("ActionIcon");
+        }
 
+        internal ProBuilderActionButton(MenuAction action) : this()
+        {
+            Bind(action);
+        }
+
+        internal void Bind(MenuAction action)
+        {
             m_Action = action;
 
             m_Button.clicked += () => EditorAction.Start(new MenuActionSettings(action, HasPreview(action)));
@@ -70,7 +79,35 @@ namespace UnityEditor.ProBuilder
             return !(action is DetachFaces || action is DuplicateFaces);
         }
 
-        internal void UpdateContent(Layout layout, bool isInToolbar, Layout preferredLayout)
+        internal void UpdateContent(ProBuilderActionsOverlay.DisplayMode mode)
+        {
+            style.flexGrow = 1f;
+            m_Button.style.flexGrow = 1f;
+            m_Button.enabledSelf = m_Action.enabled;
+            m_Button.tooltip = m_Action.menuTitle;
+            m_Icon.style.display = DisplayStyle.Flex;
+            m_Label.style.display = DisplayStyle.Flex;
+
+            //Remove all styles
+            m_Button.RemoveFromClassList("toolbarHorizontalMode");
+            m_Button.RemoveFromClassList("toolbarVerticalMode");
+            m_Button.RemoveFromClassList("enabledAction");
+            m_Button.RemoveFromClassList("unity-overlay");
+            m_Button.RemoveFromClassList("unity-toolbar-toggle");
+            m_Button.RemoveFromClassList("toolbarVerticalMode");
+            m_Label.RemoveFromClassList("toolbarMode");
+            m_Color.RemoveFromClassList("toolbarMode");
+            m_Icon.RemoveFromClassList("toolbarMode");
+
+            if(m_Action.enabled)
+                m_Button.AddToClassList("enabledAction");
+            m_Button.AddToClassList("unity-overlay");
+            m_Button.AddToClassList("unity-toolbar-toggle");
+            m_Icon.style.display = mode == ProBuilderActionsOverlay.DisplayMode.Text ? DisplayStyle.None : DisplayStyle.Flex;
+            m_Label.style.display = mode == ProBuilderActionsOverlay.DisplayMode.Icon ? DisplayStyle.None : DisplayStyle.Flex;
+        }
+
+        internal void UpdateContentForToolbar(Layout layout)
         {
             var hidden = m_Action.hidden;
             var isGOContext = EditorToolManager.activeToolContext is GameObjectToolContext;
@@ -80,80 +117,72 @@ namespace UnityEditor.ProBuilder
             m_Button.tooltip = m_Action.menuTitle;
 
             //Remove all styles
-            m_Button.RemoveFromClassList("panelMode");
             m_Button.RemoveFromClassList("toolbarHorizontalMode");
             m_Button.RemoveFromClassList("toolbarVerticalMode");
+            m_Button.RemoveFromClassList("enabledAction");
+            m_Button.RemoveFromClassList("unity-overlay");
+            m_Button.RemoveFromClassList("unity-toolbar-toggle");
             m_Label.RemoveFromClassList("toolbarMode");
             m_Color.RemoveFromClassList("toolbarMode");
             m_Icon.RemoveFromClassList("toolbarMode");
 
-            if (!isInToolbar)
-            {
-                //Add relevant ones
-                switch (layout)
-                {
-                    case Layout.VerticalToolbar:
-                        m_Button.AddToClassList("toolbarVerticalMode");
-                        m_Label.AddToClassList("toolbarMode");
-                        m_Color.AddToClassList("toolbarMode");
-                        m_Icon.AddToClassList("toolbarMode");
-                        break;
-                    case Layout.HorizontalToolbar:
-                        m_Button.AddToClassList("toolbarHorizontalMode");
-                        m_Label.AddToClassList("toolbarMode");
-                        m_Color.AddToClassList("toolbarMode");
-                        m_Icon.AddToClassList("toolbarMode");
-                        break;
-                    default:
-                        m_Button.AddToClassList("panelMode");
-                        break;
-                }
-            }
+            if(layout == Layout.HorizontalToolbar)
+                m_Button.AddToClassList("toolbarHorizontalMode");
             else
-            {
-                if(preferredLayout == Layout.HorizontalToolbar)
-                    m_Button.AddToClassList("toolbarHorizontalMode");
-                else
-                    m_Button.AddToClassList("toolbarVerticalMode");
-                m_Label.AddToClassList("toolbarMode");
-                m_Color.AddToClassList("toolbarMode");
-                m_Icon.AddToClassList("toolbarMode");
-            }
+                m_Button.AddToClassList("toolbarVerticalMode");
+
+            if(m_Action.enabled)
+                m_Button.AddToClassList("enabledAction");
+            m_Button.AddToClassList("unity-overlay");
+            m_Button.AddToClassList("unity-toolbar-toggle");
+            m_Label.AddToClassList("toolbarMode");
+            m_Color.AddToClassList("toolbarMode");
+            m_Icon.AddToClassList("toolbarMode");
         }
     }
 
-    [Overlay(typeof(SceneView), overlayId, k_DisplayName)]
+    [Overlay(typeof(SceneView), overlayId, k_DisplayName, minHeight = 150f, maxHeight = 500f, minWidth = 200f, maxWidth = 600f)]
     [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditMeshContext.png")]
     class ProBuilderActionsOverlay : Overlay, ICreateHorizontalToolbar, ICreateVerticalToolbar
     {
-        const string k_DisplayName = "ProBuilder Actions";
+        const string k_StyleSheetPath = "Packages/com.unity.probuilder/Editor/Resources/EllipsisButton.uss";
+
+        const string k_DisplayName = "ProBuilder/ProBuilder Actions";
         internal const string overlayId = "ProBuilder/ActionsOverlay";
 
         static readonly HashSet<Type> k_ContextMenuBlacklist = new HashSet<Type>()
         {
             typeof(ToggleHandleOrientation),
             typeof(ToggleDragRectMode),
-            typeof(ToggleSelectBackFaces)
+            typeof(ToggleSelectBackFaces),
+            typeof(NewBezierShape)
         };
 
         //static List<(MenuAction action, Button button)> s_Actions = null;
+        private List<MenuAction> m_Actions;
+        private List<MenuAction> m_AvailableActions = new ();
         List<ProBuilderActionButton> s_ActionButtons = new List<ProBuilderActionButton>();
+
+        Button m_EllipsisMenu;
+        GridView m_Grid;
+        OverlayToolbar m_Toolbar;
+
+        internal enum DisplayMode
+        {
+            Icon,
+            Text,
+            Full
+        }
+
+        [SerializeField] private DisplayMode m_CurrentMode = DisplayMode.Full;
+        [SerializeField] private bool m_DisplayEditors = false;
+        [SerializeField] private bool m_DisplaySelection = false;
 
         public ProBuilderActionsOverlay()
         {
-            var actions = EditorToolbarLoader.GetActions();
+            m_Actions = EditorToolbarLoader.GetActions();
 
-            // grouping and filtering is bespoke for demo reasons
-            foreach (var action in actions)
-            {
-                if (k_ContextMenuBlacklist.Contains(action.GetType()))
-                    continue;
-
-                if (action.group == ToolbarGroup.Entity || action.group == ToolbarGroup.Tool)
-                    continue;
-
-                s_ActionButtons.Add( new ProBuilderActionButton(action) );
-            }
+            RefreshAvailableActions();
 
             rootVisualElement.RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
             rootVisualElement.RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
@@ -162,7 +191,6 @@ namespace UnityEditor.ProBuilder
             floatingChanged += _ =>  UpdateContent();
             dockingCompleted += _ =>  UpdateContent();
         }
-
 
         private void OnAttachedToPanel(AttachToPanelEvent evt)
         {
@@ -174,18 +202,17 @@ namespace UnityEditor.ProBuilder
 
         private void OnDetachFromPanel(DetachFromPanelEvent evt)
         {
-            Selection.selectionChanged -= UpdateContent;
+            Selection.selectionChanged -= RefreshAvailableActions;
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
-            ToolManager.activeContextChanged -= UpdateContent;
+            ToolManager.activeContextChanged -= RefreshAvailableActions;
         }
 
         void UpdateContent()
         {
-            foreach (var actionButton in s_ActionButtons)
-            {
-                actionButton.UpdateContent(layout, isInToolbar, container.preferredLayout);
-            }
+            RefreshAvailableActions();
+            UpdateGrid();
+            UpdateToolbar();
         }
 
         private void OnSelectModeChanged(SelectMode obj) => UpdateContent();
@@ -194,39 +221,197 @@ namespace UnityEditor.ProBuilder
 
         public override VisualElement CreatePanelContent()
         {
-
             var root = new VisualElement();
-            foreach (var actionButton in s_ActionButtons)
-            {
-                root.Add(actionButton);
-            }
+            root.name = "ProbuilderActions";
+            m_EllipsisMenu = new Button(OnEllipsisMenuClicked);
+            m_EllipsisMenu.AddStyleSheetPath(k_StyleSheetPath);
+            m_EllipsisMenu.AddToClassList("ellipsis-menu");
+            root.Add(m_EllipsisMenu);
+            m_Grid = new GridView(m_AvailableActions, 0, 0, MakeItem, BindItem);
+            root.Add(m_Grid);
 
             OnSelectModeChanged(ProBuilderEditor.selectMode);
-
+            var contextClickGrid = new ContextualMenuManipulator(BuildContextMenu);
+            m_Grid.AddManipulator(contextClickGrid);
+            var contextClickMenu = new ContextualMenuManipulator(BuildContextMenu);
+            m_EllipsisMenu.AddManipulator(contextClickMenu);
             return root;
         }
 
-        public OverlayToolbar CreateHorizontalToolbarContent()
+        private VisualElement MakeItem()
         {
-            return CreateToolbarOverlay();
+            return new ProBuilderActionButton();
         }
 
-        public OverlayToolbar CreateVerticalToolbarContent()
+        private void BindItem(VisualElement element, int index)
         {
-            return CreateToolbarOverlay();
+            var e = (ProBuilderActionButton)element;
+            if (index >= 0 && index < m_AvailableActions.Count)
+            {
+                e.Bind(m_AvailableActions[index]);
+                e.UpdateContent(m_CurrentMode);
+                e.style.flexGrow = 1f;
+            }
         }
+
+        private void RefreshAvailableActions()
+        {
+            m_AvailableActions.Clear();
+
+            var initActionButtons = s_ActionButtons.Count == 0;
+
+            if (!initActionButtons)
+            {
+                foreach (var element in s_ActionButtons)
+                    element.style.display = DisplayStyle.None;
+            }
+
+            int actionIndex = 0;
+            for (int i = 0; i < m_Actions.Count; i++)
+            {
+                var action = m_Actions[i];
+                if (k_ContextMenuBlacklist.Contains(action.GetType()))
+                    continue;
+
+                if (action.group == ToolbarGroup.Entity)
+                    continue;
+
+                var shouldDisplayAsEditor = m_DisplayEditors && action.group == ToolbarGroup.Tool;
+                var shouldDisplayAsSelection = m_DisplaySelection && action.group == ToolbarGroup.Selection;
+                var shouldDisplay = action.group != ToolbarGroup.Tool && action.group != ToolbarGroup.Selection;
+
+                var hidden = action.hidden;
+                var isGOContext = EditorToolManager.activeToolContext is GameObjectToolContext;
+                hidden |= (action.group == ToolbarGroup.Object) ? !isGOContext : isGOContext;
+
+                if (initActionButtons)
+                    s_ActionButtons.Add( new ProBuilderActionButton(action) );
+
+                if (!hidden)
+                {
+                    if (shouldDisplayAsEditor || shouldDisplayAsSelection || shouldDisplay)
+                    {
+                        m_AvailableActions.Add(action);
+                        if (s_ActionButtons != null)
+                            s_ActionButtons[actionIndex].style.display = DisplayStyle.Flex;
+                    }
+                }
+
+                actionIndex++;
+            }
+        }
+
+        private void UpdateGrid()
+        {
+            if (m_Grid != null)
+            {
+                m_Grid.itemsSource = m_AvailableActions;
+                if (m_CurrentMode == DisplayMode.Icon)
+                    m_Grid.fixedItemWidth = 40f;
+                else
+                    m_Grid.fixedItemWidth = 180f;
+
+                m_Grid.Rebuild();
+            }
+        }
+
+        void BuildContextMenu(ContextualMenuPopulateEvent evt)
+        {
+            Debug.Log("BuildContextMenu");
+            var menu = evt.menu;
+
+            if (layout == Layout.Panel)
+            {
+                menu.AppendAction(L10n.Tr("Icon Mode"), _ => { SetMode(DisplayMode.Icon); },
+                    m_CurrentMode == DisplayMode.Icon ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                menu.AppendAction(L10n.Tr("Text Mode"), _ => { SetMode(DisplayMode.Text); },
+                    m_CurrentMode == DisplayMode.Text ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                menu.AppendAction(L10n.Tr("Text & Icon Mode"), _ => { SetMode(DisplayMode.Full); },
+                    m_CurrentMode == DisplayMode.Full ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                menu.AppendSeparator();
+            }
+
+            menu.AppendAction(L10n.Tr("Display Editors Actions"), _ =>
+                {
+                    m_DisplayEditors = !m_DisplayEditors;
+                    UpdateContent();
+                },
+                m_DisplayEditors ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+
+            menu.AppendAction(L10n.Tr("Display Select Actions"), _ =>
+                {
+                    m_DisplaySelection = !m_DisplaySelection;
+                    UpdateContent();
+                },
+                m_DisplaySelection ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+
+        }
+
+        private void OnEllipsisMenuClicked()
+        {
+                var dropdown = rootVisualElement.panel.CreateMenu();
+                PopulateMenu(dropdown);
+                dropdown.DropDown(m_EllipsisMenu.worldBound, rootVisualElement, DropdownMenuSizeMode.Auto);
+        }
+
+        private void PopulateMenu(AbstractGenericMenu menu)
+        {
+            if (layout == Layout.Panel)
+            {
+                menu.AddItem(L10n.Tr("Icon Mode"), m_CurrentMode == DisplayMode.Icon, () => SetMode(DisplayMode.Icon));
+                menu.AddItem(L10n.Tr("Text Mode"), m_CurrentMode == DisplayMode.Text, () => SetMode(DisplayMode.Text));
+                menu.AddItem(L10n.Tr("Text&Icon Mode"), m_CurrentMode == DisplayMode.Full, () => SetMode(DisplayMode.Full));
+                menu.AddSeparator(string.Empty);
+            }
+
+            menu.AddItem(L10n.Tr("Display Editors"), m_DisplayEditors, () =>
+            {
+                m_DisplayEditors = !m_DisplayEditors;
+                UpdateContent();
+            });
+            menu.AddItem(L10n.Tr("Display Select Action"), m_DisplaySelection, () =>
+            {
+                m_DisplaySelection = !m_DisplaySelection;
+                UpdateContent();
+            });
+        }
+
+        private void SetMode(DisplayMode mode)
+        {
+            m_CurrentMode = mode;
+            UpdateContent();
+        }
+
+        public OverlayToolbar CreateHorizontalToolbarContent() => CreateToolbarOverlay();
+
+        public OverlayToolbar CreateVerticalToolbarContent() => CreateToolbarOverlay();
 
         OverlayToolbar CreateToolbarOverlay()
         {
-            var toolbar = new OverlayToolbar();
-
-            foreach (var proBuilderAction in s_ActionButtons)
+            if (m_Toolbar == null)
             {
-                proBuilderAction.UpdateContent(layout, isInToolbar, container.preferredLayout);
-                toolbar.Add(proBuilderAction);
+                m_Toolbar = new OverlayToolbar();
+                var contextClick = new ContextualMenuManipulator(BuildContextMenu);
+                m_Toolbar.AddManipulator(contextClick);
             }
+            else
+                m_Toolbar.Clear();
 
-            return toolbar;
+            UpdateContent();
+            UpdateToolbar();
+            return m_Toolbar;
+        }
+
+        void UpdateToolbar()
+        {
+            if (m_Toolbar != null)
+            {
+                foreach (var proBuilderAction in s_ActionButtons)
+                {
+                    proBuilderAction.UpdateContentForToolbar(layout);
+                    m_Toolbar.Add(proBuilderAction);
+                }
+            }
         }
 
     }
