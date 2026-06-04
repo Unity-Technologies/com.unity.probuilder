@@ -14,10 +14,7 @@ namespace UnityEditor.ProBuilder
 {
     class ProBuilderActionButton : VisualElement
     {
-        const string k_StyleSheetPath = "Packages/com.unity.probuilder/Editor/Resources/ActionOverlay.uss";
         const string k_UxmlPath = "Packages/com.unity.probuilder/Editor/Resources/ActionButton.uxml";
-
-        static StyleSheet s_CommonStyleSheet;
         static VisualTreeAsset s_ButtonAsset;
 
         MenuAction m_Action;
@@ -58,9 +55,6 @@ namespace UnityEditor.ProBuilder
         {
             if (s_ButtonAsset == null)
                 s_ButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UxmlPath);
-
-            if (s_CommonStyleSheet == null)
-                s_CommonStyleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(k_StyleSheetPath);
 
             s_ButtonAsset.CloneTree(this);
 
@@ -169,7 +163,7 @@ namespace UnityEditor.ProBuilder
 
         private List<MenuAction> m_Actions;
         private List<MenuAction> m_AvailableActions = new ();
-        List<ProBuilderActionButton> s_ActionButtons = new List<ProBuilderActionButton>();
+        List<ProBuilderActionButton> m_ActionButtons = new List<ProBuilderActionButton>();
 
         GridView m_Grid;
         OverlayToolbar m_Toolbar;
@@ -222,6 +216,7 @@ namespace UnityEditor.ProBuilder
 
         void UpdateContent()
         {
+            Debug.Log("UPdating content");
             RefreshAvailableActions();
             UpdateGrid();
             UpdateToolbar();
@@ -264,11 +259,11 @@ namespace UnityEditor.ProBuilder
         {
             m_AvailableActions.Clear();
 
-            var initActionButtons = s_ActionButtons.Count == 0;
+            var initActionButtons = m_ActionButtons.Count == 0;
 
             if (!initActionButtons)
             {
-                foreach (var element in s_ActionButtons)
+                foreach (var element in m_ActionButtons)
                     element.style.display = DisplayStyle.None;
             }
 
@@ -291,14 +286,14 @@ namespace UnityEditor.ProBuilder
                 hidden |= (action.group == ToolbarGroup.Object) ? !isGOContext : isGOContext;
 
                 if (initActionButtons)
-                    s_ActionButtons.Add( new ProBuilderActionButton(action) );
+                    m_ActionButtons.Add( new ProBuilderActionButton(action) );
 
                 if (!hidden)
                 {
                     if (shouldDisplayAsEditor || shouldDisplayAsSelection || shouldDisplay)
                     {
                         m_AvailableActions.Add(action);
-                        s_ActionButtons[actionIndex].style.display = DisplayStyle.Flex;
+                        m_ActionButtons[actionIndex].style.display = DisplayStyle.Flex;
                     }
                 }
 
@@ -377,7 +372,7 @@ namespace UnityEditor.ProBuilder
         {
             if (m_Toolbar != null)
             {
-                foreach (var proBuilderAction in s_ActionButtons)
+                foreach (var proBuilderAction in m_ActionButtons)
                 {
                     proBuilderAction.UpdateContentForToolbar(layout);
                     m_Toolbar.Add(proBuilderAction);
