@@ -145,9 +145,7 @@ namespace UnityEditor.ProBuilder
     [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditMeshContext.png")]
     class ProBuilderActionsOverlay : Overlay, ICreateHorizontalToolbar, ICreateVerticalToolbar
     {
-        const string k_StyleSheetPath = "Packages/com.unity.probuilder/Editor/Resources/EllipsisButton.uss";
-
-        const string k_DisplayName = "ProBuilder/ProBuilder Actions";
+        const string k_DisplayName = "ProBuilder Actions";
         internal const string overlayId = "ProBuilder/ActionsOverlay";
 
         static readonly HashSet<Type> k_ContextMenuBlacklist = new HashSet<Type>()
@@ -163,7 +161,6 @@ namespace UnityEditor.ProBuilder
         private List<MenuAction> m_AvailableActions = new ();
         List<ProBuilderActionButton> s_ActionButtons = new List<ProBuilderActionButton>();
 
-        Button m_EllipsisMenu;
         GridView m_Grid;
         OverlayToolbar m_Toolbar;
 
@@ -223,18 +220,12 @@ namespace UnityEditor.ProBuilder
         {
             var root = new VisualElement();
             root.name = "ProbuilderActions";
-            m_EllipsisMenu = new Button(OnEllipsisMenuClicked);
-            m_EllipsisMenu.AddStyleSheetPath(k_StyleSheetPath);
-            m_EllipsisMenu.AddToClassList("ellipsis-menu");
-            root.Add(m_EllipsisMenu);
             m_Grid = new GridView(m_AvailableActions, 0, 0, MakeItem, BindItem);
             root.Add(m_Grid);
 
             OnSelectModeChanged(ProBuilderEditor.selectMode);
             var contextClickGrid = new ContextualMenuManipulator(BuildContextMenu);
             m_Grid.AddManipulator(contextClickGrid);
-            var contextClickMenu = new ContextualMenuManipulator(BuildContextMenu);
-            m_EllipsisMenu.AddManipulator(contextClickMenu);
             return root;
         }
 
@@ -345,35 +336,6 @@ namespace UnityEditor.ProBuilder
                 },
                 m_DisplaySelection ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
 
-        }
-
-        private void OnEllipsisMenuClicked()
-        {
-                var dropdown = rootVisualElement.panel.CreateMenu();
-                PopulateMenu(dropdown);
-                dropdown.DropDown(m_EllipsisMenu.worldBound, rootVisualElement, DropdownMenuSizeMode.Auto);
-        }
-
-        private void PopulateMenu(AbstractGenericMenu menu)
-        {
-            if (layout == Layout.Panel)
-            {
-                menu.AddItem(L10n.Tr("Icon Mode"), m_CurrentMode == DisplayMode.Icon, () => SetMode(DisplayMode.Icon));
-                menu.AddItem(L10n.Tr("Text Mode"), m_CurrentMode == DisplayMode.Text, () => SetMode(DisplayMode.Text));
-                menu.AddItem(L10n.Tr("Text&Icon Mode"), m_CurrentMode == DisplayMode.Full, () => SetMode(DisplayMode.Full));
-                menu.AddSeparator(string.Empty);
-            }
-
-            menu.AddItem(L10n.Tr("Display Editors"), m_DisplayEditors, () =>
-            {
-                m_DisplayEditors = !m_DisplayEditors;
-                UpdateContent();
-            });
-            menu.AddItem(L10n.Tr("Display Select Action"), m_DisplaySelection, () =>
-            {
-                m_DisplaySelection = !m_DisplaySelection;
-                UpdateContent();
-            });
         }
 
         private void SetMode(DisplayMode mode)
