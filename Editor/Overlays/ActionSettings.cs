@@ -18,6 +18,7 @@ namespace UnityEditor.ProBuilder
         [UserSetting("Mesh Editing", "Auto Update Action Preview", "Automatically update the action preview, without delay. This operation is costly and can cause lag when working with large selections.")]
         static Pref<bool> s_AutoUpdatePreview = new Pref<bool>("editor.autoUpdatePreview", false, SettingsScope.Project);
         internal static bool delayedPreview => !s_AutoUpdatePreview.value;
+        public static event Action delayedPreviewChanged;
 
         MenuAction m_CurrentAction;
 
@@ -59,8 +60,10 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
 
             SceneView.AddOverlayToActiveView(m_Overlay = new MenuActionSettingsOverlay());
+            // Hack to ensure that the overlay is displayed in the sceneview even when the overlay was already displayed before
+            // Doing only displayed = true is not adding the overlay as it should in the view, only changing the display status is
+            m_Overlay.displayed = false;
             m_Overlay.displayed = true;
-            SceneView.RepaintAll();
         }
 
         public void Dispose()
@@ -104,12 +107,7 @@ namespace UnityEditor.ProBuilder
 
             s_AutoUpdatePreview.value = value;
 
-            if (s_Instance == null)
-                return;
-
-            SceneView.RemoveOverlayFromActiveView(s_Instance.m_Overlay);
-            SceneView.AddOverlayToActiveView(s_Instance.m_Overlay = new MenuActionSettingsOverlay());
-            s_Instance.m_Overlay.displayed = true;
+            delayedPreviewChanged?.Invoke();
         }
 
         internal static void EndPreview()

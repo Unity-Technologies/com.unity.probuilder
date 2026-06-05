@@ -133,7 +133,7 @@ namespace UnityEditor.ProBuilder
             if(foldoutEnabled)
             {
                 EditorGUI.indentLevel++;
-                EditorGUIUtility.labelWidth = 90;
+                EditorGUIUtility.labelWidth = 120;
 
                 if (tool)
                     tool.pivotLocation = (PivotLocation)EditorGUILayout.EnumPopup(k_ShapePivotLabel, tool.pivotLocation);

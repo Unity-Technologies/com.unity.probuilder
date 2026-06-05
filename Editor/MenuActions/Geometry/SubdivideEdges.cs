@@ -83,6 +83,15 @@ namespace UnityEditor.ProBuilder.Actions
             m_SubdivCount.tooltip = tooltip;
             m_SubdivCount.RegisterCallback<ChangeEvent<int>>(OnCountChanged);
             m_SubdivCount.style.width = 40;
+            Action onDelayedPreviewChanged = () =>
+            {
+                m_SubdivCount.isDelayed = PreviewActionManager.delayedPreview;
+            };
+            PreviewActionManager.delayedPreviewChanged += onDelayedPreviewChanged;
+            root.RegisterCallback<DetachFromPanelEvent>(evt =>
+            {
+                PreviewActionManager.delayedPreviewChanged -= onDelayedPreviewChanged;
+            });
             line.Add(foldout);
             line.Add(m_Slider);
             line.Add(m_SubdivCount);

@@ -218,7 +218,7 @@ namespace UnityEngine.ProBuilder.Shapes
 
         static readonly GUIContent k_ThicknessContent = new GUIContent("Thickness", L10n.Tr("Thickness of the arch borders. Larger value creates a smaller opening."));
         static readonly GUIContent k_SidesContent = new GUIContent("Sides Count", L10n.Tr("Number of sides of the arch."));
-        static readonly GUIContent k_CircumferenceContent = new GUIContent("Arch Circumference", L10n.Tr("Circumference of the arch in degrees."));
+        static readonly GUIContent k_CircumferenceContent = new GUIContent("Arch Circ.", L10n.Tr("Circumference of the arch in degrees."));
         static readonly GUIContent k_EndCapsContent = new GUIContent("End Caps", L10n.Tr("Whether to generate faces for the ends of the arch."));
         static readonly GUIContent k_SmoothContent = new GUIContent("Smooth", L10n.Tr("Whether to smooth the edges of the arch."));
 
