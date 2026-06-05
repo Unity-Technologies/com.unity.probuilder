@@ -166,6 +166,7 @@ namespace UnityEditor.ProBuilder
         List<ProBuilderActionButton> m_ActionButtons = new List<ProBuilderActionButton>();
 
         GridView m_Grid;
+        VisualElement m_ContentViewport;
         OverlayToolbar m_Toolbar;
 
         public enum DisplayMode
@@ -204,6 +205,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += OnSelectModeChanged;
             ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
             ToolManager.activeContextChanged += UpdateContent;
+            rootVisualElement.RegisterCallback<GeometryChangedEvent>(OnGeometryChangedEvent);
         }
 
         private void OnDetachFromPanel(DetachFromPanelEvent evt)
@@ -212,6 +214,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged -= OnSelectModeChanged;
             ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
             ToolManager.activeContextChanged -= UpdateContent;
+            rootVisualElement.UnregisterCallback<GeometryChangedEvent>(OnGeometryChangedEvent);
         }
 
         void UpdateContent()
@@ -225,11 +228,17 @@ namespace UnityEditor.ProBuilder
 
         private void OnSelectionUpdated(IEnumerable<ProBuilderMesh> obj) => UpdateContent();
 
+        void OnGeometryChangedEvent(GeometryChangedEvent _)
+        {
+            UpdateGrid();
+        }
+
         public override VisualElement CreatePanelContent()
         {
             var root = new VisualElement();
             root.name = "ProbuilderActions";
             m_Grid = new GridView(m_AvailableActions, 0, 0, MakeItem, BindItem);
+            m_ContentViewport = m_Grid.Q("unity-content-viewport");
             root.Add(m_Grid);
 
             OnSelectModeChanged(ProBuilderEditor.selectMode);
@@ -305,7 +314,9 @@ namespace UnityEditor.ProBuilder
             if (m_Grid != null)
             {
                 m_Grid.itemsSource = m_AvailableActions;
-                m_Grid.fixedItemWidth = s_CurrentMode == DisplayMode.Icon ? 40f : 180f;
+                var fullWidth = float.IsFinite(m_ContentViewport.resolvedStyle.width) ?
+                    Mathf.Min(180f, m_ContentViewport.resolvedStyle.width - 10f) : 180f;
+                m_Grid.fixedItemWidth = s_CurrentMode == DisplayMode.Icon ? 40f : fullWidth;
                 m_Grid.Rebuild();
                 m_Grid.RefreshItems();
             }
