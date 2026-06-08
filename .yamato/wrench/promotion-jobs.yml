@@ -151,6 +151,16 @@ publish_dry_run_probuilder:
       UTR:
         location: results/UTR/validate-probuilder-6000.5-win10
         unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_macos13arm
+    specific_options:
+      packages:
+        ignore_artifact: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.6-macos13arm
+        unzip: true
+      UTR:
+        location: results/UTR/validate-probuilder-6000.6-macos13arm
+        unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_ubuntu2204
     specific_options:
       packages:
@@ -322,6 +332,16 @@ publish_probuilder:
         unzip: true
       UTR:
         location: results/UTR/validate-probuilder-6000.5-win10
+        unzip: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_macos13arm
+    specific_options:
+      packages:
+        ignore_artifact: true
+      pvp-results:
+        location: results/pvp/validate-probuilder-6000.6-macos13arm
+        unzip: true
+      UTR:
+        location: results/UTR/validate-probuilder-6000.6-macos13arm
         unzip: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_ubuntu2204
     specific_options:

@@ -57,14 +57,6 @@ public class ProBuilderSettings : AnnotatedSettingsBase
         Wrench.Packages[ProBuilderPackageName].CoverageCommands.Enabled = true;
         Wrench.Packages[ProBuilderPackageName].CoverageCommands.Commands = [_excludeAssembliesCodeCovCommand];
 
-        var versionToRemove = new EditorVersion("6000.6");
-        foreach (UnityEditor unityEditor in
-                 Wrench.Packages[ProBuilderPackageName].UnityEditors)
-        {
-            //if (unityEditor.Version >= versionToRemove)
-                unityEditor.EditorPlatforms.Items.Remove(EditorPlatformType.MacOs13Arm);
-        }
-
         // var defaultMacPlatform = WrenchPackage.DefaultEditorPlatforms[SystemType.MacOS];
         // Wrench.Packages["com.unity.probuilder"].EditorPlatforms[SystemType.MacOS] = new Platform(new Agent("package-ci/macos-13-arm64:v4", FlavorType.MacDefault, defaultMacPlatform.Agent.Resource, "M1"), defaultMacPlatform.System);
     }
