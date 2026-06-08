@@ -90,7 +90,7 @@
     max-height: 16px;
     min-height: 16px;
     min-width: 16px;
-    background-position-x: center 0;
+    background-position-x: center;
 }
 
 #ActionName {
