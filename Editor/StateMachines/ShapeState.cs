@@ -7,7 +7,8 @@ namespace UnityEditor.ProBuilder
     abstract class ShapeState
     {
         public static ShapeState s_defaultState;
-        public ShapeState m_nextState = null;
+        // UAC1005: direct self-reference cycle in serialized class
+        [SerializeReference] public ShapeState m_nextState = null;
         public static DrawShapeTool tool;
 
         public static ShapeState StartStateMachine()
