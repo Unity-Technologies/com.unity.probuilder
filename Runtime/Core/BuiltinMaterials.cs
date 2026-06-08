@@ -74,9 +74,9 @@ namespace UnityEngine.ProBuilder
         static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPickerURP";
         static string k_FacePickerShader = "Hidden/ProBuilder/FacePickerURP";
 
-        static string k_EdgePickerMaterial = "Materials/EdgePickerURP";
-        static string k_FacePickerMaterial = "Materials/FacePickerURP";
-        static string k_VertexPickerMaterial = "Materials/VertexPickerURP";
+        static string k_EdgePickerMaterial = "com.unity.probuilder/Materials/EdgePickerURP";
+        static string k_FacePickerMaterial = "com.unity.probuilder/Materials/FacePickerURP";
+        static string k_VertexPickerMaterial = "com.unity.probuilder/Materials/VertexPickerURP";
 
         const string k_SelectionPickerShader = "Hidden/ProBuilder/SelectionPickerURP";
 #else
@@ -84,13 +84,13 @@ namespace UnityEngine.ProBuilder
         static string k_FacePickerShader = "Hidden/ProBuilder/FacePicker";
         static string k_VertexPickerShader = "Hidden/ProBuilder/VertexPicker";
 
-        static string k_EdgePickerMaterial = "Materials/EdgePicker";
-        static string k_FacePickerMaterial = "Materials/FacePicker";
-        static string k_VertexPickerMaterial = "Materials/VertexPicker";
+        static string k_EdgePickerMaterial = "com.unity.probuilder/Materials/EdgePicker";
+        static string k_FacePickerMaterial = "com.unity.probuilder/Materials/FacePicker";
+        static string k_VertexPickerMaterial = "com.unity.probuilder/Materials/VertexPicker";
 
         const string k_SelectionPickerShader = "Hidden/ProBuilder/SelectionPicker";
 #endif
-  
+
 #if UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void ResetStaticsOnLoad()
