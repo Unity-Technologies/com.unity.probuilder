@@ -259,6 +259,7 @@ namespace UnityEditor.ProBuilder
     [EditorTool("Edit PolyShape", typeof(PolyShape))]
     public class PolyShapeTool : EditorTool
     {
+        /// <inheritdoc />
         public override bool gridSnapEnabled => true;
 
         [MenuItem("Tools/ProBuilder/Edit/Edit PolyShape", true, PreferenceKeys.menuEditor + 10)]
