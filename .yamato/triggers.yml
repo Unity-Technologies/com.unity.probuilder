@@ -8,15 +8,9 @@ pull_request_trigger:
   name: Pull Request Trigger
   dependencies:
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_macos13
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_0_-_win10
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_macos13
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_3_-_win10
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_4_-_macos13
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_4_-_win10
   - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_5_-_macos13
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_5_-_win10
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_macos13arm
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_probuilder_-_6000_6_-_win10
   triggers:
     expression: |-
       NOT pull_request.draft AND
