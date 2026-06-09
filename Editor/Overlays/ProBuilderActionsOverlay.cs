@@ -14,7 +14,7 @@ namespace UnityEditor.ProBuilder
 {
     class ProBuilderActionButton : VisualElement
     {
-        const string k_UxmlPath = "Packages/com.unity.probuilder/Editor/Resources/com.unity.probuilder/ActionButton.uxml";
+        const string k_UxmlPath = "Packages/com.unity.probuilder/Editor/Overlays/UXML/ActionButton.uxml";
         static VisualTreeAsset s_ButtonAsset;
 
         MenuAction m_Action;
