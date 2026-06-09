@@ -39,6 +39,7 @@ public class ProBuilderSettings : AnnotatedSettingsBase
             new PackageOptions()
             {
                 ReleaseOptions = new ReleaseOptions() { IsReleasing = true },
+                MaximumEditorVersion =  "6000.5",
                 ValidationOptions = new ValidationOptions()
                 {
                     AdditionalUtrArguments = ["--fail-on-assert --coverage-pkg-version=1.3.0"]
