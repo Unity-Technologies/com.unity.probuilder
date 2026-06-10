@@ -5,10 +5,7 @@ using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
-#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
-#endif
-using Sprite = UnityEngine.Sprite;
 
 static class TextureUnwrapTests
 {
@@ -32,7 +29,7 @@ static class TextureUnwrapTests
         190f
     };
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public static void SetOffsetAndRotate_InLocalSpace_IsAppliedToMesh(
         [ValueSource("offsetRotationShapes")] Type shape,
         [ValueSource("offsetValues")] Vector2 offset,
@@ -61,7 +58,7 @@ static class TextureUnwrapTests
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
 
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh, message: mesh.name);
         }
@@ -107,7 +104,7 @@ static class TextureUnwrapTests
 #endif
 
             RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh, message: name);
         }
@@ -166,7 +163,7 @@ static class TextureUnwrapTests
 #endif
 
             RuntimeUtility.AssertMeshAttributesValid(shape.mesh);
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(shape.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, shape.mesh, message: name);
         }
@@ -180,7 +177,7 @@ static class TextureUnwrapTests
         }
     }
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public static void SetWorldSpace_IsAppliedToMesh()
     {
         // Stair includes texture groups and non-grouped faces
@@ -202,7 +199,7 @@ static class TextureUnwrapTests
 #endif
 
         RuntimeUtility.AssertMeshAttributesValid(shape.mesh);
-        var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(shape.name));
+        var template = TestUtility.GetAssetTemplate<Mesh>(shape.name);
         Assert.IsNotNull(template);
         RuntimeUtility.AssertAreEqual(template, shape.mesh, message: shape.name);
         UObject.DestroyImmediate(shape.gameObject);

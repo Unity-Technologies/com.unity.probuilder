@@ -7,9 +7,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
-#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
-#endif
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
@@ -82,7 +80,7 @@ class ExtrudeTests
         }
     }
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public static void ExtrudeAllFaces_FaceNormal([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -97,13 +95,9 @@ class ExtrudeTests
 #if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
         }
         finally
         {
@@ -112,7 +106,7 @@ class ExtrudeTests
         }
     }
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public static void ExtrudeAllFaces_IndividualFaces([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -129,13 +123,9 @@ class ExtrudeTests
 #if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
         }
         finally
         {
@@ -144,7 +134,7 @@ class ExtrudeTests
         }
     }
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public static void ExtrudeAllFaces_VertexNormal([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -159,13 +149,9 @@ class ExtrudeTests
 #if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
         }
         finally
         {

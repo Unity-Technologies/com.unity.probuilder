@@ -5,9 +5,7 @@ using UnityEngine.ProBuilder.Tests;
 using System.Collections.Generic;
 using System;
 using UnityEngine.ProBuilder.Shapes;
-#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
-#endif
 
 class ShapeGeneratorTests
 {
@@ -26,7 +24,7 @@ class ShapeGeneratorTests
         }
     }
 
-    [Test, Ignore("Mesh template comparison tests are unstable")]
+    [Test]
     public void ShapeGenerator_MatchesTemplate([ValueSource("shapeTypes")] Type type)
     {
         ProBuilderMesh pb = ShapeFactory.Instantiate(type);
@@ -39,12 +37,12 @@ class ShapeGeneratorTests
         // note - pb_DestroyListener will not let pb_Object destroy meshes backed by an asset, so there's no need
         // to set `dontDestroyOnDelete` in the editor.
         TestUtility.SaveAssetTemplate(pb.GetComponent<MeshFilter>().sharedMesh, type.ToString());
-#else
+#endif
         try
         {
 
             RuntimeUtility.AssertMeshAttributesValid(pb.mesh);
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(type.ToString()));
+            var template =  TestUtility.GetAssetTemplate<Mesh>(type.ToString());
             Assert.IsNotNull(template);
             Assert.IsTrue(RuntimeUtility.AssertAreEqual(template, pb.mesh), type.ToString() + " value-wise mesh comparison");
         }
@@ -52,7 +50,6 @@ class ShapeGeneratorTests
         {
             UnityEngine.Object.DestroyImmediate(pb.gameObject);
         }
-#endif
     }
 
     [Test]

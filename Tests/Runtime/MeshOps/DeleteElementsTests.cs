@@ -7,9 +7,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
-#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
-#endif
 
 static class DeleteElementsTests
 {
@@ -90,7 +88,7 @@ static class DeleteElementsTests
         s_SubmeshCount = 0;
     }
 
-    [Test, Ignore("Mesh template tests are unstable")]
+    [Test]
     public static void DeleteFirstFace_CreatesValidMesh([ValueSource("shapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -106,13 +104,9 @@ static class DeleteElementsTests
             TestUtility.SaveAssetTemplate(mesh.mesh, mesh.name);
 #endif
             RuntimeUtility.AssertMeshAttributesValid(mesh.mesh);
-            var template = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(mesh.name));
+            var template = TestUtility.GetAssetTemplate<Mesh>(mesh.name);
             Assert.IsNotNull(template);
             RuntimeUtility.AssertAreEqual(template, mesh.mesh);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError(e.ToString());
         }
         finally
         {

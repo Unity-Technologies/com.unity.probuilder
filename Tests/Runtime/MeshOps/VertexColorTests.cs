@@ -1,13 +1,10 @@
-using System;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using NUnit.Framework;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
-#if UNITY_EDITOR && PB_CREATE_TEST_MESH_TEMPLATES
 using UnityEngine.ProBuilder.Tests.Framework;
-#endif
 
 static class VertexColorTests
 {
@@ -26,7 +23,7 @@ static class VertexColorTests
         TestUtility.SaveAssetTemplate(dup.mesh, dup.name);
 #endif
         RuntimeUtility.AssertMeshAttributesValid(dup.mesh);
-        var compare = Resources.Load<Mesh>(RuntimeUtility.GetResourcesPath<Mesh>(dup.name));
+        var compare = TestUtility.GetAssetTemplate<Mesh>(dup.name);
         Assert.IsNotNull(compare);
         RuntimeUtility.AssertAreEqual(compare, dup.mesh);
 
