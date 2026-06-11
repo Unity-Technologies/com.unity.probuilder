@@ -49,7 +49,7 @@ CGPROGRAM
                 return o;
             }
 
-            float4 frag (v2f i) : COLOR
+            float4 frag (v2f i) : SV_Target
             {
                 return i.color;
             }

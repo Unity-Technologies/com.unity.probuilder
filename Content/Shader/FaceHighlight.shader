@@ -45,7 +45,7 @@ Shader "Hidden/ProBuilder/FaceHighlight"
                 return o;
             }
 
-            half4 frag (v2f i) : COLOR
+            half4 frag (v2f i) : SV_Target
             {
                 i.pos.xy = floor(i.pos.xy * 1) * .5;
                 float checker = -frac(i.pos.x + i.pos.y);

@@ -6,12 +6,14 @@ namespace UnityEditor.ProBuilder
 {
     static class EntityUtility
     {
+        #pragma warning disable CS0618
         const StaticEditorFlags StaticEditorFlags_All =
             StaticEditorFlags.ContributeGI |
             StaticEditorFlags.OccluderStatic |
             StaticEditorFlags.BatchingStatic |
             StaticEditorFlags.OccludeeStatic |
             StaticEditorFlags.ReflectionProbeStatic;
+        #pragma warning restore CS0618
 
         /// <summary>
         /// Sets the EntityType for the passed gameObject.
