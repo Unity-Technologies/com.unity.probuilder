@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
+using UnityEngine.TestTools;
 
 static class TestHashUtility
 {
@@ -56,6 +57,7 @@ static class IntVectorTests
     }
 
     [Test]
+    [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148935", "ProBuilder IntVec3/VectorHash float hashing produces different values on CoreCLR")]
     public static void TestHashCollisions_IVEC3()
     {
 #if UNITY_EDITOR_OSX
@@ -68,6 +70,7 @@ static class IntVectorTests
     }
 
     [Test]
+    [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148935", "ProBuilder IntVec3/VectorHash float hashing produces different values on CoreCLR")]
     public static void TestVectorHashOverflow()
     {
 #if UNITY_EDITOR_OSX
@@ -88,6 +91,7 @@ static class IntVectorTests
     }
 
     [Test]
+    [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148935", "ProBuilder IntVec3/VectorHash float hashing produces different values on CoreCLR")]
     public static void TestComparison_IVEC3()
     {
 #if UNITY_EDITOR_OSX
