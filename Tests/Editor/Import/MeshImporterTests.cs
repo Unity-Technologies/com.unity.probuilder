@@ -37,9 +37,8 @@ class MeshImporterTests : TemporaryAssetTest
     {
         var srcPath = TestUtility.temporarySavedAssetsDirectory + "maya-cube-quads.fbx";
 
-        // do this song and dance because AssetDatabase.LoadAssetAtPath doesn't seem to work with models in the
-        // Package directories
-        File.Copy(TestUtility.templatesDirectory + "MeshImporter/maya-cube-quads.fbx", srcPath);
+        // overwrite: UTR retries in-fixture, and a leftover copy would fail every later attempt.
+        File.Copy(TestUtility.templatesDirectory + "MeshImporter/maya-cube-quads.fbx", srcPath, true);
         AssetDatabase.Refresh();
         var source = AssetDatabase.LoadMainAssetAtPath(srcPath);
         var meshImporter = (ModelImporter)AssetImporter.GetAtPath(srcPath);

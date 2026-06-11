@@ -6,6 +6,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.TestTools;
 
 static class TextureUnwrapTests
 {

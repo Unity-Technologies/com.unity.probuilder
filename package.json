@@ -1,47 +1,17 @@
 {
-  "name": "com.unity.probuilder",
-  "displayName": "ProBuilder",
+  "name": "com.unity.probuilder.tests",
+  "displayName": "ProBuilder Tests",
+  "type": "tests",
   "version": "6.1.2",
-  "unity": "6000.0",
-  "description": "Build, edit, and texture custom geometry in Unity. Use ProBuilder for in-scene level design, prototyping, collision meshes, all with on-the-fly play-testing.\n\nAdvanced features include UV editing, vertex colors, parametric shapes, and texture blending. With ProBuilder's model export feature it's easy to tweak your levels in any external 3D modelling suite.",
-  "keywords": [
-    "3d",
-    "model",
-    "mesh",
-    "modeling",
-    "geometry",
-    "shape",
-    "cube",
-    "blender",
-    "max",
-    "maya",
-    "fbx",
-    "obj",
-    "level",
-    "design",
-    "block",
-    "greybox",
-    "graybox",
-    "whitebox",
-    "prototype",
-    "probuilder"
-  ],
-  "samples": [
-    {
-      "displayName": "Editor Examples",
-      "description": "Scripts demonstrating how to integrate new functionality into the ProBuilder editor window.",
-      "path": "Samples~/Editor"
-    },
-    {
-      "displayName": "Runtime Examples",
-      "description": "Scripts showing how to create and modify meshes at runtime.",
-      "path": "Samples~/Runtime"
-    }
-  ],
   "dependencies": {
-    "com.unity.shadergraph": "17.0.3",
-    "com.unity.settings-manager": "1.0.3",
-    "com.unity.modules.physics": "1.0.0",
-    "com.unity.modules.imgui": "1.0.0"
+    "com.unity.test-framework.performance": "3.2.0"
+  },
+  "upmCi": {
+    "footprint": "4c738568f3a3d315f60bafbe6f315b0a6f8c46c7"
+  },
+  "repository": {
+    "url": "https://github.com/Unity-Technologies/com.unity.probuilder.git",
+    "type": "git",
+    "revision": "f070d01a1ecb9e899ee09cbeb17f006b9dfcc8d4"
   }
 }

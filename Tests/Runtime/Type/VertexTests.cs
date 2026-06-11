@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
+using UnityEngine.TestTools;
 
 static class TestHashUtility
 {
@@ -41,6 +42,11 @@ static class IntVectorTests
         return UnityEngine.Random.Range(0f, 100f) * .001f;
     }
 
+    static float RandJitter()
+    {
+        return UnityEngine.Random.Range(-.001f, .001f);
+    }
+
     static Vertex RandVertex()
     {
         Vertex v = new Vertex();
@@ -58,11 +64,6 @@ static class IntVectorTests
     [Test]
     public static void TestHashCollisions_IVEC3()
     {
-#if UNITY_EDITOR_OSX
-        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
-            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
-#endif
-
         IntVec3[] ivec3 = ArrayUtility.Fill<IntVec3>(TestIterationCount, (i) => { return (IntVec3)RandVec3(); });
         Assert.IsTrue(TestHashUtility.GetCollisionsCount(ivec3) < TestIterationCount * .05f);
     }
@@ -70,31 +71,24 @@ static class IntVectorTests
     [Test]
     public static void TestVectorHashOverflow()
     {
-#if UNITY_EDITOR_OSX
-        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
-            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
-#endif
-
         Vector3 over = new Vector3(((float)int.MaxValue) + 10f, 0f, 0f);
         Vector3 under = new Vector3(((float)-int.MaxValue) - 10f, 0f, 0f);
         Vector3 inf = new Vector3(Mathf.Infinity, 0f, 0f);
+        Vector3 negInf = new Vector3(Mathf.NegativeInfinity, 0f, 0f);
         Vector3 nan = new Vector3(float.NaN, 0f, 0f);
 
-        // mostly checking that GetHashCode doesn't throw an error when converting bad float values
-        Assert.AreEqual(VectorHash.GetHashCode(over), 1499503, "Over");
-        Assert.AreEqual(VectorHash.GetHashCode(under), 2147303674, "Under");
-        Assert.AreNotEqual(VectorHash.GetHashCode(inf), 0, "Inf");
-        Assert.AreNotEqual(VectorHash.GetHashCode(nan), 0, "NaN");
+        // Out-of-range components saturate and NaN quantizes to zero, so these hash codes are
+        // identical on every runtime and architecture. See UUM-148935.
+        Assert.AreEqual(-2146825986, VectorHash.GetHashCode(over), "Over");
+        Assert.AreEqual(-2146825145, VectorHash.GetHashCode(under), "Under");
+        Assert.AreEqual(-2146825986, VectorHash.GetHashCode(inf), "Inf");
+        Assert.AreEqual(-2146825145, VectorHash.GetHashCode(negInf), "NegInf");
+        Assert.AreEqual(VectorHash.GetHashCode(Vector3.zero), VectorHash.GetHashCode(nan), "NaN");
     }
 
     [Test]
     public static void TestComparison_IVEC3()
     {
-#if UNITY_EDITOR_OSX
-        if (System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64)
-            Assert.Ignore("Fails on macOS13 Arm64 https://jira.unity3d.com/browse/UUM-111993");
-#endif
-
         IntVec3 a = (IntVec3)RandVec3();
         IntVec3 b = (IntVec3)(a.value * 2.3f);
         IntVec3 c = (IntVec3) new Vector3(a.x, a.y + .001f, a.z);
@@ -109,6 +103,21 @@ static class IntVectorTests
         Assert.IsFalse(a.GetHashCode() == c.GetHashCode());
         Assert.IsTrue(a.GetHashCode() == d.GetHashCode());
         Assert.AreEqual(13, arr.Distinct().Count());
+    }
+
+    [Test]
+    public static void TestEqualIntVec3SharesHashCode()
+    {
+        // IntVec3.Equals and VectorHash must quantize identically, otherwise positions that
+        // ProBuilder considers coincident land in different dictionary buckets and never weld.
+        for (int i = 0; i < TestIterationCount; ++i)
+        {
+            IntVec3 a = (IntVec3)RandVec3();
+            IntVec3 b = (IntVec3)(a.value + new Vector3(RandJitter(), RandJitter(), RandJitter()));
+
+            if (a == b)
+                Assert.AreEqual(a.GetHashCode(), b.GetHashCode(), a + " == " + b);
+        }
     }
 
     [Test]
