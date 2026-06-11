@@ -338,7 +338,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_Grid.itemsSource = m_AvailableActions;
                 var fullWidth = float.IsFinite(m_ContentViewport.resolvedStyle.width) ?
-                    Mathf.Min(180f, Mathf.Max(m_ContentViewport.resolvedStyle.width - 10f, 0f)) : 180f;
+                    Mathf.Clamp(m_ContentViewport.resolvedStyle.width - 10f, 0f, 180f) : 180f;
                 m_Grid.fixedItemWidth = s_CurrentMode == DisplayMode.Icon ? 40f : fullWidth;
                 m_Grid.Rebuild();
                 m_Grid.RefreshItems();
