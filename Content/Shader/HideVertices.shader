@@ -33,7 +33,7 @@ Shader "Hidden/ProBuilder/HideVertices"
                 return o;
             }
 
-            half4 frag (v2f i) : COLOR
+            half4 frag (v2f i) : SV_Target
             {
                 return fixed4(0,0,0,0);
             }

@@ -67,7 +67,7 @@ Shader "Hidden/ProBuilder/LineBillboardMetal"
                 return o;
             }
 
-            half4 frag (v2f i) : COLOR
+            half4 frag (v2f i) : SV_Target
             {
                 return _Color;
             }

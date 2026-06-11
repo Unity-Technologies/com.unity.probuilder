@@ -63,7 +63,7 @@ namespace UnityEngine.ProBuilder
 
 		private static int round(float v)
 		{
-			return System.Convert.ToInt32(v * VectorHash.FltCompareResolution);
+			return VectorHash.RoundToInt(v);
 		}
 
 		public static implicit operator Vector4(IntVec4 p)

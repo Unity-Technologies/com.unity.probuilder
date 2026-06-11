@@ -54,7 +54,7 @@ Shader "Hidden/ProBuilder/ScrollHighlight" {
                 o.pos = UnityObjectToClipPos(v.vertex );
                 return o;
             }
-            float4 frag(VertexOutput i, float facing : VFACE) : COLOR {
+            float4 frag(VertexOutput i, float facing : VFACE) : SV_Target {
                 float isFrontFace = ( facing >= 0 ? 1 : 0 );
                 float faceSign = ( facing >= 0 ? 1 : -1 );
 ////// Lighting:

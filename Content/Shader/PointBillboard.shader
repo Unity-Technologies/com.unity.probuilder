@@ -118,7 +118,7 @@ Shader "Hidden/ProBuilder/PointBillboard"
                     triStream.Append(geo_out);
                 }
 
-                float4 frag(FS_INPUT input) : COLOR
+                float4 frag(FS_INPUT input) : SV_Target
                 {
                     return _Color * input.color;
                 }
