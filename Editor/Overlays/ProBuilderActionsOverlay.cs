@@ -17,6 +17,8 @@ namespace UnityEditor.ProBuilder
         const string k_UxmlPath = "Packages/com.unity.probuilder/Editor/Overlays/UXML/ActionButton.uxml";
         static VisualTreeAsset s_ButtonAsset;
 
+        bool m_Initialized = false;
+
         MenuAction m_Action;
 
         private MenuAction action
@@ -53,15 +55,7 @@ namespace UnityEditor.ProBuilder
 
         internal ProBuilderActionButton()
         {
-            if (s_ButtonAsset == null)
-                s_ButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UxmlPath);
-
-            s_ButtonAsset.CloneTree(this);
-
-            m_Button = this.Q<Button>();
-            m_Label = this.Q<Label>();
-            m_Color = this.Q<VisualElement>("ActionColor");
-            m_Icon = this.Q<Image>("ActionIcon");
+            Initialize();
         }
 
         internal ProBuilderActionButton(MenuAction act) : this()
@@ -69,18 +63,41 @@ namespace UnityEditor.ProBuilder
             Bind(act);
         }
 
+        void Initialize()
+        {
+            if (s_ButtonAsset == null)
+                s_ButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UxmlPath);
+
+            if (s_ButtonAsset != null)
+            {
+                m_Initialized = true;
+                s_ButtonAsset.CloneTree(this);
+
+                m_Button = this.Q<Button>();
+                m_Label = this.Q<Label>();
+                m_Color = this.Q<VisualElement>("ActionColor");
+                m_Icon = this.Q<Image>("ActionIcon");
+            }
+        }
+
         internal void Bind(MenuAction act)
         {
+            if (!m_Initialized)
+                Initialize();
+
             action = act;
 
-            if (m_ClickHandler != null)
-                m_Button.clicked -= m_ClickHandler;
-            m_ClickHandler = () => EditorAction.Start(new MenuActionSettings(action, HasPreview(action)));
-            m_Button.clicked += m_ClickHandler;
+            if (m_Initialized)
+            {
+                if (m_ClickHandler != null)
+                    m_Button.clicked -= m_ClickHandler;
+                m_ClickHandler = () => EditorAction.Start(new MenuActionSettings(action, HasPreview(action)));
+                m_Button.clicked += m_ClickHandler;
 
-            m_Color.style.backgroundColor = ToolbarGroupUtility.GetColor(m_Action.group);
-            m_Label.text = action.menuTitle;
-            m_Icon.image = iconTexture;
+                m_Color.style.backgroundColor = ToolbarGroupUtility.GetColor(m_Action.group);
+                m_Label.text = action.menuTitle;
+                m_Icon.image = iconTexture;
+            }
         }
 
         static bool HasPreview(MenuAction action)
@@ -91,18 +108,21 @@ namespace UnityEditor.ProBuilder
         void CleanUpStyles()
         {
             //Remove all styles
-            m_Button.RemoveFromClassList("toolbarHorizontalMode");
-            m_Button.RemoveFromClassList("toolbarVerticalMode");
-            m_Button.RemoveFromClassList("enabledAction");
-            m_Button.RemoveFromClassList("unity-overlay");
-            m_Button.RemoveFromClassList("unity-toolbar-toggle");
-            m_Label.RemoveFromClassList("toolbarMode");
-            m_Color.RemoveFromClassList("toolbarMode");
-            m_Icon.RemoveFromClassList("toolbarMode");
+            m_Button?.RemoveFromClassList("toolbarHorizontalMode");
+            m_Button?.RemoveFromClassList("toolbarVerticalMode");
+            m_Button?.RemoveFromClassList("enabledAction");
+            m_Button?.RemoveFromClassList("unity-overlay");
+            m_Button?.RemoveFromClassList("unity-toolbar-toggle");
+            m_Label?.RemoveFromClassList("toolbarMode");
+            m_Color?.RemoveFromClassList("toolbarMode");
+            m_Icon?.RemoveFromClassList("toolbarMode");
         }
 
         internal void UpdateContent()
         {
+            if (!m_Initialized)
+                return;
+
             style.flexGrow = 1f;
             m_Button.style.flexGrow = 1f;
             m_Button.enabledSelf = m_Action.enabled;
@@ -122,6 +142,9 @@ namespace UnityEditor.ProBuilder
 
         internal void UpdateContentForToolbar(Layout layout)
         {
+            if (!m_Initialized)
+                return;
+
             var hidden = m_Action.hidden;
             var isGOContext = EditorToolManager.activeToolContext is GameObjectToolContext;
             hidden |= (m_Action.group == ToolbarGroup.Object) ? !isGOContext : isGOContext;
@@ -146,7 +169,7 @@ namespace UnityEditor.ProBuilder
         }
     }
 
-    [Overlay(typeof(SceneView), overlayId, k_DisplayName, minHeight = 150f, maxHeight = 500f, minWidth = 200f, maxWidth = 600f)]
+    [Overlay(typeof(SceneView), overlayId, k_DisplayName, minHeight = 150f, maxHeight = 500f, minWidth = 200f, maxWidth = 600f, defaultDisplay = false)]
     [Icon("Packages/com.unity.probuilder/Editor Default Resources/Icons/EditableMesh/EditMeshContext.png")]
     class ProBuilderActionsOverlay : Overlay, ICreateHorizontalToolbar, ICreateVerticalToolbar
     {
@@ -315,7 +338,7 @@ namespace UnityEditor.ProBuilder
             {
                 m_Grid.itemsSource = m_AvailableActions;
                 var fullWidth = float.IsFinite(m_ContentViewport.resolvedStyle.width) ?
-                    Mathf.Min(180f, m_ContentViewport.resolvedStyle.width - 10f) : 180f;
+                    Mathf.Clamp(m_ContentViewport.resolvedStyle.width - 10f, 0f, 180f) : 180f;
                 m_Grid.fixedItemWidth = s_CurrentMode == DisplayMode.Icon ? 40f : fullWidth;
                 m_Grid.Rebuild();
                 m_Grid.RefreshItems();
