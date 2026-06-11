@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.TestTools;
 
 class ShapeGeneratorTests
 {

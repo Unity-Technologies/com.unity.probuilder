@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
@@ -206,26 +206,21 @@ namespace UnityEngine.ProBuilder.Tests
             return true;
         }
 
-        public static string GetResourcesPath<T>(string assetName, int methodOffset = 0)
+        public static string GetResourcesPath<T>(string assetName,
+            [CallerFilePath] string callingFilePath = null,
+            [CallerMemberName] string callingMemberName = null)
         {
-            StackTrace trace = new StackTrace(1 + methodOffset, true);
-            StackFrame calling = trace.GetFrame(0);
-
-            string filePath = calling.GetFileName();
-
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(callingFilePath))
             {
                 UnityEngine.Debug.LogError(
                     "Cannot generate mesh templates directory path from calling method. Please use the explicit SaveMeshTemplate overload.");
                 return null;
             }
 
-            string methodName = calling.GetMethod().Name;
-
             return string.Format("{0}/{1}/{2}/{3}",
                 typeof(T).ToString(),
-                Path.GetFileNameWithoutExtension(filePath),
-                methodName,
+                Path.GetFileNameWithoutExtension(callingFilePath),
+                callingMemberName,
                 assetName);
         }
 

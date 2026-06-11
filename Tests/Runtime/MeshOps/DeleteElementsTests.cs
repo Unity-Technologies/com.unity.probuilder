@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
 using UnityEngine.ProBuilder.Tests.Framework;
+using UnityEngine.TestTools;
 
 static class DeleteElementsTests
 {
