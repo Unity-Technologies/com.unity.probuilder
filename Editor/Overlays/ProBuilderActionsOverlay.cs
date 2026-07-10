@@ -314,7 +314,7 @@ namespace UnityEditor.ProBuilder
                 var shouldDisplay = action.group != ToolbarGroup.Tool && action.group != ToolbarGroup.Selection;
 
                 var hidden = action.hidden;
-                hidden |= (action.group == ToolbarGroup.Object) ? !isGOContext : isGOContext;
+                hidden |= shouldDisplayAsEditor || (action.group == ToolbarGroup.Object) ? !isGOContext : isGOContext;
 
                 if (initActionButtons)
                     m_ActionButtons.Add( new ProBuilderActionButton(action) );
@@ -355,7 +355,7 @@ namespace UnityEditor.ProBuilder
                     s_CurrentMode == DisplayMode.Icon ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
                 menu.AppendAction(L10n.Tr("Text Mode"), _ => { SetMode(DisplayMode.Text); },
                     s_CurrentMode == DisplayMode.Text ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
-                menu.AppendAction(L10n.Tr("Text & Icon Mode"), _ => { SetMode(DisplayMode.Full); },
+                menu.AppendAction(L10n.Tr("Text+Icon Mode"), _ => { SetMode(DisplayMode.Full); },
                     s_CurrentMode == DisplayMode.Full ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
                 menu.AppendSeparator();
             }
