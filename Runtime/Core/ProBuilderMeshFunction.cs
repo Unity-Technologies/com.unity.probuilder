@@ -143,6 +143,8 @@ namespace UnityEngine.ProBuilder
                     m_VersionIndex = 1;
                 m_InstanceVersionIndex = m_VersionIndex;
             }
+
+            versionChanged?.Invoke(this);
         }
 
         /// <summary>
@@ -166,8 +168,8 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             m_MeshFormatVersion = k_MeshFormatVersion;
-            IncrementVersionIndex();
             ClearSelection();
+            IncrementVersionIndex();
         }
 
         internal void EnsureMeshFilterIsAssigned()
