@@ -143,6 +143,8 @@ namespace UnityEngine.ProBuilder
                     m_VersionIndex = 1;
                 m_InstanceVersionIndex = m_VersionIndex;
             }
+
+            versionChanged?.Invoke(this);
         }
 
         /// <summary>

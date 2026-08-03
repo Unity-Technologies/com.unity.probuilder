@@ -172,6 +172,7 @@ namespace UnityEditor.ProBuilder
             SceneView.duringSceneGui += OnSceneGUI;
             MeshSelection.objectSelectionChanged += OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+            ProBuilderMesh.versionChanged += OnMeshVersionChanged;
             ProBuilderEditor.selectionUpdated += OnEditingMeshSelection;
             VertexManipulationTool.beforeMeshModification += OnBeginMeshModification;
             VertexManipulationTool.afterMeshModification += OnFinishMeshModification;
@@ -183,6 +184,7 @@ namespace UnityEditor.ProBuilder
         {
             MeshSelection.objectSelectionChanged -= OnObjectSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
+            ProBuilderMesh.versionChanged -= OnMeshVersionChanged;
             ProBuilderEditor.selectionUpdated -= OnEditingMeshSelection;
             VertexManipulationTool.beforeMeshModification -= OnBeginMeshModification;
             VertexManipulationTool.afterMeshModification -= OnFinishMeshModification;
@@ -332,6 +334,11 @@ namespace UnityEditor.ProBuilder
         }
 
         void OnElementSelectionChanged(ProBuilderMesh mesh)
+        {
+            RebuildBounds();
+        }
+
+        void OnMeshVersionChanged(ProBuilderMesh mesh)
         {
             RebuildBounds();
         }
