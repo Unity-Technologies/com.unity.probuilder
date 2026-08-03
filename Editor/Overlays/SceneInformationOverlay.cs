@@ -1,5 +1,6 @@
 ﻿using UnityEditor.Overlays;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Overlays
@@ -18,6 +19,7 @@ namespace UnityEditor.ProBuilder.Overlays
         {
             ProBuilderEditor.selectionUpdated += _ => UpdateSceneInfo();
             MeshSelection.objectSelectionChanged += UpdateSceneInfo;
+            ProBuilderMesh.versionChanged += _ => UpdateSceneInfo();
         }
 
         public override VisualElement CreatePanelContent()
