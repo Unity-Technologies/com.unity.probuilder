@@ -168,8 +168,8 @@ namespace UnityEngine.ProBuilder
             InvalidateSharedTextureLookup();
             m_Colors = null;
             m_MeshFormatVersion = k_MeshFormatVersion;
-            IncrementVersionIndex();
             ClearSelection();
+            IncrementVersionIndex();
         }
 
         internal void EnsureMeshFilterIsAssigned()
