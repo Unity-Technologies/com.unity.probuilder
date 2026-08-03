@@ -2617,7 +2617,10 @@ namespace UnityEditor.ProBuilder
                     {
                         pb.ToMesh();
                         pb.Refresh();
+                        pb.Optimize();
                     }
+                    ProBuilderEditor.Refresh();
+                    SceneView.RepaintAll();
                 }
 
                 foreach (var kvp in MeshSelection.selectedFacesInEditZone)

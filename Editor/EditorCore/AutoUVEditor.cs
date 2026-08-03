@@ -214,26 +214,12 @@ namespace UnityEditor.ProBuilder
             {
                 for (int i = 0; i < selection.Length; i++)
                     TextureGroupSelectedFaces(selection[i]);
-
-                ProBuilderEditor.Refresh();
             }
 
             if (GUILayout.Button(gc_BreakSelected))
             {
                 SetTextureGroup(selection, -1);
-
-                foreach (var kvp in MeshSelection.selectedFacesInEditZone)
-                {
-                    kvp.Key.ToMesh();
-                    kvp.Key.Refresh();
-                    kvp.Key.Optimize();
-                }
-
-                SceneView.RepaintAll();
-
                 s_AutoUVSettingsDiff["textureGroup"] = false;
-
-                ProBuilderEditor.Refresh();
             }
 
             /* Select all in current texture group */
@@ -241,8 +227,6 @@ namespace UnityEditor.ProBuilder
             {
                 for (int i = 0; i < selection.Length; i++)
                     selection[i].SetSelectedFaces(System.Array.FindAll(selection[i].facesInternal, x => x.textureGroup == textureGroup));
-
-                ProBuilderEditor.Refresh();
             }
 
             if (GUILayout.Button(gc_Reset))
@@ -260,8 +244,6 @@ namespace UnityEditor.ProBuilder
 
                     UVEditing.SplitUVs(selection[i], selection[i].GetSelectedFaces());
                 }
-
-                ProBuilderEditor.Refresh();
             }
 
             GUI.backgroundColor = PreferenceKeys.proBuilderLightGray;

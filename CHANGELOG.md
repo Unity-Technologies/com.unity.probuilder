@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Fixed
+
+- [UUM-133528] Fixed an issue where using some UV Editor actions would clear a mesh's Lightmap UVs without regenerating them.
+
 ### Changes
 
 - Made the ProBuilder Editor actions available in GameObject context in the action overlay.
