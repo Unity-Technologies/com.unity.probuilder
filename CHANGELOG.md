@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-148237] Fixed the "Lightmap UVs Settings" foldout in ProBuilder Preferences not opening when clicking its title.
 - [UUM-133528] Fixed an issue where using some UV Editor actions would clear a mesh's Lightmap UVs without regenerating them.
 
 ### Changes
