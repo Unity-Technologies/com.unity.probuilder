@@ -960,6 +960,11 @@ namespace UnityEngine.ProBuilder
         /// <seealso cref="SetSelectedEdges"/>
         public static event Action<ProBuilderMesh> elementSelectionChanged;
 
+        /// <summary>
+        /// Invoked from IncrementVersionIndex whenever this mesh's geometry is modified.
+        /// </summary>
+        internal static event Action<ProBuilderMesh> versionChanged;
+
         internal Mesh mesh
         {
             get

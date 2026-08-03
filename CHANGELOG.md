@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Made the ProBuilder Editor actions available in GameObject context in the action overlay.
 
+### Fixed
+
+- [UUM-148243] Fixed the Dimensions Overlay not updating when resizing a PolyShape or primitive Shape in the Scene View.
+
 ## [6.1.2] - 2026-06-11
 
 ### Fixed

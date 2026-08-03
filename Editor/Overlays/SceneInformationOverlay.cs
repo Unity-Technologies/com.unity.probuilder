@@ -1,5 +1,7 @@
-﻿using UnityEditor.Overlays;
+﻿using System.Collections.Generic;
+using UnityEditor.Overlays;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
 
 namespace UnityEditor.ProBuilder.Overlays
@@ -16,9 +18,27 @@ namespace UnityEditor.ProBuilder.Overlays
 
         public SceneInformationOverlay()
         {
-            ProBuilderEditor.selectionUpdated += _ => UpdateSceneInfo();
-            MeshSelection.objectSelectionChanged += UpdateSceneInfo;
+            rootVisualElement.RegisterCallback<AttachToPanelEvent>(OnAttachedToPanel);
+            rootVisualElement.RegisterCallback<DetachFromPanelEvent>(OnDetachFromPanel);
         }
+
+        void OnAttachedToPanel(AttachToPanelEvent evt)
+        {
+            ProBuilderEditor.selectionUpdated += OnSelectionUpdated;
+            MeshSelection.objectSelectionChanged += UpdateSceneInfo;
+            ProBuilderMesh.versionChanged += OnMeshVersionChanged;
+        }
+
+        void OnDetachFromPanel(DetachFromPanelEvent evt)
+        {
+            ProBuilderEditor.selectionUpdated -= OnSelectionUpdated;
+            MeshSelection.objectSelectionChanged -= UpdateSceneInfo;
+            ProBuilderMesh.versionChanged -= OnMeshVersionChanged;
+        }
+
+        void OnSelectionUpdated(IEnumerable<ProBuilderMesh> meshes) => UpdateSceneInfo();
+
+        void OnMeshVersionChanged(ProBuilderMesh mesh) => UpdateSceneInfo();
 
         public override VisualElement CreatePanelContent()
         {

@@ -21,11 +21,13 @@ namespace UnityEditor.ProBuilder.Debug
         protected MeshDebugView()
         {
             ProBuilderMesh.elementSelectionChanged += SelectionChanged;
+            ProBuilderMesh.versionChanged += VersionChanged;
         }
 
         ~MeshDebugView()
         {
             ProBuilderMesh.elementSelectionChanged -= SelectionChanged;
+            ProBuilderMesh.versionChanged -= VersionChanged;
         }
 
         public ProBuilderMesh mesh
@@ -61,6 +63,12 @@ namespace UnityEditor.ProBuilder.Debug
                 SelectionChanged();
                 AnythingChanged();
             }
+        }
+
+        void VersionChanged(ProBuilderMesh mesh)
+        {
+            if (mesh == m_Mesh)
+                AnythingChanged();
         }
 
         protected virtual void MeshAssigned() {}
@@ -171,6 +179,7 @@ namespace UnityEditor.ProBuilder.Debug
             SceneView.duringSceneGui += OnSceneGUI;
             MeshSelection.objectSelectionChanged += SelectionChanged;
             ProBuilderMesh.elementSelectionChanged += SelectionChanged;
+            ProBuilderMesh.versionChanged += MeshVersionChanged;
             EditorMeshUtility.meshOptimized += MeshOptimized;
             SelectionChanged();
         }
@@ -178,6 +187,7 @@ namespace UnityEditor.ProBuilder.Debug
         void OnDisable()
         {
             EditorMeshUtility.meshOptimized -= MeshOptimized;
+            ProBuilderMesh.versionChanged -= MeshVersionChanged;
             ProBuilderMesh.elementSelectionChanged -= SelectionChanged;
             MeshSelection.objectSelectionChanged -= SelectionChanged;
             SceneView.duringSceneGui -= OnSceneGUI;
@@ -241,6 +251,12 @@ namespace UnityEditor.ProBuilder.Debug
         void SelectionChanged(ProBuilderMesh mesh)
         {
             SelectionChanged();
+        }
+
+        void MeshVersionChanged(ProBuilderMesh mesh)
+        {
+            Repaint();
+            SceneView.RepaintAll();
         }
 
         void MeshOptimized(ProBuilderMesh pmesh, Mesh umesh)
