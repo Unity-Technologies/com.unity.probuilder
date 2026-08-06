@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [UUM-133528] Fixed an issue where using some UV Editor actions would clear a mesh's Lightmap UVs without regenerating them.
+- Fixed the Select Hidden (Select Back Faces) toggle icon missing from the Tool Settings overlay due to a filename casing mismatch.
 
 ### Changes
 
