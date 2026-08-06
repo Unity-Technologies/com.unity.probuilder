@@ -27,9 +27,9 @@ class IconUtilityTests
             // PolyShapeTool.cs
             "Toolbar/CreatePolyShape.png",
             "Toolbar/CreatePolyShape",
-            // ToggleXRay.cs
-            "Toolbar/Selection_SelectHidden-Off",
-            "Toolbar/Selection_SelectHidden-On",
+            // ToggleXRay.cs, ToggleSelectBackFaces.cs
+            "Toolbar/Selection_SelectHidden-OFF",
+            "Toolbar/Selection_SelectHidden-ON",
             // ProBuilderMeshEditor.cs
             "EditableMesh/EditMeshContext",
             // ExtrudeFaces.cs
