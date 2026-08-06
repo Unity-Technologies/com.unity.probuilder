@@ -9,12 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-148237] Fixed the "Lightmap UVs Settings" foldout in ProBuilder Preferences not opening when clicking its title.
 - [UUM-133528] Fixed an issue where using some UV Editor actions would clear a mesh's Lightmap UVs without regenerating them.
 - Fixed the Select Hidden (Select Back Faces) toggle icon missing from the Tool Settings overlay due to a filename casing mismatch.
 
 ### Changes
 
 - Made the ProBuilder Editor actions available in GameObject context in the action overlay.
+
+### Fixed
+
+- [UUM-148243] Fixed the Dimensions Overlay not updating when resizing a PolyShape or primitive Shape in the Scene View.
 
 ## [6.1.2] - 2026-06-11
 

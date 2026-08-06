@@ -71,7 +71,7 @@ namespace UnityEditor.ProBuilder
             var isSearching = !string.IsNullOrEmpty(searchContext);
 
             if (!isSearching)
-                Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings");
+                Styles.unwrapSettingsFoldout = EditorGUILayout.Foldout(Styles.unwrapSettingsFoldout, "Lightmap UVs Settings", true);
 
             if (isSearching || Styles.unwrapSettingsFoldout)
             {
