@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.EditorTools;
@@ -28,29 +29,38 @@ public class DrawShapeToolPivotOffsetTests
         ToolManager.RestorePreviousPersistentTool();
     }
 
-    // Reproduces: create a shape with Pivot = First Vertex at one size (e.g. drag out a 4x4x4 cube),
-    // then place a duplicate (shift-click) at a different, smaller size (e.g. 1x1x1 after editing
-    // Shape Settings). The duplicate's pivot offset from its own bounds center must scale with the
-    // size of the duplicate being placed, not the size of the shape it was copied from.
-    [Test]
-    public void PreviewPivotPosition_ScalesWithCurrentBoundsSize_NotStaleDragSize()
+    // For a First Vertex pivot, the pivot always sits at bounds.center - size/2: the sign of `size`
+    // itself already encodes which side the shape extends toward, so the previous drag's recorded
+    // corner-to-center vector should have no bearing on where a same-or-different-sized duplicate's
+    // pivot lands. Both cases below place a duplicate of the same currentSize/expectedOffset, only
+    // the stale drag data differs, to prove that stale data can't leak into the result.
+    static IEnumerable<TestCaseData> PivotOffsetCases()
+    {
+        // Drawn previously as a 4x4x4 cube, now duplicating at 1x1x1 (Shape Settings edited down).
+        yield return new TestCaseData(new Vector3(-2f, -2f, -2f), Vector3.one, new Vector3(-0.5f, -0.5f, -0.5f))
+            .SetName("PreviewPivotPosition_AllPositiveOldSize_ScalesToCurrentSize");
+
+        // Drawn previously as an all-negative-size shape (e.g. dragged backwards on every axis), now
+        // duplicating at 1x1x-1 (matching a Stairs-style shape with a negative Z size).
+        yield return new TestCaseData(new Vector3(2f, 2f, 2f), new Vector3(1f, 1f, -1f), new Vector3(-0.5f, -0.5f, 0.5f))
+            .SetName("PreviewPivotPosition_NegativeAxisInOldSize_DoesNotFlipCurrentAxis");
+    }
+
+    [TestCaseSource(nameof(PivotOffsetCases))]
+    public void PreviewPivotPosition_ScalesWithCurrentBoundsSize_NotStaleDragSize(Vector3 lastCenterToOrigin, Vector3 currentSize, Vector3 expectedOffset)
     {
         var tool = DrawShapeTool.instance;
         Assume.That(tool, Is.Not.Null);
 
         tool.m_PlaneRotation = Quaternion.identity;
-
-        // Corner-to-center offset captured from a previously drawn 4x4x4 shape.
-        tool.m_LastNonDuplicateCenterToOrigin = new Vector3(-2f, -2f, -2f);
-
-        // Bounds for the shape currently being previewed/duplicated: size has since been changed to 1x1x1.
-        tool.m_Bounds = new Bounds(new Vector3(5f, 0.5f, 5f), Vector3.one);
+        tool.m_LastNonDuplicateCenterToOrigin = lastCenterToOrigin;
+        tool.m_Bounds = new Bounds(new Vector3(5f, 0.5f, 5f), currentSize);
 
         var pivot = tool.previewPivotPosition;
         var offset = pivot - tool.m_Bounds.center;
 
-        Assert.That(offset.x, Is.EqualTo(-0.5f).Within(0.0001f));
-        Assert.That(offset.y, Is.EqualTo(-0.5f).Within(0.0001f));
-        Assert.That(offset.z, Is.EqualTo(-0.5f).Within(0.0001f));
+        Assert.That(offset.x, Is.EqualTo(expectedOffset.x).Within(0.0001f));
+        Assert.That(offset.y, Is.EqualTo(expectedOffset.y).Within(0.0001f));
+        Assert.That(offset.z, Is.EqualTo(expectedOffset.z).Within(0.0001f));
     }
 }

@@ -446,31 +446,16 @@ namespace UnityEditor.ProBuilder
             {
                 if (pivotLocation == PivotLocation.FirstVertex && instance != null)
                 {
-                    // Only the corner (sign per axis) of the last non-duplicate shape is reused here.
-                    // The offset magnitude must come from the size of the shape currently being
-                    // previewed/duplicated (m_Bounds.size), not from the size it was originally drawn at.
-                    var lastCenterToOrigin = instance.m_LastNonDuplicateCenterToOrigin;
-                    var cornerSign = new Vector3(
-                        SignOrZero(lastCenterToOrigin.x),
-                        SignOrZero(lastCenterToOrigin.y),
-                        SignOrZero(lastCenterToOrigin.z));
-
-                    var currentCenterToOrigin = Vector3.Scale(cornerSign, instance.m_Bounds.size * 0.5f);
-                    var pivotOffset = instance.m_PlaneRotation * currentCenterToOrigin;
+                    // A First Vertex pivot always sits at bounds.center - size/2: the sign of `size`
+                    // itself already encodes which side the shape extends toward, so the size (and
+                    // corner) of whatever shape was last drawn has no bearing on this - only the
+                    // shape currently being previewed/duplicated (instance.m_Bounds) does.
+                    var pivotOffset = instance.m_PlaneRotation * (instance.m_Bounds.size * -0.5f);
                     return pivotOffset + instance.m_Bounds.center;
                 }
 
                 return m_Bounds.center;
             }
-        }
-
-        static float SignOrZero(float value)
-        {
-            if (value > 0f)
-                return 1f;
-            if (value < 0f)
-                return -1f;
-            return 0f;
         }
 
         int m_ControlID;
