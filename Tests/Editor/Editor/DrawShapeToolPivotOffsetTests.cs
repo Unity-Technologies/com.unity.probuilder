@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.ProBuilder;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using ToolManager = UnityEditor.EditorTools.ToolManager;
 
 public class DrawShapeToolPivotOffsetTests
