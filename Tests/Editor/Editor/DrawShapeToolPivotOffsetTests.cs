@@ -44,6 +44,13 @@ public class DrawShapeToolPivotOffsetTests
         // duplicating at 1x1x-1 (matching a Stairs-style shape with a negative Z size).
         yield return new TestCaseData(new Vector3(2f, 2f, 2f), new Vector3(1f, 1f, -1f), new Vector3(-0.5f, -0.5f, 0.5f))
             .SetName("PreviewPivotPosition_NegativeAxisInOldSize_DoesNotFlipCurrentAxis");
+
+        // Drawn toward negative X (size.x negative), then duplicated unchanged: this gives a
+        // *positive* m_LastNonDuplicateCenterToOrigin.x alongside a *negative* current size.x - the
+        // exact combination that reverses the pivot onto the wrong corner if that stale vector's sign
+        // is multiplied against the current (still negative) size instead of driving off size alone.
+        yield return new TestCaseData(new Vector3(1.5f, -0.5f, -0.5f), new Vector3(-3f, 1f, 1f), new Vector3(1.5f, -0.5f, -0.5f))
+            .SetName("PreviewPivotPosition_NegativeDragDirection_DoesNotReversePivotCorner");
     }
 
     [TestCaseSource(nameof(PivotOffsetCases))]
