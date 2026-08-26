@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-149791] Fixed the First Vertex pivot ending up offset from the shape after resizing an existing shape or shift-duplicating one with the Shape tool.
 - [UUM-150702] Fixed the ProBuilderDefault and Checker materials referencing a stale shader ID, causing ProBuilder meshes to render magenta when a scene was opened.
 - [UUM-148237] Fixed the "Lightmap UVs Settings" foldout in ProBuilder Preferences not opening when clicking its title.
 - [UUM-133528] Fixed an issue where using some UV Editor actions would clear a mesh's Lightmap UVs without regenerating them.

@@ -69,6 +69,14 @@ namespace UnityEngine.ProBuilder.Shapes
 
         [SerializeField]
         Vector3 m_LocalCenter;
+
+        // Per axis, how far the pivot sits from the center as a fraction of the half-size: 0 for a
+        // Center pivot, 1 for a First Vertex pivot. Captured whenever the shape is fully rebuilt so
+        // that resizing (which only knows the new size, not what it was built with) can re-derive the
+        // center from the current size instead of keeping the previous size's stale center fixed.
+        [SerializeField]
+        Vector3 m_PivotRatio;
+
         public Bounds shapeLocalBounds => new Bounds(m_LocalCenter, size);
         public Bounds shapeWorldBounds => new Bounds(shapeWorldCenter, size);
 
@@ -104,7 +112,10 @@ namespace UnityEngine.ProBuilder.Shapes
             if(gameObject == null || gameObject.hideFlags == HideFlags.HideAndDontSave)
                 return;
 
-            Rebuild(mesh.transform.position, mesh.transform.rotation, new Bounds(shapeWorldCenter, size));
+            var newLocalCenter = Vector3.Scale(m_PivotRatio, size * 0.5f);
+            var newWorldCenter = mesh.transform.TransformPoint(newLocalCenter);
+
+            Rebuild(mesh.transform.position, mesh.transform.rotation, new Bounds(newWorldCenter, size));
         }
 
         internal void UpdateBounds(Bounds bounds)
@@ -121,8 +132,19 @@ namespace UnityEngine.ProBuilder.Shapes
             Rebuild();
             mesh.SetPivot(pivotPosition);
             m_LocalCenter = mesh.transform.InverseTransformPoint(bounds.center);
+            m_PivotRatio = new Vector3(
+                RatioOrZero(m_LocalCenter.x, bounds.size.x),
+                RatioOrZero(m_LocalCenter.y, bounds.size.y),
+                RatioOrZero(m_LocalCenter.z, bounds.size.z));
 
             m_UnmodifiedMeshVersion = mesh.versionIndex;
+        }
+
+        static float RatioOrZero(float localCenterComponent, float sizeComponent)
+        {
+            if (Mathf.Abs(sizeComponent) < 0.0001f)
+                return 0f;
+            return Mathf.Clamp(localCenterComponent / (sizeComponent * 0.5f), -1f, 1f);
         }
 
         internal void Rebuild(Bounds bounds, Quaternion rotation)

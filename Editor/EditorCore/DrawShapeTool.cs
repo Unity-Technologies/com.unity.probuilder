@@ -446,13 +446,11 @@ namespace UnityEditor.ProBuilder
             {
                 if (pivotLocation == PivotLocation.FirstVertex && instance != null)
                 {
-                    var lastCenterToOrigin = instance.m_LastNonDuplicateCenterToOrigin;
-                    var lastCenterToOriginNorm = lastCenterToOrigin.normalized;
-
-                    var deltaRot = instance.m_PlaneRotation;
-                    lastCenterToOriginNorm = deltaRot * lastCenterToOriginNorm;
-
-                    var pivotOffset = lastCenterToOriginNorm * lastCenterToOrigin.magnitude;
+                    // A First Vertex pivot always sits at bounds.center - size/2: the sign of `size`
+                    // itself already encodes which side the shape extends toward, so the size (and
+                    // corner) of whatever shape was last drawn has no bearing on this - only the
+                    // shape currently being previewed/duplicated (instance.m_Bounds) does.
+                    var pivotOffset = instance.m_PlaneRotation * (instance.m_Bounds.size * -0.5f);
                     return pivotOffset + instance.m_Bounds.center;
                 }
 
