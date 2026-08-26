@@ -81,7 +81,9 @@ class ExtrudeTests
     }
 
     [Test]
+#if UNITY_6000_7_OR_NEWER
     [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148933", "ProBuilder test mesh templates resolve their asset path from StackTrace calling-method info, which fails on CoreCLR")]
+#endif
     public static void ExtrudeAllFaces_FaceNormal([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -108,7 +110,9 @@ class ExtrudeTests
     }
 
     [Test]
+#if UNITY_6000_7_OR_NEWER
     [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148933", "ProBuilder test mesh templates resolve their asset path from StackTrace calling-method info, which fails on CoreCLR")]
+#endif
     public static void ExtrudeAllFaces_IndividualFaces([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
@@ -137,7 +141,9 @@ class ExtrudeTests
     }
 
     [Test]
+#if UNITY_6000_7_OR_NEWER
     [UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148933", "ProBuilder test mesh templates resolve their asset path from StackTrace calling-method info, which fails on CoreCLR")]
+#endif
     public static void ExtrudeAllFaces_VertexNormal([ValueSource("m_AvailableShapeTypes")] Type shape)
     {
         var mesh = ShapeFactory.Instantiate(shape);
