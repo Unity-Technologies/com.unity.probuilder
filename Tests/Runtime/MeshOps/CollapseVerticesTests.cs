@@ -5,7 +5,13 @@ using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.ProBuilder.Tests;
 using UnityEngine.ProBuilder.Tests.Framework;
+#if UNITY_6000_7_OR_NEWER
+using UnityEngine.TestTools;
+#endif
 
+#if UNITY_6000_7_OR_NEWER
+[UnityCoreClrExplicitDisabled("https://jira.unity3d.com/browse/UUM-148933", "ProBuilder test mesh templates resolve their asset path from StackTrace calling-method info, which fails on CoreCLR")]
+#endif
 static class CollapseVerticesTests
 {
     [Test]
