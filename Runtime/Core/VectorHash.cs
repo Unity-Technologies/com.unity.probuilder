@@ -11,10 +11,28 @@ namespace UnityEngine.ProBuilder
     {
         public const float FltCompareResolution = 1000f;
 
-        static int HashFloat(float f)
+        /// <summary>
+        /// Quantize a float to FltCompareResolution. Shared by IntVec2/IntVec3/IntVec4 equality and
+        /// by the hash functions below, so that values which compare equal always hash equally.
+        /// </summary>
+        internal static int RoundToInt(float f)
         {
-            ulong u = (ulong)(f * FltCompareResolution);
-            return (int)(u % int.MaxValue);
+            if (float.IsNaN(f))
+                return 0;
+
+            float scaled = f * FltCompareResolution;
+
+            // Casting an out-of-range float to an integer type is unspecified in ECMA-335 - Mono on
+            // x64 wraps around while CoreCLR and Mono on Arm64 saturate, which also collapses every
+            // negative component to 0 - so clamp explicitly (UUM-148935, UUM-111993).
+            if (scaled <= int.MinValue)
+                return int.MinValue;
+
+            if (scaled >= int.MaxValue)
+                return int.MaxValue;
+
+            // System.Math, not UnityEngine.ProBuilder.Math
+            return (int)System.Math.Round(scaled, MidpointRounding.ToEven);
         }
 
         /// <summary>
@@ -29,8 +47,8 @@ namespace UnityEngine.ProBuilder
 
             unchecked
             {
-                hash = hash * 29 + HashFloat(v.x);
-                hash = hash * 29 + HashFloat(v.y);
+                hash = hash * 29 + RoundToInt(v.x);
+                hash = hash * 29 + RoundToInt(v.y);
             }
 
             return hash;
@@ -48,9 +66,9 @@ namespace UnityEngine.ProBuilder
 
             unchecked
             {
-                hash = hash * 29 + HashFloat(v.x);
-                hash = hash * 29 + HashFloat(v.y);
-                hash = hash * 29 + HashFloat(v.z);
+                hash = hash * 29 + RoundToInt(v.x);
+                hash = hash * 29 + RoundToInt(v.y);
+                hash = hash * 29 + RoundToInt(v.z);
             }
 
             return hash;
@@ -68,10 +86,10 @@ namespace UnityEngine.ProBuilder
 
             unchecked
             {
-                hash = hash * 29 + HashFloat(v.x);
-                hash = hash * 29 + HashFloat(v.y);
-                hash = hash * 29 + HashFloat(v.z);
-                hash = hash * 29 + HashFloat(v.w);
+                hash = hash * 29 + RoundToInt(v.x);
+                hash = hash * 29 + RoundToInt(v.y);
+                hash = hash * 29 + RoundToInt(v.z);
+                hash = hash * 29 + RoundToInt(v.w);
             }
 
             return hash;
