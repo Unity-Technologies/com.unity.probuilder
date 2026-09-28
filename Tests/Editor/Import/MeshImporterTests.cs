@@ -44,6 +44,7 @@ class MeshImporterTests : TemporaryAssetTest
         var meshImporter = (ModelImporter)AssetImporter.GetAtPath(srcPath);
         meshImporter.globalScale = 100f;
         meshImporter.isReadable = true;
+        meshImporter.keepQuads = false;
         meshImporter.SaveAndReimport();
 
         Assert.IsNotNull(source);
