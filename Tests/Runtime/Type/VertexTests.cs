@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.ProBuilder;
+using UnityEngine.TestTools;
 
 static class TestHashUtility
 {
