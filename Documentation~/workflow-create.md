@@ -12,7 +12,7 @@ The most common approach is to [build a predefined shape](shape-tool.md) with th
 If you want to make a mesh with an original shape, you can: 
 
 - Use the [Poly Shape tool](polyshape.md) to create a custom 2D shape and then extrude that shape into a 3D mesh. This is a good strategy for quickly building an irregular structure, like a medieval church or a star-shaped building.
-- Use the [experimental Bezier tool](bezier.md) to define a bezier curve around which ProBuilder extrudes a mesh. For example, you can use this tool to create tunnels with lots of twists and turns.
+- Use the [experimental Bezier tool](workflow-create-bezier.md) to define a bezier curve around which ProBuilder extrudes a mesh. For example, you can use this tool to create tunnels with lots of twists and turns.
 - Apply an [experimental Boolean operation](boolean.md) to two or more meshes to create a new mesh. The new shape can be from the difference between the two (Intersection), or everything but the difference between the two (Subtraction), or the two original meshes plus the space between them (Union).
 
 >**Warning:** Bezier shapes and Boolean operations are experimental, meaning that they're still under development, and might reduce ProBuilder's stability.
