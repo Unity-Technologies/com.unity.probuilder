@@ -53,7 +53,7 @@ namespace UnityEngine.ProBuilder
         // This static method is used to execute the pass and passed as the RenderFunc delegate to the RenderGraph render pass.
         static void ExecutePass(PassData data, RasterGraphContext context)
         {
-            context.cmd.ClearRenderTarget(RTClearFlags.Color, Color.white, 1, 0);
+            context.cmd.ClearRenderTarget(RTClearFlags.ColorDepth, Color.white, 1, 0);
 
             context.cmd.DrawRendererList(data.rendererListHandle);
         }
