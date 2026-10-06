@@ -1,4 +1,5 @@
 ﻿using ProBuilder.Cookbook.Settings;
+using ProBuilder.Cookbook.Transformers;
 using RecipeEngine;
 using RecipeEngine.Modules.Wrench.Helpers;
 
@@ -15,6 +16,7 @@ public static class Program
             .Create()
             .ScanAll()
             .WithWrenchModule(settings.Wrench)
+            .WithJobTransformer<UrpTestProjectTransformer>()
             .GenerateAsync().Result;
         return engine;
     }
