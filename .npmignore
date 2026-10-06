@@ -22,6 +22,7 @@ Debug/**
 Debug.meta
 art_source~
 UpgradeProjects~
+TestProjects~
 doc-validation~
 
 # Internal package files
