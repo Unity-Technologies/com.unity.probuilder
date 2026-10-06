@@ -8,6 +8,11 @@ UpgradeProjects~/*/Temp/**
 UpgradeProjects~/*/obj/**
 UpgradeProjects~/*/*.sln
 UpgradeProjects~/*/*.csproj
+TestProjects~/*/Library/**
+TestProjects~/*/Logs/**
+TestProjects~/*/Temp/**
+TestProjects~/*/UserSettings/**
+TestProjects~/*/Packages/packages-lock.json
 
 # IDE generated files
 UpgradeProjects~/*/.idea/**
