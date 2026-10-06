@@ -17,6 +17,14 @@ class BuiltinMaterialShaderReferenceTests
         "Packages/com.unity.probuilder/Content/Material/Checker.mat"
     };
 
+    const long k_LegacyShaderLocalId = 4800000;
+
+    static readonly object[] k_MigratedSurfaceShaders =
+    {
+        new object[] { "ProBuilder/Diffuse Vertex Color", "911130a939bf84843bcc4211c327f579" },
+        new object[] { "ProBuilder/Diffuse Texture Blend", "33cb4e8ff0c1d43ac8ec40692656c7ed" }
+    };
+
     static string ResolveDiskPath(string assetPath)
     {
         var package = PackageInfo.FindForAssetPath(assetPath);
@@ -63,5 +71,21 @@ class BuiltinMaterialShaderReferenceTests
         Assert.That(material, Is.Not.Null, materialAssetPath);
         Assert.That(material.shader, Is.Not.Null, materialAssetPath);
         Assert.That(material.shader.name, Does.Not.StartWith("Hidden/InternalErrorShader"), materialAssetPath);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(k_MigratedSurfaceShaders))]
+    public void MigratedSurfaceShaderKeepsLegacyNameAndReference(string shaderName, string legacyGuid)
+    {
+        var shader = Shader.Find(shaderName);
+        Assert.That(shader, Is.Not.Null, shaderName);
+
+        Assert.That(
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(shader, out var shaderGuid, out long shaderLocalId),
+            Is.True,
+            shaderName);
+
+        Assert.That(shaderGuid, Is.EqualTo(legacyGuid), shaderName);
+        Assert.That(shaderLocalId, Is.EqualTo(k_LegacyShaderLocalId), shaderName);
     }
 }
