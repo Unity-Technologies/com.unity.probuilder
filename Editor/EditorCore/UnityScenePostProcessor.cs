@@ -3,28 +3,87 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine.ProBuilder.MeshOperations;
-using System.Linq;
+using UnityEditor.AssetImporters;
+using UnityEditor.Build;
+using UnityEditor.Build.Content;
+using UnityEditor.Build.Reporting;
 using UnityEditor.ProBuilder.Actions;
+using UnityEditor.SceneManagement;
 using UnityEngine.ProBuilder;
 using UnityEditor.SettingsManagement;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 
 namespace UnityEditor.ProBuilder
 {
     /// <summary>
     /// When building the project, remove all references to <see cref="ProBuilderMesh"/> and <see cref="EntityBehaviour"/>.
     /// </summary>
-    static class UnityScenePostProcessor
+    class UnityScenePostProcessor :
+#if UNITY_6000_7_OR_NEWER
+        AssetPostprocessor
+#else
+        IProcessSceneWithReport
+#endif
     {
         [UserSetting("General", "Script Stripping", "If true, when building an executable all ProBuilder scripts will be stripped from your built product.")]
         static Pref<bool> m_ScriptStripping = new Pref<bool>("editor.stripProBuilderScriptsOnBuild", true);
 
-        [PostProcessScene]
-        public static void OnPostprocessScene()
+        const string k_DrivenPropertiesDependencyKey = "ProBuilder/DrivenProperties";
+        const string k_ScriptStrippingDependencyKey = "ProBuilder/ScriptStripping";
+        const string k_MeshesAreAssetsDependencyKey = "ProBuilder/MeshesAreAssets";
+
+        [InitializeOnLoadMethod]
+        static void InitializeDependencies()
+        {
+#if ENABLE_DRIVEN_PROPERTIES
+            AssetDatabase.RegisterCustomDependency(k_DrivenPropertiesDependencyKey, Hash128.Compute(1));
+#else
+            AssetDatabase.RegisterCustomDependency(k_DrivenPropertiesDependencyKey, Hash128.Compute(0));
+#endif
+            ProBuilderSettings.instance.afterSettingsSaved += UpdateDependencies;
+            UpdateDependencies();
+        }
+
+        static void UpdateDependencies()
+        {
+            AssetDatabase.RegisterCustomDependency(k_ScriptStrippingDependencyKey, Hash128.Compute(m_ScriptStripping.value ? 1 : 0));
+            AssetDatabase.RegisterCustomDependency(k_MeshesAreAssetsDependencyKey, Hash128.Compute(Experimental.meshesAreAssets ? 1 : 0));
+        }
+
+#if UNITY_6000_7_OR_NEWER
+        public override uint GetVersion() => 1;
+
+        void OnProcessScene(Scene scene, UnityEditor.Build.Content.SceneImportContext sceneContext)
+        {
+            ProcessScene(scene, sceneContext.loadingReason == ProcessSceneMode.PlayMode, false, context);
+        }
+#else
+
+        public int callbackOrder => 0;
+
+        public void OnProcessScene(Scene scene, BuildReport report)
+        {
+            ProcessScene(scene, EditorApplication.isPlayingOrWillChangePlaymode, true, null);
+        }
+#endif
+
+        /// <summary>
+        /// Setup ProBuilderMesh and renderers components in the scene for playmode loading and builds.
+        /// </summary>
+        /// <param name="scene">The scene to process</param>
+        /// <param name="isPlaymode">True if loading a scene in playmode. When true, This will skip the mesh update and components stripping.</param>
+        /// <param name="canUpdateAssets">
+        /// True if modifying assets outside the scene is allowed.
+        /// This should always be false when building with Unity 6.7 and newer to prevent incremental build cache-miss.
+        /// When false, it will log an error for each non-sync ProBuilderMesh in the scene.
+        /// </param>
+        /// <param name="context">AssetImportContext used to register build dependencies for incremental builds.</param>
+        public static void ProcessScene(Scene scene, bool isPlaymode, bool canUpdateAssets = false, AssetImportContext context = null)
         {
             var invisibleFaceMaterial = Resources.Load<Material>("Materials/InvisibleFace");
 
-            var pbMeshes = (ProBuilderMesh[]) Resources.FindObjectsOfTypeAll(typeof(ProBuilderMesh));
+            var pbMeshes = FindComponentsOfType<ProBuilderMesh>(scene);
 
             // Hide nodraw faces if present.
             foreach (var pb in pbMeshes)
@@ -32,26 +91,27 @@ namespace UnityEditor.ProBuilder
                 if (pb.GetComponent<MeshRenderer>() == null || UnityEditor.EditorUtility.IsPersistent(pb))
                     continue;
 
-                if (pb.GetComponent<MeshRenderer>().sharedMaterials.Any(x => x != null && x.name.Contains("NoDraw")))
+                Material[] mats = pb.GetComponent<MeshRenderer>().sharedMaterials;
+                bool hasMaterialChanged = false;
+                for (int i = 0; i < mats.Length; i++)
                 {
-                    Material[] mats = pb.GetComponent<MeshRenderer>().sharedMaterials;
-
-                    for (int i = 0; i < mats.Length; i++)
+                    if (mats[i] != null && mats[i].name.Contains("NoDraw"))
                     {
-                        if (mats[i].name.Contains("NoDraw"))
-                            mats[i] = invisibleFaceMaterial;
+                        mats[i] = invisibleFaceMaterial;
+                        hasMaterialChanged = true;
                     }
-
-                    pb.GetComponent<MeshRenderer>().sharedMaterials = mats;
                 }
+                if(hasMaterialChanged)
+                    pb.GetComponent<MeshRenderer>().sharedMaterials = mats;
             }
 
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            if (isPlaymode)
                 return;
 
             var renderersToStrip = new List<Renderer>();
 
-            foreach (var entity in Resources.FindObjectsOfTypeAll<EntityBehaviour>())
+            var entities = FindComponentsOfType<EntityBehaviour>(scene);
+            foreach (var entity in entities)
             {
                 if (entity.manageVisibility)
                     entity.OnEnterPlayMode();
@@ -67,7 +127,8 @@ namespace UnityEditor.ProBuilder
                 if (UnityEditor.EditorUtility.IsPersistent(mesh))
                     continue;
 
-                EditorUtility.SynchronizeWithMeshFilter(mesh);
+                context?.DependsOnCustomDependency(k_MeshesAreAssetsDependencyKey);
+                EditorUtility.SynchronizeWithMeshFilter(mesh, canUpdateAssets);
 
                 if (mesh.mesh == null)
                     continue;
@@ -75,6 +136,7 @@ namespace UnityEditor.ProBuilder
                 GameObject gameObject = mesh.gameObject;
                 var entity = ProcessLegacyEntity(gameObject);
 
+                context?.DependsOnCustomDependency(k_DrivenPropertiesDependencyKey);
 #if ENABLE_DRIVEN_PROPERTIES
                 // clear editor-only HideFlags and serialization ignores
                 mesh.ClearDrivenProperties();
@@ -90,15 +152,20 @@ namespace UnityEditor.ProBuilder
 #endif
 
                 // early out if we're not planning to remove the ProBuilderMesh component
+                context?.DependsOnCustomDependency(k_ScriptStrippingDependencyKey);
                 if (m_ScriptStripping == false)
                     continue;
 
                 StripProBuilderScripts.DestroyProBuilderMeshAndDependencies(gameObject, mesh, true);
-
             }
 
             foreach (var renderer in renderersToStrip)
-                Undo.DestroyObjectImmediate(renderer);
+            {
+                if (renderer != null)
+                {
+                    Object.DestroyImmediate(renderer);
+                }
+            }
         }
 
         static Entity ProcessLegacyEntity(GameObject go)
@@ -113,6 +180,19 @@ namespace UnityEditor.ProBuilder
                 go.GetComponent<MeshRenderer>().enabled = false;
 
             return entity;
+        }
+
+        static List<T> FindComponentsOfType<T>(Scene scene) where T : Component
+        {
+            List<T> components = new List<T>();
+            List<T> finder = new List<T>();
+
+            foreach (var o in scene.GetRootGameObjects())
+            {
+                o.GetComponentsInChildren(true, finder);
+                components.AddRange(finder);
+            }
+            return components;
         }
     }
 }

@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -333,14 +333,11 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             return true;
         }
 
-        public static string GetTemplatePath<T>(string assetName, int methodOffset = 0)
+        public static string GetTemplatePath<T>(string assetName,
+            [CallerFilePath] string callingFilePath = null,
+            [CallerMemberName] string callingMemberName = null)
         {
-            StackTrace trace = new StackTrace(1 + methodOffset, true);
-            StackFrame calling = trace.GetFrame(0);
-
-            string filePath = calling.GetFileName();
-
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(callingFilePath))
             {
                 UnityEngine.Debug.LogError(
                     "Cannot generate mesh templates directory path from calling method. Please use the explicit SaveMeshTemplate overload.");
@@ -348,18 +345,16 @@ namespace UnityEngine.ProBuilder.Tests.Framework
             }
 
             // Get the calling file path relative to the `Tests/` directory
-            string fullFilePath = Path.GetFullPath(filePath).Replace("\\", "/");
+            string fullFilePath = Path.GetFullPath(callingFilePath).Replace("\\", "/");
             string fullTestRootPath = Path.GetFullPath(testsRootDirectory).Replace("\\", "/");
             string relativeTemplatePath = fullFilePath.Replace(fullTestRootPath, "");
             string relativeTemplateDir = Path.GetDirectoryName(relativeTemplatePath).Replace("\\", "/").TrimStart('/');
 
-            string methodName = calling.GetMethod().Name;
-
             return string.Format("{0}/{1}/{2}/{3}/{4}.asset",
                 typeof(T).ToString(),
                 relativeTemplateDir,
-                Path.GetFileNameWithoutExtension(filePath),
-                methodName,
+                Path.GetFileNameWithoutExtension(callingFilePath),
+                callingMemberName,
                 assetName);
         }
 
@@ -367,11 +362,15 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         /// Get a mesh saved from the same path with name. Use SaveAssetTemplate to automatically generate this path.
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="callingFilePath"></param>
+        /// <param name="callingMemberName"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetAssetTemplate<T>(string name) where T : UObject
+        public static T GetAssetTemplate<T>(string name,
+            [CallerFilePath] string callingFilePath = null,
+            [CallerMemberName] string callingMemberName = null) where T : UObject
         {
-            string assetPath = templatesDirectory + GetTemplatePath<T>(name, 1);
+            string assetPath = templatesDirectory + GetTemplatePath<T>(name, callingFilePath, callingMemberName);
             T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
             Assert.IsFalse(asset == null, "Failed loading asset template " + name + " at path " + assetPath);
             return asset;
@@ -393,11 +392,14 @@ namespace UnityEngine.ProBuilder.Tests.Framework
         /// </remarks>
         /// <param name="asset"></param>
         /// <param name="name"></param>
-        /// <param name="methodOffset"></param>
+        /// <param name="callingFilePath"></param>
+        /// <param name="callingMemberName"></param>
         /// <typeparam name="T"></typeparam>
-        public static void SaveAssetTemplate<T>(T asset, string name = null, int methodOffset = 0) where T : UObject
+        public static void SaveAssetTemplate<T>(T asset, string name = null,
+            [CallerFilePath] string callingFilePath = null,
+            [CallerMemberName] string callingMemberName = null) where T : UObject
         {
-            string templatePath = GetTemplatePath<T>(string.IsNullOrEmpty(name) ? asset.name : name, methodOffset + 1);
+            string templatePath = GetTemplatePath<T>(string.IsNullOrEmpty(name) ? asset.name : name, callingFilePath, callingMemberName);
             SaveAssetTemplateAtPath(asset, templatePath);
         }
 

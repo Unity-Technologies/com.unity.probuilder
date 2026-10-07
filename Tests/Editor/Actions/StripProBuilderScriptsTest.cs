@@ -5,9 +5,9 @@ using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEditor.ProBuilder.Actions;
-using UnityEditor.VersionControl;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.SceneManagement;
 
 public class StripProBuilderScriptsTest
 {
@@ -99,7 +99,7 @@ public class StripProBuilderScriptsTest
         Assume.That(goChild.GetComponent<ProBuilderMesh>() != null);
         Assume.That(goChild.GetComponent<ProBuilderShape>() != null);
 
-        UnityScenePostProcessor.OnPostprocessScene();
+        UnityScenePostProcessor.ProcessScene(SceneManager.GetActiveScene(), false);
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
         Assert.That(go.GetComponent<ProBuilderShape>() == null);
@@ -129,7 +129,7 @@ public class StripProBuilderScriptsTest
         goChild.GetComponent<ProBuilderShape>().enabled = false;
         goChild.GetComponent<ProBuilderMesh>().enabled = false;
 
-        UnityScenePostProcessor.OnPostprocessScene();
+        UnityScenePostProcessor.ProcessScene(SceneManager.GetActiveScene(), false);
 
         Assert.That(go.GetComponent<ProBuilderMesh>() == null);
         Assert.That(go.GetComponent<ProBuilderShape>() == null);

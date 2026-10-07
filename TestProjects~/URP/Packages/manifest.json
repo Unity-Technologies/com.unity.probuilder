@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "com.unity.probuilder": "file:../../..",
+    "com.unity.render-pipelines.universal": "17.7.0",
+    "com.unity.test-framework": "1.9.0"
+  },
+  "testables": [
+    "com.unity.probuilder"
+  ]
+}

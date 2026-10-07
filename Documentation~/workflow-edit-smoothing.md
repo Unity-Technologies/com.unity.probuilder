@@ -1,16 +1,16 @@
 # Smooth hard edges on meshes
 
-To create a smooth and rounded look on part or all of your mesh, define a Smoothing Group. If you include only a part of your mesh, the rest of the mesh has more of a sharp and hard-cornered look.
+To make the edges between faces look smooth when lit, add those faces to a smoothing group. Faces outside a smoothing group keep hard edges.
 
-Smoothing doesn't subdivide the mesh; it controls whether vertices are split for hard edges. This often works well for simpler meshes, like cylinders or more organic shapes, curved walls, or meshes for Terrain.
+Smoothing groups change the shading of the mesh, not its shape. ProBuilder averages the normals of the vertices that adjoining faces share, but doesn't move vertices, round edges, or add geometry. To turn sharp edges into curves, [bevel the edges](Edge_Bevel.md) or [subdivide the faces](Face_Subdivide.md) around them.
+
+Smoothing groups work well for meshes that already have enough faces to approximate a curved shape, such as cylinders, organic shapes, curved walls, or terrain meshes.
 
 ![One quarter of the torus - shown in yellow - is smoothed](images/Smoothing_Editor.png)
 
-> **Note:** This feature produces a subtle smoothing. If you want to turn sharp edges into smooth curves, you need to either [bevel those edges](Edge_Bevel.md) or [subdivide the faces](Face_Subdivide.md) around them for greater control.
-
 You can do the following:
 
-* [Create a smoothing group](#)
+* [Create a smoothing group](#define)
 * [Remove faces from a group](#clear)
 * [Select all faces in a group](#select)
 
