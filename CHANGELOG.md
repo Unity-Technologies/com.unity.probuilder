@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Made the ProBuilder Editor actions available in GameObject context in the action overlay.
+- Replaced the `ProBuilder/Diffuse Vertex Color` and `ProBuilder/Diffuse Texture Blend` surface shaders with Shader Graph equivalents.
 
 ## [6.1.2] - 2026-06-11
 
