@@ -195,6 +195,11 @@ namespace UnityEditor.ProBuilder
         /// <seealso cref="ProBuilderMesh.meshSyncState"/>
         public static void SynchronizeWithMeshFilter(ProBuilderMesh mesh)
         {
+            SynchronizeWithMeshFilter(mesh, true);
+        }
+
+        internal static void SynchronizeWithMeshFilter(ProBuilderMesh mesh, bool canUpdateAssets)
+        {
             if (mesh == null)
                 throw new ArgumentNullException(nameof(mesh));
 
@@ -208,6 +213,11 @@ namespace UnityEditor.ProBuilder
                 if (state == MeshSyncState.Null || state == MeshSyncState.NeedsRebuild)
                 {
                     LogMeshSyncEvent(mesh, state, "Rebuild");
+                    if (!canUpdateAssets && AssetDatabase.Contains(mesh.mesh))
+                    {
+                        Debug.LogError("A ProBuilder shared mesh was not up to date while building. Open a scene using it and force update the mesh to fix.", mesh.mesh);
+                        return;
+                    }
                     mesh.Rebuild();
                     mesh.Optimize();
                 }
@@ -226,7 +236,7 @@ namespace UnityEditor.ProBuilder
             else
             {
                 if (meshesAreAssets)
-                    EditorMeshUtility.TryCacheMesh(mesh);
+                    EditorMeshUtility.TryCacheMesh(mesh, canUpdateAssets);
             }
         }
 

@@ -114,7 +114,7 @@ namespace UnityEditor.ProBuilder
             UnityEditor.EditorUtility.SetDirty(mesh);
         }
 
-        internal static void TryCacheMesh(ProBuilderMesh pb)
+        internal static void TryCacheMesh(ProBuilderMesh pb, bool canCreateAsset = true)
         {
             Mesh mesh = pb.mesh;
 
@@ -126,6 +126,13 @@ namespace UnityEditor.ProBuilder
             // pb_Object is directly modifying the mesh asset
             if (string.IsNullOrEmpty(meshAssetPath))
             {
+                if (!canCreateAsset)
+                {
+                    Debug.LogError($"Trying to create a new ProBuilder shared mesh for {pb.name} while creating new assets is not allowed. Open the scene and force update the ProBuilder mesh to fix it.",
+                        AssetDatabase.LoadMainAssetAtPath(pb.gameObject.scene.path));
+                    return;
+                }
+
                 // at the moment the asset_guid is only used to name the mesh something unique
                 string guid = pb.assetGuid;
 
