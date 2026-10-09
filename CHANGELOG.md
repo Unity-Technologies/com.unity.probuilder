@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-155018] Fixed rect selection in URP not selecting any vertices, edges or faces when Select Hidden is disabled.
 - [UUM-149791] Fixed the First Vertex pivot ending up offset from the shape after resizing an existing shape or shift-duplicating one with the Shape tool.
 - [UUM-148935] Fixed `VectorHash`/`IntVec2`/`IntVec3`/`IntVec4` producing different hash codes on different runtimes and architectures (e.g. Mono vs CoreCLR), and fixed a `GetHashCode` contract violation where positions considered equal by `IntVec3.Equals` could still hash differently, silently breaking vertex welding.
 - [UUM-150702] Fixed the ProBuilderDefault and Checker materials referencing a stale shader ID, causing ProBuilder meshes to render magenta when a scene was opened.
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changes
 
 - Made the ProBuilder Editor actions available in GameObject context in the action overlay.
+- Replaced the `ProBuilder/Diffuse Vertex Color` and `ProBuilder/Diffuse Texture Blend` surface shaders with Shader Graph equivalents.
 
 ## [6.1.2] - 2026-06-11
 
