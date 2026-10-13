@@ -1,5 +1,8 @@
 {
 	"createSeparatePackage":true,
 	"name":"com.unity.probuilder.tests",
-	"displayName":"ProBuilder Tests"
+	"displayName":"ProBuilder Tests",
+	"dependencies": {
+		"com.unity.test-framework.performance": "3.2.0"
+	}
 }
