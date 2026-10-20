@@ -85,6 +85,18 @@ class VertexManipulationTests
             "Accessing handleOrientation in a consistent state must not fire pivotRotationChanged");
     }
 
+    static void SelectFirstFaceWithMoveTool(ProBuilderMesh pb, SelectMode selectMode)
+    {
+        MeshSelection.SetSelection(pb.gameObject);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+        ToolManager.SetActiveContext<PositionToolContext>();
+        Tools.current = Tool.Move;
+        ProBuilderEditor.selectMode = selectMode;
+        pb.SetSelectedFaces(new[] { pb.facesInternal[0] });
+
+        Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
+    }
+
     [TestCase(SelectMode.Vertex)]
     [TestCase(SelectMode.Edge)]
     [TestCase(SelectMode.Face)]
@@ -94,14 +106,9 @@ class VertexManipulationTests
 
         try
         {
-            MeshSelection.SetSelection(pb.gameObject);
-            ActiveEditorTracker.sharedTracker.ForceRebuild();
-            ToolManager.SetActiveContext<PositionToolContext>();
-            Tools.current = Tool.Move;
-            ProBuilderEditor.selectMode = selectMode;
-            pb.SetSelectedFaces(new[] { pb.facesInternal[0] });
+            SelectFirstFaceWithMoveTool(pb, selectMode);
 
-            Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
+            MeshSelection.BeforeMeshModification(MeshSelection.topInternal);
 
             var dragOriginSelection = MeshSelection.elementSelection.First();
             Assume.That(dragOriginSelection.mesh, Is.SameAs(pb));
@@ -109,6 +116,32 @@ class VertexManipulationTests
             pb.Refresh(RefreshMask.Normals);
 
             Assert.That(MeshSelection.elementSelection.First(), Is.SameAs(dragOriginSelection));
+        }
+        finally
+        {
+            MeshSelection.AfterMeshModification(MeshSelection.topInternal);
+            ToolManager.SetActiveContext<GameObjectToolContext>();
+            UObject.DestroyImmediate(pb.gameObject);
+        }
+    }
+
+    [Test]
+    public void MoveTool_VertexPositionEditedOutsideDrag_RebuildsElementSelection()
+    {
+        var pb = ShapeFactory.Instantiate<Cube>();
+
+        try
+        {
+            SelectFirstFaceWithMoveTool(pb, SelectMode.Vertex);
+
+            var staleSelection = MeshSelection.elementSelection.First();
+            Assume.That(staleSelection.mesh, Is.SameAs(pb));
+
+            var sharedVertex = pb.selectedSharedVertices.First();
+            pb.SetSharedVertexPosition(sharedVertex, pb.positionsInternal[pb.sharedVerticesInternal[sharedVertex][0]] + Vector3.up);
+            pb.Refresh(RefreshMask.Normals);
+
+            Assert.That(MeshSelection.elementSelection.First(), Is.Not.SameAs(staleSelection));
         }
         finally
         {
