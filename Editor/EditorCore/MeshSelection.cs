@@ -296,7 +296,8 @@ namespace UnityEditor.ProBuilder
 
         static void MeshVersionChanged(ProBuilderMesh mesh)
         {
-            InvalidateCaches();
+            s_ElementCountsDirty = true;
+            s_SelectionBoundsDirty = true;
         }
 
         internal static void RecalculateSelectedElementGroups()

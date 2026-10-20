@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using UnityEditor.EditorTools;
@@ -82,6 +83,38 @@ class VertexManipulationTests
 
         Assert.That(syncCount, Is.EqualTo(0),
             "Accessing handleOrientation in a consistent state must not fire pivotRotationChanged");
+    }
+
+    [TestCase(SelectMode.Vertex)]
+    [TestCase(SelectMode.Edge)]
+    [TestCase(SelectMode.Face)]
+    public void MoveTool_MeshRefreshDuringDrag_KeepsDragOriginElementSelection(SelectMode selectMode)
+    {
+        var pb = ShapeFactory.Instantiate<Cube>();
+
+        try
+        {
+            MeshSelection.SetSelection(pb.gameObject);
+            ActiveEditorTracker.sharedTracker.ForceRebuild();
+            ToolManager.SetActiveContext<PositionToolContext>();
+            Tools.current = Tool.Move;
+            ProBuilderEditor.selectMode = selectMode;
+            pb.SetSelectedFaces(new[] { pb.facesInternal[0] });
+
+            Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
+
+            var dragOriginSelection = MeshSelection.elementSelection.First();
+            Assume.That(dragOriginSelection.mesh, Is.SameAs(pb));
+
+            pb.Refresh(RefreshMask.Normals);
+
+            Assert.That(MeshSelection.elementSelection.First(), Is.SameAs(dragOriginSelection));
+        }
+        finally
+        {
+            ToolManager.SetActiveContext<GameObjectToolContext>();
+            UObject.DestroyImmediate(pb.gameObject);
+        }
     }
 
     [UnityTest, Ignore("LINUX_EDITOR")]
