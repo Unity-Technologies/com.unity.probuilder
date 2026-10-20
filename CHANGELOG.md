@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+- [UUM-158028] Fixed the Move, Rotate and Scale tools drifting while dragging vertices, edges or faces, applying the drag offset repeatedly instead of once.
+
 ## [6.1.3] - 2026-10-07
 
 ### Fixed
