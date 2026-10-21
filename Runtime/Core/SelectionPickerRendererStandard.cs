@@ -34,7 +34,9 @@ namespace UnityEngine.ProBuilder
                 Camera renderCam = go.AddComponent<Camera>();
                 renderCam.CopyFrom(camera);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 renderCam.renderingPath = RenderingPath.Forward;
+#pragma warning restore CS0618
                 renderCam.enabled = false;
                 renderCam.clearFlags = CameraClearFlags.SolidColor;
                 renderCam.backgroundColor = Color.white;
@@ -91,7 +93,9 @@ namespace UnityEngine.ProBuilder
                 var qualitySettingsRenderPipeline = QualitySettings.renderPipeline;
                 GraphicsSettings.defaultRenderPipeline = null;
                 QualitySettings.renderPipeline = null;
+                #pragma warning disable CS0618 // Replacement shaders are obsolete, but still needed for the Built-In Render Pipeline
                 renderCam.RenderWithShader(shader, tag);
+                #pragma warning restore CS0618
                 GraphicsSettings.defaultRenderPipeline = currentRenderPipeline;
                 QualitySettings.renderPipeline = qualitySettingsRenderPipeline;
 
