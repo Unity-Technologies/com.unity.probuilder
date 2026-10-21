@@ -24,6 +24,7 @@ namespace UnityEditor.ProBuilder
         static bool s_SelectedElementGroupsDirty = true;
         static bool s_SelectedFacesInEditAreaDirty = true;
         static bool s_SelectionBoundsDirty = true;
+        static bool s_MeshModificationInProgress;
 
         static Bounds s_SelectionBounds = new Bounds();
         static Dictionary<ProBuilderMesh, List<Face>> s_SelectedFacesInEditArea = new Dictionary<ProBuilderMesh, List<Face>>();
@@ -135,6 +136,7 @@ namespace UnityEditor.ProBuilder
             ProBuilderEditor.selectModeChanged += SelectModeChanged;
             ToolManager.activeToolChanged += ActiveToolChanged;
             ToolManager.activeContextChanged += ActiveToolChanged;
+            VertexManipulationTool.beforeMeshModification += BeforeMeshModification;
             VertexManipulationTool.afterMeshModification += AfterMeshModification;
             PrefabStage.prefabStageOpened += OnPrefabStageChanged;
             PrefabStage.prefabStageClosing += OnPrefabStageChanged;
@@ -257,7 +259,13 @@ namespace UnityEditor.ProBuilder
 
         static void ActiveToolChanged() => InvalidateCaches();
 
-        static void AfterMeshModification(IEnumerable<ProBuilderMesh> selection) => InvalidateCaches();
+        internal static void BeforeMeshModification(IEnumerable<ProBuilderMesh> selection) => s_MeshModificationInProgress = true;
+
+        internal static void AfterMeshModification(IEnumerable<ProBuilderMesh> selection)
+        {
+            s_MeshModificationInProgress = false;
+            InvalidateCaches();
+        }
 
         //Ensure the selection is cleaned when entering/exiting a prefab stage
         static void OnPrefabStageChanged(PrefabStage _) => InvalidateCaches();
@@ -296,7 +304,13 @@ namespace UnityEditor.ProBuilder
 
         static void MeshVersionChanged(ProBuilderMesh mesh)
         {
-            InvalidateCaches();
+            if (s_MeshModificationInProgress)
+            {
+                s_ElementCountsDirty = true;
+                s_SelectionBoundsDirty = true;
+            }
+            else
+                InvalidateCaches();
         }
 
         internal static void RecalculateSelectedElementGroups()

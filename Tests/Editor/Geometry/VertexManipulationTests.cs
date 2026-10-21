@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using UnityEditor.EditorTools;
@@ -82,6 +83,71 @@ class VertexManipulationTests
 
         Assert.That(syncCount, Is.EqualTo(0),
             "Accessing handleOrientation in a consistent state must not fire pivotRotationChanged");
+    }
+
+    static void SelectFirstFaceWithMoveTool(ProBuilderMesh pb, SelectMode selectMode)
+    {
+        MeshSelection.SetSelection(pb.gameObject);
+        ActiveEditorTracker.sharedTracker.ForceRebuild();
+        ToolManager.SetActiveContext<PositionToolContext>();
+        Tools.current = Tool.Move;
+        ProBuilderEditor.selectMode = selectMode;
+        pb.SetSelectedFaces(new[] { pb.facesInternal[0] });
+
+        Assume.That(ToolManager.activeToolType, Is.EqualTo(typeof(ProbuilderMoveTool)));
+    }
+
+    [TestCase(SelectMode.Vertex)]
+    [TestCase(SelectMode.Edge)]
+    [TestCase(SelectMode.Face)]
+    public void MoveTool_MeshRefreshDuringDrag_KeepsDragOriginElementSelection(SelectMode selectMode)
+    {
+        var pb = ShapeFactory.Instantiate<Cube>();
+
+        try
+        {
+            SelectFirstFaceWithMoveTool(pb, selectMode);
+
+            MeshSelection.BeforeMeshModification(MeshSelection.topInternal);
+
+            var dragOriginSelection = MeshSelection.elementSelection.First();
+            Assume.That(dragOriginSelection.mesh, Is.SameAs(pb));
+
+            pb.Refresh(RefreshMask.Normals);
+
+            Assert.That(MeshSelection.elementSelection.First(), Is.SameAs(dragOriginSelection));
+        }
+        finally
+        {
+            MeshSelection.AfterMeshModification(MeshSelection.topInternal);
+            ToolManager.SetActiveContext<GameObjectToolContext>();
+            UObject.DestroyImmediate(pb.gameObject);
+        }
+    }
+
+    [Test]
+    public void MoveTool_VertexPositionEditedOutsideDrag_RebuildsElementSelection()
+    {
+        var pb = ShapeFactory.Instantiate<Cube>();
+
+        try
+        {
+            SelectFirstFaceWithMoveTool(pb, SelectMode.Vertex);
+
+            var staleSelection = MeshSelection.elementSelection.First();
+            Assume.That(staleSelection.mesh, Is.SameAs(pb));
+
+            var sharedVertex = pb.selectedSharedVertices.First();
+            pb.SetSharedVertexPosition(sharedVertex, pb.positionsInternal[pb.sharedVerticesInternal[sharedVertex][0]] + Vector3.up);
+            pb.Refresh(RefreshMask.Normals);
+
+            Assert.That(MeshSelection.elementSelection.First(), Is.Not.SameAs(staleSelection));
+        }
+        finally
+        {
+            ToolManager.SetActiveContext<GameObjectToolContext>();
+            UObject.DestroyImmediate(pb.gameObject);
+        }
     }
 
     [UnityTest, Ignore("LINUX_EDITOR")]
