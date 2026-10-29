@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-157579] Fixed `Math.ReflectPoint` returning a wrong point when the line segment length is not 1.
+
+## [6.1.4] - 2026-10-21
+
+### Fixed
+
 - [UUM-158028] Fixed the Move, Rotate and Scale tools drifting while dragging vertices, edges or faces, applying the drag offset repeatedly instead of once.
 
 ## [6.1.3] - 2026-10-07
