@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- [UUM-157887] Fixed UAL0010/UAL0013 warnings when importing the "Editor Examples" or "Runtime Examples" samples with Enter Play Mode Options enabled.
 - [UUM-157579] Fixed `Math.ReflectPoint` returning a wrong point when the line segment length is not 1.
 
 ## [6.1.4] - 2026-10-21

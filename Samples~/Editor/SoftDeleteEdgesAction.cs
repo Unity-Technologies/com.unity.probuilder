@@ -6,6 +6,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
+#if UNITY_6000_5_OR_NEWER
+using Unity.Scripting.LifecycleManagement;
+#endif
 
 namespace UnityEditor.ProBuilder.Actions
 {
@@ -30,6 +33,9 @@ namespace UnityEditor.ProBuilder.Actions
 		/// TooltipContent is similar to GUIContent, with the exception that it also includes an optional params[]
 		/// char list in the constructor to define shortcut keys (ex, CMD_CONTROL, K).
 		/// </summary>
+#if UNITY_6000_5_OR_NEWER
+		[NoAutoStaticsCleanup]
+#endif
 		static readonly TooltipContent k_Tooltip = new TooltipContent
 		(
 			"Remove Edges",
