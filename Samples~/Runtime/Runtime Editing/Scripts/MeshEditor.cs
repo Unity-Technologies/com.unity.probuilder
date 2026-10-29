@@ -48,6 +48,11 @@ namespace ProBuilder.Examples
             Camera.onPostRender += DrawSelection;
         }
 
+        void OnDestroy()
+        {
+            Camera.onPostRender -= DrawSelection;
+        }
+
         void Start()
         {
             m_CameraMotion.Focus(Vector3.zero, 10f);
