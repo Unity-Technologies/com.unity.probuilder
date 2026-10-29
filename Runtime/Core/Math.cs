@@ -236,7 +236,7 @@ namespace UnityEngine.ProBuilder
         public static Vector2 ReflectPoint(Vector2 point, Vector2 lineStart, Vector2 lineEnd)
         {
             Vector2 line = lineEnd - lineStart;
-            Vector2 perp = new Vector2(-line.y, line.x);    // skip normalize
+            Vector2 perp = new Vector2(-line.y, line.x).normalized;
 
             float dist = Mathf.Sin(Vector2.Angle(line, point - lineStart) * Mathf.Deg2Rad) * Vector2.Distance(point, lineStart);
 
