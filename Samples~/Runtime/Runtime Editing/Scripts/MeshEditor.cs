@@ -45,7 +45,9 @@ namespace ProBuilder.Examples
         {
             m_SceneCamera = Camera.main;
             m_CameraMotion = m_SceneCamera.GetComponent<CameraMotion>();
+            #pragma warning disable CS0618 // Camera.onPostRender is obsolete, but still needed for the Built-In Render Pipeline
             Camera.onPostRender += DrawSelection;
+            #pragma warning restore CS0618
         }
 
         void Start()
