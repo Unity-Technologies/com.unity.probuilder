@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
+#if UNITY_6000_5_OR_NEWER
+using Unity.Scripting.LifecycleManagement;
+#endif
 
 namespace ProBuilder.Examples
 {
-	class Handles : MonoBehaviour
+#if UNITY_6000_5_OR_NEWER
+	[AutoStaticsCleanup]
+#endif
+	partial class Handles : MonoBehaviour
     {
         static Handles s_Instance;
 		static bool s_Initialized;
