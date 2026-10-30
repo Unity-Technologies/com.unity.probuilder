@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 
             void Dispose(bool disposing)
             {
-                if (!disposing && !m_Disposed)
+                if (disposing && !m_Disposed)
                 {
                     if (previewMesh)
                         DestroyImmediate(previewMesh);
@@ -355,6 +355,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
             Undo.undoRedoPerformed += OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+            ProBuilderMesh.componentWillBeDestroyed += OnMeshDestroyed;
             VertexManipulationTool.beforeMeshModification += OnBeginVertexMovement;
             VertexManipulationTool.afterMeshModification += OnFinishVertexMovement;
             autoRepaintOnSceneChange = true;
@@ -373,6 +374,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             Undo.undoRedoPerformed -= OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
+            ProBuilderMesh.componentWillBeDestroyed -= OnMeshDestroyed;
             ClearSmoothGroupData();
         }
 
@@ -419,8 +421,30 @@ namespace UnityEditor.ProBuilder
                 data.CacheSelected(pb);
         }
 
+        void OnMeshDestroyed(ProBuilderMesh pb)
+        {
+            SmoothGroupData data;
+
+            if (m_SmoothGroups.TryGetValue(pb, out data))
+            {
+                data.Dispose();
+                m_SmoothGroups.Remove(pb);
+                Repaint();
+            }
+        }
+
+        void RemoveDestroyedMeshes()
+        {
+            foreach (var pb in m_SmoothGroups.Keys.Where(x => x == null).ToList())
+            {
+                m_SmoothGroups[pb].Dispose();
+                m_SmoothGroups.Remove(pb);
+            }
+        }
+
         void OnGUI()
         {
+            RemoveDestroyedMeshes();
             DoContextMenu();
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -624,6 +648,8 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView view)
         {
+            RemoveDestroyedMeshes();
+
             if (m_SmoothGroups.Count > 1)
             {
                 using (new HandleGUI())

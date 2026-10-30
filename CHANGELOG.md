@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - [UUM-157579] Fixed `Math.ReflectPoint` returning a wrong point when the line segment length is not 1.
+- [UUM-155590] Fixed GUI errors and `MissingReferenceException`s being thrown continuously after exiting Play mode when a ProBuilder object was shown in the Smooth Group Editor.
 
 ## [6.1.4] - 2026-10-21
 
