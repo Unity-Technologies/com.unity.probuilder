@@ -52,7 +52,9 @@ namespace ProBuilder.Examples
 
         void OnDestroy()
         {
+            #pragma warning disable CS0618
             Camera.onPostRender -= DrawSelection;
+            #pragma warning restore CS0618
         }
 
         void Start()
