@@ -38,6 +38,5 @@ public class SmoothGroupEditorTests
         UObject.DestroyImmediate(m_Cube.gameObject);
 
         m_Window.SendEvent(new Event { type = EventType.Layout });
-        m_Window.SendEvent(new Event { type = EventType.Repaint });
     }
 }

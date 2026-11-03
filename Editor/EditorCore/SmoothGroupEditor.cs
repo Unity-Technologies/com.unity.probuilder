@@ -301,6 +301,7 @@ namespace UnityEditor.ProBuilder
         GUIContent m_BreakSmoothingContent = null;
         GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
         Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
+        List<ProBuilderMesh> m_DestroyedMeshes = new List<ProBuilderMesh>();
 
         static bool s_IsMovingVertices = false;
 
@@ -435,11 +436,19 @@ namespace UnityEditor.ProBuilder
 
         void RemoveDestroyedMeshes()
         {
-            foreach (var pb in m_SmoothGroups.Keys.Where(x => x == null).ToList())
+            foreach (var kvp in m_SmoothGroups)
+            {
+                if (kvp.Key == null)
+                    m_DestroyedMeshes.Add(kvp.Key);
+            }
+
+            foreach (var pb in m_DestroyedMeshes)
             {
                 m_SmoothGroups[pb].Dispose();
                 m_SmoothGroups.Remove(pb);
             }
+
+            m_DestroyedMeshes.Clear();
         }
 
         void OnGUI()
