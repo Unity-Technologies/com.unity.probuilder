@@ -127,7 +127,7 @@ namespace UnityEditor.ProBuilder
 
             void Dispose(bool disposing)
             {
-                if (!disposing && !m_Disposed)
+                if (disposing && !m_Disposed)
                 {
                     if (previewMesh)
                         DestroyImmediate(previewMesh);
@@ -301,6 +301,7 @@ namespace UnityEditor.ProBuilder
         GUIContent m_BreakSmoothingContent = null;
         GUIContent m_SelectFacesWithSmoothGroupSelectionContent = null;
         Dictionary<ProBuilderMesh, SmoothGroupData> m_SmoothGroups = new Dictionary<ProBuilderMesh, SmoothGroupData>();
+        List<ProBuilderMesh> m_DestroyedMeshes = new List<ProBuilderMesh>();
 
         static bool s_IsMovingVertices = false;
 
@@ -355,6 +356,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged += OnSelectionChanged;
             Undo.undoRedoPerformed += OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged += OnElementSelectionChanged;
+            ProBuilderMesh.componentWillBeDestroyed += OnMeshDestroyed;
             VertexManipulationTool.beforeMeshModification += OnBeginVertexMovement;
             VertexManipulationTool.afterMeshModification += OnFinishVertexMovement;
             autoRepaintOnSceneChange = true;
@@ -373,6 +375,7 @@ namespace UnityEditor.ProBuilder
             MeshSelection.objectSelectionChanged -= OnSelectionChanged;
             Undo.undoRedoPerformed -= OnSelectionChanged;
             ProBuilderMesh.elementSelectionChanged -= OnElementSelectionChanged;
+            ProBuilderMesh.componentWillBeDestroyed -= OnMeshDestroyed;
             ClearSmoothGroupData();
         }
 
@@ -419,8 +422,38 @@ namespace UnityEditor.ProBuilder
                 data.CacheSelected(pb);
         }
 
+        void OnMeshDestroyed(ProBuilderMesh pb)
+        {
+            SmoothGroupData data;
+
+            if (m_SmoothGroups.TryGetValue(pb, out data))
+            {
+                data.Dispose();
+                m_SmoothGroups.Remove(pb);
+                Repaint();
+            }
+        }
+
+        void RemoveDestroyedMeshes()
+        {
+            foreach (var kvp in m_SmoothGroups)
+            {
+                if (kvp.Key == null)
+                    m_DestroyedMeshes.Add(kvp.Key);
+            }
+
+            foreach (var pb in m_DestroyedMeshes)
+            {
+                m_SmoothGroups[pb].Dispose();
+                m_SmoothGroups.Remove(pb);
+            }
+
+            m_DestroyedMeshes.Clear();
+        }
+
         void OnGUI()
         {
+            RemoveDestroyedMeshes();
             DoContextMenu();
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -624,6 +657,8 @@ namespace UnityEditor.ProBuilder
 
         void OnSceneGUI(SceneView view)
         {
+            RemoveDestroyedMeshes();
+
             if (m_SmoothGroups.Count > 1)
             {
                 using (new HandleGUI())
