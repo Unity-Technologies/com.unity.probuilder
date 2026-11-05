@@ -8,6 +8,9 @@ using UnityEditor.ProBuilder;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
+#if UNITY_6000_5_OR_NEWER
+using Unity.Scripting.LifecycleManagement;
+#endif
 
 // When creating your own actions use your own namespace.
 namespace ProBuilder.ExampleActions
@@ -27,6 +30,9 @@ namespace ProBuilder.ExampleActions
 		// What to show in the hover tooltip window.  TooltipContent is similar to GUIContent, with the exception
 		// that it also includes an optional params[] char list in the constructor to define shortcut keys
 		// (ex, CMD_CONTROL, K).
+#if UNITY_6000_5_OR_NEWER
+		[NoAutoStaticsCleanup]
+#endif
 		static readonly TooltipContent k_Tooltip = new TooltipContent(
 			"Gen Shadow Obj",
 			"Creates a new ProBuilder mesh child with inverted normals that only exists to cast shadows. Use to " +

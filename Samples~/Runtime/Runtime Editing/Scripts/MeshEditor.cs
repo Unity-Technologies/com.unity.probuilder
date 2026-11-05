@@ -50,6 +50,13 @@ namespace ProBuilder.Examples
             #pragma warning restore CS0618
         }
 
+        void OnDestroy()
+        {
+            #pragma warning disable CS0618
+            Camera.onPostRender -= DrawSelection;
+            #pragma warning restore CS0618
+        }
+
         void Start()
         {
             m_CameraMotion.Focus(Vector3.zero, 10f);

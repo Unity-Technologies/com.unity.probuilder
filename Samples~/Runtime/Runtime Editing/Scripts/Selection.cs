@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+#if UNITY_6000_5_OR_NEWER
+using Unity.Scripting.LifecycleManagement;
+#endif
 
 namespace ProBuilder.Examples
 {
-	static class Selection
+#if UNITY_6000_5_OR_NEWER
+	[AutoStaticsCleanup]
+#endif
+	static partial class Selection
 	{
 		static HashSet<ProBuilderMesh> s_Selection = new HashSet<ProBuilderMesh>();
 
