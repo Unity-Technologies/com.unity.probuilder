@@ -322,16 +322,15 @@ namespace UnityEngine.ProBuilder
         internal static Vector3 GetNearestPointRayRay(Vector3 ao, Vector3 ad, Vector3 bo, Vector3 bd)
         {
             float dot = Vector3.Dot(ad, bd);
-            float abs = Mathf.Abs(dot);
+            float d = Vector3.Dot(ad, ad) * Vector3.Dot(bd, bd) - dot * dot;
 
-            // ray is parallel (or garbage)
-            if ((abs - 1f) > Mathf.Epsilon || abs < Mathf.Epsilon)
+            // Rays are parallel, anti-parallel, or degenerate (zero direction)
+            if (d <= Mathf.Epsilon)
                 return ao;
 
             Vector3 c = bo - ao;
 
             float n = -dot * Vector3.Dot(bd, c) + Vector3.Dot(ad, c) * Vector3.Dot(bd, bd);
-            float d = Vector3.Dot(ad, ad) * Vector3.Dot(bd, bd) - dot * dot;
 
             return ao + ad * (n / d);
         }
