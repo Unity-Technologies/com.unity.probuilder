@@ -26,7 +26,9 @@ namespace UnityEngine.ProBuilder
                 Camera renderCam = go.AddComponent<Camera>();
                 renderCam.CopyFrom(camera);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 renderCam.renderingPath = RenderingPath.Forward;
+#pragma warning restore CS0618
                 renderCam.enabled = false;
                 renderCam.clearFlags = CameraClearFlags.SolidColor;
                 renderCam.backgroundColor = Color.white;
